@@ -143,3 +143,6 @@ mypy_result
 *.stats
 logs/*
 !.gitkeep
+*.log
+protobuf
+ca-sinopac.pfx
