@@ -25,33 +25,37 @@ pip install -U \
   mypy \
   mypy-protobuf \
   pylint-protobuf \
-  pylint
+  pylint \
+  python-dotenv
 pip freeze > requirements.txt
 ```
 
+- lint
+
 ```sh
-mypy --install-types --non-interactive ./src/main.py
+mypy --install-types --non-interactive ./src
+pylint ./src
+```
+
+- env file template
+
+```env
+GRPC_PORT=56666
+CONNECTION_COUNT=2
+
+PERSON_ID=F127522501
+PASSWORD=@A2rgilaal
+CA_PASSWORD=~A2iairlol
 ```
 
 ```sh
 python ./src/main.py
 ```
 
+### Delete __pycache__
+
 ```sh
 find . -type d -name __pycache__ -exec rm -rf "{}" \;
-```
-
-- install protoc
-
-```sh
-version=3.20.0
-version=3.20.1
-rm -rf /utils
-mkdir /utils
-cd /utils
-curl -fSL https://github.com/protocolbuffers/protobuf/releases/download/v$version/protoc-$version-linux-x86_64.zip --output protobuf.zip
-unzip protobuf.zip -d protobuf
-cd /sinopac_mq_srv
 ```
 
 ### Git
@@ -63,4 +67,4 @@ git check-ignore *
 
 ## Authors
 
-- [**Tim Hsu**](https://gitlab.tocraw.com/root)
+- [__Tim Hsu__](https://gitlab.tocraw.com/root)

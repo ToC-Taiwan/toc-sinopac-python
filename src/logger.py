@@ -23,3 +23,5 @@ logger = logging.getLogger()
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 logger.setLevel(logging.INFO)
+
+logger.info('Logger initialized')

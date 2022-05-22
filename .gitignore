@@ -145,4 +145,5 @@ logs/*
 !.gitkeep
 *.log
 protobuf
-ca-sinopac.pfx
+contracts.pkl
+contracts.pkl.lock
