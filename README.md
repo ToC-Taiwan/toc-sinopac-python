@@ -36,6 +36,7 @@ pip install -U \
   pylint-protobuf \
   pylint \
   python-dotenv
+mypy --install-types --non-interactive ./src
 pip freeze > requirements.txt
 ```
 
