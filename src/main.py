@@ -24,16 +24,18 @@ if person_id is None or password is None or ca_password is None or grpc_port is 
     sys.exit()
 
 
-server_token = ''.join(random.choice(string.ascii_letters) for _ in range(25))
+server_token = ''.join(random.choice(string.ascii_letters) for _ in range(50))
 logger.info('Server Token: %s', server_token)
 
-SINOPAC_CONNECTION_LIST: typing.List[Sinopac] = []
+MAIN_WORKER: Sinopac
+SINOPAC_WORKDER_LIST: typing.List[Sinopac] = []
 
 for i in range(int(connection_count)):
     logger.info('New Connection %d', i+1)
-    is_first = False
-    if i == 0:
-        is_first = True
-    SINOPAC_CONNECTION_LIST.append(Sinopac().login(person_id, password, ca_password, is_first))
+    is_first = False if i == 0 else True
+    tmp = Sinopac().login(person_id, password, ca_password, is_first)
+    if is_first:
+        MAIN_WORKER = tmp
+    SINOPAC_WORKDER_LIST.append(tmp)
 
-serve(port=grpc_port, connections=SINOPAC_CONNECTION_LIST)
+serve(port=grpc_port, main_connection=MAIN_WORKER, workers=SINOPAC_WORKDER_LIST)
