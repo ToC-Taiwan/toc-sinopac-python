@@ -14,11 +14,21 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\x13toc_machine_trading\"\x17\n\x04\x45\x63ho\x12\x0f\n\x07message\x18\x01 \x01(\t2Z\n\x11ToCSinopacBackEnd\x12\x45\n\x0bHealthCheck\x12\x19.toc_machine_trading.Echo\x1a\x19.toc_machine_trading.Echo\"\x00\x42\x08Z\x06pkg/pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\x13toc_machine_trading\" \n\x0bRequestTime\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\"\x17\n\x04\x45\x63ho\x12\x0f\n\x07message\x18\x01 \x01(\t\"d\n\x13StockDetailResponse\x12\x36\n\x05stock\x18\x01 \x03(\x0b\x32\'.toc_machine_trading.StockDetailMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\x8f\x01\n\x12StockDetailMessage\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x02 \x01(\t\x12\x0c\n\x04\x63ode\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x11\n\treference\x18\x05 \x01(\x01\x12\x13\n\x0bupdate_date\x18\x06 \x01(\t\x12\x11\n\tday_trade\x18\x07 \x01(\t2\xbd\x01\n\x11ToCSinopacBackEnd\x12\x45\n\x0bHealthCheck\x12\x19.toc_machine_trading.Echo\x1a\x19.toc_machine_trading.Echo\"\x00\x12\x61\n\x11GetAllStockDetail\x12 .toc_machine_trading.RequestTime\x1a(.toc_machine_trading.StockDetailResponse\"\x00\x42\x08Z\x06pkg/pbb\x06proto3')
 
 
 
+_REQUESTTIME = DESCRIPTOR.message_types_by_name['RequestTime']
 _ECHO = DESCRIPTOR.message_types_by_name['Echo']
+_STOCKDETAILRESPONSE = DESCRIPTOR.message_types_by_name['StockDetailResponse']
+_STOCKDETAILMESSAGE = DESCRIPTOR.message_types_by_name['StockDetailMessage']
+RequestTime = _reflection.GeneratedProtocolMessageType('RequestTime', (_message.Message,), {
+  'DESCRIPTOR' : _REQUESTTIME,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.RequestTime)
+  })
+_sym_db.RegisterMessage(RequestTime)
+
 Echo = _reflection.GeneratedProtocolMessageType('Echo', (_message.Message,), {
   'DESCRIPTOR' : _ECHO,
   '__module__' : 'trade_pb2'
@@ -26,13 +36,33 @@ Echo = _reflection.GeneratedProtocolMessageType('Echo', (_message.Message,), {
   })
 _sym_db.RegisterMessage(Echo)
 
+StockDetailResponse = _reflection.GeneratedProtocolMessageType('StockDetailResponse', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKDETAILRESPONSE,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockDetailResponse)
+  })
+_sym_db.RegisterMessage(StockDetailResponse)
+
+StockDetailMessage = _reflection.GeneratedProtocolMessageType('StockDetailMessage', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKDETAILMESSAGE,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockDetailMessage)
+  })
+_sym_db.RegisterMessage(StockDetailMessage)
+
 _TOCSINOPACBACKEND = DESCRIPTOR.services_by_name['ToCSinopacBackEnd']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\006pkg/pb'
-  _ECHO._serialized_start=36
-  _ECHO._serialized_end=59
-  _TOCSINOPACBACKEND._serialized_start=61
-  _TOCSINOPACBACKEND._serialized_end=151
+  _REQUESTTIME._serialized_start=36
+  _REQUESTTIME._serialized_end=68
+  _ECHO._serialized_start=70
+  _ECHO._serialized_end=93
+  _STOCKDETAILRESPONSE._serialized_start=95
+  _STOCKDETAILRESPONSE._serialized_end=195
+  _STOCKDETAILMESSAGE._serialized_start=198
+  _STOCKDETAILMESSAGE._serialized_end=341
+  _TOCSINOPACBACKEND._serialized_start=344
+  _TOCSINOPACBACKEND._serialized_end=533
 # @@protoc_insertion_point(module_scope)

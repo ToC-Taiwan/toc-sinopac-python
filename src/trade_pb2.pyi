@@ -4,11 +4,23 @@ isort:skip_file
 """
 import builtins
 import google.protobuf.descriptor
+import google.protobuf.internal.containers
 import google.protobuf.message
 import typing
 import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+
+class RequestTime(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    TIMESTAMP_FIELD_NUMBER: builtins.int
+    timestamp: builtins.int
+    def __init__(self,
+        *,
+        timestamp: builtins.int = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["timestamp",b"timestamp"]) -> None: ...
+global___RequestTime = RequestTime
 
 class Echo(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -20,3 +32,47 @@ class Echo(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["message",b"message"]) -> None: ...
 global___Echo = Echo
+
+class StockDetailResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    STOCK_FIELD_NUMBER: builtins.int
+    REQ_TIMESTAMP_FIELD_NUMBER: builtins.int
+    @property
+    def stock(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___StockDetailMessage]: ...
+    req_timestamp: builtins.int
+    def __init__(self,
+        *,
+        stock: typing.Optional[typing.Iterable[global___StockDetailMessage]] = ...,
+        req_timestamp: builtins.int = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["req_timestamp",b"req_timestamp","stock",b"stock"]) -> None: ...
+global___StockDetailResponse = StockDetailResponse
+
+class StockDetailMessage(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    EXCHANGE_FIELD_NUMBER: builtins.int
+    CATEGORY_FIELD_NUMBER: builtins.int
+    CODE_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    REFERENCE_FIELD_NUMBER: builtins.int
+    UPDATE_DATE_FIELD_NUMBER: builtins.int
+    DAY_TRADE_FIELD_NUMBER: builtins.int
+    exchange: typing.Text
+    category: typing.Text
+    code: typing.Text
+    name: typing.Text
+    reference: builtins.float
+    update_date: typing.Text
+    day_trade: typing.Text
+    def __init__(self,
+        *,
+        exchange: typing.Text = ...,
+        category: typing.Text = ...,
+        code: typing.Text = ...,
+        name: typing.Text = ...,
+        reference: builtins.float = ...,
+        update_date: typing.Text = ...,
+        day_trade: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["category",b"category","code",b"code","day_trade",b"day_trade","exchange",b"exchange","name",b"name","reference",b"reference","update_date",b"update_date"]) -> None: ...
+global___StockDetailMessage = StockDetailMessage

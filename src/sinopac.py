@@ -16,7 +16,7 @@ class Sinopac:
     def __init__(self):
         self.api = sj.Shioaji()
         self.login_status = 0
-        self.stock_list = []
+        self.stock_num_list = []
         self.order_status_list = []
         # lock
         self.login_lock = threading.Lock()
@@ -43,7 +43,7 @@ class Sinopac:
             ca_passwd=ca_passwd,
             person_id=person_id,
         )
-        self.fill_stock_list()
+        self.fill_stock_num_list()
         return self
 
     def login_cb(self, security_type: sj.constant.SecurityType):
@@ -55,15 +55,15 @@ class Sinopac:
     def list_accounts(self):
         return self.api.list_accounts()
 
-    def fill_stock_list(self):
+    def fill_stock_num_list(self):
         for all_contract in self.api.Contracts.Stocks:
             for day_trade_stock in all_contract:
                 if day_trade_stock.day_trade == DayTrade.Yes.value:
-                    self.stock_list.append(day_trade_stock.code)
+                    self.stock_num_list.append(day_trade_stock.code)
         while True:
-            if len(self.stock_list) != 0:
+            if len(self.stock_num_list) != 0:
                 break
-        logger.info('Filling stock_list, total: %d', len(self.stock_list))
+        logger.info('Filling stock_num_list, total: %d', len(self.stock_num_list))
 
     def update_order_status_instant(self):
         self.api.update_status(timeout=0, cb=order_status_callback)
