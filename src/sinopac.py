@@ -17,11 +17,13 @@ class Sinopac:
         self.api.quote.set_on_tick_stk_v1_callback(quote_callback_v1)
         self.api.quote.set_on_bidask_stk_v1_callback(bid_ask_callback)
 
-    def login(self, person_id, passwd, ca_passwd):
+    def login(self, person_id: str, passwd: str, ca_passwd: str, is_first: bool):
         self.api.login(
             person_id=person_id,
             passwd=passwd,
             contracts_cb=self.login_cb,
+            subscribe_trade=is_first,
+            fetch_contract=is_first,
         )
         while True:
             if self.login_status == 100:
@@ -31,16 +33,16 @@ class Sinopac:
             ca_passwd=ca_passwd,
             person_id=person_id,
         )
+        return self
 
     def login_cb(self, security_type: sj.constant.SecurityType):
         with self.login_lock:
             if security_type.value in ('STK', 'IND', 'FUT', 'OPT'):
                 self.login_status += 25
-                logger.warning('login progress: %d%%, %s', self.login_status, security_type)
+                logger.info('login progress: %d%%, %s', self.login_status, security_type)
 
     def list_accounts(self):
-        accounts = self.api.list_accounts()
-        logger.info(accounts)
+        return self.api.list_accounts()
 
 
 def place_order_callback(order_state: sj.constant.OrderState, order: dict):
@@ -88,8 +90,8 @@ def event_callback(resp_code: int, event_code: int, info: str, event: str):
 
 
 def quote_callback_v1(exchange: sj.Exchange, tick: sj.TickSTKv1):
-    logger.info('quote_callback')
+    logger.info('Exchange: %s, tick: %s', exchange, tick.code)
 
 
 def bid_ask_callback(exchange: sj.Exchange, bidask: sj.BidAskSTKv1):
-    logger.info('bid_ask_callback')
+    logger.info('Exchange: %s, bidask: %s', exchange, bidask.code)
