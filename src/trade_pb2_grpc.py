@@ -16,8 +16,8 @@ class ToCSinopacBackEndStub(object):
         """
         self.HealthCheck = channel.unary_unary(
                 '/toc_machine_trading.ToCSinopacBackEnd/HealthCheck',
-                request_serializer=trade__pb2.Echo.SerializeToString,
-                response_deserializer=trade__pb2.Echo.FromString,
+                request_serializer=trade__pb2.RequestTime.SerializeToString,
+                response_deserializer=trade__pb2.TokenResponse.FromString,
                 )
         self.GetAllStockDetail = channel.unary_unary(
                 '/toc_machine_trading.ToCSinopacBackEnd/GetAllStockDetail',
@@ -29,10 +29,20 @@ class ToCSinopacBackEndStub(object):
                 request_serializer=trade__pb2.RequestTime.SerializeToString,
                 response_deserializer=trade__pb2.StockSnapshotResponse.FromString,
                 )
+        self.GetStockSnapshotTSE = channel.unary_unary(
+                '/toc_machine_trading.ToCSinopacBackEnd/GetStockSnapshotTSE',
+                request_serializer=trade__pb2.RequestTime.SerializeToString,
+                response_deserializer=trade__pb2.StockSnapshotResponse.FromString,
+                )
         self.GetStockSnapshotByNumArr = channel.unary_unary(
                 '/toc_machine_trading.ToCSinopacBackEnd/GetStockSnapshotByNumArr',
                 request_serializer=trade__pb2.StockNumArr.SerializeToString,
                 response_deserializer=trade__pb2.StockSnapshotResponse.FromString,
+                )
+        self.GetStockHistoryTick = channel.unary_unary(
+                '/toc_machine_trading.ToCSinopacBackEnd/GetStockHistoryTick',
+                request_serializer=trade__pb2.StockNumWithDate.SerializeToString,
+                response_deserializer=trade__pb2.StockHistoryTickResponse.FromString,
                 )
 
 
@@ -57,7 +67,19 @@ class ToCSinopacBackEndServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetStockSnapshotTSE(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetStockSnapshotByNumArr(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStockHistoryTick(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -68,8 +90,8 @@ def add_ToCSinopacBackEndServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'HealthCheck': grpc.unary_unary_rpc_method_handler(
                     servicer.HealthCheck,
-                    request_deserializer=trade__pb2.Echo.FromString,
-                    response_serializer=trade__pb2.Echo.SerializeToString,
+                    request_deserializer=trade__pb2.RequestTime.FromString,
+                    response_serializer=trade__pb2.TokenResponse.SerializeToString,
             ),
             'GetAllStockDetail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllStockDetail,
@@ -81,10 +103,20 @@ def add_ToCSinopacBackEndServicer_to_server(servicer, server):
                     request_deserializer=trade__pb2.RequestTime.FromString,
                     response_serializer=trade__pb2.StockSnapshotResponse.SerializeToString,
             ),
+            'GetStockSnapshotTSE': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockSnapshotTSE,
+                    request_deserializer=trade__pb2.RequestTime.FromString,
+                    response_serializer=trade__pb2.StockSnapshotResponse.SerializeToString,
+            ),
             'GetStockSnapshotByNumArr': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotByNumArr,
                     request_deserializer=trade__pb2.StockNumArr.FromString,
                     response_serializer=trade__pb2.StockSnapshotResponse.SerializeToString,
+            ),
+            'GetStockHistoryTick': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockHistoryTick,
+                    request_deserializer=trade__pb2.StockNumWithDate.FromString,
+                    response_serializer=trade__pb2.StockHistoryTickResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -108,8 +140,8 @@ class ToCSinopacBackEnd(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/toc_machine_trading.ToCSinopacBackEnd/HealthCheck',
-            trade__pb2.Echo.SerializeToString,
-            trade__pb2.Echo.FromString,
+            trade__pb2.RequestTime.SerializeToString,
+            trade__pb2.TokenResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -148,6 +180,23 @@ class ToCSinopacBackEnd(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def GetStockSnapshotTSE(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_machine_trading.ToCSinopacBackEnd/GetStockSnapshotTSE',
+            trade__pb2.RequestTime.SerializeToString,
+            trade__pb2.StockSnapshotResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def GetStockSnapshotByNumArr(request,
             target,
             options=(),
@@ -161,5 +210,22 @@ class ToCSinopacBackEnd(object):
         return grpc.experimental.unary_unary(request, target, '/toc_machine_trading.ToCSinopacBackEnd/GetStockSnapshotByNumArr',
             trade__pb2.StockNumArr.SerializeToString,
             trade__pb2.StockSnapshotResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetStockHistoryTick(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_machine_trading.ToCSinopacBackEnd/GetStockHistoryTick',
+            trade__pb2.StockNumWithDate.SerializeToString,
+            trade__pb2.StockHistoryTickResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

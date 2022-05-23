@@ -22,16 +22,19 @@ class RequestTime(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["timestamp",b"timestamp"]) -> None: ...
 global___RequestTime = RequestTime
 
-class Echo(google.protobuf.message.Message):
+class TokenResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     MESSAGE_FIELD_NUMBER: builtins.int
+    REQ_TIMESTAMP_FIELD_NUMBER: builtins.int
     message: typing.Text
+    req_timestamp: builtins.int
     def __init__(self,
         *,
         message: typing.Text = ...,
+        req_timestamp: builtins.int = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["message",b"message"]) -> None: ...
-global___Echo = Echo
+    def ClearField(self, field_name: typing_extensions.Literal["message",b"message","req_timestamp",b"req_timestamp"]) -> None: ...
+global___TokenResponse = TokenResponse
 
 class StockDetailResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -180,3 +183,73 @@ class StockNumArr(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["stock_num_arr",b"stock_num_arr","timestamp",b"timestamp"]) -> None: ...
 global___StockNumArr = StockNumArr
+
+class StockNumWithDate(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    TIMESTAMP_FIELD_NUMBER: builtins.int
+    STOCK_NUM_FIELD_NUMBER: builtins.int
+    DATE_FIELD_NUMBER: builtins.int
+    timestamp: builtins.int
+    stock_num: typing.Text
+    date: typing.Text
+    def __init__(self,
+        *,
+        timestamp: builtins.int = ...,
+        stock_num: typing.Text = ...,
+        date: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["date",b"date","stock_num",b"stock_num","timestamp",b"timestamp"]) -> None: ...
+global___StockNumWithDate = StockNumWithDate
+
+class StockHistoryTickResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    STOCK_NUM_FIELD_NUMBER: builtins.int
+    DATE_FIELD_NUMBER: builtins.int
+    DATA_FIELD_NUMBER: builtins.int
+    REQ_TIMESTAMP_FIELD_NUMBER: builtins.int
+    stock_num: typing.Text
+    date: typing.Text
+    @property
+    def data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___StockHistoryTickMessage]: ...
+    req_timestamp: builtins.int
+    def __init__(self,
+        *,
+        stock_num: typing.Text = ...,
+        date: typing.Text = ...,
+        data: typing.Optional[typing.Iterable[global___StockHistoryTickMessage]] = ...,
+        req_timestamp: builtins.int = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["data",b"data","date",b"date","req_timestamp",b"req_timestamp","stock_num",b"stock_num"]) -> None: ...
+global___StockHistoryTickResponse = StockHistoryTickResponse
+
+class StockHistoryTickMessage(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    TS_FIELD_NUMBER: builtins.int
+    CLOSE_FIELD_NUMBER: builtins.int
+    VOLUME_FIELD_NUMBER: builtins.int
+    BID_PRICE_FIELD_NUMBER: builtins.int
+    BID_VOLUME_FIELD_NUMBER: builtins.int
+    ASK_PRICE_FIELD_NUMBER: builtins.int
+    ASK_VOLUME_FIELD_NUMBER: builtins.int
+    TICK_TYPE_FIELD_NUMBER: builtins.int
+    ts: builtins.int
+    close: builtins.float
+    volume: builtins.int
+    bid_price: builtins.float
+    bid_volume: builtins.int
+    ask_price: builtins.float
+    ask_volume: builtins.int
+    tick_type: builtins.int
+    def __init__(self,
+        *,
+        ts: builtins.int = ...,
+        close: builtins.float = ...,
+        volume: builtins.int = ...,
+        bid_price: builtins.float = ...,
+        bid_volume: builtins.int = ...,
+        ask_price: builtins.float = ...,
+        ask_volume: builtins.int = ...,
+        tick_type: builtins.int = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["ask_price",b"ask_price","ask_volume",b"ask_volume","bid_price",b"bid_price","bid_volume",b"bid_volume","close",b"close","tick_type",b"tick_type","ts",b"ts","volume",b"volume"]) -> None: ...
+global___StockHistoryTickMessage = StockHistoryTickMessage

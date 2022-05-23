@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 '''SINOPAC PYTHON API FORWARDER'''
 import os
-import random
-import string
 import sys
 import typing
 
@@ -23,9 +21,6 @@ if person_id is None or password is None or ca_password is None or grpc_port is 
     logger.error("Missing environment variables")
     sys.exit()
 
-
-server_token = ''.join(random.choice(string.ascii_letters) for _ in range(50))
-logger.info('Server Token: %s', server_token)
 
 MAIN_WORKER: Sinopac
 SINOPAC_WORKDER_LIST: typing.List[Sinopac] = []

@@ -9,7 +9,7 @@ import shioaji as sj
 from constant import DayTrade, SecurityType
 from logger import logger
 
-order_status_lock = threading.Lock()
+ORDER_STATUS_CB_LOCK = threading.Lock()
 
 
 class Sinopac:
@@ -83,6 +83,9 @@ class Sinopac:
     def get_contract_by_stock_num(self, num):
         return self.__api.Contracts.Stocks[num]
 
+    def ticks(self, contract, date):
+        return self.__api.ticks(contract, date)
+
 
 def place_order_callback(order_state, order: dict):
     if search('DEAL', order_state) is None:
@@ -136,7 +139,7 @@ def bid_ask_callback(exchange: sj.Exchange, bidask):
 
 
 def order_status_callback(reply: typing.List[sj.order.Trade]):
-    with order_status_lock:
+    with ORDER_STATUS_CB_LOCK:
         if len(reply) != 0:
             for order in reply:
                 if order.status.order_datetime is None:
