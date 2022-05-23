@@ -15,7 +15,7 @@ class ToCSinopacBackEndStub(object):
             channel: A grpc.Channel.
         """
         self.HealthCheck = channel.unary_unary(
-                '/helloworld.ToCSinopacBackEnd/HealthCheck',
+                '/toc_machine_trading.ToCSinopacBackEnd/HealthCheck',
                 request_serializer=trade__pb2.Echo.SerializeToString,
                 response_deserializer=trade__pb2.Echo.FromString,
                 )
@@ -40,7 +40,7 @@ def add_ToCSinopacBackEndServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'helloworld.ToCSinopacBackEnd', rpc_method_handlers)
+            'toc_machine_trading.ToCSinopacBackEnd', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class ToCSinopacBackEnd(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/helloworld.ToCSinopacBackEnd/HealthCheck',
+        return grpc.experimental.unary_unary(request, target, '/toc_machine_trading.ToCSinopacBackEnd/HealthCheck',
             trade__pb2.Echo.SerializeToString,
             trade__pb2.Echo.FromString,
             options, channel_credentials,

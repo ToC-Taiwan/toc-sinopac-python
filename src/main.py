@@ -32,7 +32,7 @@ SINOPAC_WORKDER_LIST: typing.List[Sinopac] = []
 
 for i in range(int(connection_count)):
     logger.info('New Connection %d', i+1)
-    is_first = False if i == 0 else True
+    is_first = bool(i == 0)
     tmp = Sinopac().login(person_id, password, ca_password, is_first)
     if is_first:
         MAIN_WORKER = tmp

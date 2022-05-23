@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\nhelloworld\"\x17\n\x04\x45\x63ho\x12\x0f\n\x07message\x18\x01 \x01(\t2H\n\x11ToCSinopacBackEnd\x12\x33\n\x0bHealthCheck\x12\x10.helloworld.Echo\x1a\x10.helloworld.Echo\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\x13toc_machine_trading\"\x17\n\x04\x45\x63ho\x12\x0f\n\x07message\x18\x01 \x01(\t2Z\n\x11ToCSinopacBackEnd\x12\x45\n\x0bHealthCheck\x12\x19.toc_machine_trading.Echo\x1a\x19.toc_machine_trading.Echo\"\x00\x42\x08Z\x06pkg/pbb\x06proto3')
 
 
 
@@ -22,7 +22,7 @@ _ECHO = DESCRIPTOR.message_types_by_name['Echo']
 Echo = _reflection.GeneratedProtocolMessageType('Echo', (_message.Message,), {
   'DESCRIPTOR' : _ECHO,
   '__module__' : 'trade_pb2'
-  # @@protoc_insertion_point(class_scope:helloworld.Echo)
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.Echo)
   })
 _sym_db.RegisterMessage(Echo)
 
@@ -30,8 +30,9 @@ _TOCSINOPACBACKEND = DESCRIPTOR.services_by_name['ToCSinopacBackEnd']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _ECHO._serialized_start=27
-  _ECHO._serialized_end=50
-  _TOCSINOPACBACKEND._serialized_start=52
-  _TOCSINOPACBACKEND._serialized_end=124
+  DESCRIPTOR._serialized_options = b'Z\006pkg/pb'
+  _ECHO._serialized_start=36
+  _ECHO._serialized_end=59
+  _TOCSINOPACBACKEND._serialized_start=61
+  _TOCSINOPACBACKEND._serialized_end=151
 # @@protoc_insertion_point(module_scope)
