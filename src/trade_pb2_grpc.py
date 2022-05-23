@@ -24,21 +24,41 @@ class ToCSinopacBackEndStub(object):
                 request_serializer=trade__pb2.RequestTime.SerializeToString,
                 response_deserializer=trade__pb2.StockDetailResponse.FromString,
                 )
+        self.GetAllStockSnapshot = channel.unary_unary(
+                '/toc_machine_trading.ToCSinopacBackEnd/GetAllStockSnapshot',
+                request_serializer=trade__pb2.RequestTime.SerializeToString,
+                response_deserializer=trade__pb2.StockSnapshotResponse.FromString,
+                )
+        self.GetStockSnapshotByNumArr = channel.unary_unary(
+                '/toc_machine_trading.ToCSinopacBackEnd/GetStockSnapshotByNumArr',
+                request_serializer=trade__pb2.StockNumArr.SerializeToString,
+                response_deserializer=trade__pb2.StockSnapshotResponse.FromString,
+                )
 
 
 class ToCSinopacBackEndServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def HealthCheck(self, request, context):
-        """for go side to check python alive
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetAllStockDetail(self, request, context):
-        """Get all stock detail
-        """
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAllStockSnapshot(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStockSnapshotByNumArr(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -55,6 +75,16 @@ def add_ToCSinopacBackEndServicer_to_server(servicer, server):
                     servicer.GetAllStockDetail,
                     request_deserializer=trade__pb2.RequestTime.FromString,
                     response_serializer=trade__pb2.StockDetailResponse.SerializeToString,
+            ),
+            'GetAllStockSnapshot': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllStockSnapshot,
+                    request_deserializer=trade__pb2.RequestTime.FromString,
+                    response_serializer=trade__pb2.StockSnapshotResponse.SerializeToString,
+            ),
+            'GetStockSnapshotByNumArr': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockSnapshotByNumArr,
+                    request_deserializer=trade__pb2.StockNumArr.FromString,
+                    response_serializer=trade__pb2.StockSnapshotResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -97,5 +127,39 @@ class ToCSinopacBackEnd(object):
         return grpc.experimental.unary_unary(request, target, '/toc_machine_trading.ToCSinopacBackEnd/GetAllStockDetail',
             trade__pb2.RequestTime.SerializeToString,
             trade__pb2.StockDetailResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetAllStockSnapshot(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_machine_trading.ToCSinopacBackEnd/GetAllStockSnapshot',
+            trade__pb2.RequestTime.SerializeToString,
+            trade__pb2.StockSnapshotResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetStockSnapshotByNumArr(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_machine_trading.ToCSinopacBackEnd/GetStockSnapshotByNumArr',
+            trade__pb2.StockNumArr.SerializeToString,
+            trade__pb2.StockSnapshotResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

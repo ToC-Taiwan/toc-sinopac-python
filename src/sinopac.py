@@ -14,21 +14,22 @@ order_status_lock = threading.Lock()
 
 class Sinopac:
     def __init__(self):
-        self.api = sj.Shioaji()
-        self.login_status = 0
+        self.__api = sj.Shioaji()
+        self.__login_status = 0
+        # public
         self.stock_num_list = []
         self.order_status_list = []
         # lock
-        self.login_lock = threading.Lock()
-        self.order_status_lock = threading.Lock()
+        self.__login_lock = threading.Lock()
+        self.__order_status_lock = threading.Lock()
         # callback
-        self.api.set_order_callback(place_order_callback)
-        self.api.quote.set_event_callback(event_callback)
-        self.api.quote.set_on_tick_stk_v1_callback(quote_callback_v1)
-        self.api.quote.set_on_bidask_stk_v1_callback(bid_ask_callback)
+        self.__api.set_order_callback(place_order_callback)
+        self.__api.quote.set_event_callback(event_callback)
+        self.__api.quote.set_on_tick_stk_v1_callback(quote_callback_v1)
+        self.__api.quote.set_on_bidask_stk_v1_callback(bid_ask_callback)
 
     def login(self, person_id: str, passwd: str, ca_passwd: str, is_first: bool):
-        self.api.login(
+        self.__api.login(
             person_id=person_id,
             passwd=passwd,
             contracts_cb=self.login_cb,
@@ -36,9 +37,9 @@ class Sinopac:
             fetch_contract=is_first,
         )
         while True:
-            if self.login_status == 100:
+            if self.__login_status == 100:
                 break
-        self.api.activate_ca(
+        self.__api.activate_ca(
             ca_path=f'./data/{person_id}.pfx',
             ca_passwd=ca_passwd,
             person_id=person_id,
@@ -46,17 +47,17 @@ class Sinopac:
         self.fill_stock_num_list()
         return self
 
-    def login_cb(self, security_type: sj.constant.SecurityType):
-        with self.login_lock:
+    def login_cb(self, security_type):
+        with self.__login_lock:
             if security_type.value in [item.value for item in SecurityType]:
-                self.login_status += 25
-                logger.info('login progress: %d%%, %s', self.login_status, security_type)
+                self.__login_status += 25
+                logger.info('login progress: %d%%, %s', self.__login_status, security_type)
 
     def list_accounts(self):
-        return self.api.list_accounts()
+        return self.__api.list_accounts()
 
     def fill_stock_num_list(self):
-        for all_contract in self.api.Contracts.Stocks:
+        for all_contract in self.__api.Contracts.Stocks:
             for day_trade_stock in all_contract:
                 if day_trade_stock.day_trade == DayTrade.Yes.value:
                     self.stock_num_list.append(day_trade_stock.code)
@@ -66,15 +67,24 @@ class Sinopac:
         logger.info('Filling stock_num_list, total: %d', len(self.stock_num_list))
 
     def update_order_status_instant(self):
-        self.api.update_status(timeout=0, cb=order_status_callback)
+        self.__api.update_status(timeout=0, cb=order_status_callback)
 
     def update_local_order_status(self):
-        with self.order_status_lock:
-            self.api.update_status()
-            self.order_status_list = self.api.list_trades()
+        with self.__order_status_lock:
+            self.__api.update_status()
+            self.order_status_list = self.__api.list_trades()
+
+    def snapshots(self, contracts):
+        return self.__api.snapshots(contracts)
+
+    def get_contract_tse_001(self):
+        return self.__api.Contracts.Indexs.TSE.TSE001
+
+    def get_contract_by_stock_num(self, num):
+        return self.__api.Contracts.Stocks[num]
 
 
-def place_order_callback(order_state: sj.constant.OrderState, order: dict):
+def place_order_callback(order_state, order: dict):
     if search('DEAL', order_state) is None:
         logger.info('%s %s %.2f %d %s %d %s %s %s %s',
                     order['contract']['code'],
@@ -117,11 +127,11 @@ def event_callback(resp_code: int, event_code: int, info: str, event: str):
     logger.info(pformat(tmp, width=max(length_arr)))
 
 
-def quote_callback_v1(exchange: sj.Exchange, tick: sj.TickSTKv1):
+def quote_callback_v1(exchange: sj.Exchange, tick):
     logger.info('Exchange: %s, tick: %s', exchange, tick.code)
 
 
-def bid_ask_callback(exchange: sj.Exchange, bidask: sj.BidAskSTKv1):
+def bid_ask_callback(exchange: sj.Exchange, bidask):
     logger.info('Exchange: %s, bidask: %s', exchange, bidask.code)
 
 

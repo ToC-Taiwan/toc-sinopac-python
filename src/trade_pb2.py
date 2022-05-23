@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\x13toc_machine_trading\" \n\x0bRequestTime\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\"\x17\n\x04\x45\x63ho\x12\x0f\n\x07message\x18\x01 \x01(\t\"d\n\x13StockDetailResponse\x12\x36\n\x05stock\x18\x01 \x03(\x0b\x32\'.toc_machine_trading.StockDetailMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\x8f\x01\n\x12StockDetailMessage\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x02 \x01(\t\x12\x0c\n\x04\x63ode\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x11\n\treference\x18\x05 \x01(\x01\x12\x13\n\x0bupdate_date\x18\x06 \x01(\t\x12\x11\n\tday_trade\x18\x07 \x01(\t2\xbd\x01\n\x11ToCSinopacBackEnd\x12\x45\n\x0bHealthCheck\x12\x19.toc_machine_trading.Echo\x1a\x19.toc_machine_trading.Echo\"\x00\x12\x61\n\x11GetAllStockDetail\x12 .toc_machine_trading.RequestTime\x1a(.toc_machine_trading.StockDetailResponse\"\x00\x42\x08Z\x06pkg/pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\x13toc_machine_trading\" \n\x0bRequestTime\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\"\x17\n\x04\x45\x63ho\x12\x0f\n\x07message\x18\x01 \x01(\t\"d\n\x13StockDetailResponse\x12\x36\n\x05stock\x18\x01 \x03(\x0b\x32\'.toc_machine_trading.StockDetailMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\x8f\x01\n\x12StockDetailMessage\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x02 \x01(\t\x12\x0c\n\x04\x63ode\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x11\n\treference\x18\x05 \x01(\x01\x12\x13\n\x0bupdate_date\x18\x06 \x01(\t\x12\x11\n\tday_trade\x18\x07 \x01(\t\"g\n\x15StockSnapshotResponse\x12\x37\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32).toc_machine_trading.StockSnapshotMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\xb0\x03\n\x14StockSnapshotMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x10\n\x08\x65xchange\x18\x03 \x01(\t\x12\x0c\n\x04open\x18\x04 \x01(\x01\x12\x0c\n\x04high\x18\x05 \x01(\x01\x12\x0b\n\x03low\x18\x06 \x01(\x01\x12\r\n\x05\x63lose\x18\x07 \x01(\x01\x12\x11\n\ttick_type\x18\x08 \x01(\t\x12\x14\n\x0c\x63hange_price\x18\t \x01(\x01\x12\x13\n\x0b\x63hange_rate\x18\n \x01(\x01\x12\x13\n\x0b\x63hange_type\x18\x0b \x01(\t\x12\x15\n\raverage_price\x18\x0c \x01(\x01\x12\x0e\n\x06volume\x18\r \x01(\x03\x12\x14\n\x0ctotal_volume\x18\x0e \x01(\x03\x12\x0e\n\x06\x61mount\x18\x0f \x01(\x03\x12\x14\n\x0ctotal_amount\x18\x10 \x01(\x03\x12\x18\n\x10yesterday_volume\x18\x11 \x01(\x01\x12\x11\n\tbuy_price\x18\x12 \x01(\x01\x12\x12\n\nbuy_volume\x18\x13 \x01(\x01\x12\x12\n\nsell_price\x18\x14 \x01(\x01\x12\x13\n\x0bsell_volume\x18\x15 \x01(\x03\x12\x14\n\x0cvolume_ratio\x18\x16 \x01(\x01\"7\n\x0bStockNumArr\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\x12\x15\n\rstock_num_arr\x18\x02 \x03(\t2\x90\x03\n\x11ToCSinopacBackEnd\x12\x45\n\x0bHealthCheck\x12\x19.toc_machine_trading.Echo\x1a\x19.toc_machine_trading.Echo\"\x00\x12\x61\n\x11GetAllStockDetail\x12 .toc_machine_trading.RequestTime\x1a(.toc_machine_trading.StockDetailResponse\"\x00\x12\x65\n\x13GetAllStockSnapshot\x12 .toc_machine_trading.RequestTime\x1a*.toc_machine_trading.StockSnapshotResponse\"\x00\x12j\n\x18GetStockSnapshotByNumArr\x12 .toc_machine_trading.StockNumArr\x1a*.toc_machine_trading.StockSnapshotResponse\"\x00\x42\x08Z\x06pkg/pbb\x06proto3')
 
 
 
@@ -22,6 +22,9 @@ _REQUESTTIME = DESCRIPTOR.message_types_by_name['RequestTime']
 _ECHO = DESCRIPTOR.message_types_by_name['Echo']
 _STOCKDETAILRESPONSE = DESCRIPTOR.message_types_by_name['StockDetailResponse']
 _STOCKDETAILMESSAGE = DESCRIPTOR.message_types_by_name['StockDetailMessage']
+_STOCKSNAPSHOTRESPONSE = DESCRIPTOR.message_types_by_name['StockSnapshotResponse']
+_STOCKSNAPSHOTMESSAGE = DESCRIPTOR.message_types_by_name['StockSnapshotMessage']
+_STOCKNUMARR = DESCRIPTOR.message_types_by_name['StockNumArr']
 RequestTime = _reflection.GeneratedProtocolMessageType('RequestTime', (_message.Message,), {
   'DESCRIPTOR' : _REQUESTTIME,
   '__module__' : 'trade_pb2'
@@ -50,6 +53,27 @@ StockDetailMessage = _reflection.GeneratedProtocolMessageType('StockDetailMessag
   })
 _sym_db.RegisterMessage(StockDetailMessage)
 
+StockSnapshotResponse = _reflection.GeneratedProtocolMessageType('StockSnapshotResponse', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKSNAPSHOTRESPONSE,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockSnapshotResponse)
+  })
+_sym_db.RegisterMessage(StockSnapshotResponse)
+
+StockSnapshotMessage = _reflection.GeneratedProtocolMessageType('StockSnapshotMessage', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKSNAPSHOTMESSAGE,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockSnapshotMessage)
+  })
+_sym_db.RegisterMessage(StockSnapshotMessage)
+
+StockNumArr = _reflection.GeneratedProtocolMessageType('StockNumArr', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKNUMARR,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockNumArr)
+  })
+_sym_db.RegisterMessage(StockNumArr)
+
 _TOCSINOPACBACKEND = DESCRIPTOR.services_by_name['ToCSinopacBackEnd']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
@@ -63,6 +87,12 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _STOCKDETAILRESPONSE._serialized_end=195
   _STOCKDETAILMESSAGE._serialized_start=198
   _STOCKDETAILMESSAGE._serialized_end=341
-  _TOCSINOPACBACKEND._serialized_start=344
-  _TOCSINOPACBACKEND._serialized_end=533
+  _STOCKSNAPSHOTRESPONSE._serialized_start=343
+  _STOCKSNAPSHOTRESPONSE._serialized_end=446
+  _STOCKSNAPSHOTMESSAGE._serialized_start=449
+  _STOCKSNAPSHOTMESSAGE._serialized_end=881
+  _STOCKNUMARR._serialized_start=883
+  _STOCKNUMARR._serialized_end=938
+  _TOCSINOPACBACKEND._serialized_start=941
+  _TOCSINOPACBACKEND._serialized_end=1341
 # @@protoc_insertion_point(module_scope)

@@ -76,3 +76,107 @@ class StockDetailMessage(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["category",b"category","code",b"code","day_trade",b"day_trade","exchange",b"exchange","name",b"name","reference",b"reference","update_date",b"update_date"]) -> None: ...
 global___StockDetailMessage = StockDetailMessage
+
+class StockSnapshotResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DATA_FIELD_NUMBER: builtins.int
+    REQ_TIMESTAMP_FIELD_NUMBER: builtins.int
+    @property
+    def data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___StockSnapshotMessage]: ...
+    req_timestamp: builtins.int
+    def __init__(self,
+        *,
+        data: typing.Optional[typing.Iterable[global___StockSnapshotMessage]] = ...,
+        req_timestamp: builtins.int = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["data",b"data","req_timestamp",b"req_timestamp"]) -> None: ...
+global___StockSnapshotResponse = StockSnapshotResponse
+
+class StockSnapshotMessage(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    TS_FIELD_NUMBER: builtins.int
+    CODE_FIELD_NUMBER: builtins.int
+    EXCHANGE_FIELD_NUMBER: builtins.int
+    OPEN_FIELD_NUMBER: builtins.int
+    HIGH_FIELD_NUMBER: builtins.int
+    LOW_FIELD_NUMBER: builtins.int
+    CLOSE_FIELD_NUMBER: builtins.int
+    TICK_TYPE_FIELD_NUMBER: builtins.int
+    CHANGE_PRICE_FIELD_NUMBER: builtins.int
+    CHANGE_RATE_FIELD_NUMBER: builtins.int
+    CHANGE_TYPE_FIELD_NUMBER: builtins.int
+    AVERAGE_PRICE_FIELD_NUMBER: builtins.int
+    VOLUME_FIELD_NUMBER: builtins.int
+    TOTAL_VOLUME_FIELD_NUMBER: builtins.int
+    AMOUNT_FIELD_NUMBER: builtins.int
+    TOTAL_AMOUNT_FIELD_NUMBER: builtins.int
+    YESTERDAY_VOLUME_FIELD_NUMBER: builtins.int
+    BUY_PRICE_FIELD_NUMBER: builtins.int
+    BUY_VOLUME_FIELD_NUMBER: builtins.int
+    SELL_PRICE_FIELD_NUMBER: builtins.int
+    SELL_VOLUME_FIELD_NUMBER: builtins.int
+    VOLUME_RATIO_FIELD_NUMBER: builtins.int
+    ts: builtins.int
+    code: typing.Text
+    exchange: typing.Text
+    open: builtins.float
+    high: builtins.float
+    low: builtins.float
+    close: builtins.float
+    tick_type: typing.Text
+    change_price: builtins.float
+    change_rate: builtins.float
+    change_type: typing.Text
+    average_price: builtins.float
+    volume: builtins.int
+    total_volume: builtins.int
+    amount: builtins.int
+    total_amount: builtins.int
+    yesterday_volume: builtins.float
+    buy_price: builtins.float
+    buy_volume: builtins.float
+    sell_price: builtins.float
+    sell_volume: builtins.int
+    volume_ratio: builtins.float
+    def __init__(self,
+        *,
+        ts: builtins.int = ...,
+        code: typing.Text = ...,
+        exchange: typing.Text = ...,
+        open: builtins.float = ...,
+        high: builtins.float = ...,
+        low: builtins.float = ...,
+        close: builtins.float = ...,
+        tick_type: typing.Text = ...,
+        change_price: builtins.float = ...,
+        change_rate: builtins.float = ...,
+        change_type: typing.Text = ...,
+        average_price: builtins.float = ...,
+        volume: builtins.int = ...,
+        total_volume: builtins.int = ...,
+        amount: builtins.int = ...,
+        total_amount: builtins.int = ...,
+        yesterday_volume: builtins.float = ...,
+        buy_price: builtins.float = ...,
+        buy_volume: builtins.float = ...,
+        sell_price: builtins.float = ...,
+        sell_volume: builtins.int = ...,
+        volume_ratio: builtins.float = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["amount",b"amount","average_price",b"average_price","buy_price",b"buy_price","buy_volume",b"buy_volume","change_price",b"change_price","change_rate",b"change_rate","change_type",b"change_type","close",b"close","code",b"code","exchange",b"exchange","high",b"high","low",b"low","open",b"open","sell_price",b"sell_price","sell_volume",b"sell_volume","tick_type",b"tick_type","total_amount",b"total_amount","total_volume",b"total_volume","ts",b"ts","volume",b"volume","volume_ratio",b"volume_ratio","yesterday_volume",b"yesterday_volume"]) -> None: ...
+global___StockSnapshotMessage = StockSnapshotMessage
+
+class StockNumArr(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    TIMESTAMP_FIELD_NUMBER: builtins.int
+    STOCK_NUM_ARR_FIELD_NUMBER: builtins.int
+    timestamp: builtins.int
+    @property
+    def stock_num_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
+    def __init__(self,
+        *,
+        timestamp: builtins.int = ...,
+        stock_num_arr: typing.Optional[typing.Iterable[typing.Text]] = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["stock_num_arr",b"stock_num_arr","timestamp",b"timestamp"]) -> None: ...
+global___StockNumArr = StockNumArr
