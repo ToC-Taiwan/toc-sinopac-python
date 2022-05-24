@@ -14,20 +14,24 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\x13toc_machine_trading\" \n\x0bRequestTime\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\"7\n\rTokenResponse\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"d\n\x13StockDetailResponse\x12\x36\n\x05stock\x18\x01 \x03(\x0b\x32\'.toc_machine_trading.StockDetailMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\x8f\x01\n\x12StockDetailMessage\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x02 \x01(\t\x12\x0c\n\x04\x63ode\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x11\n\treference\x18\x05 \x01(\x01\x12\x13\n\x0bupdate_date\x18\x06 \x01(\t\x12\x11\n\tday_trade\x18\x07 \x01(\t\"g\n\x15StockSnapshotResponse\x12\x37\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32).toc_machine_trading.StockSnapshotMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\xb0\x03\n\x14StockSnapshotMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x10\n\x08\x65xchange\x18\x03 \x01(\t\x12\x0c\n\x04open\x18\x04 \x01(\x01\x12\x0c\n\x04high\x18\x05 \x01(\x01\x12\x0b\n\x03low\x18\x06 \x01(\x01\x12\r\n\x05\x63lose\x18\x07 \x01(\x01\x12\x11\n\ttick_type\x18\x08 \x01(\t\x12\x14\n\x0c\x63hange_price\x18\t \x01(\x01\x12\x13\n\x0b\x63hange_rate\x18\n \x01(\x01\x12\x13\n\x0b\x63hange_type\x18\x0b \x01(\t\x12\x15\n\raverage_price\x18\x0c \x01(\x01\x12\x0e\n\x06volume\x18\r \x01(\x03\x12\x14\n\x0ctotal_volume\x18\x0e \x01(\x03\x12\x0e\n\x06\x61mount\x18\x0f \x01(\x03\x12\x14\n\x0ctotal_amount\x18\x10 \x01(\x03\x12\x18\n\x10yesterday_volume\x18\x11 \x01(\x01\x12\x11\n\tbuy_price\x18\x12 \x01(\x01\x12\x12\n\nbuy_volume\x18\x13 \x01(\x01\x12\x12\n\nsell_price\x18\x14 \x01(\x01\x12\x13\n\x0bsell_volume\x18\x15 \x01(\x03\x12\x14\n\x0cvolume_ratio\x18\x16 \x01(\x01\"7\n\x0bStockNumArr\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\x12\x15\n\rstock_num_arr\x18\x02 \x03(\t\"M\n\x13StockNumArrWithDate\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\x12\x15\n\rstock_num_arr\x18\x02 \x03(\t\x12\x0c\n\x04\x64\x61te\x18\x03 \x01(\t\"{\n\x18StockHistoryTickResponse\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\x12:\n\x04\x64\x61ta\x18\x02 \x03(\x0b\x32,.toc_machine_trading.StockHistoryTickMessage\x12\x15\n\rreq_timestamp\x18\x03 \x01(\x03\"\xb8\x01\n\x17StockHistoryTickMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0e\n\x06volume\x18\x03 \x01(\x03\x12\x11\n\tbid_price\x18\x04 \x01(\x01\x12\x12\n\nbid_volume\x18\x05 \x01(\x03\x12\x11\n\task_price\x18\x06 \x01(\x01\x12\x12\n\nask_volume\x18\x07 \x01(\x03\x12\x11\n\ttick_type\x18\x08 \x01(\x03\x12\x11\n\tstock_num\x18\t \x01(\t2\xf9\x04\n\x11ToCSinopacBackEnd\x12U\n\x0bHealthCheck\x12 .toc_machine_trading.RequestTime\x1a\".toc_machine_trading.TokenResponse\"\x00\x12\x61\n\x11GetAllStockDetail\x12 .toc_machine_trading.RequestTime\x1a(.toc_machine_trading.StockDetailResponse\"\x00\x12\x65\n\x13GetAllStockSnapshot\x12 .toc_machine_trading.RequestTime\x1a*.toc_machine_trading.StockSnapshotResponse\"\x00\x12\x65\n\x13GetStockSnapshotTSE\x12 .toc_machine_trading.RequestTime\x1a*.toc_machine_trading.StockSnapshotResponse\"\x00\x12j\n\x18GetStockSnapshotByNumArr\x12 .toc_machine_trading.StockNumArr\x1a*.toc_machine_trading.StockSnapshotResponse\"\x00\x12p\n\x13GetStockHistoryTick\x12(.toc_machine_trading.StockNumArrWithDate\x1a-.toc_machine_trading.StockHistoryTickResponse\"\x00\x42\x08Z\x06pkg/pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\x13toc_machine_trading\" \n\x0bRequestTime\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\"7\n\rTokenResponse\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"7\n\x0bStockNumArr\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\x12\x15\n\rstock_num_arr\x18\x02 \x03(\t\"M\n\x13StockNumArrWithDate\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\x12\x15\n\rstock_num_arr\x18\x02 \x03(\t\x12\x0c\n\x04\x64\x61te\x18\x03 \x01(\t\"d\n\x13StockDetailResponse\x12\x36\n\x05stock\x18\x01 \x03(\x0b\x32\'.toc_machine_trading.StockDetailMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\x8f\x01\n\x12StockDetailMessage\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x02 \x01(\t\x12\x0c\n\x04\x63ode\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x11\n\treference\x18\x05 \x01(\x01\x12\x13\n\x0bupdate_date\x18\x06 \x01(\t\x12\x11\n\tday_trade\x18\x07 \x01(\t\"g\n\x15StockSnapshotResponse\x12\x37\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32).toc_machine_trading.StockSnapshotMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\xb0\x03\n\x14StockSnapshotMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x10\n\x08\x65xchange\x18\x03 \x01(\t\x12\x0c\n\x04open\x18\x04 \x01(\x01\x12\x0c\n\x04high\x18\x05 \x01(\x01\x12\x0b\n\x03low\x18\x06 \x01(\x01\x12\r\n\x05\x63lose\x18\x07 \x01(\x01\x12\x11\n\ttick_type\x18\x08 \x01(\t\x12\x14\n\x0c\x63hange_price\x18\t \x01(\x01\x12\x13\n\x0b\x63hange_rate\x18\n \x01(\x01\x12\x13\n\x0b\x63hange_type\x18\x0b \x01(\t\x12\x15\n\raverage_price\x18\x0c \x01(\x01\x12\x0e\n\x06volume\x18\r \x01(\x03\x12\x14\n\x0ctotal_volume\x18\x0e \x01(\x03\x12\x0e\n\x06\x61mount\x18\x0f \x01(\x03\x12\x14\n\x0ctotal_amount\x18\x10 \x01(\x03\x12\x18\n\x10yesterday_volume\x18\x11 \x01(\x01\x12\x11\n\tbuy_price\x18\x12 \x01(\x01\x12\x12\n\nbuy_volume\x18\x13 \x01(\x01\x12\x12\n\nsell_price\x18\x14 \x01(\x01\x12\x13\n\x0bsell_volume\x18\x15 \x01(\x03\x12\x14\n\x0cvolume_ratio\x18\x16 \x01(\x01\"m\n\x18StockHistoryTickResponse\x12:\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32,.toc_machine_trading.StockHistoryTickMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\xb8\x01\n\x17StockHistoryTickMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0e\n\x06volume\x18\x03 \x01(\x03\x12\x11\n\tbid_price\x18\x04 \x01(\x01\x12\x12\n\nbid_volume\x18\x05 \x01(\x03\x12\x11\n\task_price\x18\x06 \x01(\x01\x12\x12\n\nask_volume\x18\x07 \x01(\x03\x12\x11\n\ttick_type\x18\x08 \x01(\x03\x12\x11\n\tstock_num\x18\t \x01(\t\"m\n\x18StockHistoryKbarResponse\x12:\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32,.toc_machine_trading.StockHistoryKbarMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"\x80\x01\n\x17StockHistoryKbarMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x43lose\x18\x02 \x01(\x01\x12\x0c\n\x04Open\x18\x03 \x01(\x01\x12\x0c\n\x04High\x18\x04 \x01(\x01\x12\x0b\n\x03Low\x18\x05 \x01(\x01\x12\x0e\n\x06Volume\x18\x06 \x01(\x03\x12\x11\n\tstock_num\x18\x07 \x01(\t\"o\n\x19StockHistoryCloseResponse\x12;\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32-.toc_machine_trading.StockHistoryCloseMessage\x12\x15\n\rreq_timestamp\x18\x02 \x01(\x03\"E\n\x18StockHistoryCloseMessage\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\r\n\x05\x63lose\x18\x03 \x01(\x01\x32\xdf\x06\n\x11ToCSinopacBackEnd\x12U\n\x0bHealthCheck\x12 .toc_machine_trading.RequestTime\x1a\".toc_machine_trading.TokenResponse\"\x00\x12\x61\n\x11GetAllStockDetail\x12 .toc_machine_trading.RequestTime\x1a(.toc_machine_trading.StockDetailResponse\"\x00\x12\x65\n\x13GetAllStockSnapshot\x12 .toc_machine_trading.RequestTime\x1a*.toc_machine_trading.StockSnapshotResponse\"\x00\x12\x65\n\x13GetStockSnapshotTSE\x12 .toc_machine_trading.RequestTime\x1a*.toc_machine_trading.StockSnapshotResponse\"\x00\x12j\n\x18GetStockSnapshotByNumArr\x12 .toc_machine_trading.StockNumArr\x1a*.toc_machine_trading.StockSnapshotResponse\"\x00\x12p\n\x13GetStockHistoryTick\x12(.toc_machine_trading.StockNumArrWithDate\x1a-.toc_machine_trading.StockHistoryTickResponse\"\x00\x12p\n\x13GetStockHistoryKbar\x12(.toc_machine_trading.StockNumArrWithDate\x1a-.toc_machine_trading.StockHistoryKbarResponse\"\x00\x12r\n\x14GetStockHistoryClose\x12(.toc_machine_trading.StockNumArrWithDate\x1a..toc_machine_trading.StockHistoryCloseResponse\"\x00\x42\x08Z\x06pkg/pbb\x06proto3')
 
 
 
 _REQUESTTIME = DESCRIPTOR.message_types_by_name['RequestTime']
 _TOKENRESPONSE = DESCRIPTOR.message_types_by_name['TokenResponse']
+_STOCKNUMARR = DESCRIPTOR.message_types_by_name['StockNumArr']
+_STOCKNUMARRWITHDATE = DESCRIPTOR.message_types_by_name['StockNumArrWithDate']
 _STOCKDETAILRESPONSE = DESCRIPTOR.message_types_by_name['StockDetailResponse']
 _STOCKDETAILMESSAGE = DESCRIPTOR.message_types_by_name['StockDetailMessage']
 _STOCKSNAPSHOTRESPONSE = DESCRIPTOR.message_types_by_name['StockSnapshotResponse']
 _STOCKSNAPSHOTMESSAGE = DESCRIPTOR.message_types_by_name['StockSnapshotMessage']
-_STOCKNUMARR = DESCRIPTOR.message_types_by_name['StockNumArr']
-_STOCKNUMARRWITHDATE = DESCRIPTOR.message_types_by_name['StockNumArrWithDate']
 _STOCKHISTORYTICKRESPONSE = DESCRIPTOR.message_types_by_name['StockHistoryTickResponse']
 _STOCKHISTORYTICKMESSAGE = DESCRIPTOR.message_types_by_name['StockHistoryTickMessage']
+_STOCKHISTORYKBARRESPONSE = DESCRIPTOR.message_types_by_name['StockHistoryKbarResponse']
+_STOCKHISTORYKBARMESSAGE = DESCRIPTOR.message_types_by_name['StockHistoryKbarMessage']
+_STOCKHISTORYCLOSERESPONSE = DESCRIPTOR.message_types_by_name['StockHistoryCloseResponse']
+_STOCKHISTORYCLOSEMESSAGE = DESCRIPTOR.message_types_by_name['StockHistoryCloseMessage']
 RequestTime = _reflection.GeneratedProtocolMessageType('RequestTime', (_message.Message,), {
   'DESCRIPTOR' : _REQUESTTIME,
   '__module__' : 'trade_pb2'
@@ -41,6 +45,20 @@ TokenResponse = _reflection.GeneratedProtocolMessageType('TokenResponse', (_mess
   # @@protoc_insertion_point(class_scope:toc_machine_trading.TokenResponse)
   })
 _sym_db.RegisterMessage(TokenResponse)
+
+StockNumArr = _reflection.GeneratedProtocolMessageType('StockNumArr', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKNUMARR,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockNumArr)
+  })
+_sym_db.RegisterMessage(StockNumArr)
+
+StockNumArrWithDate = _reflection.GeneratedProtocolMessageType('StockNumArrWithDate', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKNUMARRWITHDATE,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockNumArrWithDate)
+  })
+_sym_db.RegisterMessage(StockNumArrWithDate)
 
 StockDetailResponse = _reflection.GeneratedProtocolMessageType('StockDetailResponse', (_message.Message,), {
   'DESCRIPTOR' : _STOCKDETAILRESPONSE,
@@ -70,20 +88,6 @@ StockSnapshotMessage = _reflection.GeneratedProtocolMessageType('StockSnapshotMe
   })
 _sym_db.RegisterMessage(StockSnapshotMessage)
 
-StockNumArr = _reflection.GeneratedProtocolMessageType('StockNumArr', (_message.Message,), {
-  'DESCRIPTOR' : _STOCKNUMARR,
-  '__module__' : 'trade_pb2'
-  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockNumArr)
-  })
-_sym_db.RegisterMessage(StockNumArr)
-
-StockNumArrWithDate = _reflection.GeneratedProtocolMessageType('StockNumArrWithDate', (_message.Message,), {
-  'DESCRIPTOR' : _STOCKNUMARRWITHDATE,
-  '__module__' : 'trade_pb2'
-  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockNumArrWithDate)
-  })
-_sym_db.RegisterMessage(StockNumArrWithDate)
-
 StockHistoryTickResponse = _reflection.GeneratedProtocolMessageType('StockHistoryTickResponse', (_message.Message,), {
   'DESCRIPTOR' : _STOCKHISTORYTICKRESPONSE,
   '__module__' : 'trade_pb2'
@@ -98,6 +102,34 @@ StockHistoryTickMessage = _reflection.GeneratedProtocolMessageType('StockHistory
   })
 _sym_db.RegisterMessage(StockHistoryTickMessage)
 
+StockHistoryKbarResponse = _reflection.GeneratedProtocolMessageType('StockHistoryKbarResponse', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKHISTORYKBARRESPONSE,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockHistoryKbarResponse)
+  })
+_sym_db.RegisterMessage(StockHistoryKbarResponse)
+
+StockHistoryKbarMessage = _reflection.GeneratedProtocolMessageType('StockHistoryKbarMessage', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKHISTORYKBARMESSAGE,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockHistoryKbarMessage)
+  })
+_sym_db.RegisterMessage(StockHistoryKbarMessage)
+
+StockHistoryCloseResponse = _reflection.GeneratedProtocolMessageType('StockHistoryCloseResponse', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKHISTORYCLOSERESPONSE,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockHistoryCloseResponse)
+  })
+_sym_db.RegisterMessage(StockHistoryCloseResponse)
+
+StockHistoryCloseMessage = _reflection.GeneratedProtocolMessageType('StockHistoryCloseMessage', (_message.Message,), {
+  'DESCRIPTOR' : _STOCKHISTORYCLOSEMESSAGE,
+  '__module__' : 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:toc_machine_trading.StockHistoryCloseMessage)
+  })
+_sym_db.RegisterMessage(StockHistoryCloseMessage)
+
 _TOCSINOPACBACKEND = DESCRIPTOR.services_by_name['ToCSinopacBackEnd']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
@@ -107,22 +139,30 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _REQUESTTIME._serialized_end=68
   _TOKENRESPONSE._serialized_start=70
   _TOKENRESPONSE._serialized_end=125
-  _STOCKDETAILRESPONSE._serialized_start=127
-  _STOCKDETAILRESPONSE._serialized_end=227
-  _STOCKDETAILMESSAGE._serialized_start=230
-  _STOCKDETAILMESSAGE._serialized_end=373
-  _STOCKSNAPSHOTRESPONSE._serialized_start=375
-  _STOCKSNAPSHOTRESPONSE._serialized_end=478
-  _STOCKSNAPSHOTMESSAGE._serialized_start=481
-  _STOCKSNAPSHOTMESSAGE._serialized_end=913
-  _STOCKNUMARR._serialized_start=915
-  _STOCKNUMARR._serialized_end=970
-  _STOCKNUMARRWITHDATE._serialized_start=972
-  _STOCKNUMARRWITHDATE._serialized_end=1049
+  _STOCKNUMARR._serialized_start=127
+  _STOCKNUMARR._serialized_end=182
+  _STOCKNUMARRWITHDATE._serialized_start=184
+  _STOCKNUMARRWITHDATE._serialized_end=261
+  _STOCKDETAILRESPONSE._serialized_start=263
+  _STOCKDETAILRESPONSE._serialized_end=363
+  _STOCKDETAILMESSAGE._serialized_start=366
+  _STOCKDETAILMESSAGE._serialized_end=509
+  _STOCKSNAPSHOTRESPONSE._serialized_start=511
+  _STOCKSNAPSHOTRESPONSE._serialized_end=614
+  _STOCKSNAPSHOTMESSAGE._serialized_start=617
+  _STOCKSNAPSHOTMESSAGE._serialized_end=1049
   _STOCKHISTORYTICKRESPONSE._serialized_start=1051
-  _STOCKHISTORYTICKRESPONSE._serialized_end=1174
-  _STOCKHISTORYTICKMESSAGE._serialized_start=1177
-  _STOCKHISTORYTICKMESSAGE._serialized_end=1361
-  _TOCSINOPACBACKEND._serialized_start=1364
-  _TOCSINOPACBACKEND._serialized_end=1997
+  _STOCKHISTORYTICKRESPONSE._serialized_end=1160
+  _STOCKHISTORYTICKMESSAGE._serialized_start=1163
+  _STOCKHISTORYTICKMESSAGE._serialized_end=1347
+  _STOCKHISTORYKBARRESPONSE._serialized_start=1349
+  _STOCKHISTORYKBARRESPONSE._serialized_end=1458
+  _STOCKHISTORYKBARMESSAGE._serialized_start=1461
+  _STOCKHISTORYKBARMESSAGE._serialized_end=1589
+  _STOCKHISTORYCLOSERESPONSE._serialized_start=1591
+  _STOCKHISTORYCLOSERESPONSE._serialized_end=1702
+  _STOCKHISTORYCLOSEMESSAGE._serialized_start=1704
+  _STOCKHISTORYCLOSEMESSAGE._serialized_end=1773
+  _TOCSINOPACBACKEND._serialized_start=1776
+  _TOCSINOPACBACKEND._serialized_end=2639
 # @@protoc_insertion_point(module_scope)

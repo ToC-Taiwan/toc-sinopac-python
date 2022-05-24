@@ -147,13 +147,85 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
         Returns:
             _type_: _description_
         '''
-        response = trade_pb2.StockHistoryTickResponse(req_timestamp=request.timestamp, date=request.date)
+        response = trade_pb2.StockHistoryTickResponse(req_timestamp=request.timestamp)
         lock = threading.Lock()
         threads = []
         i = int()
         for j, num in enumerate(request.stock_num_arr):
             t = threading.Thread(
-                target=fill_history_response,
+                target=fill_history_tick_response,
+                args=(MAIN_WORKER.get_contract_by_stock_num(num),
+                      num,
+                      request.date,
+                      response,
+                      SINOPAC_WORKDER_LIST[i],
+                      lock,))
+
+            threads.append(t)
+            t.start()
+            if i == len(SINOPAC_WORKDER_LIST)-1 or j == len(request.stock_num_arr)-1:
+                for t in threads:
+                    t.join()
+                threads = []
+                i = 0
+                continue
+            i += 1
+        return response
+
+    def GetStockHistoryKbar(self, request, _):
+        '''
+        GetStockHistoryKbar _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        response = trade_pb2.StockHistoryKbarResponse(req_timestamp=request.timestamp)
+        lock = threading.Lock()
+        threads = []
+        i = int()
+        for j, num in enumerate(request.stock_num_arr):
+            t = threading.Thread(
+                target=fill_history_kbar_response,
+                args=(MAIN_WORKER.get_contract_by_stock_num(num),
+                      num,
+                      request.date,
+                      response,
+                      SINOPAC_WORKDER_LIST[i],
+                      lock,))
+
+            threads.append(t)
+            t.start()
+            if i == len(SINOPAC_WORKDER_LIST)-1 or j == len(request.stock_num_arr)-1:
+                for t in threads:
+                    t.join()
+                threads = []
+                i = 0
+                continue
+            i += 1
+        return response
+
+    def GetStockHistoryClose(self, request, _):
+        '''
+        GetStockHistoryClose _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        response = trade_pb2.StockHistoryCloseResponse(req_timestamp=request.timestamp)
+        lock = threading.Lock()
+        threads = []
+        i = int()
+        for j, num in enumerate(request.stock_num_arr):
+            t = threading.Thread(
+                target=fill_history_close_response,
                 args=(MAIN_WORKER.get_contract_by_stock_num(num),
                       num,
                       request.date,
@@ -224,9 +296,9 @@ def fill_sinopac_snapshot_arr(contracts, snapshots, sinopac: Sinopac, mutex):
         snapshots.extend(tmp)
 
 
-def fill_history_response(contract, num, date, response, sinopac: Sinopac, mutex):
+def fill_history_tick_response(contract, num, date, response, sinopac: Sinopac, mutex):
     '''
-    fill_history_response _summary_
+    fill_history_tick_response _summary_
 
     Args:
         contract (_type_): _description_
@@ -262,6 +334,62 @@ def fill_history_response(contract, num, date, response, sinopac: Sinopac, mutex
                 ask_volume=ticks.ask_volume[pos],
                 tick_type=ticks.tick_type[pos],
             ))
+
+
+def fill_history_kbar_response(contract, num, date, response, sinopac: Sinopac, mutex):
+    '''
+    fill_history_kbar_response _summary_
+
+    Args:
+        contract (_type_): _description_
+        date (_type_): _description_
+        response (_type_): _description_
+        sinopac (Sinopac): _description_
+        mutex (_type_): _description_
+    '''
+    kbar = sinopac.kbars(contract, date)
+    total_count = len(kbar.ts)
+    tmp_length = [
+        len(kbar.Close),
+        len(kbar.Open),
+        len(kbar.High),
+        len(kbar.Low),
+        len(kbar.Volume),
+    ]
+    for length in tmp_length:
+        if length - total_count != 0:
+            return
+    with mutex:
+        for pos in range(total_count):
+            response.data.append(trade_pb2.StockHistoryKbarMessage(
+                stock_num=num,
+                ts=kbar.ts[pos],
+                Close=kbar.Close[pos],
+                Open=kbar.Open[pos],
+                High=kbar.High[pos],
+                Low=kbar.Low[pos],
+                Volume=kbar.Volume[pos],
+            ))
+
+
+def fill_history_close_response(contract, num, date, response, sinopac: Sinopac, mutex):
+    '''
+    fill_history_kbar_response _summary_
+
+    Args:
+        contract (_type_): _description_
+        date (_type_): _description_
+        response (_type_): _description_
+        sinopac (Sinopac): _description_
+        mutex (_type_): _description_
+    '''
+    close = sinopac.get_stock_last_close_by_date(contract, date)
+    with mutex:
+        response.data.append(trade_pb2.StockHistoryCloseMessage(
+            code=num,
+            close=close,
+            date=date,
+        ))
 
 
 def serve(port: str, main_connection: Sinopac, workers: typing.List[Sinopac]):

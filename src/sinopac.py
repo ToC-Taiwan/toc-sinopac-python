@@ -13,14 +13,7 @@ ORDER_STATUS_CB_LOCK = threading.Lock()
 
 
 class Sinopac:
-    '''
-     _summary_
-    '''
-
     def __init__(self):
-        '''
-        __init__ _summary_
-        '''
         self.__api = sj.Shioaji()
         self.__login_status = 0
         # public
@@ -159,6 +152,41 @@ class Sinopac:
             _type_: _description_
         '''
         return self.__api.ticks(contract, date)
+
+    def kbars(self, contract, date):
+        '''
+        kbars _summary_
+
+        Args:
+            contract (_type_): _description_
+            date (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        return self.__api.kbars(
+            contract=contract,
+            start=date,
+            end=date,
+        )
+
+    def get_stock_last_close_by_date(self, contract, date):
+        '''
+        kbars _summary_
+
+        Args:
+            contract (_type_): _description_
+            date (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        return self.__api.quote.ticks(
+            contract=contract,
+            date=date,
+            query_type=sj.constant.TicksQueryType.LastCount,
+            last_cnt=1,
+        ).close[0]
 
 
 def place_order_callback(order_state, order: dict):
