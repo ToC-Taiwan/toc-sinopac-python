@@ -23,14 +23,14 @@ if person_id is None or password is None or ca_password is None or grpc_port is 
 
 
 MAIN_WORKER: Sinopac
-SINOPAC_WORKDER_LIST: typing.List[Sinopac] = []
+SINOPAC_WORKER_LIST: typing.List[Sinopac] = []
 
 for i in range(int(connection_count)):
-    logger.info('New Connection %d', i+1)
+    logger.info('Establish Connection %d', i+1)
     is_first = bool(i == 0)
     tmp = Sinopac().login(person_id, password, ca_password, is_first)
     if is_first:
         MAIN_WORKER = tmp
-    SINOPAC_WORKDER_LIST.append(tmp)
+    SINOPAC_WORKER_LIST.append(tmp)
 
-serve(port=grpc_port, main_connection=MAIN_WORKER, workers=SINOPAC_WORKDER_LIST)
+serve(port=grpc_port, main_worker=MAIN_WORKER, workers=SINOPAC_WORKER_LIST)

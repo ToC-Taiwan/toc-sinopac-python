@@ -11,10 +11,10 @@ import trade_pb2
 import trade_pb2_grpc
 from logger import logger
 from sinopac import Sinopac
+from sinopac_worker import SinopacWorker
 
 SERVER_TOKEN = ''.join(random.choice(string.ascii_letters) for _ in range(50))
-MAIN_WORKER: Sinopac
-SINOPAC_WORKDER_LIST: typing.List[Sinopac] = []
+WORKERS: SinopacWorker
 
 
 class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
@@ -43,7 +43,8 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
             _type_: _description_
         '''
         response = trade_pb2.StockDetailResponse(req_timestamp=request.timestamp)
-        tse_001 = MAIN_WORKER.get_contract_tse_001()
+        worker = WORKERS.get()
+        tse_001 = worker.get_contract_tse_001()
         response.stock.append(trade_pb2.StockDetailMessage(
             exchange=tse_001.exchange,
             category=tse_001.category,
@@ -53,8 +54,8 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
             update_date=tse_001.update_date,
             day_trade=tse_001.day_trade,
         ))
-        for row in MAIN_WORKER.stock_num_list:
-            contract = MAIN_WORKER.get_contract_by_stock_num(row)
+        for row in worker.stock_num_list:
+            contract = worker.get_contract_by_stock_num(row)
             if contract is None:
                 logger.error('%s has no stock data', row)
                 continue
@@ -81,10 +82,10 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
             _type_: _description_
         '''
         contracts = []
-        tmp = MAIN_WORKER.stock_num_list
-        for stock in tmp:
-            contracts.append(MAIN_WORKER.get_contract_by_stock_num(stock))
-        snapshots = MAIN_WORKER.snapshots(contracts)
+        worker = WORKERS.get()
+        for stock in worker.stock_num_list:
+            contracts.append(worker.get_contract_by_stock_num(stock))
+        snapshots = worker.snapshots(contracts)
         response = trade_pb2.StockSnapshotResponse(req_timestamp=request.timestamp)
         for result in snapshots:
             response.data.append(sinopac_snapshot_to_pb(result))
@@ -101,7 +102,8 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
         Returns:
             _type_: _description_
         '''
-        snapshots = MAIN_WORKER.snapshots([MAIN_WORKER.get_contract_tse_001()])
+        worker = WORKERS.get()
+        snapshots = worker.snapshots([worker.get_contract_tse_001()])
         response = trade_pb2.StockSnapshotResponse(req_timestamp=request.timestamp)
         for result in snapshots:
             response.data.append(sinopac_snapshot_to_pb(result))
@@ -119,15 +121,15 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
             _type_: _description_
         '''
         contracts = []
-        tmp = request.stock_num_arr
-        for stock in tmp:
-            contracts.append(MAIN_WORKER.get_contract_by_stock_num(stock))
-        splits = np.array_split(contracts, len(SINOPAC_WORKDER_LIST))
+        worker = WORKERS.get()
+        for stock in request.stock_num_arr:
+            contracts.append(worker.get_contract_by_stock_num(stock))
+        splits = np.array_split(contracts, WORKERS.count())
         snapshots = []
         threads = []
         lock = threading.Lock()
         for i, split in enumerate(splits):
-            threads.append(threading.Thread(target=fill_sinopac_snapshot_arr, args=(split, snapshots, SINOPAC_WORKDER_LIST[i], lock)))
+            threads.append(threading.Thread(target=fill_sinopac_snapshot_arr, args=(split, snapshots, WORKERS.get(), lock)))
             threads[i].start()
         for t in threads:
             t.join()
@@ -150,26 +152,20 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
         response = trade_pb2.StockHistoryTickResponse(req_timestamp=request.timestamp)
         lock = threading.Lock()
         threads = []
-        i = int()
-        for j, num in enumerate(request.stock_num_arr):
+        for num in request.stock_num_arr:
             t = threading.Thread(
                 target=fill_history_tick_response,
-                args=(MAIN_WORKER.get_contract_by_stock_num(num),
+                args=(WORKERS.get().get_contract_by_stock_num(num),
                       num,
                       request.date,
                       response,
-                      SINOPAC_WORKDER_LIST[i],
+                      WORKERS.get(),
                       lock,))
 
             threads.append(t)
             t.start()
-            if i == len(SINOPAC_WORKDER_LIST)-1 or j == len(request.stock_num_arr)-1:
-                for t in threads:
-                    t.join()
-                threads = []
-                i = 0
-                continue
-            i += 1
+        for t in threads:
+            t.join()
         return response
 
     def GetStockHistoryKbar(self, request, _):
@@ -186,26 +182,20 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
         response = trade_pb2.StockHistoryKbarResponse(req_timestamp=request.timestamp)
         lock = threading.Lock()
         threads = []
-        i = int()
-        for j, num in enumerate(request.stock_num_arr):
+        for num in request.stock_num_arr:
             t = threading.Thread(
                 target=fill_history_kbar_response,
-                args=(MAIN_WORKER.get_contract_by_stock_num(num),
+                args=(WORKERS.get().get_contract_by_stock_num(num),
                       num,
                       request.date,
                       response,
-                      SINOPAC_WORKDER_LIST[i],
+                      WORKERS.get(),
                       lock,))
 
             threads.append(t)
             t.start()
-            if i == len(SINOPAC_WORKDER_LIST)-1 or j == len(request.stock_num_arr)-1:
-                for t in threads:
-                    t.join()
-                threads = []
-                i = 0
-                continue
-            i += 1
+        for t in threads:
+            t.join()
         return response
 
     def GetStockHistoryClose(self, request, _):
@@ -222,26 +212,20 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
         response = trade_pb2.StockHistoryCloseResponse(req_timestamp=request.timestamp)
         lock = threading.Lock()
         threads = []
-        i = int()
-        for j, num in enumerate(request.stock_num_arr):
+        for num in request.stock_num_arr:
             t = threading.Thread(
                 target=fill_history_close_response,
-                args=(MAIN_WORKER.get_contract_by_stock_num(num),
+                args=(WORKERS.get().get_contract_by_stock_num(num),
                       num,
                       request.date,
                       response,
-                      SINOPAC_WORKDER_LIST[i],
+                      WORKERS.get(),
                       lock,))
 
             threads.append(t)
             t.start()
-            if i == len(SINOPAC_WORKDER_LIST)-1 or j == len(request.stock_num_arr)-1:
-                for t in threads:
-                    t.join()
-                threads = []
-                i = 0
-                continue
-            i += 1
+        for t in threads:
+            t.join()
         return response
 
 
@@ -392,7 +376,7 @@ def fill_history_close_response(contract, num, date, response, sinopac: Sinopac,
         ))
 
 
-def serve(port: str, main_connection: Sinopac, workers: typing.List[Sinopac]):
+def serve(port: str, main_worker: Sinopac, workers: typing.List[Sinopac]):
     '''
     serve _summary_
 
@@ -401,9 +385,8 @@ def serve(port: str, main_connection: Sinopac, workers: typing.List[Sinopac]):
         main_connection (Sinopac): _description_
         workers (typing.List[Sinopac]): _description_
     '''
-    global MAIN_WORKER, SINOPAC_WORKDER_LIST  # pylint: disable=global-statement
-    MAIN_WORKER = main_connection
-    SINOPAC_WORKDER_LIST = workers
+    global WORKERS  # pylint: disable=global-statement
+    WORKERS = SinopacWorker(main_worker, workers)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     trade_pb2_grpc.add_ToCSinopacBackEndServicer_to_server(ToCSinopacBackEnd(), server)
     server.add_insecure_port(f'[::]:{port}')
