@@ -13,7 +13,14 @@ ORDER_STATUS_CB_LOCK = threading.Lock()
 
 
 class Sinopac:
+    '''
+     _summary_
+    '''
+
     def __init__(self):
+        '''
+        __init__ _summary_
+        '''
         self.__api = sj.Shioaji()
         self.__login_status = 0
         # public
@@ -29,6 +36,18 @@ class Sinopac:
         self.__api.quote.set_on_bidask_stk_v1_callback(bid_ask_callback)
 
     def login(self, person_id: str, passwd: str, ca_passwd: str, is_first: bool):
+        '''
+        login _summary_
+
+        Args:
+            person_id (str): _description_
+            passwd (str): _description_
+            ca_passwd (str): _description_
+            is_first (bool): _description_
+
+        Returns:
+            _type_: _description_
+        '''
         self.__api.login(
             person_id=person_id,
             passwd=passwd,
@@ -48,15 +67,30 @@ class Sinopac:
         return self
 
     def login_cb(self, security_type):
+        '''
+        login_cb _summary_
+
+        Args:
+            security_type (_type_): _description_
+        '''
         with self.__login_lock:
             if security_type.value in [item.value for item in SecurityType]:
                 self.__login_status += 25
                 logger.info('login progress: %d%%, %s', self.__login_status, security_type)
 
     def list_accounts(self):
+        '''
+        list_accounts _summary_
+
+        Returns:
+            _type_: _description_
+        '''
         return self.__api.list_accounts()
 
     def fill_stock_num_list(self):
+        '''
+        fill_stock_num_list _summary_
+        '''
         for all_contract in self.__api.Contracts.Stocks:
             for day_trade_stock in all_contract:
                 if day_trade_stock.day_trade == DayTrade.Yes.value:
@@ -67,27 +101,74 @@ class Sinopac:
         logger.info('Filling stock_num_list, total: %d', len(self.stock_num_list))
 
     def update_order_status_instant(self):
+        '''
+        update_order_status_instant _summary_
+        '''
         self.__api.update_status(timeout=0, cb=order_status_callback)
 
     def update_local_order_status(self):
+        '''
+        update_local_order_status _summary_
+        '''
         with self.__order_status_lock:
             self.__api.update_status()
             self.order_status_list = self.__api.list_trades()
 
     def snapshots(self, contracts):
+        '''
+        snapshots _summary_
+
+        Args:
+            contracts (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
         return self.__api.snapshots(contracts)
 
     def get_contract_tse_001(self):
+        '''
+        get_contract_tse_001 _summary_
+
+        Returns:
+            _type_: _description_
+        '''
         return self.__api.Contracts.Indexs.TSE.TSE001
 
     def get_contract_by_stock_num(self, num):
+        '''
+        get_contract_by_stock_num _summary_
+
+        Args:
+            num (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
         return self.__api.Contracts.Stocks[num]
 
     def ticks(self, contract, date):
+        '''
+        ticks _summary_
+
+        Args:
+            contract (_type_): _description_
+            date (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
         return self.__api.ticks(contract, date)
 
 
 def place_order_callback(order_state, order: dict):
+    '''
+    place_order_callback _summary_
+
+    Args:
+        order_state (_type_): _description_
+        order (dict): _description_
+    '''
     if search('DEAL', order_state) is None:
         logger.info('%s %s %.2f %d %s %d %s %s %s %s',
                     order['contract']['code'],
@@ -115,6 +196,15 @@ def place_order_callback(order_state, order: dict):
 
 
 def event_callback(resp_code: int, event_code: int, info: str, event: str):
+    '''
+    event_callback _summary_
+
+    Args:
+        resp_code (int): _description_
+        event_code (int): _description_
+        info (str): _description_
+        event (str): _description_
+    '''
     length_arr = [
         len(str(resp_code)),
         len(str(event_code)),
@@ -131,14 +221,34 @@ def event_callback(resp_code: int, event_code: int, info: str, event: str):
 
 
 def quote_callback_v1(exchange: sj.Exchange, tick):
+    '''
+    quote_callback_v1 _summary_
+
+    Args:
+        exchange (sj.Exchange): _description_
+        tick (_type_): _description_
+    '''
     logger.info('Exchange: %s, tick: %s', exchange, tick.code)
 
 
 def bid_ask_callback(exchange: sj.Exchange, bidask):
+    '''
+    bid_ask_callback _summary_
+
+    Args:
+        exchange (sj.Exchange): _description_
+        bidask (_type_): _description_
+    '''
     logger.info('Exchange: %s, bidask: %s', exchange, bidask.code)
 
 
 def order_status_callback(reply: typing.List[sj.order.Trade]):
+    '''
+    order_status_callback _summary_
+
+    Args:
+        reply (typing.List[sj.order.Trade]): _description_
+    '''
     with ORDER_STATUS_CB_LOCK:
         if len(reply) != 0:
             for order in reply:

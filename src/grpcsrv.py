@@ -19,9 +19,29 @@ SINOPAC_WORKDER_LIST: typing.List[Sinopac] = []
 
 class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
     def HealthCheck(self, request, _):
+        '''
+        HealthCheck _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
         return trade_pb2.TokenResponse(req_timestamp=request.timestamp, message=SERVER_TOKEN)
 
     def GetAllStockDetail(self, request, _):
+        '''
+        GetAllStockDetail _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
         response = trade_pb2.StockDetailResponse(req_timestamp=request.timestamp)
         tse_001 = MAIN_WORKER.get_contract_tse_001()
         response.stock.append(trade_pb2.StockDetailMessage(
@@ -50,6 +70,16 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
         return response
 
     def GetAllStockSnapshot(self, request, _):
+        '''
+        GetAllStockSnapshot _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
         contracts = []
         tmp = MAIN_WORKER.stock_num_list
         for stock in tmp:
@@ -61,6 +91,16 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
         return response
 
     def GetStockSnapshotTSE(self, request, _):
+        '''
+        GetStockSnapshotTSE _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
         snapshots = MAIN_WORKER.snapshots([MAIN_WORKER.get_contract_tse_001()])
         response = trade_pb2.StockSnapshotResponse(req_timestamp=request.timestamp)
         for result in snapshots:
@@ -68,6 +108,16 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
         return response
 
     def GetStockSnapshotByNumArr(self, request, _):
+        '''
+        GetStockSnapshotByNumArr _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
         contracts = []
         tmp = request.stock_num_arr
         for stock in tmp:
@@ -87,38 +137,52 @@ class ToCSinopacBackEnd(trade_pb2_grpc.ToCSinopacBackEndServicer):
         return response
 
     def GetStockHistoryTick(self, request, _):
-        response = trade_pb2.StockHistoryTickResponse(req_timestamp=request.timestamp)
-        response.stock_num = request.stock_num
-        response.date = request.date
-        ticks = MAIN_WORKER.ticks(MAIN_WORKER.get_contract_by_stock_num(request.stock_num), request.date)
-        total_count = len(ticks.ts)
-        tmp_length = [
-            len(ticks.close),
-            len(ticks.tick_type),
-            len(ticks.volume),
-            len(ticks.bid_price),
-            len(ticks.bid_volume),
-            len(ticks.ask_price),
-            len(ticks.ask_volume),
-        ]
-        for length in tmp_length:
-            if length - total_count != 0:
-                return trade_pb2.StockHistoryTickResponse()
-        for pos in range(total_count):
-            response.data.append(trade_pb2.StockHistoryTickMessage(
-                ts=ticks.ts[pos],
-                close=ticks.close[pos],
-                volume=ticks.volume[pos],
-                bid_price=ticks.bid_price[pos],
-                bid_volume=ticks.bid_volume[pos],
-                ask_price=ticks.ask_price[pos],
-                ask_volume=ticks.ask_volume[pos],
-                tick_type=ticks.tick_type[pos],
-            ))
+        '''
+        GetStockHistoryTick _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        response = trade_pb2.StockHistoryTickResponse(req_timestamp=request.timestamp, date=request.date)
+        lock = threading.Lock()
+        threads = []
+        i = int()
+        for j, num in enumerate(request.stock_num_arr):
+            t = threading.Thread(
+                target=fill_history_response,
+                args=(MAIN_WORKER.get_contract_by_stock_num(num),
+                      num,
+                      request.date,
+                      response,
+                      SINOPAC_WORKDER_LIST[i],
+                      lock,))
+
+            threads.append(t)
+            t.start()
+            if i == len(SINOPAC_WORKDER_LIST)-1 or j == len(request.stock_num_arr)-1:
+                for t in threads:
+                    t.join()
+                threads = []
+                i = 0
+                continue
+            i += 1
         return response
 
 
 def sinopac_snapshot_to_pb(result) -> trade_pb2.StockSnapshotMessage:
+    '''
+    sinopac_snapshot_to_pb _summary_
+
+    Args:
+        result (_type_): _description_
+
+    Returns:
+        trade_pb2.StockSnapshotMessage: _description_
+    '''
     return trade_pb2.StockSnapshotMessage(
         ts=result.ts,
         code=result.code,
@@ -146,12 +210,69 @@ def sinopac_snapshot_to_pb(result) -> trade_pb2.StockSnapshotMessage:
 
 
 def fill_sinopac_snapshot_arr(contracts, snapshots, sinopac: Sinopac, mutex):
+    '''
+    fill_sinopac_snapshot_arr _summary_
+
+    Args:
+        contracts (_type_): _description_
+        snapshots (_type_): _description_
+        sinopac (Sinopac): _description_
+        mutex (_type_): _description_
+    '''
     tmp = sinopac.snapshots(contracts)
     with mutex:
         snapshots.extend(tmp)
 
 
+def fill_history_response(contract, num, date, response, sinopac: Sinopac, mutex):
+    '''
+    fill_history_response _summary_
+
+    Args:
+        contract (_type_): _description_
+        date (_type_): _description_
+        response (_type_): _description_
+        sinopac (Sinopac): _description_
+        mutex (_type_): _description_
+    '''
+    ticks = sinopac.ticks(contract, date)
+    total_count = len(ticks.ts)
+    tmp_length = [
+        len(ticks.close),
+        len(ticks.tick_type),
+        len(ticks.volume),
+        len(ticks.bid_price),
+        len(ticks.bid_volume),
+        len(ticks.ask_price),
+        len(ticks.ask_volume),
+    ]
+    for length in tmp_length:
+        if length - total_count != 0:
+            return
+    with mutex:
+        for pos in range(total_count):
+            response.data.append(trade_pb2.StockHistoryTickMessage(
+                stock_num=num,
+                ts=ticks.ts[pos],
+                close=ticks.close[pos],
+                volume=ticks.volume[pos],
+                bid_price=ticks.bid_price[pos],
+                bid_volume=ticks.bid_volume[pos],
+                ask_price=ticks.ask_price[pos],
+                ask_volume=ticks.ask_volume[pos],
+                tick_type=ticks.tick_type[pos],
+            ))
+
+
 def serve(port: str, main_connection: Sinopac, workers: typing.List[Sinopac]):
+    '''
+    serve _summary_
+
+    Args:
+        port (str): _description_
+        main_connection (Sinopac): _description_
+        workers (typing.List[Sinopac]): _description_
+    '''
     global MAIN_WORKER, SINOPAC_WORKDER_LIST  # pylint: disable=global-statement
     MAIN_WORKER = main_connection
     SINOPAC_WORKDER_LIST = workers

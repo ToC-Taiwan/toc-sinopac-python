@@ -41,7 +41,7 @@ class ToCSinopacBackEndStub(object):
                 )
         self.GetStockHistoryTick = channel.unary_unary(
                 '/toc_machine_trading.ToCSinopacBackEnd/GetStockHistoryTick',
-                request_serializer=trade__pb2.StockNumWithDate.SerializeToString,
+                request_serializer=trade__pb2.StockNumArrWithDate.SerializeToString,
                 response_deserializer=trade__pb2.StockHistoryTickResponse.FromString,
                 )
 
@@ -115,7 +115,7 @@ def add_ToCSinopacBackEndServicer_to_server(servicer, server):
             ),
             'GetStockHistoryTick': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockHistoryTick,
-                    request_deserializer=trade__pb2.StockNumWithDate.FromString,
+                    request_deserializer=trade__pb2.StockNumArrWithDate.FromString,
                     response_serializer=trade__pb2.StockHistoryTickResponse.SerializeToString,
             ),
     }
@@ -225,7 +225,7 @@ class ToCSinopacBackEnd(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/toc_machine_trading.ToCSinopacBackEnd/GetStockHistoryTick',
-            trade__pb2.StockNumWithDate.SerializeToString,
+            trade__pb2.StockNumArrWithDate.SerializeToString,
             trade__pb2.StockHistoryTickResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
