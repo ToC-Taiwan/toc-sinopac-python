@@ -205,6 +205,75 @@ class Sinopac:
             date=date,
         )
 
+    def subscribe_stock_tick(self, stock_num):
+        '''
+        subscribe_stock_tick _summary_
+
+        Args:
+            count (_type_): _description_
+            date (_type_): _description_
+        '''
+        try:
+            self.__api.quote.subscribe(
+                self.__api.Contracts.Stocks[stock_num],
+                quote_type=sj.constant.QuoteType.Tick,
+                version=sj.constant.QuoteVersion.v1
+            )
+            return None
+        except Exception:  # pylint: disable=broad-except
+            return stock_num
+
+    def unsubscribe_stock_tick(self, stock_num):
+        '''
+        unsubscribe_stock_tick _summary_
+
+        Args:
+            stock_num (_type_): _description_
+        '''
+        try:
+            self.__api.quote.unsubscribe(
+                self.__api.Contracts.Stocks[stock_num],
+                quote_type=sj.constant.QuoteType.Tick,
+                version=sj.constant.QuoteVersion.v1
+            )
+            return None
+        except Exception:  # pylint: disable=broad-except
+            return stock_num
+
+    def subscribe_stock_bidask(self, stock_num):
+        '''
+        subscribe_stock_bidask _summary_
+
+        Args:
+            stock_num (_type_): _description_
+        '''
+        try:
+            self.__api.quote.subscribe(
+                self.__api.Contracts.Stocks[stock_num],
+                quote_type=sj.constant.QuoteType.BidAsk,
+                version=sj.constant.QuoteVersion.v1
+            )
+            return None
+        except Exception:  # pylint: disable=broad-except
+            return stock_num
+
+    def unsubscribe_stock_bidask(self, stock_num):
+        '''
+        unsubscribe_stock_bidask _summary_
+
+        Args:
+            stock_num (_type_): _description_
+        '''
+        try:
+            self.__api.quote.unsubscribe(
+                self.__api.Contracts.Stocks[stock_num],
+                quote_type=sj.constant.QuoteType.BidAsk,
+                version=sj.constant.QuoteVersion.v1
+            )
+            return None
+        except Exception:  # pylint: disable=broad-except
+            return stock_num
+
 
 def place_order_callback(order_state, order: dict):
     '''

@@ -228,6 +228,74 @@ class gRPCMethod(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             t.join()
         return response
 
+    def GetStockVolumeRank(self, request, _):
+        response = sinopac_forwarder_pb2.StockVolumeRankResponse()
+        worker = WORKERS.get()
+        ranks = worker.get_stock_volume_rank_by_date(request.count, request.date)
+        for result in ranks:
+            response.data.append(sinopac_forwarder_pb2.StockVolumeRankMessage(
+                date=result.date,
+                code=result.code,
+                name=result.name,
+                ts=result.ts,
+                open=result.open,
+                high=result.high,
+                low=result.low,
+                close=result.close,
+                price_range=result.price_range,
+                tick_type=result.tick_type,
+                change_price=result.change_price,
+                change_type=result.change_type,
+                average_price=result.average_price,
+                volume=result.volume,
+                total_volume=result.total_volume,
+                amount=result.amount,
+                total_amount=result.total_amount,
+                yesterday_volume=result.yesterday_volume,
+                volume_ratio=result.volume_ratio,
+                buy_price=result.buy_price,
+                buy_volume=result.buy_volume,
+                sell_price=result.sell_price,
+                sell_volume=result.sell_volume,
+                bid_orders=result.bid_orders,
+                bid_volumes=result.bid_volumes,
+                ask_orders=result.ask_orders,
+                ask_volumes=result.ask_volumes,
+            ))
+        return response
+
+    def SubscribeStockTick(self, request, _):
+        response = sinopac_forwarder_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = WORKERS.subscribe_stock_tick(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
+    def SubscribeStockBidAsk(self, request, _):
+        response = sinopac_forwarder_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = WORKERS.subscribe_stock_bidask(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
+    def UnSubscribeStockTick(self, request, _):
+        response = sinopac_forwarder_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = WORKERS.unsubscribe_stock_tick(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
+    def UnSubscribeStockBidAsk(self, request, _):
+        response = sinopac_forwarder_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = WORKERS.unsubscribe_stock_bidask(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
 
 def sinopac_snapshot_to_pb(result) -> sinopac_forwarder_pb2.StockSnapshotMessage:
     '''
