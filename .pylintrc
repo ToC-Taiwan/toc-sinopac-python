@@ -9,7 +9,7 @@
 
 # Files or directories to be skipped. They should be base names, not
 # paths.
-ignore=CVS,trade_pb2_grpc.py,trade_pb2.py,trade_pb2.pyi
+ignore=CVS,sinopac_forwarder_pb2.py,sinopac_forwarder_pb2_grpc.py,sinopac_forwarder_pb2.pyi
 
 # Pickle collected data for later comparisons.
 persistent=yes

@@ -188,6 +188,23 @@ class Sinopac:
             last_cnt=1,
         ).close[0]
 
+    def get_stock_volume_rank_by_date(self, count, date):
+        '''
+        kbars _summary_
+
+        Args:
+            contract (_type_): _description_
+            date (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        return self.__api.scanners(
+            scanner_type=sj.constant.ScannerType.VolumeRank,
+            count=count,
+            date=date,
+        )
+
 
 def place_order_callback(order_state, order: dict):
     '''
