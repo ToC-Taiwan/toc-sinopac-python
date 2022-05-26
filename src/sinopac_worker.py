@@ -98,3 +98,21 @@ class SinopacWorker():
             self.unsubscribe_stock_tick(stock_num)
         for stock_num in self.stock_bidask_sub_dict:
             self.unsubscribe_stock_bidask(stock_num)
+
+    def set_event_cb(self, func):
+        for worker in self.workers:
+            worker.set_event_callback(func)
+
+    def set_quote_cb(self, func):
+        for worker in self.workers:
+            worker.set_on_tick_stk_v1_callback(func)
+
+    def set_bid_ask_cb(self, func):
+        for worker in self.workers:
+            worker.set_on_bidask_stk_v1_callback(func)
+
+    def set_place_order_cb(self, func):
+        self.main_worker.set_order_callback(func)
+
+    def set_order_status_cb(self, func):
+        self.main_worker.set_order_status_callback(func)

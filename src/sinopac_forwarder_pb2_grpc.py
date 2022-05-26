@@ -461,3 +461,64 @@ class SinopacForwarder(object):
             sinopac__forwarder__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class LongConeectionServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.EventChannel = channel.unary_stream(
+                '/sinopac_forwarder.LongConeectionService/EventChannel',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.EventResponse.FromString,
+                )
+
+
+class LongConeectionServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def EventChannel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_LongConeectionServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'EventChannel': grpc.unary_stream_rpc_method_handler(
+                    servicer.EventChannel,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=sinopac__forwarder__pb2.EventResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'sinopac_forwarder.LongConeectionService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class LongConeectionService(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def EventChannel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/sinopac_forwarder.LongConeectionService/EventChannel',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            sinopac__forwarder__pb2.EventResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -3,9 +3,13 @@ import string
 import threading
 import typing
 from concurrent import futures
+from datetime import datetime
+from queue import Queue
+from re import search
 
 import grpc
 import numpy as np
+import shioaji as sj
 
 import sinopac_forwarder_pb2
 import sinopac_forwarder_pb2_grpc
@@ -17,7 +21,7 @@ SERVER_TOKEN = ''.join(random.choice(string.ascii_letters) for _ in range(50))
 WORKERS: SinopacWorker
 
 
-class gRPCMethod(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
+class gRPCFetchData(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
     def GetServerToken(self, request, _):
         '''
         HealthCheck _summary_
@@ -297,6 +301,128 @@ class gRPCMethod(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         return response
 
 
+class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceServicer):
+    def __init__(self):
+        self.event_queue = Queue()
+        self.quote_queue = Queue()
+        self.bid_ask_queue = Queue()
+        self.order_queue = Queue()
+        self.order_cb_lock = threading.Lock()
+
+    def event_callback(self, resp_code: int, event_code: int, info: str, event: str):
+        '''
+        event_callback _summary_
+
+        Args:
+            resp_code (int): _description_
+            event_code (int): _description_
+            info (str): _description_
+            event (str): _description_
+        '''
+        tmp = {
+            'resp_code': str(resp_code),
+            'event_code': str(event_code),
+            'info': info,
+            'event': event,
+        }
+        self.event_queue.put(tmp)
+
+    def EventChannel(self, request, _):
+        while True:
+            if self.event_queue.empty():
+                continue
+            event = self.event_queue.get()
+            yield sinopac_forwarder_pb2.EventResponse(
+                resp_code=int(event['resp_code']),
+                event_code=int(event['event_code']),
+                info=event['info'],
+                event=event['event'],
+            )
+
+    def quote_callback_v1(self, exchange: sj.Exchange, tick):
+        '''
+        quote_callback_v1 _summary_
+
+        Args:
+            exchange (sj.Exchange): _description_
+            tick (_type_): _description_
+        '''
+        self.quote_queue.put(tick)
+        logger.info('Exchange: %s, tick: %s', exchange, tick.code)
+
+    def bid_ask_callback(self, exchange: sj.Exchange, bidask):
+        '''
+        bid_ask_callback _summary_
+
+        Args:
+            exchange (sj.Exchange): _description_
+            bidask (_type_): _description_
+        '''
+        self.bid_ask_queue.put(bidask)
+        logger.info('Exchange: %s, bidask: %s', exchange, bidask.code)
+
+    def place_order_callback(self, order_state, order: dict):
+        '''
+        place_order_callback _summary_
+
+        Args:
+            order_state (_type_): _description_
+            order (dict): _description_
+        '''
+        self.order_queue.put(order)
+        if search('DEAL', order_state) is None:
+            logger.info('%s %s %.2f %d %s %d %s %s %s %s',
+                        order['contract']['code'],
+                        order['order']['action'],
+                        order['order']['price'],
+                        order['order']['quantity'],
+                        order_state,
+                        order['status']['exchange_ts'],
+                        order['order']['id'],
+                        order['operation']['op_type'],
+                        order['operation']['op_code'],
+                        order['operation']['op_msg'],
+                        )
+        else:
+            logger.info('%s %s %.2f %d %s %d %s %s',
+                        order['code'],
+                        order['action'],
+                        order['price'],
+                        order['quantity'],
+                        order_state,
+                        order['ts'],
+                        order['trade_id'],
+                        order['exchange_seq'],
+                        )
+
+    def order_status_callback(self, reply: typing.List[sj.order.Trade]):
+        '''
+        order_status_callback _summary_
+
+        Args:
+            reply (typing.List[sj.order.Trade]): _description_
+        '''
+        with self.order_cb_lock:
+            if len(reply) != 0:
+                for order in reply:
+                    if order.status.order_datetime is None:
+                        order.status.order_datetime = datetime.now()
+                    order_price = int()
+                    if order.status.modified_price != 0:
+                        order_price = order.status.modified_price
+                    else:
+                        order_price = order.order.price
+                    logger.info('Order status callback: %s %s %.2f %d %s %s %s',
+                                order.contract.code,
+                                order.order.action,
+                                order_price,
+                                order.order.quantity,
+                                order.status.id,
+                                order.status.status,
+                                datetime.strftime(order.status.order_datetime, '%Y-%m-%d %H:%M:%S'),
+                                )
+
+
 def sinopac_snapshot_to_pb(result) -> sinopac_forwarder_pb2.StockSnapshotMessage:
     '''
     sinopac_snapshot_to_pb _summary_
@@ -455,8 +581,21 @@ def serve(port: str, main_worker: Sinopac, workers: typing.List[Sinopac]):
     '''
     global WORKERS  # pylint: disable=global-statement
     WORKERS = SinopacWorker(main_worker, workers)
+
+    # gRPC servicer
+    sinopac_forwarder_servicer = gRPCFetchData()
+    long_connection_servicer = gRPCLongConnection()
+
+    # set call back
+    WORKERS.set_event_cb(long_connection_servicer.event_callback)
+    WORKERS.set_quote_cb(long_connection_servicer.quote_callback_v1)
+    WORKERS.set_bid_ask_cb(long_connection_servicer.bid_ask_callback)
+    WORKERS.set_place_order_cb(long_connection_servicer.place_order_callback)
+    WORKERS.set_order_status_cb(long_connection_servicer.order_status_callback)
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    sinopac_forwarder_pb2_grpc.add_SinopacForwarderServicer_to_server(gRPCMethod(), server)
+    sinopac_forwarder_pb2_grpc.add_SinopacForwarderServicer_to_server(sinopac_forwarder_servicer, server)
+    sinopac_forwarder_pb2_grpc.add_LongConeectionServiceServicer_to_server(long_connection_servicer, server)
     server.add_insecure_port(f'[::]:{port}')
     server.start()
     logger.info('gRPC server started at port %s', port)

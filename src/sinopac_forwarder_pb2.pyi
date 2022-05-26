@@ -11,6 +11,26 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+class EventResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    RESP_CODE_FIELD_NUMBER: builtins.int
+    EVENT_CODE_FIELD_NUMBER: builtins.int
+    INFO_FIELD_NUMBER: builtins.int
+    EVENT_FIELD_NUMBER: builtins.int
+    resp_code: builtins.int
+    event_code: builtins.int
+    info: typing.Text
+    event: typing.Text
+    def __init__(self,
+        *,
+        resp_code: builtins.int = ...,
+        event_code: builtins.int = ...,
+        info: typing.Text = ...,
+        event: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["event",b"event","event_code",b"event_code","info",b"info","resp_code",b"resp_code"]) -> None: ...
+global___EventResponse = EventResponse
+
 class TokenResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     TOKEN_FIELD_NUMBER: builtins.int

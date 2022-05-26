@@ -1,8 +1,4 @@
 import threading
-import typing
-from datetime import datetime
-from pprint import pformat
-from re import search
 
 import shioaji as sj
 
@@ -22,11 +18,6 @@ class Sinopac:
         # lock
         self.__login_lock = threading.Lock()
         self.__order_status_lock = threading.Lock()
-        # callback
-        self.__api.set_order_callback(place_order_callback)
-        self.__api.quote.set_event_callback(event_callback)
-        self.__api.quote.set_on_tick_stk_v1_callback(quote_callback_v1)
-        self.__api.quote.set_on_bidask_stk_v1_callback(bid_ask_callback)
 
     def login(self, person_id: str, passwd: str, ca_passwd: str, is_first: bool):
         '''
@@ -71,6 +62,51 @@ class Sinopac:
                 self.__login_status += 25
                 logger.info('login progress: %d%%, %s', self.__login_status, security_type)
 
+    def set_event_callback(self, func):
+        '''
+        set_event_callback _summary_
+
+        Args:
+            security_type (_type_): _description_
+        '''
+        self.__api.quote.set_event_callback(func)
+
+    def set_on_tick_stk_v1_callback(self, func):
+        '''
+        set_on_tick_stk_v1_callback _summary_
+
+        Args:
+            func (_type_): _description_
+        '''
+        self.__api.quote.set_on_tick_stk_v1_callback(func)
+
+    def set_on_bidask_stk_v1_callback(self, func):
+        '''
+        set_on_bidask_stk_v1_callback _summary_
+
+        Args:
+            func (_type_): _description_
+        '''
+        self.__api.quote.set_on_bidask_stk_v1_callback(func)
+
+    def set_order_callback(self, func):
+        '''
+        set_order_callback _summary_
+
+        Args:
+            func (_type_): _description_
+        '''
+        self.__api.set_order_callback(func)
+
+    def set_order_status_callback(self, func):
+        '''
+        set_order_status_callback _summary_
+
+        Args:
+            func (_type_): _description_
+        '''
+        self.order_status_callback = func
+
     def list_accounts(self):
         '''
         list_accounts _summary_
@@ -97,7 +133,7 @@ class Sinopac:
         '''
         update_order_status_instant _summary_
         '''
-        self.__api.update_status(timeout=0, cb=order_status_callback)
+        self.__api.update_status(timeout=0, cb=self.order_status_callback)
 
     def update_local_order_status(self):
         '''
@@ -273,112 +309,3 @@ class Sinopac:
             return None
         except Exception:  # pylint: disable=broad-except
             return stock_num
-
-
-def place_order_callback(order_state, order: dict):
-    '''
-    place_order_callback _summary_
-
-    Args:
-        order_state (_type_): _description_
-        order (dict): _description_
-    '''
-    if search('DEAL', order_state) is None:
-        logger.info('%s %s %.2f %d %s %d %s %s %s %s',
-                    order['contract']['code'],
-                    order['order']['action'],
-                    order['order']['price'],
-                    order['order']['quantity'],
-                    order_state,
-                    order['status']['exchange_ts'],
-                    order['order']['id'],
-                    order['operation']['op_type'],
-                    order['operation']['op_code'],
-                    order['operation']['op_msg'],
-                    )
-    else:
-        logger.info('%s %s %.2f %d %s %d %s %s',
-                    order['code'],
-                    order['action'],
-                    order['price'],
-                    order['quantity'],
-                    order_state,
-                    order['ts'],
-                    order['trade_id'],
-                    order['exchange_seq'],
-                    )
-
-
-def event_callback(resp_code: int, event_code: int, info: str, event: str):
-    '''
-    event_callback _summary_
-
-    Args:
-        resp_code (int): _description_
-        event_code (int): _description_
-        info (str): _description_
-        event (str): _description_
-    '''
-    length_arr = [
-        len(str(resp_code)),
-        len(str(event_code)),
-        len(info),
-        len(event),
-    ]
-    tmp = {
-        'resp_code': resp_code,
-        'event_code': event_code,
-        'info': info,
-        'event': event,
-    }
-    logger.info(pformat(tmp, width=max(length_arr)))
-
-
-def quote_callback_v1(exchange: sj.Exchange, tick):
-    '''
-    quote_callback_v1 _summary_
-
-    Args:
-        exchange (sj.Exchange): _description_
-        tick (_type_): _description_
-    '''
-    logger.info('Exchange: %s, tick: %s', exchange, tick.code)
-
-
-def bid_ask_callback(exchange: sj.Exchange, bidask):
-    '''
-    bid_ask_callback _summary_
-
-    Args:
-        exchange (sj.Exchange): _description_
-        bidask (_type_): _description_
-    '''
-    logger.info('Exchange: %s, bidask: %s', exchange, bidask.code)
-
-
-def order_status_callback(reply: typing.List[sj.order.Trade]):
-    '''
-    order_status_callback _summary_
-
-    Args:
-        reply (typing.List[sj.order.Trade]): _description_
-    '''
-    with ORDER_STATUS_CB_LOCK:
-        if len(reply) != 0:
-            for order in reply:
-                if order.status.order_datetime is None:
-                    order.status.order_datetime = datetime.now()
-                order_price = int()
-                if order.status.modified_price != 0:
-                    order_price = order.status.modified_price
-                else:
-                    order_price = order.order.price
-                logger.info('Order status callback: %s %s %.2f %d %s %s %s',
-                            order.contract.code,
-                            order.order.action,
-                            order_price,
-                            order.order.quantity,
-                            order.status.id,
-                            order.status.status,
-                            datetime.strftime(order.status.order_datetime, '%Y-%m-%d %H:%M:%S'),
-                            )
