@@ -44,8 +44,7 @@ pip freeze > requirements.txt
 ### Lint
 
 ```sh
-mypy --install-types --non-interactive ./src
-pylint ./src
+mypy --install-types --non-interactive ./src && pylint ./src
 ```
 
 ### Run
