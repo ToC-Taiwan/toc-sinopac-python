@@ -1,36 +1,33 @@
-#!/usr/local/bin/python
-# -*- coding: utf-8 -*-
 '''SINOPAC PYTHON API FORWARDER'''
-import os
-import sys
 import typing
 
-from dotenv import load_dotenv
-
+from cron import init_schedule_job
+from env import RequiredEnv
 from grpcsrv import serve
 from logger import logger
 from sinopac import Sinopac
 
-load_dotenv()
-person_id = os.environ.get("PERSON_ID")
-password = os.environ.get("PASSWORD")
-ca_password = os.environ.get("CA_PASSWORD")
-grpc_port = os.environ.get("GRPC_PORT")
-connection_count = os.environ.get("CONNECTION_COUNT")
-if person_id is None or password is None or ca_password is None or grpc_port is None or connection_count is None:
-    logger.error("Missing environment variables")
-    sys.exit()
+env = RequiredEnv()
+person_id = env.person_id
+password = env.password
+ca_password = env.ca_password
+grpc_port = env.grpc_port
+connection_count = env.connection_count
 
+# add schedule to exit the program
+init_schedule_job()
 
 MAIN_WORKER: Sinopac
-SINOPAC_WORKER_LIST: typing.List[Sinopac] = []
+SINOPAC_WORKER_POOL: typing.List[Sinopac] = []
 
 for i in range(int(connection_count)):
-    logger.info('Establish Connection %d', i+1)
-    is_first = bool(i == 0)
-    tmp = Sinopac().login(person_id, password, ca_password, is_first)
-    if is_first:
-        MAIN_WORKER = tmp
-    SINOPAC_WORKER_LIST.append(tmp)
+    logger.info('establish connection %d', i+1)
+    is_main = bool(i == 0)
+    new_connection = Sinopac().login(person_id, password, ca_password, is_main)
+    if is_main:
+        MAIN_WORKER = new_connection
+        # if do not let main worker be the first worker in the pool, then continue
+        # continue
+    SINOPAC_WORKER_POOL.append(new_connection)
 
-serve(port=grpc_port, main_worker=MAIN_WORKER, workers=SINOPAC_WORKER_LIST)
+serve(port=grpc_port, main_worker=MAIN_WORKER, workers=SINOPAC_WORKER_POOL)

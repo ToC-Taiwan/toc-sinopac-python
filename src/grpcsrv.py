@@ -5,7 +5,6 @@ import typing
 from concurrent import futures
 from datetime import datetime
 from queue import Queue
-from re import search
 
 import grpc
 import numpy as np
@@ -89,7 +88,14 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         worker = WORKERS.get()
         for stock in worker.stock_num_list:
             contracts.append(worker.get_contract_by_stock_num(stock))
-        snapshots = worker.snapshots(contracts)
+        splits = np.array_split(contracts, WORKERS.count())
+        snapshots = []
+        threads = []
+        for i, split in enumerate(splits):
+            threads.append(threading.Thread(target=fill_sinopac_snapshot_arr, args=(split, snapshots, WORKERS.get())))
+            threads[i].start()
+        for t in threads:
+            t.join()
         response = sinopac_forwarder_pb2.StockSnapshotResponse()
         for result in snapshots:
             response.data.append(sinopac_snapshot_to_pb(result))
@@ -131,9 +137,8 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         splits = np.array_split(contracts, WORKERS.count())
         snapshots = []
         threads = []
-        lock = threading.Lock()
         for i, split in enumerate(splits):
-            threads.append(threading.Thread(target=fill_sinopac_snapshot_arr, args=(split, snapshots, WORKERS.get(), lock)))
+            threads.append(threading.Thread(target=fill_sinopac_snapshot_arr, args=(split, snapshots, WORKERS.get())))
             threads[i].start()
         for t in threads:
             t.join()
@@ -154,18 +159,18 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         '''
         response = sinopac_forwarder_pb2.StockHistoryTickResponse()
-        lock = threading.Lock()
         threads = []
         for num in request.stock_num_arr:
             t = threading.Thread(
                 target=fill_history_tick_response,
-                args=(WORKERS.get().get_contract_by_stock_num(num),
-                      num,
-                      request.date,
-                      response,
-                      WORKERS.get(),
-                      lock,))
-
+                args=(
+                    WORKERS.get().get_contract_by_stock_num(num),
+                    num,
+                    request.date,
+                    response,
+                    WORKERS.get(),
+                ),
+            )
             threads.append(t)
             t.start()
         for t in threads:
@@ -184,15 +189,16 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         '''
         response = sinopac_forwarder_pb2.StockHistoryTickResponse()
-        lock = threading.Lock()
         t = threading.Thread(
             target=fill_history_tick_response,
-            args=(WORKERS.get().get_contract_tse_001(),
-                  'tse_001',
-                  request.date,
-                  response,
-                  WORKERS.get(),
-                  lock,))
+            args=(
+                WORKERS.get().get_contract_tse_001(),
+                'tse_001',
+                request.date,
+                response,
+                WORKERS.get(),
+            ),
+        )
         t.start()
         t.join()
         return response
@@ -209,18 +215,18 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         '''
         response = sinopac_forwarder_pb2.StockHistoryKbarResponse()
-        lock = threading.Lock()
         threads = []
         for num in request.stock_num_arr:
             t = threading.Thread(
                 target=fill_history_kbar_response,
-                args=(WORKERS.get().get_contract_by_stock_num(num),
-                      num,
-                      request.date,
-                      response,
-                      WORKERS.get(),
-                      lock,))
-
+                args=(
+                    WORKERS.get().get_contract_by_stock_num(num),
+                    num,
+                    request.date,
+                    response,
+                    WORKERS.get(),
+                ),
+            )
             threads.append(t)
             t.start()
         for t in threads:
@@ -239,15 +245,16 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         '''
         response = sinopac_forwarder_pb2.StockHistoryKbarResponse()
-        lock = threading.Lock()
         t = threading.Thread(
             target=fill_history_kbar_response,
-            args=(WORKERS.get().get_contract_tse_001(),
-                  'tse_001',
-                  request.date,
-                  response,
-                  WORKERS.get(),
-                  lock,))
+            args=(
+                WORKERS.get().get_contract_tse_001(),
+                'tse_001',
+                request.date,
+                response,
+                WORKERS.get(),
+            ),
+        )
         t.start()
         t.join()
         return response
@@ -264,18 +271,18 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         '''
         response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
-        lock = threading.Lock()
         threads = []
         for num in request.stock_num_arr:
             t = threading.Thread(
                 target=fill_history_close_response,
-                args=(WORKERS.get().get_contract_by_stock_num(num),
-                      num,
-                      request.date,
-                      response,
-                      WORKERS.get(),
-                      lock,))
-
+                args=(
+                    WORKERS.get().get_contract_by_stock_num(num),
+                    num,
+                    request.date,
+                    response,
+                    WORKERS.get(),
+                ),
+            )
             threads.append(t)
             t.start()
         for t in threads:
@@ -294,19 +301,19 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         '''
         response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
-        lock = threading.Lock()
         threads = []
         for date in request.date_arr:
             for num in request.stock_num_arr:
                 t = threading.Thread(
                     target=fill_history_close_response,
-                    args=(WORKERS.get().get_contract_by_stock_num(num),
-                          num,
-                          date,
-                          response,
-                          WORKERS.get(),
-                          lock,))
-
+                    args=(
+                        WORKERS.get().get_contract_by_stock_num(num),
+                        num,
+                        date,
+                        response,
+                        WORKERS.get(),
+                    ),
+                )
                 threads.append(t)
                 t.start()
         for t in threads:
@@ -325,15 +332,16 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         '''
         response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
-        lock = threading.Lock()
         t = threading.Thread(
             target=fill_history_close_response,
-            args=(WORKERS.get().get_contract_tse_001(),
-                  'tse_001',
-                  request.date,
-                  response,
-                  WORKERS.get(),
-                  lock,))
+            args=(
+                WORKERS.get().get_contract_tse_001(),
+                'tse_001',
+                request.date,
+                response,
+                WORKERS.get(),
+            ),
+        )
         t.start()
         t.join()
         return response
@@ -412,7 +420,6 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
         self.event_queue = Queue()
         self.quote_queue = Queue()
         self.bid_ask_queue = Queue()
-        self.order_queue = Queue()
         self.order_status_queue = Queue()
         self.order_cb_lock = threading.Lock()
 
@@ -433,8 +440,11 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
             event=event,
         ))
 
-    def EventChannel(self, request, _):
+    def EventChannel(self, request, context: grpc.RpcContext):
         while True:
+            if context.is_active() is not True:
+                logger.warning('EventChannel is down')
+                return
             if self.event_queue.empty():
                 continue
             yield self.event_queue.get()
@@ -471,8 +481,11 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
             simtrade=tick.simtrade,
         ))
 
-    def TickChannel(self, request, _):
+    def TickChannel(self, request, context: grpc.RpcContext):
         while True:
+            if context.is_active() is not True:
+                WORKERS.unsubscribe_all_tick()
+                return
             if self.quote_queue.empty():
                 continue
             yield self.quote_queue.get()
@@ -499,45 +512,14 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
         tmp.diff_ask_vol.extend(bidask.diff_ask_vol)
         self.bid_ask_queue.put(tmp)
 
-    def BidAskChannel(self, request, _):
+    def BidAskChannel(self, request, context: grpc.RpcContext):
         while True:
+            if context.is_active() is not True:
+                WORKERS.unsubscribe_all_bidask()
+                return
             if self.bid_ask_queue.empty():
                 continue
             yield self.bid_ask_queue.get()
-
-    def place_order_callback(self, order_state, order: dict):
-        '''
-        place_order_callback _summary_
-
-        Args:
-            order_state (_type_): _description_
-            order (dict): _description_
-        '''
-        self.order_queue.put(order)
-        if search('DEAL', order_state) is None:
-            logger.info('%s %s %.2f %d %s %d %s %s %s %s',
-                        order['contract']['code'],
-                        order['order']['action'],
-                        order['order']['price'],
-                        order['order']['quantity'],
-                        order_state,
-                        order['status']['exchange_ts'],
-                        order['order']['id'],
-                        order['operation']['op_type'],
-                        order['operation']['op_code'],
-                        order['operation']['op_msg'],
-                        )
-        else:
-            logger.info('%s %s %.2f %d %s %d %s %s',
-                        order['code'],
-                        order['action'],
-                        order['price'],
-                        order['quantity'],
-                        order_state,
-                        order['ts'],
-                        order['trade_id'],
-                        order['exchange_seq'],
-                        )
 
     def order_status_callback(self, reply: typing.List[sj.order.Trade]):
         '''
@@ -556,7 +538,7 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
                         order_price = order.status.modified_price
                     else:
                         order_price = order.order.price
-                    self.order_status_queue.put(sinopac_forwarder_pb2.StockOrderStatusHistoryResponse(
+                    self.order_status_queue.put(sinopac_forwarder_pb2.StockOrderStatus(
                         code=order.contract.code,
                         action=order.order.action,
                         price=order_price,
@@ -566,11 +548,156 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
                         order_time=datetime.strftime(order.status.order_datetime, '%Y-%m-%d %H:%M:%S'),
                     ))
 
-    def OrderStatusChannel(self, request, _):
+    def OrderStatusChannel(self, request, context: grpc.RpcContext):
         while True:
+            if context.is_active() is not True:
+                logger.warning('OrderStatusChannel is down')
+                return
             if self.order_status_queue.empty():
                 continue
             yield self.order_status_queue.get()
+
+
+class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
+    def BuyStock(self, request, _):
+        '''
+        BuyStock _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        result = WORKERS.buy_stock(request.stock_num, request.price, request.quantity, request.simulate)
+        response = sinopac_forwarder_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+        return response
+
+    def SellStock(self, request, _):
+        '''
+        SellStock _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        result = WORKERS.sell_stock(request.stock_num, request.price, request.quantity, request.simulate)
+        response = sinopac_forwarder_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+        return response
+
+    def SellFirstStock(self, request, _):
+        '''
+        SellFirstStock _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        result = WORKERS.sell_first_stock(request.stock_num, request.price, request.quantity, request.simulate)
+        response = sinopac_forwarder_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+        return response
+
+    def CancelStock(self, request, _):
+        '''
+        CancelStock _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        result = WORKERS.cancel_stock(request.order_id, request.simulate)
+        response = sinopac_forwarder_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+        return response
+
+    def GetOrderStatusByID(self, request, _):
+        '''
+        GetOrderStatusByID _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        result = WORKERS.get_order_status_by_id(request.order_id, request.simulate)
+        response = sinopac_forwarder_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+        return response
+
+    def GetOrderStatusArr(self, request, _):
+        '''
+        GetOrderStatusArr _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        arr = WORKERS.get_order_status_arr()
+        response = sinopac_forwarder_pb2.StockOrderStatusArr()
+        for order in arr:
+            if order.status.order_datetime is None:
+                order.status.order_datetime = datetime.now()
+            order_price = int()
+            if order.status.modified_price != 0:
+                order_price = order.status.modified_price
+            else:
+                order_price = order.order.price
+            response.data.append(sinopac_forwarder_pb2.StockOrderStatus(
+                code=order.contract.code,
+                action=order.order.action,
+                price=order_price,
+                quantity=order.order.quantity,
+                order_id=order.status.id,
+                status=order.status.status,
+                order_time=datetime.strftime(order.status.order_datetime, '%Y-%m-%d %H:%M:%S'),
+            ))
+        return response
+
+    def GetNonBlockOrderStatusArr(self, request, _):
+        '''
+        GetNonBlockOrderStatusArr _summary_
+
+        Args:
+            request (_type_): _description_
+            _ (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        '''
+        return sinopac_forwarder_pb2.FunctionErr(err=WORKERS.get_non_block_order_status_arr())
 
 
 def sinopac_snapshot_to_pb(result) -> sinopac_forwarder_pb2.StockSnapshotMessage:
@@ -609,7 +736,7 @@ def sinopac_snapshot_to_pb(result) -> sinopac_forwarder_pb2.StockSnapshotMessage
     )
 
 
-def fill_sinopac_snapshot_arr(contracts, snapshots, sinopac: Sinopac, mutex):
+def fill_sinopac_snapshot_arr(contracts, snapshots, sinopac: Sinopac):
     '''
     fill_sinopac_snapshot_arr _summary_
 
@@ -619,12 +746,10 @@ def fill_sinopac_snapshot_arr(contracts, snapshots, sinopac: Sinopac, mutex):
         sinopac (Sinopac): _description_
         mutex (_type_): _description_
     '''
-    tmp = sinopac.snapshots(contracts)
-    with mutex:
-        snapshots.extend(tmp)
+    snapshots.extend(sinopac.snapshots(contracts))
 
 
-def fill_history_tick_response(contract, num, date, response, sinopac: Sinopac, mutex):
+def fill_history_tick_response(contract, num, date, response, sinopac: Sinopac):
     '''
     fill_history_tick_response _summary_
 
@@ -646,25 +771,26 @@ def fill_history_tick_response(contract, num, date, response, sinopac: Sinopac, 
         len(ticks.ask_price),
         len(ticks.ask_volume),
     ]
+
     for length in tmp_length:
         if length - total_count != 0:
             return
-    with mutex:
-        for pos in range(total_count):
-            response.data.append(sinopac_forwarder_pb2.StockHistoryTickMessage(
-                stock_num=num,
-                ts=ticks.ts[pos],
-                close=ticks.close[pos],
-                volume=ticks.volume[pos],
-                bid_price=ticks.bid_price[pos],
-                bid_volume=ticks.bid_volume[pos],
-                ask_price=ticks.ask_price[pos],
-                ask_volume=ticks.ask_volume[pos],
-                tick_type=ticks.tick_type[pos],
-            ))
+
+    for pos in range(total_count):
+        response.data.append(sinopac_forwarder_pb2.StockHistoryTickMessage(
+            stock_num=num,
+            ts=ticks.ts[pos],
+            close=ticks.close[pos],
+            volume=ticks.volume[pos],
+            bid_price=ticks.bid_price[pos],
+            bid_volume=ticks.bid_volume[pos],
+            ask_price=ticks.ask_price[pos],
+            ask_volume=ticks.ask_volume[pos],
+            tick_type=ticks.tick_type[pos],
+        ))
 
 
-def fill_history_kbar_response(contract, num, date, response, sinopac: Sinopac, mutex):
+def fill_history_kbar_response(contract, num, date, response, sinopac: Sinopac):
     '''
     fill_history_kbar_response _summary_
 
@@ -684,40 +810,40 @@ def fill_history_kbar_response(contract, num, date, response, sinopac: Sinopac, 
         len(kbar.Low),
         len(kbar.Volume),
     ]
+
     for length in tmp_length:
         if length - total_count != 0:
             return
-    with mutex:
-        for pos in range(total_count):
-            response.data.append(sinopac_forwarder_pb2.StockHistoryKbarMessage(
-                stock_num=num,
-                ts=kbar.ts[pos],
-                Close=kbar.Close[pos],
-                Open=kbar.Open[pos],
-                High=kbar.High[pos],
-                Low=kbar.Low[pos],
-                Volume=kbar.Volume[pos],
-            ))
+
+    for pos in range(total_count):
+        response.data.append(sinopac_forwarder_pb2.StockHistoryKbarMessage(
+            stock_num=num,
+            ts=kbar.ts[pos],
+            Close=kbar.Close[pos],
+            Open=kbar.Open[pos],
+            High=kbar.High[pos],
+            Low=kbar.Low[pos],
+            Volume=kbar.Volume[pos],
+        ))
 
 
-def fill_history_close_response(contract, num, date, response, sinopac: Sinopac, mutex):
+def fill_history_close_response(contract, num, date, response, sinopac: Sinopac):
     '''
-    fill_history_kbar_response _summary_
+    fill_history_close_response _summary_
 
     Args:
         contract (_type_): _description_
+        num (_type_): _description_
         date (_type_): _description_
         response (_type_): _description_
         sinopac (Sinopac): _description_
         mutex (_type_): _description_
     '''
-    close = sinopac.get_stock_last_close_by_date(contract, date)
-    with mutex:
-        response.data.append(sinopac_forwarder_pb2.StockHistoryCloseMessage(
-            code=num,
-            close=close,
-            date=date,
-        ))
+    response.data.append(sinopac_forwarder_pb2.StockHistoryCloseMessage(
+        code=num,
+        close=sinopac.get_stock_last_close_by_date(contract, date),
+        date=date,
+    ))
 
 
 def serve(port: str, main_worker: Sinopac, workers: typing.List[Sinopac]):
@@ -735,18 +861,20 @@ def serve(port: str, main_worker: Sinopac, workers: typing.List[Sinopac]):
     # gRPC servicer
     sinopac_forwarder_servicer = gRPCSinopacForwarder()
     long_connection_servicer = gRPCLongConnection()
+    trade_servicer = gRPCTradeMethod()
 
     # set call back
     WORKERS.set_event_cb(long_connection_servicer.event_callback)
     WORKERS.set_quote_cb(long_connection_servicer.quote_callback_v1)
     WORKERS.set_bid_ask_cb(long_connection_servicer.bid_ask_callback)
-    WORKERS.set_place_order_cb(long_connection_servicer.place_order_callback)
     WORKERS.set_order_status_cb(long_connection_servicer.order_status_callback)
 
     server = grpc.server(futures.ThreadPoolExecutor())
     sinopac_forwarder_pb2_grpc.add_SinopacForwarderServicer_to_server(sinopac_forwarder_servicer, server)
     sinopac_forwarder_pb2_grpc.add_LongConeectionServiceServicer_to_server(long_connection_servicer, server)
+    sinopac_forwarder_pb2_grpc.add_TradeServiceServicer_to_server(trade_servicer, server)
+
     server.add_insecure_port(f'[::]:{port}')
     server.start()
-    logger.info('gRPC server started at port %s', port)
+    logger.info('gRPC Server started at port %s', port)
     server.wait_for_termination()

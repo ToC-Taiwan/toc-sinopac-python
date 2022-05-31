@@ -36,7 +36,8 @@ pip install -U \
   pylint-protobuf \
   pylint \
   python-dotenv \
-  numpy
+  numpy \
+  schedule
 mypy --install-types --non-interactive ./src
 pip freeze > requirements.txt
 ```
@@ -50,13 +51,13 @@ mypy --install-types --non-interactive ./src && pylint ./src
 ### Run
 
 ```sh
-echo '
+echo 'DEPLOYMENT=dev
 GRPC_PORT=56666
 CONNECTION_COUNT=4
 
-PERSON_ID=F127522501
-PASSWORD=@A2rgilaal
-CA_PASSWORD=~A2iairlol' > ./.env
+PERSON_ID=XXXXXXXXXX
+PASSWORD=YYYYYYYYYY
+CA_PASSWORD=ZZZZZZZZZZ' > ./.env
 ```
 
 ```sh

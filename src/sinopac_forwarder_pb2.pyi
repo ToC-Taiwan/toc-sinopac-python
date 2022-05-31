@@ -11,6 +11,68 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+class FunctionErr(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    ERR_FIELD_NUMBER: builtins.int
+    err: typing.Text
+    def __init__(self,
+        *,
+        err: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["err",b"err"]) -> None: ...
+global___FunctionErr = FunctionErr
+
+class OrderID(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    ORDER_ID_FIELD_NUMBER: builtins.int
+    SIMULATE_FIELD_NUMBER: builtins.int
+    order_id: typing.Text
+    simulate: builtins.bool
+    def __init__(self,
+        *,
+        order_id: typing.Text = ...,
+        simulate: builtins.bool = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["order_id",b"order_id","simulate",b"simulate"]) -> None: ...
+global___OrderID = OrderID
+
+class StockOrderDetail(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    STOCK_NUM_FIELD_NUMBER: builtins.int
+    PRICE_FIELD_NUMBER: builtins.int
+    QUANTITY_FIELD_NUMBER: builtins.int
+    SIMULATE_FIELD_NUMBER: builtins.int
+    stock_num: typing.Text
+    price: builtins.float
+    quantity: builtins.int
+    simulate: builtins.bool
+    def __init__(self,
+        *,
+        stock_num: typing.Text = ...,
+        price: builtins.float = ...,
+        quantity: builtins.int = ...,
+        simulate: builtins.bool = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["price",b"price","quantity",b"quantity","simulate",b"simulate","stock_num",b"stock_num"]) -> None: ...
+global___StockOrderDetail = StockOrderDetail
+
+class TradeResult(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    ORDER_ID_FIELD_NUMBER: builtins.int
+    STATUS_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    order_id: typing.Text
+    status: typing.Text
+    error: typing.Text
+    def __init__(self,
+        *,
+        order_id: typing.Text = ...,
+        status: typing.Text = ...,
+        error: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["error",b"error","order_id",b"order_id","status",b"status"]) -> None: ...
+global___TradeResult = TradeResult
+
 class EventResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     RESP_CODE_FIELD_NUMBER: builtins.int
@@ -582,7 +644,19 @@ class StockRealTimeBidAskResponse(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["ask_price",b"ask_price","ask_volume",b"ask_volume","bid_price",b"bid_price","bid_volume",b"bid_volume","code",b"code","date_time",b"date_time","diff_ask_vol",b"diff_ask_vol","diff_bid_vol",b"diff_bid_vol","simtrade",b"simtrade","suspend",b"suspend"]) -> None: ...
 global___StockRealTimeBidAskResponse = StockRealTimeBidAskResponse
 
-class StockOrderStatusHistoryResponse(google.protobuf.message.Message):
+class StockOrderStatusArr(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DATA_FIELD_NUMBER: builtins.int
+    @property
+    def data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___StockOrderStatus]: ...
+    def __init__(self,
+        *,
+        data: typing.Optional[typing.Iterable[global___StockOrderStatus]] = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["data",b"data"]) -> None: ...
+global___StockOrderStatusArr = StockOrderStatusArr
+
+class StockOrderStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     STATUS_FIELD_NUMBER: builtins.int
     CODE_FIELD_NUMBER: builtins.int
@@ -609,4 +683,4 @@ class StockOrderStatusHistoryResponse(google.protobuf.message.Message):
         order_time: typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["action",b"action","code",b"code","order_id",b"order_id","order_time",b"order_time","price",b"price","quantity",b"quantity","status",b"status"]) -> None: ...
-global___StockOrderStatusHistoryResponse = StockOrderStatusHistoryResponse
+global___StockOrderStatus = StockOrderStatus

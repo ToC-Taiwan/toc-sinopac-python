@@ -622,7 +622,7 @@ class LongConeectionServiceStub(object):
         self.OrderStatusChannel = channel.unary_stream(
                 '/sinopac_forwarder.LongConeectionService/OrderStatusChannel',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockOrderStatusHistoryResponse.FromString,
+                response_deserializer=sinopac__forwarder__pb2.StockOrderStatus.FromString,
                 )
 
 
@@ -674,7 +674,7 @@ def add_LongConeectionServiceServicer_to_server(servicer, server):
             'OrderStatusChannel': grpc.unary_stream_rpc_method_handler(
                     servicer.OrderStatusChannel,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockOrderStatusHistoryResponse.SerializeToString,
+                    response_serializer=sinopac__forwarder__pb2.StockOrderStatus.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -750,6 +750,265 @@ class LongConeectionService(object):
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/sinopac_forwarder.LongConeectionService/OrderStatusChannel',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            sinopac__forwarder__pb2.StockOrderStatusHistoryResponse.FromString,
+            sinopac__forwarder__pb2.StockOrderStatus.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class TradeServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.BuyStock = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/BuyStock',
+                request_serializer=sinopac__forwarder__pb2.StockOrderDetail.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.TradeResult.FromString,
+                )
+        self.SellStock = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/SellStock',
+                request_serializer=sinopac__forwarder__pb2.StockOrderDetail.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.TradeResult.FromString,
+                )
+        self.SellFirstStock = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/SellFirstStock',
+                request_serializer=sinopac__forwarder__pb2.StockOrderDetail.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.TradeResult.FromString,
+                )
+        self.CancelStock = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/CancelStock',
+                request_serializer=sinopac__forwarder__pb2.OrderID.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.TradeResult.FromString,
+                )
+        self.GetOrderStatusByID = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/GetOrderStatusByID',
+                request_serializer=sinopac__forwarder__pb2.OrderID.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.TradeResult.FromString,
+                )
+        self.GetOrderStatusArr = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/GetOrderStatusArr',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockOrderStatusArr.FromString,
+                )
+        self.GetNonBlockOrderStatusArr = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/GetNonBlockOrderStatusArr',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.FunctionErr.FromString,
+                )
+
+
+class TradeServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def BuyStock(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SellStock(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SellFirstStock(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CancelStock(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetOrderStatusByID(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetOrderStatusArr(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetNonBlockOrderStatusArr(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_TradeServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'BuyStock': grpc.unary_unary_rpc_method_handler(
+                    servicer.BuyStock,
+                    request_deserializer=sinopac__forwarder__pb2.StockOrderDetail.FromString,
+                    response_serializer=sinopac__forwarder__pb2.TradeResult.SerializeToString,
+            ),
+            'SellStock': grpc.unary_unary_rpc_method_handler(
+                    servicer.SellStock,
+                    request_deserializer=sinopac__forwarder__pb2.StockOrderDetail.FromString,
+                    response_serializer=sinopac__forwarder__pb2.TradeResult.SerializeToString,
+            ),
+            'SellFirstStock': grpc.unary_unary_rpc_method_handler(
+                    servicer.SellFirstStock,
+                    request_deserializer=sinopac__forwarder__pb2.StockOrderDetail.FromString,
+                    response_serializer=sinopac__forwarder__pb2.TradeResult.SerializeToString,
+            ),
+            'CancelStock': grpc.unary_unary_rpc_method_handler(
+                    servicer.CancelStock,
+                    request_deserializer=sinopac__forwarder__pb2.OrderID.FromString,
+                    response_serializer=sinopac__forwarder__pb2.TradeResult.SerializeToString,
+            ),
+            'GetOrderStatusByID': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOrderStatusByID,
+                    request_deserializer=sinopac__forwarder__pb2.OrderID.FromString,
+                    response_serializer=sinopac__forwarder__pb2.TradeResult.SerializeToString,
+            ),
+            'GetOrderStatusArr': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOrderStatusArr,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockOrderStatusArr.SerializeToString,
+            ),
+            'GetNonBlockOrderStatusArr': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetNonBlockOrderStatusArr,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=sinopac__forwarder__pb2.FunctionErr.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'sinopac_forwarder.TradeService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class TradeService(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def BuyStock(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/BuyStock',
+            sinopac__forwarder__pb2.StockOrderDetail.SerializeToString,
+            sinopac__forwarder__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SellStock(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/SellStock',
+            sinopac__forwarder__pb2.StockOrderDetail.SerializeToString,
+            sinopac__forwarder__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SellFirstStock(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/SellFirstStock',
+            sinopac__forwarder__pb2.StockOrderDetail.SerializeToString,
+            sinopac__forwarder__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CancelStock(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/CancelStock',
+            sinopac__forwarder__pb2.OrderID.SerializeToString,
+            sinopac__forwarder__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetOrderStatusByID(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/GetOrderStatusByID',
+            sinopac__forwarder__pb2.OrderID.SerializeToString,
+            sinopac__forwarder__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetOrderStatusArr(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/GetOrderStatusArr',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            sinopac__forwarder__pb2.StockOrderStatusArr.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetNonBlockOrderStatusArr(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/GetNonBlockOrderStatusArr',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            sinopac__forwarder__pb2.FunctionErr.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

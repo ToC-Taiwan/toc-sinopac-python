@@ -3,13 +3,12 @@ import string
 import threading
 import time
 from datetime import datetime
+from re import search
 
 import shioaji as sj
 
 from constant import DayTrade, SecurityType
 from logger import logger
-
-ORDER_STATUS_CB_LOCK = threading.Lock()
 
 
 class Sinopac:  # pylint: disable=too-many-public-methods
@@ -22,11 +21,11 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         # lock
         self.__login_lock = threading.Lock()
         self.__order_status_lock = threading.Lock()
-        # simulate trade
         self.__simulation_lock = threading.Lock()
-        self.__courent_simulation_count = {}
+        # simulate trade
+        self.__courent_simulation_count = {}  # key: stock_num, value: count
 
-    def login(self, person_id: str, passwd: str, ca_passwd: str, is_first: bool):
+    def login(self, person_id: str, passwd: str, ca_passwd: str, is_main: bool):
         '''
         login _summary_
 
@@ -39,12 +38,14 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         Returns:
             _type_: _description_
         '''
+        # before gRPC set cb, using logger to save event
+        self.set_event_callback(event_logger_cb)
         self.__api.login(
             person_id=person_id,
             passwd=passwd,
             contracts_cb=self.login_cb,
-            subscribe_trade=is_first,
-            fetch_contract=is_first,
+            subscribe_trade=is_main,
+            fetch_contract=is_main,
         )
         while True:
             if self.__login_status == 100:
@@ -55,6 +56,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             person_id=person_id,
         )
         self.fill_stock_num_list()
+        if is_main is True:
+            self.set_order_callback(self.place_order_callback)
         return self
 
     def login_cb(self, security_type):
@@ -134,12 +137,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         while True:
             if len(self.stock_num_list) != 0:
                 break
-        logger.info('Filling stock_num_list, total: %d', len(self.stock_num_list))
+        logger.info('filling stock_num_list, total: %d', len(self.stock_num_list))
 
     def update_order_status_instant(self):
         '''
         update_order_status_instant _summary_
         '''
+        if self.order_status_callback is None:
+            logger.error('order_status_callback is None')
+            return
         self.__api.update_status(timeout=0, cb=self.order_status_callback)
 
     def update_local_order_status(self):
@@ -369,11 +375,11 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         if sim is False:
             trade = self.__api.place_order(contract, order)
             if trade is not None and trade.order.id != '':
-                return TradeResult(trade.order.id, trade.status.status, '')
+                return OrderStatus(trade.order.id, trade.status.status, '')
         else:
             with self.__simulation_lock:
                 if self.__courent_simulation_count[stock_num] < 0 or quantity+self.__courent_simulation_count[stock_num] != 0:
-                    return TradeResult('', '', 'should buy later')
+                    return OrderStatus('', '', 'should buy later')
             sim_order = sj.order.Trade(
                 contract=contract,
                 order=order,
@@ -386,9 +392,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 ),
             )
             threading.Thread(target=self.finish_simulation_order, args=(sim_order, random.randrange(15)+1)).start()
-            return TradeResult(sim_order.status.id, sim_order.status.status, '')
+            return OrderStatus(sim_order.status.id, sim_order.status.status, '')
 
-        return TradeResult('', '', 'unknown error')
+        return OrderStatus('', '', 'unknown error')
 
     def sell_stock(self, stock_num: str, price: float, quantity: int, sim: bool):
         '''
@@ -417,7 +423,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         if sim is False:
             trade = self.__api.place_order(contract, order)
             if trade is not None and trade.order.id != '':
-                return TradeResult(trade.order.id, trade.status.status, '')
+                return OrderStatus(trade.order.id, trade.status.status, '')
         else:
             order_status = sj.order.OrderStatus(
                 id=''.join(random.choice(string.ascii_lowercase+string.octdigits) for _ in range(8)),
@@ -433,11 +439,11 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             )
             with self.__simulation_lock:
                 if quantity > self.__courent_simulation_count[stock_num]:
-                    return TradeResult('', '', 'quantity is too large')
+                    return OrderStatus('', '', 'quantity is too large')
             threading.Thread(target=self.finish_simulation_order, args=(sim_order, random.randrange(15)+1)).start()
-            return TradeResult(sim_order.status.id, sim_order.status.status, '')
+            return OrderStatus(sim_order.status.id, sim_order.status.status, '')
 
-        return TradeResult('', '', 'unknown error')
+        return OrderStatus('', '', 'unknown error')
 
     def sell_first_stock(self, stock_num: str, price: float, quantity: int, sim: bool):
         '''
@@ -467,7 +473,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         if sim is False:
             trade = self.__api.place_order(contract, order)
             if trade is not None and trade.order.id != '':
-                return TradeResult(trade.order.id, trade.status.status, '')
+                return OrderStatus(trade.order.id, trade.status.status, '')
         else:
             order_status = sj.order.OrderStatus(
                 id=''.join(random.choice(string.ascii_lowercase+string.octdigits) for _ in range(8)),
@@ -483,11 +489,11 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             )
             with self.__simulation_lock:
                 if self.__courent_simulation_count[stock_num] > 0:
-                    return TradeResult('', '', 'can not sell first')
+                    return OrderStatus('', '', 'can not sell first')
             threading.Thread(target=self.finish_simulation_order, args=(sim_order, random.randrange(15)+1)).start()
-            return TradeResult(sim_order.status.id, sim_order.status.status, '')
+            return OrderStatus(sim_order.status.id, sim_order.status.status, '')
 
-        return TradeResult('', '', 'unknown error')
+        return OrderStatus('', '', 'unknown error')
 
     def cancel_stock(self, order_id: str, sim: bool):
         '''
@@ -512,9 +518,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                     break
                 times += 1
             if cancel_order is None:
-                return TradeResult(order_id, '', 'id_not_found')
+                return OrderStatus(order_id, '', 'id not found')
             if cancel_order.status.status == sj.constant.Status.Cancelled:
-                return TradeResult(order_id, '', 'id_already_cancelled')
+                return OrderStatus(order_id, '', 'id already cancelled')
             self.__api.cancel_order(cancel_order)
             times = 0
             while True:
@@ -523,15 +529,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 self.update_local_order_status()
                 for order in self.order_status_list:
                     if order.status.id == order_id and order.status.status == sj.constant.Status.Cancelled:
-                        return TradeResult(order_id, order.status.status, '')
+                        return OrderStatus(order_id, order.status.status, '')
                 times += 1
         else:
             for order in self.order_status_list:
                 if order.status.id == order_id and order.status.status != sj.constant.Status.Cancelled:
                     order.status.status = sj.constant.Status.Cancelled
-                    return TradeResult(order_id, order.status.status, '')
+                    return OrderStatus(order_id, order.status.status, '')
 
-        return TradeResult('', '', 'unknown error')
+        return OrderStatus('', '', 'unknown error')
 
     def get_order_status_from_local_by_order_id(self, order_id: str, sim: bool):
         '''
@@ -546,14 +552,17 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         '''
         if sim is False:
             self.update_local_order_status()
+
         if len(self.order_status_list) == 0:
-            return TradeResult('', '', 'order list is empty')
+            return OrderStatus('', '', 'order list is empty')
+
         for order in self.order_status_list:
             if order.status.id == order_id:
-                return TradeResult(order_id, order.status.status, '')
-        return TradeResult('', '', 'unknown error')
+                return OrderStatus(order_id, order.status.status, '')
 
-    def get_order_status(self, sim: bool):
+        return OrderStatus('', '', 'unknown error')
+
+    def get_order_status(self):
         '''
         get_order_status _summary_
 
@@ -563,14 +572,54 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         Returns:
             _type_: _description_
         '''
-        if sim is False:
-            self.update_order_status_instant()
-            return None
         return self.order_status_list
 
+    def place_order_callback(self, order_state, order: dict):
+        '''
+        place_order_callback _summary_
 
-class TradeResult():
+        Args:
+            order_state (_type_): _description_
+            order (dict): _description_
+        '''
+        if order['contract']['code'] is None:
+            logger.error('contract code is None')
+            return
+        contract = self.get_contract_by_stock_num(order['contract']['code'])
+        if search('DEAL', order_state) is None:
+            logger.info('%s %s %s %.2f %d %s %d %s %s %s %s',
+                        order['contract']['code'],
+                        contract.name,
+                        order['order']['action'],
+                        order['order']['price'],
+                        order['order']['quantity'],
+                        order_state,
+                        order['status']['exchange_ts'],
+                        order['order']['id'],
+                        order['operation']['op_type'],
+                        order['operation']['op_code'],
+                        order['operation']['op_msg'],
+                        )
+        else:
+            logger.info('%s %s %s %.2f %d %s %d %s %s',
+                        order['code'],
+                        contract.name,
+                        order['action'],
+                        order['price'],
+                        order['quantity'],
+                        order_state,
+                        order['ts'],
+                        order['trade_id'],
+                        order['exchange_seq'],
+                        )
+
+
+class OrderStatus():
     def __init__(self, order_id: str, status: str, error: str):
         self.order_id = order_id
         self.status = status
         self.error = error
+
+
+def event_logger_cb(resp_code: int, event_code: int, info: str, event: str):
+    logger.info('event logger:\nresp_code: %d\nevent_code: %d\ninfo: %s\nevent: %s', resp_code, event_code, info, event)
