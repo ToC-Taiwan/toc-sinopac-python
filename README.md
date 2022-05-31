@@ -61,7 +61,7 @@ CA_PASSWORD=ZZZZZZZZZZ' > ./.env
 ```
 
 ```sh
-python ./src/main.py
+python -B -OO ./src/main.py
 ```
 
 ### Dev
