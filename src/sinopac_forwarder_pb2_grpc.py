@@ -30,34 +30,14 @@ class SinopacForwarderStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
                 )
-        self.GetStockSnapshotTSE = channel.unary_unary(
-                '/sinopac_forwarder.SinopacForwarder/GetStockSnapshotTSE',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
-                )
-        self.GetStockTSEHistoryTick = channel.unary_unary(
-                '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryTick',
-                request_serializer=sinopac__forwarder__pb2.Date.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockHistoryTickResponse.FromString,
-                )
-        self.GetStockTSEHistoryKbar = channel.unary_unary(
-                '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryKbar',
-                request_serializer=sinopac__forwarder__pb2.Date.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockHistoryKbarResponse.FromString,
-                )
-        self.GetStockTSEHistoryClose = channel.unary_unary(
-                '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryClose',
-                request_serializer=sinopac__forwarder__pb2.Date.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockHistoryCloseResponse.FromString,
-                )
-        self.GetStockVolumeRank = channel.unary_unary(
-                '/sinopac_forwarder.SinopacForwarder/GetStockVolumeRank',
-                request_serializer=sinopac__forwarder__pb2.VolumeRankRequest.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockVolumeRankResponse.FromString,
-                )
         self.GetStockSnapshotByNumArr = channel.unary_unary(
                 '/sinopac_forwarder.SinopacForwarder/GetStockSnapshotByNumArr',
                 request_serializer=sinopac__forwarder__pb2.StockNumArr.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
+                )
+        self.GetStockSnapshotTSE = channel.unary_unary(
+                '/sinopac_forwarder.SinopacForwarder/GetStockSnapshotTSE',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
                 )
         self.GetStockHistoryTick = channel.unary_unary(
@@ -79,6 +59,26 @@ class SinopacForwarderStub(object):
                 '/sinopac_forwarder.SinopacForwarder/GetStockHistoryCloseByDateArr',
                 request_serializer=sinopac__forwarder__pb2.StockNumArrWithDateArr.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.StockHistoryCloseResponse.FromString,
+                )
+        self.GetStockTSEHistoryTick = channel.unary_unary(
+                '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryTick',
+                request_serializer=sinopac__forwarder__pb2.Date.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockHistoryTickResponse.FromString,
+                )
+        self.GetStockTSEHistoryKbar = channel.unary_unary(
+                '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryKbar',
+                request_serializer=sinopac__forwarder__pb2.Date.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockHistoryKbarResponse.FromString,
+                )
+        self.GetStockTSEHistoryClose = channel.unary_unary(
+                '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryClose',
+                request_serializer=sinopac__forwarder__pb2.Date.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockHistoryCloseResponse.FromString,
+                )
+        self.GetStockVolumeRank = channel.unary_unary(
+                '/sinopac_forwarder.SinopacForwarder/GetStockVolumeRank',
+                request_serializer=sinopac__forwarder__pb2.VolumeRankRequest.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockVolumeRankResponse.FromString,
                 )
         self.SubscribeStockTick = channel.unary_unary(
                 '/sinopac_forwarder.SinopacForwarder/SubscribeStockTick',
@@ -106,7 +106,8 @@ class SinopacForwarderServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetServerToken(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Basic
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -123,7 +124,38 @@ class SinopacForwarderServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetStockSnapshotByNumArr(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetStockSnapshotTSE(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStockHistoryTick(self, request, context):
+        """History
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStockHistoryKbar(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStockHistoryClose(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStockHistoryCloseByDateArr(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -148,37 +180,8 @@ class SinopacForwarderServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetStockVolumeRank(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetStockSnapshotByNumArr(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetStockHistoryTick(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetStockHistoryKbar(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetStockHistoryClose(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetStockHistoryCloseByDateArr(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Target
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -225,34 +228,14 @@ def add_SinopacForwarderServicer_to_server(servicer, server):
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=sinopac__forwarder__pb2.StockSnapshotResponse.SerializeToString,
             ),
-            'GetStockSnapshotTSE': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetStockSnapshotTSE,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockSnapshotResponse.SerializeToString,
-            ),
-            'GetStockTSEHistoryTick': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetStockTSEHistoryTick,
-                    request_deserializer=sinopac__forwarder__pb2.Date.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockHistoryTickResponse.SerializeToString,
-            ),
-            'GetStockTSEHistoryKbar': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetStockTSEHistoryKbar,
-                    request_deserializer=sinopac__forwarder__pb2.Date.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockHistoryKbarResponse.SerializeToString,
-            ),
-            'GetStockTSEHistoryClose': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetStockTSEHistoryClose,
-                    request_deserializer=sinopac__forwarder__pb2.Date.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockHistoryCloseResponse.SerializeToString,
-            ),
-            'GetStockVolumeRank': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetStockVolumeRank,
-                    request_deserializer=sinopac__forwarder__pb2.VolumeRankRequest.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockVolumeRankResponse.SerializeToString,
-            ),
             'GetStockSnapshotByNumArr': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotByNumArr,
                     request_deserializer=sinopac__forwarder__pb2.StockNumArr.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockSnapshotResponse.SerializeToString,
+            ),
+            'GetStockSnapshotTSE': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockSnapshotTSE,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=sinopac__forwarder__pb2.StockSnapshotResponse.SerializeToString,
             ),
             'GetStockHistoryTick': grpc.unary_unary_rpc_method_handler(
@@ -274,6 +257,26 @@ def add_SinopacForwarderServicer_to_server(servicer, server):
                     servicer.GetStockHistoryCloseByDateArr,
                     request_deserializer=sinopac__forwarder__pb2.StockNumArrWithDateArr.FromString,
                     response_serializer=sinopac__forwarder__pb2.StockHistoryCloseResponse.SerializeToString,
+            ),
+            'GetStockTSEHistoryTick': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockTSEHistoryTick,
+                    request_deserializer=sinopac__forwarder__pb2.Date.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockHistoryTickResponse.SerializeToString,
+            ),
+            'GetStockTSEHistoryKbar': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockTSEHistoryKbar,
+                    request_deserializer=sinopac__forwarder__pb2.Date.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockHistoryKbarResponse.SerializeToString,
+            ),
+            'GetStockTSEHistoryClose': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockTSEHistoryClose,
+                    request_deserializer=sinopac__forwarder__pb2.Date.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockHistoryCloseResponse.SerializeToString,
+            ),
+            'GetStockVolumeRank': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockVolumeRank,
+                    request_deserializer=sinopac__forwarder__pb2.VolumeRankRequest.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockVolumeRankResponse.SerializeToString,
             ),
             'SubscribeStockTick': grpc.unary_unary_rpc_method_handler(
                     servicer.SubscribeStockTick,
@@ -357,91 +360,6 @@ class SinopacForwarder(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetStockSnapshotTSE(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockSnapshotTSE',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetStockTSEHistoryTick(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryTick',
-            sinopac__forwarder__pb2.Date.SerializeToString,
-            sinopac__forwarder__pb2.StockHistoryTickResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetStockTSEHistoryKbar(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryKbar',
-            sinopac__forwarder__pb2.Date.SerializeToString,
-            sinopac__forwarder__pb2.StockHistoryKbarResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetStockTSEHistoryClose(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryClose',
-            sinopac__forwarder__pb2.Date.SerializeToString,
-            sinopac__forwarder__pb2.StockHistoryCloseResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetStockVolumeRank(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockVolumeRank',
-            sinopac__forwarder__pb2.VolumeRankRequest.SerializeToString,
-            sinopac__forwarder__pb2.StockVolumeRankResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
     def GetStockSnapshotByNumArr(request,
             target,
             options=(),
@@ -454,6 +372,23 @@ class SinopacForwarder(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockSnapshotByNumArr',
             sinopac__forwarder__pb2.StockNumArr.SerializeToString,
+            sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetStockSnapshotTSE(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockSnapshotTSE',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -523,6 +458,74 @@ class SinopacForwarder(object):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockHistoryCloseByDateArr',
             sinopac__forwarder__pb2.StockNumArrWithDateArr.SerializeToString,
             sinopac__forwarder__pb2.StockHistoryCloseResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetStockTSEHistoryTick(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryTick',
+            sinopac__forwarder__pb2.Date.SerializeToString,
+            sinopac__forwarder__pb2.StockHistoryTickResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetStockTSEHistoryKbar(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryKbar',
+            sinopac__forwarder__pb2.Date.SerializeToString,
+            sinopac__forwarder__pb2.StockHistoryKbarResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetStockTSEHistoryClose(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockTSEHistoryClose',
+            sinopac__forwarder__pb2.Date.SerializeToString,
+            sinopac__forwarder__pb2.StockHistoryCloseResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetStockVolumeRank(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockVolumeRank',
+            sinopac__forwarder__pb2.VolumeRankRequest.SerializeToString,
+            sinopac__forwarder__pb2.StockVolumeRankResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
