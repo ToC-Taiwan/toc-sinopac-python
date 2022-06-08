@@ -33,7 +33,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             person_id (str): _description_
             passwd (str): _description_
             ca_passwd (str): _description_
-            is_first (bool): _description_
+            is_main (bool): _description_
 
         Returns:
             _type_: _description_
@@ -77,7 +77,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         set_event_callback _summary_
 
         Args:
-            security_type (_type_): _description_
+            func (_type_): _description_
         '''
         self.__api.quote.set_event_callback(func)
 
@@ -239,10 +239,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
 
     def get_stock_volume_rank_by_date(self, count, date):
         '''
-        kbars _summary_
+        get_stock_volume_rank_by_date _summary_
 
         Args:
-            contract (_type_): _description_
+            count (_type_): _description_
             date (_type_): _description_
 
         Returns:
@@ -259,8 +259,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         subscribe_stock_tick _summary_
 
         Args:
-            count (_type_): _description_
-            date (_type_): _description_
+            stock_num (_type_): _description_
+
+        Returns:
+            _type_: _description_
         '''
         try:
             self.__api.quote.subscribe(
@@ -354,9 +356,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         buy_stock _summary_
 
         Args:
-            stock_num (_type_): _description_
-            price (_type_): _description_
-            quantity (_type_): _description_
+            stock_num (str): _description_
+            price (float): _description_
+            quantity (int): _description_
+            sim (bool): _description_
 
         Returns:
             _type_: _description_
@@ -565,9 +568,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
     def get_order_status(self):
         '''
         get_order_status _summary_
-
-        Args:
-            sim (_type_): _description_
 
         Returns:
             _type_: _description_

@@ -1,12 +1,11 @@
 import threading
-import typing
 
 from logger import logger
 from sinopac import Sinopac
 
 
 class SinopacWorker():
-    def __init__(self, main_worker: Sinopac, workers: typing.List[Sinopac]):
+    def __init__(self, main_worker: Sinopac, workers: list[Sinopac]):
         self.main_worker = main_worker
         self.workers = workers
         # request count
@@ -15,8 +14,8 @@ class SinopacWorker():
         # subscribe list
         self.subscribe_count = [int() for _ in range(len(workers))]
         self.sub_lock = threading.Lock()
-        self.stock_tick_sub_dict: typing.Dict[str, int] = {}
-        self.stock_bidask_sub_dict: typing.Dict[str, int] = {}
+        self.stock_tick_sub_dict: dict[str, int] = {}
+        self.stock_bidask_sub_dict: dict[str, int] = {}
 
     def get_main(self):
         '''

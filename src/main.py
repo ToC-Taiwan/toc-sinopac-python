@@ -1,6 +1,4 @@
 '''SINOPAC PYTHON API FORWARDER'''
-import typing
-
 from cron import init_schedule_job
 from env import RequiredEnv
 from grpcsrv import serve
@@ -18,7 +16,7 @@ connection_count = env.connection_count
 init_schedule_job()
 
 MAIN_WORKER: Sinopac
-SINOPAC_WORKER_POOL: typing.List[Sinopac] = []
+SINOPAC_WORKER_POOL: list[Sinopac] = []
 
 for i in range(int(connection_count)):
     logger.info('establish connection %d', i+1)

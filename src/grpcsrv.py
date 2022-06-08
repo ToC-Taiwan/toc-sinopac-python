@@ -2,7 +2,6 @@ import os
 import random
 import string
 import threading
-import typing
 from concurrent import futures
 from datetime import datetime
 from queue import Full, Queue
@@ -28,7 +27,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -41,7 +39,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -80,7 +77,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -108,7 +104,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -126,7 +121,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -154,7 +148,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -184,7 +177,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -210,7 +202,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -240,7 +231,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -266,7 +256,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -296,7 +285,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -327,7 +315,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -459,8 +446,7 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
         quote_callback_v1 _summary_
 
         Args:
-            exchange (sj.Exchange): _description_
-            tick (_type_): _description_
+            tick (sj.TickSTKv1): _description_
         '''
         try:
             self.quote_queue.put(sinopac_forwarder_pb2.StockRealTimeTickResponse(
@@ -504,8 +490,7 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
         bid_ask_callback _summary_
 
         Args:
-            exchange (sj.Exchange): _description_
-            bidask (_type_): _description_
+            bidask (sj.BidAskSTKv1): _description_
         '''
         tmp = sinopac_forwarder_pb2.StockRealTimeBidAskResponse(
             code=bidask.code,
@@ -534,12 +519,12 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
                 continue
             yield self.bid_ask_queue.get()
 
-    def order_status_callback(self, reply: typing.List[sj.order.Trade]):
+    def order_status_callback(self, reply: list[sj.order.Trade]):
         '''
         order_status_callback _summary_
 
         Args:
-            reply (typing.List[sj.order.Trade]): _description_
+            reply (list[sj.order.Trade]): _description_
         '''
         with self.order_cb_lock:
             if len(reply) != 0:
@@ -581,7 +566,6 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -600,7 +584,6 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -619,7 +602,6 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -638,7 +620,6 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -657,7 +638,6 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -676,7 +656,6 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -708,7 +687,6 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
 
         Args:
             request (_type_): _description_
-            _ (_type_): _description_
 
         Returns:
             _type_: _description_
@@ -760,7 +738,6 @@ def fill_sinopac_snapshot_arr(contracts, snapshots, sinopac: Sinopac):
         contracts (_type_): _description_
         snapshots (_type_): _description_
         sinopac (Sinopac): _description_
-        mutex (_type_): _description_
     '''
     snapshots.extend(sinopac.snapshots(contracts))
 
@@ -771,10 +748,10 @@ def fill_history_tick_response(contract, num, date, response, sinopac: Sinopac):
 
     Args:
         contract (_type_): _description_
+        num (_type_): _description_
         date (_type_): _description_
         response (_type_): _description_
         sinopac (Sinopac): _description_
-        mutex (_type_): _description_
     '''
     ticks = sinopac.ticks(contract, date)
     total_count = len(ticks.ts)
@@ -812,10 +789,10 @@ def fill_history_kbar_response(contract, num, date, response, sinopac: Sinopac):
 
     Args:
         contract (_type_): _description_
+        num (_type_): _description_
         date (_type_): _description_
         response (_type_): _description_
         sinopac (Sinopac): _description_
-        mutex (_type_): _description_
     '''
     kbar = sinopac.kbars(contract, date)
     total_count = len(kbar.ts)
@@ -853,7 +830,6 @@ def fill_history_close_response(contract, num, date, response, sinopac: Sinopac)
         date (_type_): _description_
         response (_type_): _description_
         sinopac (Sinopac): _description_
-        mutex (_type_): _description_
     '''
     response.data.append(sinopac_forwarder_pb2.StockHistoryCloseMessage(
         code=num,
@@ -862,14 +838,14 @@ def fill_history_close_response(contract, num, date, response, sinopac: Sinopac)
     ))
 
 
-def serve(port: str, main_worker: Sinopac, workers: typing.List[Sinopac]):
+def serve(port: str, main_worker: Sinopac, workers: list[Sinopac]):
     '''
     serve _summary_
 
     Args:
         port (str): _description_
-        main_connection (Sinopac): _description_
-        workers (typing.List[Sinopac]): _description_
+        main_worker (Sinopac): _description_
+        workers (list[Sinopac]): _description_
     '''
     global WORKERS  # pylint: disable=global-statement
     WORKERS = SinopacWorker(main_worker, workers)
