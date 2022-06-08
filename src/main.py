@@ -1,4 +1,4 @@
-'''SINOPAC PYTHON API FORWARDER'''
+"""SINOPAC PYTHON API FORWARDER"""
 from cron import init_schedule_job
 from env import RequiredEnv
 from grpcsrv import serve
@@ -19,7 +19,7 @@ MAIN_WORKER: Sinopac
 SINOPAC_WORKER_POOL: list[Sinopac] = []
 
 for i in range(int(connection_count)):
-    logger.info('establish connection %d', i+1)
+    logger.info("establish connection %d", i + 1)
     is_main = bool(i == 0)
     new_connection = Sinopac().login(person_id, password, ca_password, is_main)
     if is_main is True:
