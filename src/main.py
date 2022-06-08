@@ -24,7 +24,7 @@ for i in range(int(connection_count)):
     logger.info('establish connection %d', i+1)
     is_main = bool(i == 0)
     new_connection = Sinopac().login(person_id, password, ca_password, is_main)
-    if is_main:
+    if is_main is True:
         MAIN_WORKER = new_connection
         # if do not let main worker be the first worker in the pool, then continue
         # continue

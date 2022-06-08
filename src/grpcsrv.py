@@ -1,10 +1,11 @@
+import os
 import random
 import string
 import threading
 import typing
 from concurrent import futures
 from datetime import datetime
-from queue import Queue
+from queue import Full, Queue
 
 import grpc
 import numpy as np
@@ -417,10 +418,10 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
 class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceServicer):
     def __init__(self):
-        self.event_queue = Queue()
-        self.quote_queue = Queue()
-        self.bid_ask_queue = Queue()
-        self.order_status_queue = Queue()
+        self.event_queue = Queue(256)
+        self.quote_queue = Queue(256)
+        self.bid_ask_queue = Queue(256)
+        self.order_status_queue = Queue(256)
         self.order_cb_lock = threading.Lock()
 
     def event_callback(self, resp_code: int, event_code: int, info: str, event: str):
@@ -433,19 +434,23 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
             info (str): _description_
             event (str): _description_
         '''
-        self.event_queue.put(sinopac_forwarder_pb2.EventResponse(
+        data = sinopac_forwarder_pb2.EventResponse(
             resp_code=resp_code,
             event_code=event_code,
             info=info,
             event=event,
-        ))
+        )
+        try:
+            self.event_queue.put(item=data, block=True, timeout=10)
+        except Full:
+            os._exit(1)
 
     def EventChannel(self, request, context: grpc.RpcContext):
         while True:
             if context.is_active() is not True:
                 logger.warning('EventChannel is down')
                 return
-            if self.event_queue.empty():
+            if self.event_queue.empty() is True:
                 continue
             yield self.event_queue.get()
 
@@ -457,36 +462,40 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
             exchange (sj.Exchange): _description_
             tick (_type_): _description_
         '''
-        self.quote_queue.put(sinopac_forwarder_pb2.StockRealTimeTickResponse(
-            code=tick.code,
-            date_time=datetime.strftime(tick.datetime, '%Y-%m-%d %H:%M:%S.%f'),
-            open=tick.open,
-            avg_price=tick.avg_price,
-            close=tick.close,
-            high=tick.high,
-            low=tick.low,
-            amount=tick.amount,
-            total_amount=tick.total_amount,
-            volume=tick.volume,
-            total_volume=tick.total_volume,
-            tick_type=tick.tick_type,
-            chg_type=tick.chg_type,
-            price_chg=tick.price_chg,
-            pct_chg=tick.pct_chg,
-            bid_side_total_vol=tick.bid_side_total_vol,
-            ask_side_total_vol=tick.ask_side_total_vol,
-            bid_side_total_cnt=tick.bid_side_total_cnt,
-            ask_side_total_cnt=tick.ask_side_total_cnt,
-            suspend=tick.suspend,
-            simtrade=tick.simtrade,
-        ))
+        try:
+            self.quote_queue.put(sinopac_forwarder_pb2.StockRealTimeTickResponse(
+                code=tick.code,
+                date_time=datetime.strftime(tick.datetime, '%Y-%m-%d %H:%M:%S.%f'),
+                open=tick.open,
+                avg_price=tick.avg_price,
+                close=tick.close,
+                high=tick.high,
+                low=tick.low,
+                amount=tick.amount,
+                total_amount=tick.total_amount,
+                volume=tick.volume,
+                total_volume=tick.total_volume,
+                tick_type=tick.tick_type,
+                chg_type=tick.chg_type,
+                price_chg=tick.price_chg,
+                pct_chg=tick.pct_chg,
+                bid_side_total_vol=tick.bid_side_total_vol,
+                ask_side_total_vol=tick.ask_side_total_vol,
+                bid_side_total_cnt=tick.bid_side_total_cnt,
+                ask_side_total_cnt=tick.ask_side_total_cnt,
+                suspend=tick.suspend,
+                simtrade=tick.simtrade,
+            ), block=True, timeout=10)
+        except Full:
+            os._exit(1)
 
     def TickChannel(self, request, context: grpc.RpcContext):
         while True:
             if context.is_active() is not True:
+                logger.warning('TickChannel is down')
                 WORKERS.unsubscribe_all_tick()
                 return
-            if self.quote_queue.empty():
+            if self.quote_queue.empty() is True:
                 continue
             yield self.quote_queue.get()
 
@@ -510,14 +519,18 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
         tmp.ask_price.extend(bidask.ask_price)
         tmp.ask_volume.extend(bidask.ask_volume)
         tmp.diff_ask_vol.extend(bidask.diff_ask_vol)
-        self.bid_ask_queue.put(tmp)
+        try:
+            self.bid_ask_queue.put(item=tmp, block=True, timeout=10)
+        except Full:
+            os._exit(1)
 
     def BidAskChannel(self, request, context: grpc.RpcContext):
         while True:
             if context.is_active() is not True:
+                logger.warning('BidAskChannel is down')
                 WORKERS.unsubscribe_all_bidask()
                 return
-            if self.bid_ask_queue.empty():
+            if self.bid_ask_queue.empty() is True:
                 continue
             yield self.bid_ask_queue.get()
 
@@ -538,22 +551,25 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
                         order_price = order.status.modified_price
                     else:
                         order_price = order.order.price
-                    self.order_status_queue.put(sinopac_forwarder_pb2.StockOrderStatus(
-                        code=order.contract.code,
-                        action=order.order.action,
-                        price=order_price,
-                        quantity=order.order.quantity,
-                        order_id=order.status.id,
-                        status=order.status.status,
-                        order_time=datetime.strftime(order.status.order_datetime, '%Y-%m-%d %H:%M:%S'),
-                    ))
+                    try:
+                        self.order_status_queue.put(sinopac_forwarder_pb2.StockOrderStatus(
+                            code=order.contract.code,
+                            action=order.order.action,
+                            price=order_price,
+                            quantity=order.order.quantity,
+                            order_id=order.status.id,
+                            status=order.status.status,
+                            order_time=datetime.strftime(order.status.order_datetime, '%Y-%m-%d %H:%M:%S'),
+                        ), block=True, timeout=10)
+                    except Full:
+                        os._exit(1)
 
     def OrderStatusChannel(self, request, context: grpc.RpcContext):
         while True:
             if context.is_active() is not True:
                 logger.warning('OrderStatusChannel is down')
                 return
-            if self.order_status_queue.empty():
+            if self.order_status_queue.empty() is True:
                 continue
             yield self.order_status_queue.get()
 
