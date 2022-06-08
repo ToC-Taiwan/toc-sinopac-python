@@ -7,3 +7,9 @@ repos:
       - id: check-yaml
       - id: check-shebang-scripts-are-executable
       - id: detect-private-key
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        language: system
+        entry: ./scripts/hook_lint.sh
