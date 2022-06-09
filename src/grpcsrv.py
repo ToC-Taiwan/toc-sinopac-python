@@ -440,7 +440,7 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
             if self.event_queue.empty() is True:
                 logger.warning("EventChannel is down")
                 break
-            logger.warning(self.event_queue.get())
+            self.event_queue.get()
 
     def event_callback(self, resp_code: int, event_code: int, info: str, event: str):
         """
@@ -474,7 +474,7 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
             if self.quote_queue.empty() is True:
                 logger.warning("TickChannel is down")
                 break
-            logger.warning(self.quote_queue.get())
+            self.quote_queue.get()
 
     def quote_callback_v1(self, _, tick: sj.TickSTKv1):
         """
@@ -522,7 +522,7 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
             if self.bid_ask_queue.empty() is True:
                 logger.warning("BidAskChannel is down")
                 break
-            logger.warning(self.bid_ask_queue.get())
+            self.bid_ask_queue.get()
 
     def bid_ask_callback(self, _, bidask: sj.BidAskSTKv1):
         """
@@ -557,7 +557,7 @@ class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceService
             if self.order_status_queue.empty() is True:
                 logger.warning("OrderStatusChannel is down")
                 break
-            logger.warning(self.order_status_queue.get())
+            self.order_status_queue.get()
 
     def order_status_callback(self, reply: list[sj.order.Trade]):
         """

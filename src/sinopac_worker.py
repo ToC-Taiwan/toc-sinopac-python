@@ -66,7 +66,6 @@ class SinopacWorker:
                 return result
             self.subscribe_count[idx] += 1
             self.stock_tick_sub_dict[stock_num] = idx
-            logger.info("subscribe_stock_tick: %s", stock_num)
         return None
 
     def unsubscribe_stock_tick(self, stock_num):
@@ -87,7 +86,6 @@ class SinopacWorker:
                 result = self.workers[idx].unsubscribe_stock_tick(stock_num)
                 if result is not None:
                     return result
-                logger.info("unsubscribe_stock_tick: %s", stock_num)
         return None
 
     def subscribe_stock_bidask(self, stock_num):
@@ -109,7 +107,6 @@ class SinopacWorker:
                 return result
             self.subscribe_count[idx] += 1
             self.stock_bidask_sub_dict[stock_num] = idx
-            logger.info("subscribe_stock_bidask: %s", stock_num)
         return None
 
     def unsubscribe_stock_bidask(self, stock_num):
@@ -130,7 +127,6 @@ class SinopacWorker:
                 result = self.workers[idx].unsubscribe_stock_bidask(stock_num)
                 if result is not None:
                     return result
-                logger.info("unsubscribe_stock_bidask: %s", stock_num)
         return None
 
     def unsubscribe_all_tick(self):
