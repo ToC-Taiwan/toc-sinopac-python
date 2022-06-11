@@ -1,4 +1,4 @@
-# (2022-06-08)
+# (2022-06-11)
 
 ## CHANGELOG
 
@@ -10,6 +10,7 @@
 ### Features
 
 * **channel:** add all stream channel, sinopac trade method ([cb37927](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/cb379270f30a30667528bc1b2e10f2d233bb9070))
+* **grpc:** add stream callback, remove queue block ([ef6f839](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/ef6f8391205c16802b153edb6743e268c62dc95b))
 * **grpc:** add stream event to client, move sinopac callback to grpc, and set in workers ([654e64f](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/654e64fa8421ebb29522fa7a9355327f5bbb1019))
 * **history:** add history kbar, close ([2b16bdd](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/2b16bdd2b43f47702a6d4557946d784ba5a193e7))
 * **history:** add History Tick rpc ([60acb68](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/60acb6858f7920446689b483622772b68ec292bc))

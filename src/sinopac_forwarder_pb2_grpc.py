@@ -598,168 +598,15 @@ class SinopacForwarder(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
 
-class LongConeectionServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.EventChannel = channel.unary_stream(
-                '/sinopac_forwarder.LongConeectionService/EventChannel',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.EventResponse.FromString,
-                )
-        self.TickChannel = channel.unary_stream(
-                '/sinopac_forwarder.LongConeectionService/TickChannel',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockRealTimeTickResponse.FromString,
-                )
-        self.BidAskChannel = channel.unary_stream(
-                '/sinopac_forwarder.LongConeectionService/BidAskChannel',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockRealTimeBidAskResponse.FromString,
-                )
-        self.OrderStatusChannel = channel.unary_stream(
-                '/sinopac_forwarder.LongConeectionService/OrderStatusChannel',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockOrderStatus.FromString,
-                )
-
-
-class LongConeectionServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def EventChannel(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def TickChannel(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def BidAskChannel(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def OrderStatusChannel(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_LongConeectionServiceServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'EventChannel': grpc.unary_stream_rpc_method_handler(
-                    servicer.EventChannel,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=sinopac__forwarder__pb2.EventResponse.SerializeToString,
-            ),
-            'TickChannel': grpc.unary_stream_rpc_method_handler(
-                    servicer.TickChannel,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockRealTimeTickResponse.SerializeToString,
-            ),
-            'BidAskChannel': grpc.unary_stream_rpc_method_handler(
-                    servicer.BidAskChannel,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockRealTimeBidAskResponse.SerializeToString,
-            ),
-            'OrderStatusChannel': grpc.unary_stream_rpc_method_handler(
-                    servicer.OrderStatusChannel,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockOrderStatus.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'sinopac_forwarder.LongConeectionService', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
- # This class is part of an EXPERIMENTAL API.
-class LongConeectionService(object):
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def EventChannel(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/sinopac_forwarder.LongConeectionService/EventChannel',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            sinopac__forwarder__pb2.EventResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def TickChannel(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/sinopac_forwarder.LongConeectionService/TickChannel',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            sinopac__forwarder__pb2.StockRealTimeTickResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def BidAskChannel(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/sinopac_forwarder.LongConeectionService/BidAskChannel',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            sinopac__forwarder__pb2.StockRealTimeBidAskResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def OrderStatusChannel(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/sinopac_forwarder.LongConeectionService/OrderStatusChannel',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            sinopac__forwarder__pb2.StockOrderStatus.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-
 class TradeServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """service LongConeectionService {
+    rpc EventChannel(google.protobuf.Empty) returns (stream EventResponse) {}
+    rpc TickChannel(google.protobuf.Empty) returns (stream StockRealTimeTickResponse) {}
+    rpc BidAskChannel(google.protobuf.Empty) returns (stream StockRealTimeBidAskResponse) {}
+    rpc OrderStatusChannel(google.protobuf.Empty) returns (stream StockOrderStatus) {}
+    }
+
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -805,7 +652,14 @@ class TradeServiceStub(object):
 
 
 class TradeServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """service LongConeectionService {
+    rpc EventChannel(google.protobuf.Empty) returns (stream EventResponse) {}
+    rpc TickChannel(google.protobuf.Empty) returns (stream StockRealTimeTickResponse) {}
+    rpc BidAskChannel(google.protobuf.Empty) returns (stream StockRealTimeBidAskResponse) {}
+    rpc OrderStatusChannel(google.protobuf.Empty) returns (stream StockOrderStatus) {}
+    }
+
+    """
 
     def BuyStock(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -895,7 +749,14 @@ def add_TradeServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class TradeService(object):
-    """Missing associated documentation comment in .proto file."""
+    """service LongConeectionService {
+    rpc EventChannel(google.protobuf.Empty) returns (stream EventResponse) {}
+    rpc TickChannel(google.protobuf.Empty) returns (stream StockRealTimeTickResponse) {}
+    rpc BidAskChannel(google.protobuf.Empty) returns (stream StockRealTimeBidAskResponse) {}
+    rpc OrderStatusChannel(google.protobuf.Empty) returns (stream StockOrderStatus) {}
+    }
+
+    """
 
     @staticmethod
     def BuyStock(request,

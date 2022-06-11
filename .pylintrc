@@ -35,7 +35,7 @@ load-plugins=
     pylint.extensions.typing,
     pylint.extensions.redefined_variable_type,
     pylint.extensions.comparison_placement,
-    pylint_protobuf
+    pylint_protobuf,
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
@@ -105,6 +105,7 @@ disable=
     format,
     # We anticipate #3512 where it will become optional
     fixme,
+    duplicate-code,
 
 
 [REPORTS]

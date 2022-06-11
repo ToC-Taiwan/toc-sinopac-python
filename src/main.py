@@ -28,4 +28,4 @@ for i in range(int(connection_count)):
         # continue
     SINOPAC_WORKER_POOL.append(new_connection)
 
-serve(port=grpc_port, main_worker=MAIN_WORKER, workers=SINOPAC_WORKER_POOL)
+serve(port=grpc_port, main_worker=MAIN_WORKER, workers=SINOPAC_WORKER_POOL, cfg=env)

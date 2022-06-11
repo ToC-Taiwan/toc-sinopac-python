@@ -6,10 +6,52 @@
 [![OS](https://img.shields.io/badge/OS-Linux-orange?logo=linux&logoColor=orange)](https://www.linux.org/)
 [![Container](https://img.shields.io/badge/Container-Docker-blue?logo=docker&logoColor=blue)](https://www.docker.com/)
 
-## Initialize
+## Tools
+
+### Conventional Commit
+
+- install git cz tool global
 
 ```sh
-pip install --no-warn-script-location --no-cache-dir -U -r requirements.txt
+npm install -g commitizen
+npm install -g cz-conventional-changelog
+npm install -g conventional-changelog-cli
+echo '{ "path": "cz-conventional-changelog" }' > ~/.czrc
+```
+
+### Pre-commit
+
+- install git pre-commit tool global
+
+```sh
+pip install --no-warn-script-location --no-cache-dir pre-commit
+```
+
+- install/modify from config
+
+```sh
+pre-commit autoupdate
+pre-commit install
+```
+
+- dry run pre-commit
+
+```sh
+pre-commit run --all-files
+```
+
+### Modify CHANGELOG
+
+- First Time
+
+```sh
+conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+```
+
+- From Last semver tag
+
+```sh
+conventional-changelog -p angular -i CHANGELOG.md -s
 ```
 
 ### Needed dependency
@@ -22,7 +64,7 @@ pip uninstall -y -r requirements.txt
 rm -rf requirements.txt
 ```
 
-- Install
+- Install prod
 
 ```sh
 pip install -U \
@@ -31,50 +73,50 @@ pip install -U \
   shioaji \
   grpcio \
   grpcio-tools \
-  mypy \
-  mypy-protobuf \
-  pylint-protobuf \
-  pylint \
   python-dotenv \
   numpy \
-  schedule
-mypy --install-types --non-interactive ./src
+  schedule \
+  pika
 pip freeze > requirements.txt
 ```
 
-### Lint
+- dev
 
 ```sh
-mypy --install-types --non-interactive ./src && pylint ./src
+pip install -U \
+  --no-warn-script-location \
+  --no-cache-dir \
+  pre-commit \
+  mypy-protobuf \
+  pylint-protobuf \
+  black \
+  mypy \
+  pylint
+mypy --install-types --non-interactive ./src
+pre-commit install
+```
+
+## Initialize
+
+```sh
+pip install --no-warn-script-location --no-cache-dir -U -r requirements.txt
 ```
 
 ### Run
 
 ```sh
-echo 'DEPLOYMENT=dev
+echo 'DEPLOYMENT=prod
 GRPC_PORT=56666
-CONNECTION_COUNT=4
-
+CONNECTION_COUNT=5
 PERSON_ID=XXXXXXXXXX
 PASSWORD=YYYYYYYYYY
-CA_PASSWORD=ZZZZZZZZZZ' > ./.env
+CA_PASSWORD=ZZZZZZZZZZ
+RABBITMQ_EXCHANGE=exchange
+RABBITMQ_URL=amqp://guest:guest@localhost:5672/'> ./.env
 ```
 
 ```sh
 python -BOO ./src/main.py
-```
-
-### Dev
-
-```sh
-find . -type d -name __pycache__ -exec rm -rf "{}" \;
-```
-
-### Git
-
-```sh
-git fetch --prune --prune-tags origin
-git check-ignore *
 ```
 
 ## Authors

@@ -79,18 +79,21 @@ class EventResponse(google.protobuf.message.Message):
     EVENT_CODE_FIELD_NUMBER: builtins.int
     INFO_FIELD_NUMBER: builtins.int
     EVENT_FIELD_NUMBER: builtins.int
+    EVENT_TIME_FIELD_NUMBER: builtins.int
     resp_code: builtins.int
     event_code: builtins.int
     info: typing.Text
     event: typing.Text
+    event_time: typing.Text
     def __init__(self,
         *,
         resp_code: builtins.int = ...,
         event_code: builtins.int = ...,
         info: typing.Text = ...,
         event: typing.Text = ...,
+        event_time: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["event",b"event","event_code",b"event_code","info",b"info","resp_code",b"resp_code"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["event",b"event","event_code",b"event_code","event_time",b"event_time","info",b"info","resp_code",b"resp_code"]) -> None: ...
 global___EventResponse = EventResponse
 
 class Date(google.protobuf.message.Message):

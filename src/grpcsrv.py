@@ -3,15 +3,15 @@ import string
 import threading
 from concurrent import futures
 from datetime import datetime
-from queue import Queue
 
 import grpc
 import numpy as np
-import shioaji as sj
 
 import sinopac_forwarder_pb2
 import sinopac_forwarder_pb2_grpc
+from env import RequiredEnv
 from logger import logger
+from rabbitmq import RabbitMQS
 from sinopac import Sinopac
 from sinopac_worker import SinopacWorker
 
@@ -418,179 +418,6 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         return response
 
 
-class gRPCLongConnection(sinopac_forwarder_pb2_grpc.LongConeectionServiceServicer):
-    def __init__(self):
-        # queue
-        self.event_queue = Queue()
-        self.quote_queue = Queue()
-        self.bid_ask_queue = Queue()
-        self.order_status_queue = Queue()
-        # lock
-        self.order_cb_lock = threading.Lock()
-
-    def EventChannel(self, request, context: grpc.RpcContext):
-        context.add_callback(self.event_channel_down_callback)
-        while True:
-            if self.event_queue.empty() is True:
-                continue
-            yield self.event_queue.get()
-
-    def event_channel_down_callback(self):
-        while True:
-            if self.event_queue.empty() is True:
-                logger.warning("EventChannel is down")
-                break
-            self.event_queue.get()
-
-    def event_callback(self, resp_code: int, event_code: int, info: str, event: str):
-        """
-        event_callback _summary_
-
-        Args:
-            resp_code (int): _description_
-            event_code (int): _description_
-            info (str): _description_
-            event (str): _description_
-        """
-        self.event_queue.put(
-            sinopac_forwarder_pb2.EventResponse(
-                resp_code=resp_code,
-                event_code=event_code,
-                info=info,
-                event=event,
-            )
-        )
-
-    def TickChannel(self, request, context: grpc.RpcContext):
-        context.add_callback(self.tick_channel_down_callback)
-        while True:
-            if self.quote_queue.empty() is True:
-                continue
-            yield self.quote_queue.get()
-
-    def tick_channel_down_callback(self):
-        WORKERS.unsubscribe_all_tick()
-        while True:
-            if self.quote_queue.empty() is True:
-                logger.warning("TickChannel is down")
-                break
-            self.quote_queue.get()
-
-    def quote_callback_v1(self, _, tick: sj.TickSTKv1):
-        """
-        quote_callback_v1 _summary_
-
-        Args:
-            tick (sj.TickSTKv1): _description_
-        """
-        self.quote_queue.put(
-            sinopac_forwarder_pb2.StockRealTimeTickResponse(
-                code=tick.code,
-                date_time=datetime.strftime(tick.datetime, "%Y-%m-%d %H:%M:%S.%f"),
-                open=tick.open,
-                avg_price=tick.avg_price,
-                close=tick.close,
-                high=tick.high,
-                low=tick.low,
-                amount=tick.amount,
-                total_amount=tick.total_amount,
-                volume=tick.volume,
-                total_volume=tick.total_volume,
-                tick_type=tick.tick_type,
-                chg_type=tick.chg_type,
-                price_chg=tick.price_chg,
-                pct_chg=tick.pct_chg,
-                bid_side_total_vol=tick.bid_side_total_vol,
-                ask_side_total_vol=tick.ask_side_total_vol,
-                bid_side_total_cnt=tick.bid_side_total_cnt,
-                ask_side_total_cnt=tick.ask_side_total_cnt,
-                suspend=tick.suspend,
-                simtrade=tick.simtrade,
-            )
-        )
-
-    def BidAskChannel(self, request, context: grpc.RpcContext):
-        context.add_callback(self.bid_ask_channel_down_callback)
-        while True:
-            if self.bid_ask_queue.empty() is True:
-                continue
-            yield self.bid_ask_queue.get()
-
-    def bid_ask_channel_down_callback(self):
-        WORKERS.unsubscribe_all_bidask()
-        while True:
-            if self.bid_ask_queue.empty() is True:
-                logger.warning("BidAskChannel is down")
-                break
-            self.bid_ask_queue.get()
-
-    def bid_ask_callback(self, _, bidask: sj.BidAskSTKv1):
-        """
-        bid_ask_callback _summary_
-
-        Args:
-            bidask (sj.BidAskSTKv1): _description_
-        """
-        tmp = sinopac_forwarder_pb2.StockRealTimeBidAskResponse(
-            code=bidask.code,
-            date_time=datetime.strftime(bidask.datetime, "%Y-%m-%d %H:%M:%S.%f"),
-            suspend=bidask.suspend,
-            simtrade=bidask.simtrade,
-        )
-        tmp.bid_price.extend(bidask.bid_price)
-        tmp.bid_volume.extend(bidask.bid_volume)
-        tmp.diff_bid_vol.extend(bidask.diff_bid_vol)
-        tmp.ask_price.extend(bidask.ask_price)
-        tmp.ask_volume.extend(bidask.ask_volume)
-        tmp.diff_ask_vol.extend(bidask.diff_ask_vol)
-        self.bid_ask_queue.put(tmp)
-
-    def OrderStatusChannel(self, request, context: grpc.RpcContext):
-        context.add_callback(self.order_status_channel_down_callback)
-        while True:
-            if self.order_status_queue.empty() is True:
-                continue
-            yield self.order_status_queue.get()
-
-    def order_status_channel_down_callback(self):
-        while True:
-            if self.order_status_queue.empty() is True:
-                logger.warning("OrderStatusChannel is down")
-                break
-            self.order_status_queue.get()
-
-    def order_status_callback(self, reply: list[sj.order.Trade]):
-        """
-        order_status_callback _summary_
-
-        Args:
-            reply (list[sj.order.Trade]): _description_
-        """
-        with self.order_cb_lock:
-            if len(reply) != 0:
-                for order in reply:
-                    if order.status.order_datetime is None:
-                        order.status.order_datetime = datetime.now()
-                    order_price = int()
-                    if order.status.modified_price != 0:
-                        order_price = order.status.modified_price
-                    else:
-                        order_price = order.order.price
-                    self.order_status_queue.put(
-                        sinopac_forwarder_pb2.StockOrderStatus(
-                            code=order.contract.code,
-                            action=order.order.action,
-                            price=order_price,
-                            quantity=order.order.quantity,
-                            order_id=order.status.id,
-                            status=order.status.status,
-                            order_time=datetime.strftime(
-                                order.status.order_datetime, "%Y-%m-%d %H:%M:%S"
-                            ),
-                        )
-                    )
-
-
 class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
     def BuyStock(self, request, _):
         """
@@ -888,7 +715,7 @@ def fill_history_close_response(contract, num, date, response, sinopac: Sinopac)
     )
 
 
-def serve(port: str, main_worker: Sinopac, workers: list[Sinopac]):
+def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: RequiredEnv):
     """
     serve _summary_
 
@@ -896,27 +723,37 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac]):
         port (str): _description_
         main_worker (Sinopac): _description_
         workers (list[Sinopac]): _description_
+        cfg (RequiredEnv): _description_
     """
     global WORKERS  # pylint: disable=global-statement
     WORKERS = SinopacWorker(main_worker, workers)
 
     # gRPC servicer
     sinopac_forwarder_servicer = gRPCSinopacForwarder()
-    long_connection_servicer = gRPCLongConnection()
     trade_servicer = gRPCTradeMethod()
 
     # set call back
-    WORKERS.set_event_cb(long_connection_servicer.event_callback)
-    WORKERS.set_quote_cb(long_connection_servicer.quote_callback_v1)
-    WORKERS.set_bid_ask_cb(long_connection_servicer.bid_ask_callback)
-    WORKERS.set_order_status_cb(long_connection_servicer.order_status_callback)
+    rq = RabbitMQS(
+        cfg.rabbitmq_url,
+        cfg.rabbitmq_exchange,
+    )
+    create_channel = []
+    create_channel.append(threading.Thread(target=rq.create_event_channel))
+    create_channel.append(threading.Thread(target=rq.create_tick_channel))
+    create_channel.append(threading.Thread(target=rq.create_bid_ask_channel))
+    create_channel.append(threading.Thread(target=rq.create_order_status_channel))
+    for t in create_channel:
+        t.start()
+        t.join()
+
+    WORKERS.set_event_cb(rq.event_callback)
+    WORKERS.set_quote_cb(rq.quote_callback_v1)
+    WORKERS.set_bid_ask_cb(rq.bid_ask_callback)
+    WORKERS.set_order_status_cb(rq.order_status_callback)
 
     server = grpc.server(futures.ThreadPoolExecutor())
     sinopac_forwarder_pb2_grpc.add_SinopacForwarderServicer_to_server(
         sinopac_forwarder_servicer, server
-    )
-    sinopac_forwarder_pb2_grpc.add_LongConeectionServiceServicer_to_server(
-        long_connection_servicer, server
     )
     sinopac_forwarder_pb2_grpc.add_TradeServiceServicer_to_server(
         trade_servicer, server
