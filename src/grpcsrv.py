@@ -417,6 +417,12 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                 response.fail_arr.append(stock_num)
         return response
 
+    def UnSubscribeStockAllTick(self, request, _):
+        return sinopac_forwarder_pb2.FunctionErr(err=WORKERS.unsubscribe_all_tick())
+
+    def UnSubscribeStockAllBidAsk(self, request, _):
+        return sinopac_forwarder_pb2.FunctionErr(err=WORKERS.unsubscribe_all_bidask())
+
 
 class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
     def BuyStock(self, request, _):

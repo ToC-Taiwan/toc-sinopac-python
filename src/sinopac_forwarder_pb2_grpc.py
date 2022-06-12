@@ -85,13 +85,18 @@ class SinopacForwarderStub(object):
                 request_serializer=sinopac__forwarder__pb2.StockNumArr.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.SubscribeResponse.FromString,
                 )
-        self.SubscribeStockBidAsk = channel.unary_unary(
-                '/sinopac_forwarder.SinopacForwarder/SubscribeStockBidAsk',
+        self.UnSubscribeStockTick = channel.unary_unary(
+                '/sinopac_forwarder.SinopacForwarder/UnSubscribeStockTick',
                 request_serializer=sinopac__forwarder__pb2.StockNumArr.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.SubscribeResponse.FromString,
                 )
-        self.UnSubscribeStockTick = channel.unary_unary(
-                '/sinopac_forwarder.SinopacForwarder/UnSubscribeStockTick',
+        self.UnSubscribeStockAllTick = channel.unary_unary(
+                '/sinopac_forwarder.SinopacForwarder/UnSubscribeStockAllTick',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.FunctionErr.FromString,
+                )
+        self.SubscribeStockBidAsk = channel.unary_unary(
+                '/sinopac_forwarder.SinopacForwarder/SubscribeStockBidAsk',
                 request_serializer=sinopac__forwarder__pb2.StockNumArr.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.SubscribeResponse.FromString,
                 )
@@ -99,6 +104,11 @@ class SinopacForwarderStub(object):
                 '/sinopac_forwarder.SinopacForwarder/UnSubscribeStockBidAsk',
                 request_serializer=sinopac__forwarder__pb2.StockNumArr.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.SubscribeResponse.FromString,
+                )
+        self.UnSubscribeStockAllBidAsk = channel.unary_unary(
+                '/sinopac_forwarder.SinopacForwarder/UnSubscribeStockAllBidAsk',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.FunctionErr.FromString,
                 )
 
 
@@ -192,19 +202,31 @@ class SinopacForwarderServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def SubscribeStockBidAsk(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def UnSubscribeStockTick(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UnSubscribeStockAllTick(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SubscribeStockBidAsk(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def UnSubscribeStockBidAsk(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UnSubscribeStockAllBidAsk(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -283,13 +305,18 @@ def add_SinopacForwarderServicer_to_server(servicer, server):
                     request_deserializer=sinopac__forwarder__pb2.StockNumArr.FromString,
                     response_serializer=sinopac__forwarder__pb2.SubscribeResponse.SerializeToString,
             ),
-            'SubscribeStockBidAsk': grpc.unary_unary_rpc_method_handler(
-                    servicer.SubscribeStockBidAsk,
+            'UnSubscribeStockTick': grpc.unary_unary_rpc_method_handler(
+                    servicer.UnSubscribeStockTick,
                     request_deserializer=sinopac__forwarder__pb2.StockNumArr.FromString,
                     response_serializer=sinopac__forwarder__pb2.SubscribeResponse.SerializeToString,
             ),
-            'UnSubscribeStockTick': grpc.unary_unary_rpc_method_handler(
-                    servicer.UnSubscribeStockTick,
+            'UnSubscribeStockAllTick': grpc.unary_unary_rpc_method_handler(
+                    servicer.UnSubscribeStockAllTick,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=sinopac__forwarder__pb2.FunctionErr.SerializeToString,
+            ),
+            'SubscribeStockBidAsk': grpc.unary_unary_rpc_method_handler(
+                    servicer.SubscribeStockBidAsk,
                     request_deserializer=sinopac__forwarder__pb2.StockNumArr.FromString,
                     response_serializer=sinopac__forwarder__pb2.SubscribeResponse.SerializeToString,
             ),
@@ -297,6 +324,11 @@ def add_SinopacForwarderServicer_to_server(servicer, server):
                     servicer.UnSubscribeStockBidAsk,
                     request_deserializer=sinopac__forwarder__pb2.StockNumArr.FromString,
                     response_serializer=sinopac__forwarder__pb2.SubscribeResponse.SerializeToString,
+            ),
+            'UnSubscribeStockAllBidAsk': grpc.unary_unary_rpc_method_handler(
+                    servicer.UnSubscribeStockAllBidAsk,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=sinopac__forwarder__pb2.FunctionErr.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -547,23 +579,6 @@ class SinopacForwarder(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def SubscribeStockBidAsk(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/SubscribeStockBidAsk',
-            sinopac__forwarder__pb2.StockNumArr.SerializeToString,
-            sinopac__forwarder__pb2.SubscribeResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
     def UnSubscribeStockTick(request,
             target,
             options=(),
@@ -575,6 +590,40 @@ class SinopacForwarder(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/UnSubscribeStockTick',
+            sinopac__forwarder__pb2.StockNumArr.SerializeToString,
+            sinopac__forwarder__pb2.SubscribeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UnSubscribeStockAllTick(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/UnSubscribeStockAllTick',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            sinopac__forwarder__pb2.FunctionErr.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SubscribeStockBidAsk(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/SubscribeStockBidAsk',
             sinopac__forwarder__pb2.StockNumArr.SerializeToString,
             sinopac__forwarder__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
@@ -594,6 +643,23 @@ class SinopacForwarder(object):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/UnSubscribeStockBidAsk',
             sinopac__forwarder__pb2.StockNumArr.SerializeToString,
             sinopac__forwarder__pb2.SubscribeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UnSubscribeStockAllBidAsk(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/UnSubscribeStockAllBidAsk',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            sinopac__forwarder__pb2.FunctionErr.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

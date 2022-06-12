@@ -133,19 +133,29 @@ class SinopacWorker:
         """
         unsubscribe_all_tick _summary_
         """
+        fail_arr = []
         if len(self.stock_tick_sub_dict) != 0:
             logger.info("unsubscribe all tick")
             for stock_num in list(self.stock_tick_sub_dict):
-                self.unsubscribe_stock_tick(stock_num)
+                if self.unsubscribe_stock_tick(stock_num) is not None:
+                    fail_arr.append(stock_num)
+        if len(fail_arr) != 0:
+            return f"unsubscribe_all_tick fail: {fail_arr}"
+        return ""
 
     def unsubscribe_all_bidask(self):
         """
         unsubscribe_all_bidask _summary_
         """
+        fail_arr = []
         if len(self.stock_bidask_sub_dict) != 0:
             logger.info("unsubscribe all bidask")
             for stock_num in list(self.stock_bidask_sub_dict):
-                self.unsubscribe_stock_bidask(stock_num)
+                if self.unsubscribe_stock_bidask(stock_num) is not None:
+                    fail_arr.append(stock_num)
+        if len(fail_arr) != 0:
+            return f"unsubscribe_all_bidask fail: {fail_arr}"
+        return ""
 
     def set_event_cb(self, func):
         """
