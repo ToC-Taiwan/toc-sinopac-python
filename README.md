@@ -112,7 +112,7 @@ PERSON_ID=XXXXXXXXXX
 PASSWORD=YYYYYYYYYY
 CA_PASSWORD=ZZZZZZZZZZ
 RABBITMQ_EXCHANGE=exchange
-RABBITMQ_URL=amqp://guest:guest@localhost:5672/'> ./.env
+RABBITMQ_URL=amqp://guest:guest@localhost:5672/%2f'> ./.env
 ```
 
 ```sh
