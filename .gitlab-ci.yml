@@ -1,0 +1,94 @@
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+include:
+  - local: SAST.gitlab-ci.yml
+  - local: Secret-Detection.gitlab-ci.yml
+
+variables:
+  DOCKER_DRIVER: overlay2
+  IMAGE_TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+  LATEST_TAG: $CI_REGISTRY_IMAGE:latest
+
+stages:
+  - test
+  - build
+  - deployment
+
+py-lint:
+  image: python:3.10.5-bullseye
+  only:
+    - main
+  stage: test
+  before_script:
+    - pip install --no-warn-script-location --no-cache-dir -r requirements.txt
+    - mypy --install-types --non-interactive ./src
+  script:
+    - pylint ./src
+    - mypy --config-file=./mypy.ini ./src
+
+docker_build:
+  image: docker:latest
+  only:
+    - main
+  stage: build
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $IMAGE_TAG -t $LATEST_TAG .
+    - docker push --all-tags $CI_REGISTRY_IMAGE
+    - docker rmi $IMAGE_TAG $LATEST_TAG
+    - docker system prune --volumes -f
+
+docker-deploy:
+  image: alpine:latest
+  only:
+    - main
+  stage: deployment
+  script:
+    - chmod og= $ID_ED25519
+    - apk update && apk add openssh-client
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_TAG"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop toc-sinopac-python || true"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker system prune --volumes -f"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "cat "$ENV" > /toc-sinopac-python/.env"
+    - |
+      ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run --name toc-sinopac-python \
+      --network tocvlan \
+      --ip=172.20.10.228 \
+      --restart always \
+      -v /$SERVER_USER/toc-sinopac-python-logs:/toc-sinopac-python/logs \
+      -e TZ="Asia/Taipei" \
+      -dt $IMAGE_TAG"
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    on_stop: stop_production
+
+stop_production:
+  image: alpine:latest
+  only:
+    - main
+  stage: deployment
+  script:
+    - chmod og= $ID_ED25519
+    - apk update && apk add openssh-client
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "cd /$SERVER_USER/toc-sinopac-python-logs && tar -czvPf /toc-sinopac-python-logs-$CI_COMMIT_SHORT_SHA.tgz ./*.log"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "rm -rf /$SERVER_USER/toc-sinopac-python-logs || true"
+    - scp -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP:/toc-sinopac-python-logs-$CI_COMMIT_SHORT_SHA.tgz toc-sinopac-python-logs-$CI_COMMIT_SHORT_SHA.tgz
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "rm -rf /toc-sinopac-python-logs-$CI_COMMIT_SHORT_SHA.tgz || true"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop toc-sinopac-python"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker system prune --volumes -f"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rmi $IMAGE_TAG"
+  when: manual
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
+  artifacts:
+    paths:
+      - toc-sinopac-python-logs-$CI_COMMIT_SHORT_SHA.tgz
+    expire_in: 2 week

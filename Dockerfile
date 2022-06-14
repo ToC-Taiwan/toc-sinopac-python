@@ -1,0 +1,19 @@
+FROM python:3.10.5-bullseye
+USER root
+
+ENV TZ=Asia/Taipei
+
+WORKDIR /
+RUN mkdir toc-sinopac-python
+WORKDIR /toc-sinopac-python
+COPY . .
+
+RUN apt update -y && \
+    apt install -y tzdata && \
+    apt autoremove -y && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-warn-script-location --no-cache-dir -r requirements.txt
+
+ENTRYPOINT ["/toc-sinopac-python/scripts/docker-entrypoint.sh"]
