@@ -26,6 +26,7 @@ py-lint:
   stage: test
   before_script:
     - pip install --no-warn-script-location --no-cache-dir -r requirements.txt
+    - pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
     - mypy --install-types --non-interactive ./src
   script:
     - pylint ./src
