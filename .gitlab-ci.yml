@@ -57,14 +57,13 @@ docker-deploy:
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_TAG"
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop toc-sinopac-python || true"
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker system prune --volumes -f"
-    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "cat "$ENV" > /$SERVER_USER/.env"
     - |
       ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run --name toc-sinopac-python \
       --network tocvlan \
       --ip=172.20.10.228 \
       --restart always \
       -v /$SERVER_USER/toc-sinopac-python-logs:/toc-sinopac-python/logs \
-      -v /$SERVER_USER/.env:/toc-sinopac-python/.env \
+      --env-file $ENV \
       -e TZ="Asia/Taipei" \
       -dt $IMAGE_TAG"
   environment:
