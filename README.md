@@ -76,7 +76,8 @@ pip install -U \
   python-dotenv \
   numpy \
   schedule \
-  pika
+  pika \
+  docker
 pip freeze > requirements.txt
 ```
 

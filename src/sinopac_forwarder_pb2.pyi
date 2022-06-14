@@ -11,6 +11,17 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+class Beat(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    MESSAGE_FIELD_NUMBER: builtins.int
+    message: typing.Text
+    def __init__(self,
+        *,
+        message: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["message",b"message"]) -> None: ...
+global___Beat = Beat
+
 class FunctionErr(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     ERR_FIELD_NUMBER: builtins.int
@@ -106,17 +117,6 @@ class Date(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["date",b"date"]) -> None: ...
 global___Date = Date
-
-class TokenResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-    TOKEN_FIELD_NUMBER: builtins.int
-    token: typing.Text
-    def __init__(self,
-        *,
-        token: typing.Text = ...,
-        ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["token",b"token"]) -> None: ...
-global___TokenResponse = TokenResponse
 
 class StockNumArr(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor

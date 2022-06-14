@@ -1,8 +1,9 @@
-import random
-import string
+import os
 import threading
+import time
 from concurrent import futures
 from datetime import datetime
+from queue import Queue
 
 import grpc
 import numpy as np
@@ -15,22 +16,28 @@ from rabbitmq import RabbitMQS
 from sinopac import Sinopac
 from sinopac_worker import SinopacWorker
 
-SERVER_TOKEN = "".join(random.choice(string.ascii_letters) for _ in range(50))
 WORKERS: SinopacWorker
 
 
 class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
-    def GetServerToken(self, request, _):
-        """
-        HealthCheck _summary_
+    def Heartbeat(self, request_iterator, _):
+        self.beat_queue: Queue = Queue()
+        threading.Thread(target=self.beat_timer).start()
+        for beat in request_iterator:
+            self.beat_queue.put(beat.message)
+            yield sinopac_forwarder_pb2.Beat(message=beat.message)
 
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        return sinopac_forwarder_pb2.TokenResponse(token=SERVER_TOKEN)
+    def beat_timer(self):
+        beat_time = datetime.now().timestamp()
+        while True:
+            if datetime.now().timestamp() > beat_time + 10:
+                logger.error("machine trading not responding")
+                os._exit(1)
+            if self.beat_queue.empty():
+                time.sleep(1)
+                continue
+            self.beat_queue.get()
+            beat_time = datetime.now().timestamp()
 
     def GetAllStockDetail(self, request, _):
         """

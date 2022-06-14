@@ -15,10 +15,10 @@ class SinopacForwarderStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetServerToken = channel.unary_unary(
-                '/sinopac_forwarder.SinopacForwarder/GetServerToken',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.TokenResponse.FromString,
+        self.Heartbeat = channel.stream_stream(
+                '/sinopac_forwarder.SinopacForwarder/Heartbeat',
+                request_serializer=sinopac__forwarder__pb2.Beat.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.Beat.FromString,
                 )
         self.GetAllStockDetail = channel.unary_unary(
                 '/sinopac_forwarder.SinopacForwarder/GetAllStockDetail',
@@ -115,15 +115,16 @@ class SinopacForwarderStub(object):
 class SinopacForwarderServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GetServerToken(self, request, context):
-        """Basic
+    def Heartbeat(self, request_iterator, context):
+        """Health check
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetAllStockDetail(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Basic
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -235,10 +236,10 @@ class SinopacForwarderServicer(object):
 
 def add_SinopacForwarderServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetServerToken': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetServerToken,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=sinopac__forwarder__pb2.TokenResponse.SerializeToString,
+            'Heartbeat': grpc.stream_stream_rpc_method_handler(
+                    servicer.Heartbeat,
+                    request_deserializer=sinopac__forwarder__pb2.Beat.FromString,
+                    response_serializer=sinopac__forwarder__pb2.Beat.SerializeToString,
             ),
             'GetAllStockDetail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllStockDetail,
@@ -341,7 +342,7 @@ class SinopacForwarder(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetServerToken(request,
+    def Heartbeat(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -351,9 +352,9 @@ class SinopacForwarder(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetServerToken',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            sinopac__forwarder__pb2.TokenResponse.FromString,
+        return grpc.experimental.stream_stream(request_iterator, target, '/sinopac_forwarder.SinopacForwarder/Heartbeat',
+            sinopac__forwarder__pb2.Beat.SerializeToString,
+            sinopac__forwarder__pb2.Beat.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -665,14 +666,7 @@ class SinopacForwarder(object):
 
 
 class TradeServiceStub(object):
-    """service LongConeectionService {
-    rpc EventChannel(google.protobuf.Empty) returns (stream EventResponse) {}
-    rpc TickChannel(google.protobuf.Empty) returns (stream StockRealTimeTickResponse) {}
-    rpc BidAskChannel(google.protobuf.Empty) returns (stream StockRealTimeBidAskResponse) {}
-    rpc OrderStatusChannel(google.protobuf.Empty) returns (stream StockOrderStatus) {}
-    }
-
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -718,14 +712,7 @@ class TradeServiceStub(object):
 
 
 class TradeServiceServicer(object):
-    """service LongConeectionService {
-    rpc EventChannel(google.protobuf.Empty) returns (stream EventResponse) {}
-    rpc TickChannel(google.protobuf.Empty) returns (stream StockRealTimeTickResponse) {}
-    rpc BidAskChannel(google.protobuf.Empty) returns (stream StockRealTimeBidAskResponse) {}
-    rpc OrderStatusChannel(google.protobuf.Empty) returns (stream StockOrderStatus) {}
-    }
-
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def BuyStock(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -815,14 +802,7 @@ def add_TradeServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class TradeService(object):
-    """service LongConeectionService {
-    rpc EventChannel(google.protobuf.Empty) returns (stream EventResponse) {}
-    rpc TickChannel(google.protobuf.Empty) returns (stream StockRealTimeTickResponse) {}
-    rpc BidAskChannel(google.protobuf.Empty) returns (stream StockRealTimeBidAskResponse) {}
-    rpc OrderStatusChannel(google.protobuf.Empty) returns (stream StockOrderStatus) {}
-    }
-
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def BuyStock(request,
