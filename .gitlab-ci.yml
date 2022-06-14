@@ -53,6 +53,8 @@ docker-deploy:
   script:
     - chmod og= $ID_ED25519
     - apk update && apk add openssh-client
+    - cp $ENV_FILE .env
+    - scp -r -i $ID_ED25519 -o StrictHostKeyChecking=no .env $SERVER_USER@$SERVER_IP:/$SERVER_USER/toc-sinopac-python-env/.env
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_TAG"
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop toc-sinopac-python || true"
@@ -63,7 +65,7 @@ docker-deploy:
       --ip=172.20.10.228 \
       --restart always \
       -v /$SERVER_USER/toc-sinopac-python-logs:/toc-sinopac-python/logs \
-      --env-file "$ENV" \
+      -v /$SERVER_USER/toc-sinopac-python-env/.env::/toc-sinopac-python/.env \
       -e TZ="Asia/Taipei" \
       -dt $IMAGE_TAG"
   environment:
