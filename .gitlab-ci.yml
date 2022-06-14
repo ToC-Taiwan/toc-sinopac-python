@@ -63,7 +63,7 @@ docker-deploy:
       --ip=172.20.10.228 \
       --restart always \
       -v /$SERVER_USER/toc-sinopac-python-logs:/toc-sinopac-python/logs \
-      --env-file $ENV \
+      --env-file "$ENV" \
       -e TZ="Asia/Taipei" \
       -dt $IMAGE_TAG"
   environment:
