@@ -12,46 +12,52 @@ import sinopac_forwarder_pb2
 logging.getLogger("pika").setLevel(logging.WARNING)
 
 
+class PikaCC:
+    def __init__(self, conn: pika.BlockingConnection, ch):
+        self.conn = conn
+        self.ch = ch
+
+    def heartbeat(self):
+        self.conn.process_data_events()
+
+
 class RabbitMQS:
-    def __init__(self, url: str, exchange: str):
+    def __init__(self, url: str, exchange: str, pool_size: int):
         # pika
         self.exchange = exchange
         self.parameters = pika.URLParameters(url)
+        self.pool_size = pool_size
         # queue
-        self.event_channel_queue: Queue = Queue()
-        self.tick_channel_queue: Queue = Queue()
-        self.bid_ask_channel_queue: Queue = Queue()
-        self.order_status_channel_queue: Queue = Queue()
+        self.pika_queue: Queue = Queue()
         # lock
         self.order_cb_lock = threading.Lock()
+        # initial connections
+        self.fill_pika_queue()
 
-    def send_heartbeat(self, conn: pika.BlockingConnection):
+    def send_heartbeat(self):
         while True:
-            conn.process_data_events()
-            time.sleep(30)
+            time.sleep(20)
+            count = 0
+            while True:
+                if count >= self.pool_size:
+                    break
+                p = self.pika_queue.get(block=True)
+                p.heartbeat()
+                count += 1
+                self.pika_queue.put(p)
 
-    def create_channel(self):
-        connection = pika.BlockingConnection(self.parameters)
-        channel = connection.channel()
-        channel.exchange_declare(
+    def create_pika(self):
+        conn = pika.BlockingConnection(self.parameters)
+        ch = conn.channel()
+        ch.exchange_declare(
             exchange=self.exchange, exchange_type="direct", durable=True
         )
-        threading.Thread(target=self.send_heartbeat, args=(connection,)).start()
-        return channel
+        return PikaCC(conn, ch)
 
-    def create_event_channel(self):
-        self.event_channel_queue.put(self.create_channel())
-
-    def create_order_status_channel(self):
-        self.order_status_channel_queue.put(self.create_channel())
-
-    def create_tick_channel(self):
-        for _ in range(32):
-            self.tick_channel_queue.put(self.create_channel())
-
-    def create_bid_ask_channel(self):
-        for _ in range(32):
-            self.bid_ask_channel_queue.put(self.create_channel())
+    def fill_pika_queue(self):
+        for _ in range(self.pool_size):
+            self.pika_queue.put(self.create_pika())
+        threading.Thread(target=self.send_heartbeat).start()
 
     def event_callback(self, resp_code: int, event_code: int, info: str, event: str):
         """
@@ -63,8 +69,8 @@ class RabbitMQS:
             info (str): _description_
             event (str): _description_
         """
-        channel = self.event_channel_queue.get(block=True)
-        channel.basic_publish(
+        p = self.pika_queue.get(block=True)
+        p.ch.basic_publish(
             exchange=self.exchange,
             routing_key="event",
             body=sinopac_forwarder_pb2.EventResponse(
@@ -75,7 +81,7 @@ class RabbitMQS:
                 event_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
             ).SerializeToString(),
         )
-        self.event_channel_queue.put(channel)
+        self.pika_queue.put(p)
 
     def order_status_callback(self, reply: list[sj.order.Trade]):
         """
@@ -93,8 +99,8 @@ class RabbitMQS:
                     order_price = order.status.modified_price
                 else:
                     order_price = order.order.price
-                channel = self.order_status_channel_queue.get(block=True)
-                channel.basic_publish(
+                p = self.pika_queue.get(block=True)
+                p.ch.basic_publish(
                     exchange=self.exchange,
                     routing_key="order_status",
                     body=sinopac_forwarder_pb2.StockOrderStatus(
@@ -109,7 +115,7 @@ class RabbitMQS:
                         ),
                     ).SerializeToString(),
                 )
-                self.order_status_channel_queue.put(channel)
+                self.pika_queue.put(p)
 
     def quote_callback_v1(self, _, tick: sj.TickSTKv1):
         """
@@ -118,8 +124,8 @@ class RabbitMQS:
         Args:
             tick (sj.TickSTKv1): _description_
         """
-        channel = self.tick_channel_queue.get(block=True)
-        channel.basic_publish(
+        p = self.pika_queue.get(block=True)
+        p.ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"tick:{tick.code}",
             body=sinopac_forwarder_pb2.StockRealTimeTickResponse(
@@ -146,7 +152,7 @@ class RabbitMQS:
                 simtrade=tick.simtrade,
             ).SerializeToString(),
         )
-        self.tick_channel_queue.put(channel)
+        self.pika_queue.put(p)
 
     def bid_ask_callback(self, _, bidask: sj.BidAskSTKv1):
         """
@@ -155,8 +161,8 @@ class RabbitMQS:
         Args:
             bidask (sj.BidAskSTKv1): _description_
         """
-        channel = self.bid_ask_channel_queue.get(block=True)
-        channel.basic_publish(
+        p = self.pika_queue.get(block=True)
+        p.ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"bid_ask:{bidask.code}",
             body=sinopac_forwarder_pb2.StockRealTimeBidAskResponse(
@@ -172,4 +178,4 @@ class RabbitMQS:
                 diff_ask_vol=bidask.diff_ask_vol,
             ).SerializeToString(),
         )
-        self.bid_ask_channel_queue.put(channel)
+        self.pika_queue.put(p)

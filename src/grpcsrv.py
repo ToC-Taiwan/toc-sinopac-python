@@ -742,15 +742,8 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     rq = RabbitMQS(
         cfg.rabbitmq_url,
         cfg.rabbitmq_exchange,
+        128,
     )
-    create_channel = []
-    create_channel.append(threading.Thread(target=rq.create_event_channel))
-    create_channel.append(threading.Thread(target=rq.create_tick_channel))
-    create_channel.append(threading.Thread(target=rq.create_bid_ask_channel))
-    create_channel.append(threading.Thread(target=rq.create_order_status_channel))
-    for t in create_channel:
-        t.start()
-        t.join()
 
     WORKERS.set_event_cb(rq.event_callback)
     WORKERS.set_quote_cb(rq.quote_callback_v1)
