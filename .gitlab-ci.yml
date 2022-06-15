@@ -67,6 +67,7 @@ docker-deploy:
       --restart always \
       -v /$SERVER_USER/toc-sinopac-python-logs:/toc-sinopac-python/logs \
       -v /$SERVER_USER/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
+      -v /var/run/docker.sock:/var/run/docker.sock \
       -e TZ="Asia/Taipei" \
       -dt $IMAGE_TAG"
   environment:
