@@ -19,8 +19,8 @@ class RabbitMQContainer:
     def run_rabbitmq(self):
         self.terminate_exist_rabbitmq()
 
-        container_host = "172.20.10.227"
-        container = self.client.containers.create(
+        docker_host = "172.20.10.96"
+        self.client.containers.run(
             auto_remove=True,
             image="rabbitmq:3.10.5-management",
             name="toc-rabbitmq",
@@ -29,19 +29,11 @@ class RabbitMQContainer:
                 "RABBITMQ_DEFAULT_PASS": "password",
             },
             detach=True,
+            network_mode="host",
         )
-
-        network = self.client.networks.get("tocvlan")
-        if network is None:
-            raise Exception("network not found")
-
-        network.connect(
-            container, ipv4_address=container_host, driver_opt={"Driver": "macvlan"}
-        )
-        container.start()
 
         a_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        location = (container_host, 15672)
+        location = (docker_host, 15672)
         result_of_check = a_socket.connect_ex(location)
         while True:
             if result_of_check == 0:
@@ -49,7 +41,7 @@ class RabbitMQContainer:
                 break
             time.sleep(1)
 
-        url = f"http://{container_host}:15672/api/exchanges/%2F/toc"
+        url = f"http://{docker_host}:15672/api/exchanges/%2F/toc"
         body = {
             "type": "direct",
             "durable": True,
