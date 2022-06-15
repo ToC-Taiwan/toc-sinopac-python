@@ -1,5 +1,4 @@
 import json
-import socket
 import time
 from base64 import b64encode
 
@@ -32,12 +31,16 @@ class RabbitMQContainer:
             network_mode="host",
         )
 
-        a_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        location = (docker_host, 15672)
-        result_of_check = a_socket.connect_ex(location)
+        userAndPass = b64encode(b"admin:password").decode("ascii")
+        headers = {
+            "Authorization": f"Basic {userAndPass}",
+            "Content-Type": "application/json",
+        }
+
+        url = f"http://{docker_host}:15672/api/health/checks/alarms"
         while True:
-            if result_of_check == 0:
-                a_socket.close()
+            r = requests.get(url=url, headers=headers)
+            if r.status_code == 200:
                 break
             time.sleep(1)
 
@@ -45,11 +48,6 @@ class RabbitMQContainer:
         body = {
             "type": "direct",
             "durable": True,
-        }
-        userAndPass = b64encode(b"admin:password").decode("ascii")
-        headers = {
-            "Authorization": f"Basic {userAndPass}",
-            "Content-Type": "application/json",
         }
         r = requests.put(url=url, data=json.dumps(body), headers=headers)
         if r.status_code != 201:
