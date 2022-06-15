@@ -62,8 +62,7 @@ docker-deploy:
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker system prune --volumes -f"
     - |
       ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run --name toc-sinopac-python \
-      --network tocvlan \
-      --ip=172.20.10.228 \
+      --network host \
       --restart always \
       -v /$SERVER_USER/toc-sinopac-python-logs:/toc-sinopac-python/logs \
       -v /$SERVER_USER/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
