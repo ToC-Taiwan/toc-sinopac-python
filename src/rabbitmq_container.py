@@ -45,7 +45,7 @@ class RabbitMQContainer:
         while True:
             try:
                 r = requests.get(
-                    url=f"http://{env.docker_host}:15672/api/health/checks/alarms",
+                    url=f"http://{env.network_host}:15672/api/health/checks/alarms",
                     headers=headers,
                 )
             except requests.exceptions.ConnectionError:
@@ -55,7 +55,7 @@ class RabbitMQContainer:
                 break
 
         r = requests.put(
-            url=f"http://{env.docker_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
+            url=f"http://{env.network_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
             data=json.dumps(
                 {
                     "type": "direct",
