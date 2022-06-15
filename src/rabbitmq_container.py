@@ -35,7 +35,9 @@ class RabbitMQContainer:
         if network is None:
             raise Exception("network not found")
 
-        network.connect(container, ipv4_address=container_host)
+        network.connect(
+            container, ipv4_address=container_host, driver_opt={"Driver": "macvlan"}
+        )
         container.start()
 
         a_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
