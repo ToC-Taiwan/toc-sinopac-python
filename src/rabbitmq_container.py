@@ -37,18 +37,27 @@ class RabbitMQContainer:
             "Content-Type": "application/json",
         }
 
-        url = f"http://{docker_host}:15672/api/health/checks/alarms"
         while True:
-            r = requests.get(url=url, headers=headers)
+            try:
+                r = requests.get(
+                    url=f"http://{docker_host}:15672/api/health/checks/alarms",
+                    headers=headers,
+                )
+            except requests.exceptions.ConnectionError:
+                time.sleep(1)
+                continue
             if r.status_code == 200:
                 break
-            time.sleep(1)
 
-        url = f"http://{docker_host}:15672/api/exchanges/%2F/toc"
-        body = {
-            "type": "direct",
-            "durable": True,
-        }
-        r = requests.put(url=url, data=json.dumps(body), headers=headers)
+        r = requests.put(
+            url=f"http://{docker_host}:15672/api/exchanges/%2F/toc",
+            data=json.dumps(
+                {
+                    "type": "direct",
+                    "durable": True,
+                }
+            ),
+            headers=headers,
+        )
         if r.status_code != 201:
             raise Exception("RabbitMQ container start fail")
