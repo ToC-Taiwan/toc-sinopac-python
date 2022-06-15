@@ -34,11 +34,14 @@ class RabbitMQContainer:
             network_mode="host",
         )
 
-        userAndPass = b64encode(
-            bytes(f"{env.rabbitmq_user}:{env.rabbitmq_password}")
+        auth = b64encode(
+            bytes(
+                f"{env.rabbitmq_user}:{env.rabbitmq_password}",
+                encoding="utf8",
+            )
         ).decode("ascii")
         headers = {
-            "Authorization": f"Basic {userAndPass}",
+            "Authorization": f"Basic {auth}",
             "Content-Type": "application/json",
         }
 
