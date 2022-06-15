@@ -3,6 +3,7 @@ from cron import init_schedule_job
 from env import RequiredEnv
 from grpcsrv import serve
 from logger import logger
+from rabbitmq_container import RabbitMQContainer
 from sinopac import Sinopac
 
 env = RequiredEnv()
@@ -14,6 +15,10 @@ connection_count = env.connection_count
 
 # add schedule to exit the program
 init_schedule_job()
+
+# start rabbitmq container first
+rc = RabbitMQContainer()
+rc.run_rabbitmq()
 
 MAIN_WORKER: Sinopac
 SINOPAC_WORKER_POOL: list[Sinopac] = []
