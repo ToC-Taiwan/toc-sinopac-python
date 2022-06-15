@@ -17,8 +17,10 @@ class RabbitMQContainer:
                 c.stop()
 
     def run_rabbitmq(self):
+        self.terminate_exist_rabbitmq()
+
         container_host = "172.20.10.227"
-        c = self.client.containers.create(
+        container = self.client.containers.create(
             auto_remove=True,
             image="rabbitmq:3.10.5-management",
             name="toc-rabbitmq",
@@ -28,15 +30,13 @@ class RabbitMQContainer:
             },
             detach=True,
         )
-        network = self.client.networks.list()
-        started = False
-        for n in network:
-            if n.name == "tocvlan":
-                n.connect(c, ipv4_address=container_host)
-                c.start()
-                started = True
-        if started is False:
-            raise Exception("RabbitMQ container start fail")
+
+        network = self.client.networks.get("tocvlan")
+        if network is None:
+            raise Exception("network not found")
+
+        network.connect(container, ipv4_address=container_host)
+        container.start()
 
         a_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         location = (container_host, 15672)
