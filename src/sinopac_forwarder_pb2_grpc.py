@@ -6,7 +6,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 import sinopac_forwarder_pb2 as sinopac__forwarder__pb2
 
 
-class SinopacForwarderStub(object):
+class HealthCheckStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -16,10 +16,100 @@ class SinopacForwarderStub(object):
             channel: A grpc.Channel.
         """
         self.Heartbeat = channel.stream_stream(
-                '/sinopac_forwarder.SinopacForwarder/Heartbeat',
+                '/sinopac_forwarder.HealthCheck/Heartbeat',
                 request_serializer=sinopac__forwarder__pb2.Beat.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.Beat.FromString,
                 )
+        self.Terminate = channel.unary_unary(
+                '/sinopac_forwarder.HealthCheck/Terminate',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+
+
+class HealthCheckServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def Heartbeat(self, request_iterator, context):
+        """Health check
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Terminate(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_HealthCheckServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'Heartbeat': grpc.stream_stream_rpc_method_handler(
+                    servicer.Heartbeat,
+                    request_deserializer=sinopac__forwarder__pb2.Beat.FromString,
+                    response_serializer=sinopac__forwarder__pb2.Beat.SerializeToString,
+            ),
+            'Terminate': grpc.unary_unary_rpc_method_handler(
+                    servicer.Terminate,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'sinopac_forwarder.HealthCheck', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class HealthCheck(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def Heartbeat(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_stream(request_iterator, target, '/sinopac_forwarder.HealthCheck/Heartbeat',
+            sinopac__forwarder__pb2.Beat.SerializeToString,
+            sinopac__forwarder__pb2.Beat.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Terminate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HealthCheck/Terminate',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class SinopacForwarderStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
         self.GetAllStockDetail = channel.unary_unary(
                 '/sinopac_forwarder.SinopacForwarder/GetAllStockDetail',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -114,13 +204,6 @@ class SinopacForwarderStub(object):
 
 class SinopacForwarderServicer(object):
     """Missing associated documentation comment in .proto file."""
-
-    def Heartbeat(self, request_iterator, context):
-        """Health check
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
 
     def GetAllStockDetail(self, request, context):
         """Basic
@@ -236,11 +319,6 @@ class SinopacForwarderServicer(object):
 
 def add_SinopacForwarderServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Heartbeat': grpc.stream_stream_rpc_method_handler(
-                    servicer.Heartbeat,
-                    request_deserializer=sinopac__forwarder__pb2.Beat.FromString,
-                    response_serializer=sinopac__forwarder__pb2.Beat.SerializeToString,
-            ),
             'GetAllStockDetail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllStockDetail,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
@@ -340,23 +418,6 @@ def add_SinopacForwarderServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class SinopacForwarder(object):
     """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def Heartbeat(request_iterator,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.stream_stream(request_iterator, target, '/sinopac_forwarder.SinopacForwarder/Heartbeat',
-            sinopac__forwarder__pb2.Beat.SerializeToString,
-            sinopac__forwarder__pb2.Beat.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def GetAllStockDetail(request,

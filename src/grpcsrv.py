@@ -5,6 +5,7 @@ from concurrent import futures
 from datetime import datetime
 from queue import Queue
 
+import google.protobuf.empty_pb2
 import grpc
 import numpy as np
 
@@ -19,18 +20,21 @@ from sinopac_worker import SinopacWorker
 WORKERS: SinopacWorker
 
 
-class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
+class gRPCHealthCheck(sinopac_forwarder_pb2_grpc.HealthCheckServicer):
     def Heartbeat(self, request_iterator, _):
         self.beat_queue: Queue = Queue()
         threading.Thread(target=self.beat_timer).start()
         for beat in request_iterator:
-            self.beat_queue.put(beat.message)
+            if beat.message != "debug":
+                self.beat_queue.put(beat.message)
+            else:
+                self.debug = True
             yield sinopac_forwarder_pb2.Beat(message=beat.message)
 
     def beat_timer(self):
         beat_time = datetime.now().timestamp()
         while True:
-            if datetime.now().timestamp() > beat_time + 10:
+            if datetime.now().timestamp() > beat_time + 10 and self.debug is False:
                 logger.error("machine trading not responding")
                 os._exit(1)
             if self.beat_queue.empty():
@@ -39,6 +43,16 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             self.beat_queue.get()
             beat_time = datetime.now().timestamp()
 
+    def Terminate(self, request, _):
+        threading.Thread(target=self.wait_and_terminate).start()
+        return google.protobuf.empty_pb2.Empty()  # pylint: disable=no-member
+
+    def wait_and_terminate(self):
+        time.sleep(3)
+        os._exit(1)
+
+
+class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
     def GetAllStockDetail(self, request, _):
         """
         GetAllStockDetail _summary_
@@ -742,6 +756,7 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     WORKERS = SinopacWorker(main_worker, workers)
 
     # gRPC servicer
+    health_servicer = gRPCHealthCheck()
     sinopac_forwarder_servicer = gRPCSinopacForwarder()
     trade_servicer = gRPCTradeMethod()
 
@@ -758,6 +773,9 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     WORKERS.set_order_status_cb(rq.order_status_callback)
 
     server = grpc.server(futures.ThreadPoolExecutor())
+    sinopac_forwarder_pb2_grpc.add_HealthCheckServicer_to_server(
+        health_servicer, server
+    )
     sinopac_forwarder_pb2_grpc.add_SinopacForwarderServicer_to_server(
         sinopac_forwarder_servicer, server
     )
