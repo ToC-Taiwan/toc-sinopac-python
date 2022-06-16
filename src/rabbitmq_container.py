@@ -1,4 +1,5 @@
 import json
+import os
 import time
 from base64 import b64encode
 
@@ -18,7 +19,10 @@ class RabbitMQContainer:
     def terminate_exist_rabbitmq(self):
         for c in self.client.containers.list():
             if c.name == self.container_name:
-                c.stop()
+                try:
+                    c.stop()
+                except (requests.exceptions.ReadTimeout, TimeoutError):
+                    os._exit(1)
 
     def run_rabbitmq(self):
         self.terminate_exist_rabbitmq()
