@@ -270,12 +270,16 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         Returns:
             _type_: _description_
         """
-        return self.__api.quote.ticks(
-            contract=contract,
-            date=date,
-            query_type=sj.constant.TicksQueryType.LastCount,
-            last_cnt=1,
-        ).close[0]
+        try:
+            close = self.__api.quote.ticks(
+                contract=contract,
+                date=date,
+                query_type=sj.constant.TicksQueryType.LastCount,
+                last_cnt=1,
+            ).close[0]
+            return close
+        except TimeoutError:
+            return 0
 
     def get_stock_volume_rank_by_date(self, count, date):
         """
