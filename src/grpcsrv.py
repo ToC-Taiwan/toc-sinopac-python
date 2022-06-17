@@ -772,7 +772,13 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     WORKERS.set_bid_ask_cb(rq.bid_ask_callback)
     WORKERS.set_order_status_cb(rq.order_status_callback)
 
-    server = grpc.server(futures.ThreadPoolExecutor())
+    server = grpc.server(
+        server=futures.ThreadPoolExecutor(),
+        options=[
+            ("grpc.max_send_message_length", 1024 * 1024 * 1024),
+            ("grpc.max_receive_message_length", 1024 * 1024 * 1024),
+        ],
+    )
     sinopac_forwarder_pb2_grpc.add_HealthCheckServicer_to_server(
         health_servicer, server
     )
