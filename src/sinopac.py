@@ -240,7 +240,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         Returns:
             _type_: _description_
         """
-        return self.__api.ticks(contract, date)
+        try:
+            return self.__api.ticks(contract, date)
+        except TimeoutError:
+            return self.ticks(contract, date)
 
     def kbars(self, contract, date):
         """
@@ -253,11 +256,14 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         Returns:
             _type_: _description_
         """
-        return self.__api.kbars(
-            contract=contract,
-            start=date,
-            end=date,
-        )
+        try:
+            return self.__api.kbars(
+                contract=contract,
+                start=date,
+                end=date,
+            )
+        except TimeoutError:
+            return self.kbars(contract, date)
 
     def get_stock_last_close_by_date(self, contract, date):
         """
@@ -281,7 +287,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return ticks.close[0]
             return 0
         except TimeoutError:
-            logger.warning("retry get_stock_last_close_by_date")
             return self.get_stock_last_close_by_date(contract, date)
 
     def get_stock_volume_rank_by_date(self, count, date):
