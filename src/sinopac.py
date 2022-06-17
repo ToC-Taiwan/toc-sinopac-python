@@ -281,7 +281,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return ticks.close[0]
             return 0
         except TimeoutError:
-            return 0
+            logger.warning("retry get_stock_last_close_by_date")
+            return self.get_stock_last_close_by_date(contract, date)
 
     def get_stock_volume_rank_by_date(self, count, date):
         """
