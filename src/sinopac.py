@@ -277,8 +277,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 query_type=sj.constant.TicksQueryType.LastCount,
                 last_cnt=1,
             )
-            if len(ticks) > 0:
-                return ticks[0].close
+            if len(ticks.close) > 0:
+                return ticks.close[0]
             return 0
         except TimeoutError:
             return 0
