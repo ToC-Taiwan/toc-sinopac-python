@@ -773,7 +773,7 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     WORKERS.set_order_status_cb(rq.order_status_callback)
 
     server = grpc.server(
-        server=futures.ThreadPoolExecutor(),
+        futures.ThreadPoolExecutor(),
         options=[
             ("grpc.max_send_message_length", 1024 * 1024 * 1024),
             ("grpc.max_receive_message_length", 1024 * 1024 * 1024),
