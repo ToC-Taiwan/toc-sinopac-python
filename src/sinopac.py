@@ -271,13 +271,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             _type_: _description_
         """
         try:
-            close = self.__api.quote.ticks(
+            ticks = self.__api.quote.ticks(
                 contract=contract,
                 date=date,
                 query_type=sj.constant.TicksQueryType.LastCount,
                 last_cnt=1,
-            ).close[0]
-            return close
+            )
+            if len(ticks) > 0:
+                return ticks[0].close
+            return 0
         except TimeoutError:
             return 0
 
