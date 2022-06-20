@@ -102,7 +102,7 @@ class RabbitMQS:
                 p = self.pika_queue.get(block=True)
                 p.ch.basic_publish(
                     exchange=self.exchange,
-                    routing_key="order_status",
+                    routing_key="order",
                     body=sinopac_forwarder_pb2.StockOrderStatus(
                         code=order.contract.code,
                         action=order.order.action,
