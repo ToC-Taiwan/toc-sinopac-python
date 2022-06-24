@@ -446,11 +446,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if (
-                    self.__courent_simulation_count[stock_num] < 0
-                    or quantity + self.__courent_simulation_count[stock_num] != 0
-                ):
-                    return OrderStatus("", "", "should buy later")
+                if self.__courent_simulation_count[stock_num] < 0:
+                    if quantity + self.__courent_simulation_count[stock_num] > 0:
+                        return OrderStatus("", "", "buy later quantity is too big")
             sim_order = sj.order.Trade(
                 contract=contract,
                 order=order,
@@ -502,24 +500,23 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             if trade is not None and trade.order.id != "":
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
-            order_status = sj.order.OrderStatus(
-                id="".join(
-                    random.choice(string.ascii_lowercase + string.octdigits)
-                    for _ in range(8)
-                ),
-                status=sj.constant.Status.Submitted,
-                status_code="",
-                order_datetime=datetime.now(),
-                deals=[],
-            )
-            sim_order = sj.order.Trade(
-                contract=contract,
-                order=order,
-                status=order_status,
-            )
             with self.__simulation_lock:
                 if quantity > self.__courent_simulation_count[stock_num]:
-                    return OrderStatus("", "", "quantity is too large")
+                    return OrderStatus("", "", "quantity is too big")
+                sim_order = sj.order.Trade(
+                    contract=contract,
+                    order=order,
+                    status=sj.order.OrderStatus(
+                        id="".join(
+                            random.choice(string.ascii_lowercase + string.octdigits)
+                            for _ in range(8)
+                        ),
+                        status=sj.constant.Status.Submitted,
+                        status_code="",
+                        order_datetime=datetime.now(),
+                        deals=[],
+                    ),
+                )
             threading.Thread(
                 target=self.finish_simulation_order,
                 args=(sim_order, random.randrange(15) + 1),
@@ -558,24 +555,23 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             if trade is not None and trade.order.id != "":
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
-            order_status = sj.order.OrderStatus(
-                id="".join(
-                    random.choice(string.ascii_lowercase + string.octdigits)
-                    for _ in range(8)
-                ),
-                status=sj.constant.Status.Submitted,
-                status_code="",
-                order_datetime=datetime.now(),
-                deals=[],
-            )
-            sim_order = sj.order.Trade(
-                contract=contract,
-                order=order,
-                status=order_status,
-            )
             with self.__simulation_lock:
                 if self.__courent_simulation_count[stock_num] > 0:
                     return OrderStatus("", "", "can not sell first")
+                sim_order = sj.order.Trade(
+                    contract=contract,
+                    order=order,
+                    status=sj.order.OrderStatus(
+                        id="".join(
+                            random.choice(string.ascii_lowercase + string.octdigits)
+                            for _ in range(8)
+                        ),
+                        status=sj.constant.Status.Submitted,
+                        status_code="",
+                        order_datetime=datetime.now(),
+                        deals=[],
+                    ),
+                )
             threading.Thread(
                 target=self.finish_simulation_order,
                 args=(sim_order, random.randrange(15) + 1),
