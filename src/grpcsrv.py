@@ -713,11 +713,11 @@ def fill_history_kbar_response(contract, num, date, response, sinopac: Sinopac):
             sinopac_forwarder_pb2.StockHistoryKbarMessage(
                 stock_num=num,
                 ts=kbar.ts[pos],
-                Close=kbar.Close[pos],
-                Open=kbar.Open[pos],
-                High=kbar.High[pos],
-                Low=kbar.Low[pos],
-                Volume=kbar.Volume[pos],
+                close=kbar.Close[pos],
+                open=kbar.Open[pos],
+                high=kbar.High[pos],
+                low=kbar.Low[pos],
+                volume=kbar.Volume[pos],
             )
         )
 

@@ -357,23 +357,23 @@ class StockHistoryKbarMessage(google.protobuf.message.Message):
     VOLUME_FIELD_NUMBER: builtins.int
     STOCK_NUM_FIELD_NUMBER: builtins.int
     ts: builtins.int
-    Close: builtins.float
-    Open: builtins.float
-    High: builtins.float
-    Low: builtins.float
-    Volume: builtins.int
+    close: builtins.float
+    open: builtins.float
+    high: builtins.float
+    low: builtins.float
+    volume: builtins.int
     stock_num: typing.Text
     def __init__(self,
         *,
         ts: builtins.int = ...,
-        Close: builtins.float = ...,
-        Open: builtins.float = ...,
-        High: builtins.float = ...,
-        Low: builtins.float = ...,
-        Volume: builtins.int = ...,
+        close: builtins.float = ...,
+        open: builtins.float = ...,
+        high: builtins.float = ...,
+        low: builtins.float = ...,
+        volume: builtins.int = ...,
         stock_num: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["Close",b"Close","High",b"High","Low",b"Low","Open",b"Open","Volume",b"Volume","stock_num",b"stock_num","ts",b"ts"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["close",b"close","high",b"high","low",b"low","open",b"open","stock_num",b"stock_num","ts",b"ts","volume",b"volume"]) -> None: ...
 global___StockHistoryKbarMessage = StockHistoryKbarMessage
 
 class StockHistoryCloseResponse(google.protobuf.message.Message):
