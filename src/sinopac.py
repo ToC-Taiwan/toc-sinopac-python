@@ -174,6 +174,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             for day_trade_stock in all_contract:
                 if day_trade_stock.day_trade == DayTrade.Yes.value:
                     self.stock_num_list.append(day_trade_stock.code)
+                    self.__courent_simulation_count[day_trade_stock.code] = 0
         while True:
             if len(self.stock_num_list) != 0:
                 break
