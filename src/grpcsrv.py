@@ -139,10 +139,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         """
         worker = WORKERS.get()
         snapshots = worker.snapshots([worker.get_contract_tse_001()])
-        response = sinopac_forwarder_pb2.StockSnapshotResponse()
-        for result in snapshots:
-            response.data.append(sinopac_snapshot_to_pb(result))
-        return response
+        return sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockSnapshotByNumArr(self, request, _):
         """

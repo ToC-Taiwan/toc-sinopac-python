@@ -128,7 +128,7 @@ class SinopacForwarderStub(object):
         self.GetStockSnapshotTSE = channel.unary_unary(
                 '/sinopac_forwarder.SinopacForwarder/GetStockSnapshotTSE',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
+                response_deserializer=sinopac__forwarder__pb2.StockSnapshotMessage.FromString,
                 )
         self.GetStockHistoryTick = channel.unary_unary(
                 '/sinopac_forwarder.SinopacForwarder/GetStockHistoryTick',
@@ -337,7 +337,7 @@ def add_SinopacForwarderServicer_to_server(servicer, server):
             'GetStockSnapshotTSE': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotTSE,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=sinopac__forwarder__pb2.StockSnapshotResponse.SerializeToString,
+                    response_serializer=sinopac__forwarder__pb2.StockSnapshotMessage.SerializeToString,
             ),
             'GetStockHistoryTick': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockHistoryTick,
@@ -483,7 +483,7 @@ class SinopacForwarder(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.SinopacForwarder/GetStockSnapshotTSE',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
+            sinopac__forwarder__pb2.StockSnapshotMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
