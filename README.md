@@ -104,17 +104,20 @@ pre-commit install
 pip install --no-warn-script-location --no-cache-dir -U -r requirements.txt
 ```
 
-### Run
+### Run Local
 
 ```sh
-echo 'DEPLOYMENT=prod
+echo 'DEPLOYMENT=dev
 GRPC_PORT=56666
-CONNECTION_COUNT=5
-PERSON_ID=XXXXXXXXXX
-PASSWORD=YYYYYYYYYY
-CA_PASSWORD=ZZZZZZZZZZ
-RABBITMQ_EXCHANGE=exchange
-RABBITMQ_URL=amqp://guest:guest@localhost:5672/%2f'> ./.env
+PERSON_ID=F127522501
+PASSWORD=@A2rgilaal
+CA_PASSWORD=~A2iairlol
+NETWORK_HOST=172.20.10.227
+RABBITMQ_USER=admin
+RABBITMQ_PASSWORD=password
+RABBITMQ_EXCHANGE=toc
+RABBITMQ_URL=amqp://admin:password@172.20.10.227:5672/%2f
+CONNECTION_COUNT=4'> ./.env
 ```
 
 ```sh

@@ -24,7 +24,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         self.__order_status_lock = threading.Lock()
         self.__simulation_lock = threading.Lock()
         # simulate trade
-        self.__courent_simulation_count = {}  # key: stock_num, value: count
+        self.__current_simulation_count_map = {}  # key: stock_num, value: count
 
     def login(self, person_id: str, passwd: str, ca_passwd: str, is_main: bool):
         """
@@ -174,7 +174,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             for day_trade_stock in all_contract:
                 if day_trade_stock.day_trade == DayTrade.Yes.value:
                     self.stock_num_list.append(day_trade_stock.code)
-                    self.__courent_simulation_count[day_trade_stock.code] = 0
+                    self.__current_simulation_count_map[day_trade_stock.code] = 0
         while True:
             if len(self.stock_num_list) != 0:
                 break
@@ -392,14 +392,14 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             buy_later = False
             if (
                 order.order.action == sj.constant.Action.Buy
-                and self.__courent_simulation_count[order.contract.code] < 0
+                and self.__current_simulation_count_map[order.contract.code] < 0
             ):
                 buy_later = True
-                self.__courent_simulation_count[
+                self.__current_simulation_count_map[
                     order.contract.code
                 ] += order.order.quantity
             if order.order.action == sj.constant.Action.Sell:
-                self.__courent_simulation_count[
+                self.__current_simulation_count_map[
                     order.contract.code
                 ] -= order.order.quantity
 
@@ -412,7 +412,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                         sim.order.action == sj.constant.Action.Buy
                         and buy_later is False
                     ):
-                        self.__courent_simulation_count[
+                        self.__current_simulation_count_map[
                             sim.contract.code
                         ] += sim.order.quantity
 
@@ -446,8 +446,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if self.__courent_simulation_count[stock_num] < 0:
-                    if quantity + self.__courent_simulation_count[stock_num] > 0:
+                if self.__current_simulation_count_map[stock_num] < 0:
+                    if quantity + self.__current_simulation_count_map[stock_num] > 0:
                         return OrderStatus("", "", "buy later quantity is too big")
             sim_order = sj.order.Trade(
                 contract=contract,
@@ -501,7 +501,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if quantity > self.__courent_simulation_count[stock_num]:
+                if quantity > self.__current_simulation_count_map[stock_num]:
                     return OrderStatus("", "", "quantity is too big")
                 sim_order = sj.order.Trade(
                     contract=contract,
@@ -556,7 +556,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if self.__courent_simulation_count[stock_num] > 0:
+                if self.__current_simulation_count_map[stock_num] > 0:
                     return OrderStatus("", "", "can not sell first")
                 sim_order = sj.order.Trade(
                     contract=contract,
