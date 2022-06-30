@@ -1,3 +1,4 @@
+import os
 import random
 import string
 import threading
@@ -71,14 +72,18 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         except FileNotFoundError:
             file = Path("./data/last_success_fetch")
             file.touch(exist_ok=True)
+        try:
+            self.__api.login(
+                person_id=person_id,
+                passwd=passwd,
+                contracts_cb=self.login_cb,
+                subscribe_trade=is_main,
+                fetch_contract=need_fetch,
+            )
+        except sj.error.SystemMaintenance:
+            logger.error("503 system maintenance, terminate after one minute")
+            os._exit(1)
 
-        self.__api.login(
-            person_id=person_id,
-            passwd=passwd,
-            contracts_cb=self.login_cb,
-            subscribe_trade=is_main,
-            fetch_contract=need_fetch,
-        )
         if need_fetch is True:
             with open(
                 file="./data/last_success_fetch", mode="w", encoding="UTF-8"
