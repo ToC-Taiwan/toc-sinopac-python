@@ -21,6 +21,9 @@ WORKERS: SinopacWorker
 
 
 class gRPCHealthCheck(sinopac_forwarder_pb2_grpc.HealthCheckServicer):
+    def __init__(self):
+        self.debug = False
+
     def Heartbeat(self, request_iterator, _):
         self.beat_queue: Queue = Queue()
         threading.Thread(target=self.beat_timer).start()
