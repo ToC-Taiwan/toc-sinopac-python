@@ -50,8 +50,8 @@ class RabbitMQSetting:
                     url=f"http://{env.rabbitmq_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
                     headers=headers,
                 )
-                if r.status_code != 201:
-                    raise Exception("RabbitMQ container start fail")
+                if r.status_code != 204:
+                    raise Exception("RabbitMQ exchange delete fail")
                 break
 
         r = requests.put(
@@ -65,4 +65,4 @@ class RabbitMQSetting:
             headers=headers,
         )
         if r.status_code != 201:
-            raise Exception("RabbitMQ container start fail")
+            raise Exception("RabbitMQ exchange add fail")
