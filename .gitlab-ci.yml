@@ -53,7 +53,7 @@ docker-deploy:
   script:
     - chmod og= $ID_ED25519
     - apk update && apk add openssh-client
-    - echo $ENV_FILE && source $ENV_FILE
+    - echo $ENV_FILE
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "mkdir -p /$SERVER_USER/toc-sinopac-python-env"
     - scp -i $ID_ED25519 -o StrictHostKeyChecking=no $ENV_FILE $SERVER_USER@$SERVER_IP:/$SERVER_USER/toc-sinopac-python-env/.env
     # stop toc-sinopac-python and toc-rabbitmq
