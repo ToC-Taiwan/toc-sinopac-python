@@ -3,7 +3,7 @@ from cron import init_schedule_job
 from env import RequiredEnv
 from grpcsrv import serve
 from logger import logger
-from rabbitmq_container import RabbitMQContainer
+from rabbitmq_setting import RabbitMQSetting
 from sinopac import Sinopac
 
 env = RequiredEnv()
@@ -17,7 +17,7 @@ connection_count = env.connection_count
 init_schedule_job()
 
 # start rabbitmq container first
-rc = RabbitMQContainer()
+rc = RabbitMQSetting()
 rc.reset_rabbitmq_exchange()
 
 MAIN_WORKER: Sinopac

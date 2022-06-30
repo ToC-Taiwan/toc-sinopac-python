@@ -77,7 +77,6 @@ pip install -U \
   numpy \
   schedule \
   pika \
-  docker \
   requests
 pip freeze > requirements.txt
 ```
