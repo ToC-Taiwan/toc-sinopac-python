@@ -15,7 +15,7 @@ class RequiredEnv:
         self.password = os.environ.get("PASSWORD")
         self.ca_password = os.environ.get("CA_PASSWORD")
 
-        self.network_host = os.environ.get("NETWORK_HOST")
+        self.rabbitmq_host = os.environ.get("RABBITMQ_HOST")
         self.rabbitmq_user = os.environ.get("RABBITMQ_USER")
         self.rabbitmq_password = os.environ.get("RABBITMQ_PASSWORD")
         self.rabbitmq_exchange = os.environ.get("RABBITMQ_EXCHANGE")
@@ -32,8 +32,8 @@ class RequiredEnv:
             raise Exception("Missing environment PASSWORD")
         if self.ca_password is None:
             raise Exception("Missing environment CA_PASSWORD")
-        if self.network_host is None:
-            raise Exception("Missing environment NETWORK_HOST")
+        if self.rabbitmq_host is None:
+            raise Exception("Missing environment RABBITMQ_HOST")
         if self.rabbitmq_user is None:
             raise Exception("Missing environment RABBITMQ_USER")
         if self.rabbitmq_password is None:

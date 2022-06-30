@@ -53,22 +53,34 @@ docker-deploy:
   script:
     - chmod og= $ID_ED25519
     - apk update && apk add openssh-client
-    - echo $ENV_FILE
+    - echo $ENV_FILE && source $ENV_FILE
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "mkdir -p /$SERVER_USER/toc-sinopac-python-env"
-    - scp -r -i $ID_ED25519 -o StrictHostKeyChecking=no $ENV_FILE $SERVER_USER@$SERVER_IP:/$SERVER_USER/toc-sinopac-python-env/.env
+    - scp -i $ID_ED25519 -o StrictHostKeyChecking=no $ENV_FILE $SERVER_USER@$SERVER_IP:/$SERVER_USER/toc-sinopac-python-env/.env
+    # stop toc-sinopac-python and toc-rabbitmq
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_TAG"
-    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop toc-sinopac-python || true"
-    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop toc-rabbitmq || true"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker kill toc-sinopac-python || true"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker kill toc-rabbitmq || true"
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker system prune --volumes -f"
+    # start toc-rabbitmq
+    - |
+      ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run --name toc-rabbitmq \
+      --network tocvlan \
+      --ip=172.20.10.226 \
+      --restart always \
+      -e TZ="Asia/Taipei" \
+      -e RABBITMQ_DEFAULT_USER=$RABBITMQ_USER \
+      -e RABBITMQ_DEFAULT_PASS=$RABBITMQ_PASSWORD \
+      -dt rabbitmq:3.10.5-management
+    # start toc-sinopac-python
     - |
       ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run --name toc-sinopac-python \
-      --network host \
+      --network tocvlan \
+      --ip=172.20.10.227 \
       --restart always \
+      -e TZ="Asia/Taipei" \
       -v /$SERVER_USER/toc-sinopac-python-logs:/toc-sinopac-python/logs \
       -v /$SERVER_USER/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
-      -v /var/run/docker.sock:/var/run/docker.sock \
-      -e TZ="Asia/Taipei" \
       -dt $IMAGE_TAG"
   when: manual
   environment:
@@ -87,7 +99,9 @@ stop_production:
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "rm -rf /$SERVER_USER/toc-sinopac-python-logs || true"
     - scp -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP:/toc-sinopac-python-logs-$CI_COMMIT_SHORT_SHA.tgz toc-sinopac-python-logs-$CI_COMMIT_SHORT_SHA.tgz
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "rm -rf /toc-sinopac-python-logs-$CI_COMMIT_SHORT_SHA.tgz || true"
-    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop toc-sinopac-python"
+    # stop conatiners
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker kill toc-sinopac-python"
+    - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker kill toc-rabbitmq"
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker system prune --volumes -f"
     - ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rmi $IMAGE_TAG"
   when: manual

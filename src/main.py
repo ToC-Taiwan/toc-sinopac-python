@@ -18,7 +18,7 @@ init_schedule_job()
 
 # start rabbitmq container first
 rc = RabbitMQContainer()
-rc.run_rabbitmq()
+rc.reset_rabbitmq_exchange()
 
 MAIN_WORKER: Sinopac
 SINOPAC_WORKER_POOL: list[Sinopac] = []
