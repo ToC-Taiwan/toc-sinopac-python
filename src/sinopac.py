@@ -81,9 +81,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 fetch_contract=need_fetch,
             )
         except sj.error.SystemMaintenance:
-            logger.error("503 system maintenance, terminate after one minute")
-            time.sleep(60)
-            os._exit(1)
+            logger.error("503 system maintenance, terminate after 75 sec")
+            wait = 75
+            while True:
+                time.sleep(1)
+                wait -= 1
+                if wait == 0:
+                    os._exit(1)
+                elif wait % 5 == 0:
+                    logger.info("system maintenance, wait %d sec", wait)
 
         if need_fetch is True:
             with open(
