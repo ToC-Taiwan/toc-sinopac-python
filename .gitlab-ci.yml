@@ -67,8 +67,8 @@ docker-deploy:
       --ip=172.20.10.226 \
       --restart always \
       -e TZ="Asia/Taipei" \
-      -e RABBITMQ_DEFAULT_USER=$RABBITMQ_USER \
-      -e RABBITMQ_DEFAULT_PASS=$RABBITMQ_PASSWORD \
+      -e RABBITMQ_DEFAULT_USER=admin \
+      -e RABBITMQ_DEFAULT_PASS=password \
       -dt rabbitmq:3.10.5-management
     - |
       ssh -i $ID_ED25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run --name toc-sinopac-python \
