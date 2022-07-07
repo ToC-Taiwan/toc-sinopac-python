@@ -106,7 +106,7 @@ pip install --no-warn-script-location --no-cache-dir -U -r requirements.txt
 ### Run Local
 
 ```sh
-echo 'DEPLOYMENT=dev
+echo 'DEPLOYMENT=prod
 GRPC_PORT=56666
 PERSON_ID=F127522501
 PASSWORD=@A2rgilaal
@@ -116,7 +116,7 @@ RABBITMQ_USER=admin
 RABBITMQ_PASSWORD=password
 RABBITMQ_EXCHANGE=toc
 RABBITMQ_URL=amqp://admin:password@172.20.10.226:5672/%2f
-CONNECTION_COUNT=4
+CONNECTION_COUNT=5
 '> ./.env
 ```
 

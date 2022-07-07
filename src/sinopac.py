@@ -3,8 +3,7 @@ import random
 import string
 import threading
 import time
-from datetime import datetime, timedelta
-from pathlib import Path
+from datetime import datetime
 from re import search
 
 import shioaji as sj
@@ -42,44 +41,14 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         # before gRPC set cb, using logger to save event
         self.set_event_callback(event_logger_cb)
-        standard_time = datetime(
-            datetime.now().year,
-            datetime.now().month,
-            datetime.now().day,
-            8,
-        )
-        minimum_timestamp = standard_time.timestamp()
-        maximum_timestamp = (standard_time + timedelta(days=1)).timestamp()
-
-        need_fetch = True
-        try:
-            with open(
-                file="./data/last_success_fetch", mode="r", encoding="UTF-8"
-            ) as f:
-                lines = f.readlines()
-                if len(lines) != 0:
-                    last_success_fetch_date = lines[len(lines) - 1]
-                    if (
-                        float(last_success_fetch_date) > minimum_timestamp
-                        and float(last_success_fetch_date) < maximum_timestamp
-                    ):
-                        need_fetch = False
-                    if (
-                        float(last_success_fetch_date) < minimum_timestamp
-                        and maximum_timestamp - float(last_success_fetch_date) > 86400
-                    ):
-                        need_fetch = False
-        except FileNotFoundError:
-            file = Path("./data/last_success_fetch")
-            file.touch(exist_ok=True)
         try:
             self.__api.login(
                 person_id=person_id,
                 passwd=passwd,
                 contracts_cb=self.login_cb,
                 subscribe_trade=is_main,
-                fetch_contract=need_fetch,
             )
+
         except sj.error.SystemMaintenance:
             logger.error("503 system maintenance, terminate after 75 sec")
             wait = 75
@@ -91,15 +60,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 elif wait % 5 == 0:
                     logger.info("system maintenance, wait %d sec", wait)
 
-        if need_fetch is True:
-            with open(
-                file="./data/last_success_fetch", mode="w", encoding="UTF-8"
-            ) as f:
-                f.write(str(datetime.now().timestamp()))
-
         while True:
             if self.__login_status == 100:
                 break
+
         self.__api.activate_ca(
             ca_path=f"./data/{person_id}.pfx",
             ca_passwd=ca_passwd,
