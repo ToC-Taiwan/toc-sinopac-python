@@ -15,7 +15,7 @@ from logger import logger
 class Sinopac:  # pylint: disable=too-many-public-methods
     def __init__(self):
         self.__api = sj.Shioaji()
-        self.__login_status = 0
+        self.__login_status = int()
         # public
         self.stock_num_list = []
         self.order_status_list = []

@@ -54,49 +54,6 @@ conventional-changelog -p angular -i CHANGELOG.md -s -r 0
 conventional-changelog -p angular -i CHANGELOG.md -s
 ```
 
-### Needed dependency
-
-- Reset all dependency
-
-```sh
-pip freeze > requirements.txt && \
-pip uninstall -y -r requirements.txt
-rm -rf requirements.txt
-```
-
-- Install prod
-
-```sh
-pip install -U \
-  --no-warn-script-location \
-  --no-cache-dir \
-  shioaji \
-  grpcio \
-  grpcio-tools \
-  python-dotenv \
-  numpy \
-  schedule \
-  pika \
-  requests
-pip freeze > requirements.txt
-```
-
-- dev
-
-```sh
-pip install -U \
-  --no-warn-script-location \
-  --no-cache-dir \
-  pre-commit \
-  mypy-protobuf \
-  pylint-protobuf \
-  black \
-  mypy \
-  pylint
-mypy --install-types --non-interactive ./src
-pre-commit install
-```
-
 ## Initialize
 
 ```sh
