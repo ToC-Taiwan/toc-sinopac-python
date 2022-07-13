@@ -4,12 +4,13 @@ import string
 import threading
 import time
 from datetime import datetime
-from re import search
 
 import shioaji as sj
 
 from constant import DayTrade, SecurityType
 from logger import logger
+
+# from re import search
 
 
 class Sinopac:  # pylint: disable=too-many-public-methods
@@ -646,38 +647,39 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             order_state (_type_): _description_
             order (dict): _description_
         """
-        if order["contract"]["code"] is None:
-            logger.error("contract code is None")
-            return
-        contract = self.get_contract_by_stock_num(order["contract"]["code"])
-        if search("DEAL", order_state) is None:
-            logger.info(
-                "%s %s %s %.2f %d %s %d %s %s %s %s",
-                order["contract"]["code"],
-                contract.name,
-                order["order"]["action"],
-                order["order"]["price"],
-                order["order"]["quantity"],
-                order_state,
-                order["status"]["exchange_ts"],
-                order["order"]["id"],
-                order["operation"]["op_type"],
-                order["operation"]["op_code"],
-                order["operation"]["op_msg"],
-            )
-        else:
-            logger.info(
-                "%s %s %s %.2f %d %s %d %s %s",
-                order["code"],
-                contract.name,
-                order["action"],
-                order["price"],
-                order["quantity"],
-                order_state,
-                order["ts"],
-                order["trade_id"],
-                order["exchange_seq"],
-            )
+        logger.info(order_state, order)
+        # if order["contract"]["code"] is None:
+        #     logger.error("contract code is None")
+        #     return
+        # contract = self.get_contract_by_stock_num(order["contract"]["code"])
+        # if search("DEAL", order_state) is None:
+        #     logger.info(
+        #         "%s %s %s %.2f %d %s %d %s %s %s %s",
+        #         order["contract"]["code"],
+        #         contract.name,
+        #         order["order"]["action"],
+        #         order["order"]["price"],
+        #         order["order"]["quantity"],
+        #         order_state,
+        #         order["status"]["exchange_ts"],
+        #         order["order"]["id"],
+        #         order["operation"]["op_type"],
+        #         order["operation"]["op_code"],
+        #         order["operation"]["op_msg"],
+        #     )
+        # else:
+        #     logger.info(
+        #         "%s %s %s %.2f %d %s %d %s %s",
+        #         order["code"],
+        #         contract.name,
+        #         order["action"],
+        #         order["price"],
+        #         order["quantity"],
+        #         order_state,
+        #         order["ts"],
+        #         order["trade_id"],
+        #         order["exchange_seq"],
+        #     )
 
 
 class OrderStatus:
