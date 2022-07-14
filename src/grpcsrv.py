@@ -637,7 +637,9 @@ def fill_sinopac_snapshot_arr(contracts, snapshots, sinopac: Sinopac):
         snapshots (_type_): _description_
         sinopac (Sinopac): _description_
     """
-    snapshots.extend(sinopac.snapshots(contracts))
+    data = sinopac.snapshots(contracts)
+    if data is not None:
+        snapshots.extend(data)
 
 
 def fill_history_tick_response(contract, num, date, response, sinopac: Sinopac):

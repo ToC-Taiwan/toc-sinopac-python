@@ -147,11 +147,14 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         fill_stock_num_list _summary_
         """
-        for all_contract in self.__api.Contracts.Stocks:
-            for day_trade_stock in all_contract:
-                if day_trade_stock.day_trade == DayTrade.Yes.value:
-                    self.stock_num_list.append(day_trade_stock.code)
-                    self.__current_simulation_count_map[day_trade_stock.code] = 0
+        for contract_arr in self.__api.Contracts.Stocks:
+            for contract in contract_arr:
+                if (
+                    contract.day_trade == DayTrade.Yes.value
+                    and contract.category != "00"
+                ):
+                    self.stock_num_list.append(contract.code)
+                    self.__current_simulation_count_map[contract.code] = 0
         while True:
             if len(self.stock_num_list) != 0:
                 break
@@ -184,7 +187,11 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         Returns:
             _type_: _description_
         """
-        return self.__api.snapshots(contracts)
+        try:
+            return self.__api.snapshots(contracts)
+        except TimeoutError:
+            logger.error("snapshots timeout error")
+            return None
 
     def get_contract_tse_001(self):
         """
