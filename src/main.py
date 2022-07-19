@@ -30,7 +30,7 @@ for i in range(int(connection_count)):
     if is_main is True:
         MAIN_WORKER = new_connection
         # if do not let main worker be the first worker in the pool, then continue
-        # continue
+        continue
     SINOPAC_WORKER_POOL.append(new_connection)
 
 serve(port=grpc_port, main_worker=MAIN_WORKER, workers=SINOPAC_WORKER_POOL, cfg=env)
