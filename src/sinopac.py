@@ -167,7 +167,12 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         if self.order_status_callback is None:
             logger.error("order_status_callback is None")
             return
-        self.__api.update_status(timeout=0, cb=self.order_status_callback)
+        with self.__order_status_lock:
+            try:
+                self.__api.update_status(timeout=0, cb=self.order_status_callback)
+            except sj.error.TokenError:
+                logger.error("token error in update_order_status_instant")
+                os._exit(1)
 
     def update_local_order_status(self):
         """
