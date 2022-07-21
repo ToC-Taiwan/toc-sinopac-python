@@ -586,12 +586,14 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 if cancel_order is not None or times >= 10:
                     break
                 times += 1
+                time.sleep(1)
             if cancel_order is None:
                 return OrderStatus(order_id, "", "id not found")
             if cancel_order.status.status == sj.constant.Status.Cancelled:
                 return OrderStatus(order_id, "", "id already cancelled")
-            self.__api.cancel_order(cancel_order)
+
             times = 0
+            self.__api.cancel_order(cancel_order)
             while True:
                 if times >= 10:
                     break
@@ -603,6 +605,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                     ):
                         return OrderStatus(order_id, order.status.status, "")
                 times += 1
+                time.sleep(1)
         else:
             for order in self.order_status_list:
                 if (
@@ -612,7 +615,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                     order.status.status = sj.constant.Status.Cancelled
                     return OrderStatus(order_id, order.status.status, "")
 
-        return OrderStatus("", "", "unknown error")
+        return OrderStatus("", "", "cancel order fail, unknown error")
 
     def get_order_status_from_local_by_order_id(self, order_id: str, sim: bool):
         """
