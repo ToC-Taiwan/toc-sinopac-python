@@ -1,4 +1,6 @@
 import threading
+import time
+from datetime import datetime
 
 from logger import logger
 from sinopac import Sinopac
@@ -10,12 +12,15 @@ class SinopacWorker:
         self.workers = workers
         # request count
         self.request_count = [int() for _ in range(len(workers))]
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
         # subscribe list
         self.subscribe_count = [int() for _ in range(len(workers))]
         self.sub_lock = threading.Lock()
         self.stock_tick_sub_dict: dict[str, int] = {}
         self.stock_bidask_sub_dict: dict[str, int] = {}
+        # request workder limit
+        self.request_worker_timestamp = int()
+        self.request_worker_times = int()
 
     def get_main(self):
         """
@@ -26,7 +31,7 @@ class SinopacWorker:
         """
         return self.main_worker
 
-    def get(self):
+    def get(self, fetch: bool):
         """
         get_worker _summary_
 
@@ -34,8 +39,22 @@ class SinopacWorker:
             Sinopac: _description_
         """
         with self.lock:
+            now = round(datetime.now().timestamp() * 1000)
+            gap = now - self.request_worker_timestamp
+
+            if gap >= 5000:
+                self.request_worker_timestamp = now
+                self.request_worker_times = 0
+
+            elif fetch is True and self.request_worker_times > 499:
+                rest_time = 5 - (gap / 1000)
+                time.sleep(rest_time)
+                return self.get(fetch)
+
             idx = self.request_count.index(min(self.request_count))
             self.request_count[idx] += 1
+            if fetch is True:
+                self.request_worker_times += 1
             return self.workers[idx]
 
     def count(self):
