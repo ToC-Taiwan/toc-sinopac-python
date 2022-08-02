@@ -215,33 +215,41 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         return self.__api.Contracts.Stocks[num]
 
-    def ticks(self, contract, date):
+    def ticks(self, num, date):
         """
         ticks _summary_
 
         Args:
-            contract (_type_): _description_
+            num (_type_): _description_
             date (_type_): _description_
 
         Returns:
             _type_: _description_
         """
+        contract = self.get_contract_by_stock_num(num)
+        if num == "tse_001":
+            contract = self.get_contract_tse_001()
+
         try:
             return self.__api.ticks(contract, date)
         except TimeoutError:
             return self.ticks(contract, date)
 
-    def kbars(self, contract, date):
+    def kbars(self, num, date):
         """
         kbars _summary_
 
         Args:
-            contract (_type_): _description_
+            num (_type_): _description_
             date (_type_): _description_
 
         Returns:
             _type_: _description_
         """
+        contract = self.get_contract_by_stock_num(num)
+        if num == "tse_001":
+            contract = self.get_contract_tse_001()
+
         try:
             return self.__api.kbars(
                 contract=contract,
@@ -251,17 +259,21 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         except TimeoutError:
             return self.kbars(contract, date)
 
-    def get_stock_last_close_by_date(self, contract, date):
+    def get_stock_last_close_by_date(self, num, date):
         """
-        kbars _summary_
+        get_stock_last_close_by_date _summary_
 
         Args:
-            contract (_type_): _description_
+            num (_type_): _description_
             date (_type_): _description_
 
         Returns:
             _type_: _description_
         """
+        contract = self.get_contract_by_stock_num(num)
+        if num == "tse_001":
+            contract = self.get_contract_tse_001()
+
         try:
             ticks = self.__api.quote.ticks(
                 contract=contract,

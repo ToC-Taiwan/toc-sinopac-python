@@ -191,13 +191,10 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         """
         response = sinopac_forwarder_pb2.StockHistoryTickResponse()
         threads = []
-        worker = WORKERS.get(False)
-
         for num in request.stock_num_arr:
             t = threading.Thread(
                 target=fill_history_tick_response,
                 args=(
-                    worker.get_contract_by_stock_num(num),
                     num,
                     request.date,
                     response,
@@ -221,12 +218,10 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         """
         response = sinopac_forwarder_pb2.StockHistoryTickResponse()
-        worker = WORKERS.get(False)
 
         t = threading.Thread(
             target=fill_history_tick_response,
             args=(
-                worker.get_contract_tse_001(),
                 "tse_001",
                 request.date,
                 response,
@@ -249,13 +244,11 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         """
         response = sinopac_forwarder_pb2.StockHistoryKbarResponse()
         threads = []
-        worker = WORKERS.get(False)
 
         for num in request.stock_num_arr:
             t = threading.Thread(
                 target=fill_history_kbar_response,
                 args=(
-                    worker.get_contract_by_stock_num(num),
                     num,
                     request.date,
                     response,
@@ -279,12 +272,10 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         """
         response = sinopac_forwarder_pb2.StockHistoryKbarResponse()
-        worker = WORKERS.get(False)
 
         t = threading.Thread(
             target=fill_history_kbar_response,
             args=(
-                worker.get_contract_tse_001(),
                 "tse_001",
                 request.date,
                 response,
@@ -307,13 +298,11 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         """
         response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
         threads = []
-        worker = WORKERS.get(False)
 
         for num in request.stock_num_arr:
             t = threading.Thread(
                 target=fill_history_close_response,
                 args=(
-                    worker.get_contract_by_stock_num(num),
                     num,
                     request.date,
                     response,
@@ -338,14 +327,12 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         """
         response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
         threads = []
-        worker = WORKERS.get(False)
 
         for date in request.date_arr:
             for num in request.stock_num_arr:
                 t = threading.Thread(
                     target=fill_history_close_response,
                     args=(
-                        worker.get_contract_by_stock_num(num),
                         num,
                         date,
                         response,
@@ -369,12 +356,10 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         """
         response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
-        worker = WORKERS.get(False)
 
         t = threading.Thread(
             target=fill_history_close_response,
             args=(
-                worker.get_contract_tse_001(),
                 "tse_001",
                 request.date,
                 response,
@@ -387,8 +372,9 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
     def GetStockVolumeRank(self, request, _):
         response = sinopac_forwarder_pb2.StockVolumeRankResponse()
-        worker = WORKERS.get(True)
-        ranks = worker.get_stock_volume_rank_by_date(request.count, request.date)
+        ranks = WORKERS.get(True).get_stock_volume_rank_by_date(
+            request.count, request.date
+        )
         for result in ranks:
             response.data.append(
                 sinopac_forwarder_pb2.StockVolumeRankMessage(
@@ -659,18 +645,17 @@ def fill_sinopac_snapshot_arr(contracts, snapshots, sinopac: Sinopac):
         snapshots.extend(data)
 
 
-def fill_history_tick_response(contract, num, date, response, sinopac: Sinopac):
+def fill_history_tick_response(num, date, response, sinopac: Sinopac):
     """
     fill_history_tick_response _summary_
 
     Args:
-        contract (_type_): _description_
         num (_type_): _description_
         date (_type_): _description_
         response (_type_): _description_
         sinopac (Sinopac): _description_
     """
-    ticks = sinopac.ticks(contract, date)
+    ticks = sinopac.ticks(num, date)
     total_count = len(ticks.ts)
     tmp_length = [
         len(ticks.close),
@@ -702,18 +687,17 @@ def fill_history_tick_response(contract, num, date, response, sinopac: Sinopac):
         )
 
 
-def fill_history_kbar_response(contract, num, date, response, sinopac: Sinopac):
+def fill_history_kbar_response(num, date, response, sinopac: Sinopac):
     """
     fill_history_kbar_response _summary_
 
     Args:
-        contract (_type_): _description_
         num (_type_): _description_
         date (_type_): _description_
         response (_type_): _description_
         sinopac (Sinopac): _description_
     """
-    kbar = sinopac.kbars(contract, date)
+    kbar = sinopac.kbars(num, date)
     total_count = len(kbar.ts)
     tmp_length = [
         len(kbar.Close),
@@ -741,12 +725,11 @@ def fill_history_kbar_response(contract, num, date, response, sinopac: Sinopac):
         )
 
 
-def fill_history_close_response(contract, num, date, response, sinopac: Sinopac):
+def fill_history_close_response(num, date, response, sinopac: Sinopac):
     """
     fill_history_close_response _summary_
 
     Args:
-        contract (_type_): _description_
         num (_type_): _description_
         date (_type_): _description_
         response (_type_): _description_
@@ -755,7 +738,7 @@ def fill_history_close_response(contract, num, date, response, sinopac: Sinopac)
     response.data.append(
         sinopac_forwarder_pb2.StockHistoryCloseMessage(
             code=num,
-            close=sinopac.get_stock_last_close_by_date(contract, date),
+            close=sinopac.get_stock_last_close_by_date(num, date),
             date=date,
         )
     )
