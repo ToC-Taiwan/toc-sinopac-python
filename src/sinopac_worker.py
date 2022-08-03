@@ -45,11 +45,11 @@ class SinopacWorker:
             if gap >= 1000:
                 self.request_worker_timestamp = now
                 self.request_worker_times = 0
-                logger.info("Reset request timesatmp")
+                # logger.info("Reset request timesatmp")
 
-            elif fetch is True and self.request_worker_times > 94:
+            elif fetch is True and self.request_worker_times >= 85:
                 rest_time = 1 - (gap / 1000)
-                logger.info("Rest time: %.3f", rest_time)
+                # logger.info("Rest time: %.3f", rest_time)
                 time.sleep(rest_time)
                 return self.get(fetch)
 
@@ -57,7 +57,7 @@ class SinopacWorker:
             self.request_count[idx] += 1
             if fetch is True:
                 self.request_worker_times += 1
-                logger.info("Request times: %d", self.request_worker_times)
+                # logger.info("Request times: %d", self.request_worker_times)
             return self.workers[idx]
 
     def count(self):
