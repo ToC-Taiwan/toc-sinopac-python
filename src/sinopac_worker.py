@@ -1,6 +1,4 @@
 import threading
-import time
-from datetime import datetime
 
 from logger import logger
 from sinopac import Sinopac
@@ -12,15 +10,12 @@ class SinopacWorker:
         self.workers = workers
         # request count
         self.request_count = [int() for _ in range(len(workers))]
-        self.lock = threading.RLock()
+        self.lock = threading.Lock()
         # subscribe list
         self.subscribe_count = [int() for _ in range(len(workers))]
         self.sub_lock = threading.Lock()
         self.stock_tick_sub_dict: dict[str, int] = {}
         self.stock_bidask_sub_dict: dict[str, int] = {}
-        # request workder limit
-        self.request_worker_timestamp = int()
-        self.request_worker_times = int()
 
     def get_main(self):
         """
@@ -31,7 +26,7 @@ class SinopacWorker:
         """
         return self.main_worker
 
-    def get(self, fetch: bool):
+    def get(self):
         """
         get_worker _summary_
 
@@ -39,25 +34,8 @@ class SinopacWorker:
             Sinopac: _description_
         """
         with self.lock:
-            now = round(datetime.now().timestamp() * 1000)
-            gap = now - self.request_worker_timestamp
-
-            if gap >= 1000:
-                self.request_worker_timestamp = now
-                self.request_worker_times = 0
-                # logger.info("Reset request timesatmp")
-
-            elif fetch is True and self.request_worker_times >= 85:
-                rest_time = 1 - (gap / 1000)
-                # logger.info("Rest time: %.3f", rest_time)
-                time.sleep(rest_time)
-                return self.get(fetch)
-
             idx = self.request_count.index(min(self.request_count))
             self.request_count[idx] += 1
-            if fetch is True:
-                self.request_worker_times += 1
-                # logger.info("Request times: %d", self.request_worker_times)
             return self.workers[idx]
 
     def count(self):

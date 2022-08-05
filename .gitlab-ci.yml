@@ -20,7 +20,7 @@ stages:
   - deployment
 
 py-lint:
-  image: python:3.10.5-bullseye
+  image: python:3.10.6-bullseye
   only:
     - main
   stage: test
