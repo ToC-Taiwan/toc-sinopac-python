@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-class RequiredEnv:
+class RequiredEnv:  # pylint: disable=too-many-instance-attributes
     def __init__(self):
 
         self.deployment = os.environ.get("DEPLOYMENT")
@@ -14,13 +14,14 @@ class RequiredEnv:
         self.person_id = os.environ.get("PERSON_ID")
         self.password = os.environ.get("PASSWORD")
         self.ca_password = os.environ.get("CA_PASSWORD")
+        self.request_limit_per_second = int(os.environ.get("REQUEST_LIMIT_PER_SECOND"))
 
         self.rabbitmq_host = os.environ.get("RABBITMQ_HOST")
         self.rabbitmq_user = os.environ.get("RABBITMQ_USER")
         self.rabbitmq_password = os.environ.get("RABBITMQ_PASSWORD")
         self.rabbitmq_exchange = os.environ.get("RABBITMQ_EXCHANGE")
         self.rabbitmq_url = os.environ.get("RABBITMQ_URL")
-        self.connection_count = os.environ.get("CONNECTION_COUNT")
+        self.connection_count = int(os.environ.get("CONNECTION_COUNT"))
 
         if self.deployment is None:
             raise Exception("Missing environment DEPLOYMENT")
@@ -32,6 +33,8 @@ class RequiredEnv:
             raise Exception("Missing environment PASSWORD")
         if self.ca_password is None:
             raise Exception("Missing environment CA_PASSWORD")
+        if self.request_limit_per_second is None:
+            raise Exception("Missing environment REQUEST_LIMIT_PER_SECOND")
         if self.rabbitmq_host is None:
             raise Exception("Missing environment RABBITMQ_HOST")
         if self.rabbitmq_user is None:

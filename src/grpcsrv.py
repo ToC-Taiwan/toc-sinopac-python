@@ -67,7 +67,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         """
         response = sinopac_forwarder_pb2.StockDetailResponse()
-        worker = WORKERS.get()
+        worker = WORKERS.get(False)
 
         tse_001 = worker.get_contract_tse_001()
         response.stock.append(
@@ -110,7 +110,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         """
         contracts = []
-        worker = WORKERS.get()
+        worker = WORKERS.get(False)
 
         for stock in worker.stock_num_list:
             contracts.append(worker.get_contract_by_stock_num(stock))
@@ -121,7 +121,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             threads.append(
                 threading.Thread(
                     target=fill_sinopac_snapshot_arr,
-                    args=(split, snapshots, WORKERS.get()),
+                    args=(split, snapshots, WORKERS.get(True)),
                 )
             )
             threads[i].start()
@@ -142,7 +142,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         Returns:
             _type_: _description_
         """
-        worker = WORKERS.get()
+        worker = WORKERS.get(True)
         snapshots = worker.snapshots([worker.get_contract_tse_001()])
         return sinopac_snapshot_to_pb(snapshots[0])
 
@@ -157,7 +157,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             _type_: _description_
         """
         contracts = []
-        worker = WORKERS.get()
+        worker = WORKERS.get(False)
 
         for stock in request.stock_num_arr:
             contracts.append(worker.get_contract_by_stock_num(stock))
@@ -168,7 +168,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             threads.append(
                 threading.Thread(
                     target=fill_sinopac_snapshot_arr,
-                    args=(split, snapshots, WORKERS.get()),
+                    args=(split, snapshots, WORKERS.get(True)),
                 )
             )
             threads[i].start()
@@ -198,7 +198,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                     num,
                     request.date,
                     response,
-                    WORKERS.get(),
+                    WORKERS.get(True),
                 ),
             )
             threads.append(t)
@@ -225,7 +225,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                 "tse_001",
                 request.date,
                 response,
-                WORKERS.get(),
+                WORKERS.get(True),
             ),
         )
         t.start()
@@ -252,7 +252,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                     num,
                     request.date,
                     response,
-                    WORKERS.get(),
+                    WORKERS.get(True),
                 ),
             )
             threads.append(t)
@@ -279,7 +279,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                 "tse_001",
                 request.date,
                 response,
-                WORKERS.get(),
+                WORKERS.get(True),
             ),
         )
         t.start()
@@ -306,7 +306,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                     num,
                     request.date,
                     response,
-                    WORKERS.get(),
+                    WORKERS.get(True),
                 ),
             )
             threads.append(t)
@@ -336,7 +336,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                         num,
                         date,
                         response,
-                        WORKERS.get(),
+                        WORKERS.get(True),
                     ),
                 )
                 threads.append(t)
@@ -363,7 +363,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                 "tse_001",
                 request.date,
                 response,
-                WORKERS.get(),
+                WORKERS.get(True),
             ),
         )
         t.start()
@@ -372,7 +372,9 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
 
     def GetStockVolumeRank(self, request, _):
         response = sinopac_forwarder_pb2.StockVolumeRankResponse()
-        ranks = WORKERS.get().get_stock_volume_rank_by_date(request.count, request.date)
+        ranks = WORKERS.get(True).get_stock_volume_rank_by_date(
+            request.count, request.date
+        )
         for result in ranks:
             response.data.append(
                 sinopac_forwarder_pb2.StockVolumeRankMessage(
@@ -753,7 +755,7 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
         cfg (RequiredEnv): _description_
     """
     global WORKERS  # pylint: disable=global-statement
-    WORKERS = SinopacWorker(main_worker, workers)
+    WORKERS = SinopacWorker(main_worker, workers, cfg.request_limit_per_second)
 
     # gRPC servicer
     health_servicer = gRPCHealthCheck()

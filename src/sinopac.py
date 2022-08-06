@@ -165,10 +165,11 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         update_order_status_instant _summary_
         """
         if self.order_status_callback is None:
-            logger.error("order_status_callback is None")
-            return
+            return "order_status_callback is None"
+
         with self.__order_status_lock:
             self.__api.update_status(timeout=0, cb=self.order_status_callback)
+            return None
 
     def update_local_order_status(self):
         """
