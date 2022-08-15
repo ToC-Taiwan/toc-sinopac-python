@@ -73,6 +73,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         self.fill_stock_num_list()
         if is_main is True:
             self.set_order_callback(self.place_order_callback)
+            logger.info(self.__api.stock_account)
+            logger.info(self.__api.futopt_account)
         return self
 
     def login_cb(self, security_type):
@@ -234,7 +236,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             return self.__api.ticks(contract, date)
         except TimeoutError:
-            return self.ticks(contract, date)
+            return self.ticks(num, date)
 
     def kbars(self, num, date):
         """
@@ -258,7 +260,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 end=date,
             )
         except TimeoutError:
-            return self.kbars(contract, date)
+            return self.kbars(num, date)
 
     def get_stock_last_close_by_date(self, num, date):
         """
@@ -286,7 +288,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return ticks.close[0]
             return 0
         except TimeoutError:
-            return self.get_stock_last_close_by_date(contract, date)
+            return self.get_stock_last_close_by_date(num, date)
 
     def get_stock_volume_rank_by_date(self, count, date):
         """

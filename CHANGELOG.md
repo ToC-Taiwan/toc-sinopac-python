@@ -1,6 +1,19 @@
-# [](https://gitlab.tocraw.com/root/toc-sinopac-python/compare/v0.0.2...v) (2022-07-22)
+# [](https://gitlab.tocraw.com/root/toc-sinopac-python/compare/v0.0.3...v) (2022-08-08)
 
 ## CHANGELOG
+
+## [0.0.3](https://gitlab.tocraw.com/root/toc-sinopac-python/compare/v0.0.2...v0.0.3) (2022-08-06)
+
+### Bug Fixes
+
+* **limit:** remove sinopac request limit, upgrade python to 3.10.6 ([9ea9ccb](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/9ea9ccb36da46f87d902b11def58b1795fa53558))
+* **log:** remove redundant log get worker, limit worker one second to 85 ([cbfa6d4](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/cbfa6d419f517c3857963f89582f39ffa2ca81e5))
+
+### Features
+
+* **fetch:** add every 5 secs, 500 fetch limit ([121ec73](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/121ec73e03e8eb911db8d0c372ceaaefc86815ba))
+* **fetch:** change contract to num, modify fetch rate to 95 times per second ([88ed683](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/88ed683c2391a5b52412e6003a036a5673812d6c))
+* **limit:** add request limit in env, add request limit in snapshot, ticks, kbars ([d876e23](https://gitlab.tocraw.com/root/toc-sinopac-python/commit/d876e2375d3611f863a0a54426592a906e4e0af9))
 
 ## [0.0.2](https://gitlab.tocraw.com/root/toc-sinopac-python/compare/v0.0.1...v0.0.2) (2022-07-21)
 
