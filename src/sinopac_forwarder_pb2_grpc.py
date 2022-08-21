@@ -983,3 +983,64 @@ class TradeService(object):
             sinopac__forwarder__pb2.FunctionErr.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class FutureForwarderStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.GetFIMTXSnapshot = channel.unary_unary(
+                '/sinopac_forwarder.FutureForwarder/GetFIMTXSnapshot',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockSnapshotMessage.FromString,
+                )
+
+
+class FutureForwarderServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def GetFIMTXSnapshot(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_FutureForwarderServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'GetFIMTXSnapshot': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFIMTXSnapshot,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockSnapshotMessage.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'sinopac_forwarder.FutureForwarder', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class FutureForwarder(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def GetFIMTXSnapshot(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.FutureForwarder/GetFIMTXSnapshot',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            sinopac__forwarder__pb2.StockSnapshotMessage.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

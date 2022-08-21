@@ -15,10 +15,11 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17sinopac_forwarder.proto\x12\x11sinopac_forwarder\x1a\x1bgoogle/protobuf/empty.proto\"\x17\n\x04\x42\x65\x61t\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x1a\n\x0b\x46unctionErr\x12\x0b\n\x03\x65rr\x18\x01 \x01(\t\"-\n\x07OrderID\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x10\n\x08simulate\x18\x02 \x01(\x08\"X\n\x10StockOrderDetail\x12\x11\n\tstock_num\x18\x01 \x01(\t\x12\r\n\x05price\x18\x02 \x01(\x01\x12\x10\n\x08quantity\x18\x03 \x01(\x03\x12\x10\n\x08simulate\x18\x04 \x01(\x08\">\n\x0bTradeResult\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\r\n\x05\x65rror\x18\x03 \x01(\t\"g\n\rEventResponse\x12\x11\n\tresp_code\x18\x01 \x01(\x03\x12\x12\n\nevent_code\x18\x02 \x01(\x03\x12\x0c\n\x04info\x18\x03 \x01(\t\x12\r\n\x05\x65vent\x18\x04 \x01(\t\x12\x12\n\nevent_time\x18\x05 \x01(\t\"\x14\n\x04\x44\x61te\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\"$\n\x0bStockNumArr\x12\x15\n\rstock_num_arr\x18\x01 \x03(\t\":\n\x13StockNumArrWithDate\x12\x15\n\rstock_num_arr\x18\x01 \x03(\t\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\"A\n\x16StockNumArrWithDateArr\x12\x15\n\rstock_num_arr\x18\x01 \x03(\t\x12\x10\n\x08\x64\x61te_arr\x18\x02 \x03(\t\"K\n\x13StockDetailResponse\x12\x34\n\x05stock\x18\x01 \x03(\x0b\x32%.sinopac_forwarder.StockDetailMessage\"\x8f\x01\n\x12StockDetailMessage\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x02 \x01(\t\x12\x0c\n\x04\x63ode\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x11\n\treference\x18\x05 \x01(\x01\x12\x13\n\x0bupdate_date\x18\x06 \x01(\t\x12\x11\n\tday_trade\x18\x07 \x01(\t\"N\n\x15StockSnapshotResponse\x12\x35\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32\'.sinopac_forwarder.StockSnapshotMessage\"\xb0\x03\n\x14StockSnapshotMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x10\n\x08\x65xchange\x18\x03 \x01(\t\x12\x0c\n\x04open\x18\x04 \x01(\x01\x12\x0c\n\x04high\x18\x05 \x01(\x01\x12\x0b\n\x03low\x18\x06 \x01(\x01\x12\r\n\x05\x63lose\x18\x07 \x01(\x01\x12\x11\n\ttick_type\x18\x08 \x01(\t\x12\x14\n\x0c\x63hange_price\x18\t \x01(\x01\x12\x13\n\x0b\x63hange_rate\x18\n \x01(\x01\x12\x13\n\x0b\x63hange_type\x18\x0b \x01(\t\x12\x15\n\raverage_price\x18\x0c \x01(\x01\x12\x0e\n\x06volume\x18\r \x01(\x03\x12\x14\n\x0ctotal_volume\x18\x0e \x01(\x03\x12\x0e\n\x06\x61mount\x18\x0f \x01(\x03\x12\x14\n\x0ctotal_amount\x18\x10 \x01(\x03\x12\x18\n\x10yesterday_volume\x18\x11 \x01(\x01\x12\x11\n\tbuy_price\x18\x12 \x01(\x01\x12\x12\n\nbuy_volume\x18\x13 \x01(\x01\x12\x12\n\nsell_price\x18\x14 \x01(\x01\x12\x13\n\x0bsell_volume\x18\x15 \x01(\x03\x12\x14\n\x0cvolume_ratio\x18\x16 \x01(\x01\"T\n\x18StockHistoryTickResponse\x12\x38\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32*.sinopac_forwarder.StockHistoryTickMessage\"\xb8\x01\n\x17StockHistoryTickMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0e\n\x06volume\x18\x03 \x01(\x03\x12\x11\n\tbid_price\x18\x04 \x01(\x01\x12\x12\n\nbid_volume\x18\x05 \x01(\x03\x12\x11\n\task_price\x18\x06 \x01(\x01\x12\x12\n\nask_volume\x18\x07 \x01(\x03\x12\x11\n\ttick_type\x18\x08 \x01(\x03\x12\x11\n\tstock_num\x18\t \x01(\t\"T\n\x18StockHistoryKbarResponse\x12\x38\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32*.sinopac_forwarder.StockHistoryKbarMessage\"\x80\x01\n\x17StockHistoryKbarMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0c\n\x04open\x18\x03 \x01(\x01\x12\x0c\n\x04high\x18\x04 \x01(\x01\x12\x0b\n\x03low\x18\x05 \x01(\x01\x12\x0e\n\x06volume\x18\x06 \x01(\x03\x12\x11\n\tstock_num\x18\x07 \x01(\t\"V\n\x19StockHistoryCloseResponse\x12\x39\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32+.sinopac_forwarder.StockHistoryCloseMessage\"E\n\x18StockHistoryCloseMessage\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\r\n\x05\x63lose\x18\x03 \x01(\x01\"0\n\x11VolumeRankRequest\x12\r\n\x05\x63ount\x18\x01 \x01(\x03\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\"R\n\x17StockVolumeRankResponse\x12\x37\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32).sinopac_forwarder.StockVolumeRankMessage\"\x8e\x04\n\x16StockVolumeRankMessage\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\n\n\x02ts\x18\x04 \x01(\x03\x12\x0c\n\x04open\x18\x05 \x01(\x01\x12\x0c\n\x04high\x18\x06 \x01(\x01\x12\x0b\n\x03low\x18\x07 \x01(\x01\x12\r\n\x05\x63lose\x18\x08 \x01(\x01\x12\x13\n\x0bprice_range\x18\t \x01(\x01\x12\x11\n\ttick_type\x18\n \x01(\x03\x12\x14\n\x0c\x63hange_price\x18\x0b \x01(\x01\x12\x13\n\x0b\x63hange_type\x18\x0c \x01(\x03\x12\x15\n\raverage_price\x18\r \x01(\x01\x12\x0e\n\x06volume\x18\x0e \x01(\x03\x12\x14\n\x0ctotal_volume\x18\x0f \x01(\x03\x12\x0e\n\x06\x61mount\x18\x10 \x01(\x03\x12\x14\n\x0ctotal_amount\x18\x11 \x01(\x03\x12\x18\n\x10yesterday_volume\x18\x12 \x01(\x03\x12\x14\n\x0cvolume_ratio\x18\x13 \x01(\x01\x12\x11\n\tbuy_price\x18\x14 \x01(\x01\x12\x12\n\nbuy_volume\x18\x15 \x01(\x03\x12\x12\n\nsell_price\x18\x16 \x01(\x01\x12\x13\n\x0bsell_volume\x18\x17 \x01(\x03\x12\x12\n\nbid_orders\x18\x18 \x01(\x03\x12\x13\n\x0b\x62id_volumes\x18\x19 \x01(\x03\x12\x12\n\nask_orders\x18\x1a \x01(\x03\x12\x13\n\x0b\x61sk_volumes\x18\x1b \x01(\x03\"%\n\x11SubscribeResponse\x12\x10\n\x08\x66\x61il_arr\x18\x01 \x03(\t\"\xaf\x03\n\x19StockRealTimeTickResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x11\n\tdate_time\x18\x02 \x01(\t\x12\x0c\n\x04open\x18\x03 \x01(\x01\x12\x11\n\tavg_price\x18\x04 \x01(\x01\x12\r\n\x05\x63lose\x18\x05 \x01(\x01\x12\x0c\n\x04high\x18\x06 \x01(\x01\x12\x0b\n\x03low\x18\x07 \x01(\x01\x12\x0e\n\x06\x61mount\x18\x08 \x01(\x01\x12\x14\n\x0ctotal_amount\x18\t \x01(\x01\x12\x0e\n\x06volume\x18\n \x01(\x03\x12\x14\n\x0ctotal_volume\x18\x0b \x01(\x03\x12\x11\n\ttick_type\x18\x0c \x01(\x03\x12\x10\n\x08\x63hg_type\x18\r \x01(\x03\x12\x11\n\tprice_chg\x18\x0e \x01(\x01\x12\x0f\n\x07pct_chg\x18\x0f \x01(\x01\x12\x1a\n\x12\x62id_side_total_vol\x18\x10 \x01(\x03\x12\x1a\n\x12\x61sk_side_total_vol\x18\x11 \x01(\x03\x12\x1a\n\x12\x62id_side_total_cnt\x18\x12 \x01(\x03\x12\x1a\n\x12\x61sk_side_total_cnt\x18\x13 \x01(\x03\x12\x0f\n\x07suspend\x18\x14 \x01(\x03\x12\x10\n\x08simtrade\x18\x15 \x01(\x03\"\xdb\x01\n\x1bStockRealTimeBidAskResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x11\n\tdate_time\x18\x02 \x01(\t\x12\x11\n\tbid_price\x18\x03 \x03(\x01\x12\x12\n\nbid_volume\x18\x04 \x03(\x03\x12\x14\n\x0c\x64iff_bid_vol\x18\x05 \x03(\x03\x12\x11\n\task_price\x18\x06 \x03(\x01\x12\x12\n\nask_volume\x18\x07 \x03(\x03\x12\x14\n\x0c\x64iff_ask_vol\x18\x08 \x03(\x03\x12\x0f\n\x07suspend\x18\t \x01(\x03\x12\x10\n\x08simtrade\x18\n \x01(\x03\"H\n\x13StockOrderStatusArr\x12\x31\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32#.sinopac_forwarder.StockOrderStatus\"\x87\x01\n\x10StockOrderStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x63tion\x18\x03 \x01(\t\x12\r\n\x05price\x18\x04 \x01(\x01\x12\x10\n\x08quantity\x18\x05 \x01(\x03\x12\x10\n\x08order_id\x18\x06 \x01(\t\x12\x12\n\norder_time\x18\x07 \x01(\t2\x8d\x01\n\x0bHealthCheck\x12\x41\n\tHeartbeat\x12\x17.sinopac_forwarder.Beat\x1a\x17.sinopac_forwarder.Beat(\x01\x30\x01\x12;\n\tTerminate\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty2\x8c\x0e\n\x10SinopacForwarder\x12U\n\x11GetAllStockDetail\x12\x16.google.protobuf.Empty\x1a&.sinopac_forwarder.StockDetailResponse\"\x00\x12Y\n\x13GetAllStockSnapshot\x12\x16.google.protobuf.Empty\x1a(.sinopac_forwarder.StockSnapshotResponse\"\x00\x12\x66\n\x18GetStockSnapshotByNumArr\x12\x1e.sinopac_forwarder.StockNumArr\x1a(.sinopac_forwarder.StockSnapshotResponse\"\x00\x12X\n\x13GetStockSnapshotTSE\x12\x16.google.protobuf.Empty\x1a\'.sinopac_forwarder.StockSnapshotMessage\"\x00\x12l\n\x13GetStockHistoryTick\x12&.sinopac_forwarder.StockNumArrWithDate\x1a+.sinopac_forwarder.StockHistoryTickResponse\"\x00\x12l\n\x13GetStockHistoryKbar\x12&.sinopac_forwarder.StockNumArrWithDate\x1a+.sinopac_forwarder.StockHistoryKbarResponse\"\x00\x12n\n\x14GetStockHistoryClose\x12&.sinopac_forwarder.StockNumArrWithDate\x1a,.sinopac_forwarder.StockHistoryCloseResponse\"\x00\x12z\n\x1dGetStockHistoryCloseByDateArr\x12).sinopac_forwarder.StockNumArrWithDateArr\x1a,.sinopac_forwarder.StockHistoryCloseResponse\"\x00\x12`\n\x16GetStockTSEHistoryTick\x12\x17.sinopac_forwarder.Date\x1a+.sinopac_forwarder.StockHistoryTickResponse\"\x00\x12`\n\x16GetStockTSEHistoryKbar\x12\x17.sinopac_forwarder.Date\x1a+.sinopac_forwarder.StockHistoryKbarResponse\"\x00\x12\x62\n\x17GetStockTSEHistoryClose\x12\x17.sinopac_forwarder.Date\x1a,.sinopac_forwarder.StockHistoryCloseResponse\"\x00\x12h\n\x12GetStockVolumeRank\x12$.sinopac_forwarder.VolumeRankRequest\x1a*.sinopac_forwarder.StockVolumeRankResponse\"\x00\x12\\\n\x12SubscribeStockTick\x12\x1e.sinopac_forwarder.StockNumArr\x1a$.sinopac_forwarder.SubscribeResponse\"\x00\x12^\n\x14UnSubscribeStockTick\x12\x1e.sinopac_forwarder.StockNumArr\x1a$.sinopac_forwarder.SubscribeResponse\"\x00\x12S\n\x17UnSubscribeStockAllTick\x12\x16.google.protobuf.Empty\x1a\x1e.sinopac_forwarder.FunctionErr\"\x00\x12^\n\x14SubscribeStockBidAsk\x12\x1e.sinopac_forwarder.StockNumArr\x1a$.sinopac_forwarder.SubscribeResponse\"\x00\x12`\n\x16UnSubscribeStockBidAsk\x12\x1e.sinopac_forwarder.StockNumArr\x1a$.sinopac_forwarder.SubscribeResponse\"\x00\x12U\n\x19UnSubscribeStockAllBidAsk\x12\x16.google.protobuf.Empty\x1a\x1e.sinopac_forwarder.FunctionErr\"\x00\x32\xdd\x04\n\x0cTradeService\x12Q\n\x08\x42uyStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\tSellStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12W\n\x0eSellFirstStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12K\n\x0b\x43\x61ncelStock\x12\x1a.sinopac_forwarder.OrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\x12GetOrderStatusByID\x12\x1a.sinopac_forwarder.OrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12U\n\x11GetOrderStatusArr\x12\x16.google.protobuf.Empty\x1a&.sinopac_forwarder.StockOrderStatusArr\"\x00\x12U\n\x19GetNonBlockOrderStatusArr\x12\x16.google.protobuf.Empty\x1a\x1e.sinopac_forwarder.FunctionErr\"\x00\x42\x06Z\x04./pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17sinopac_forwarder.proto\x12\x11sinopac_forwarder\x1a\x1bgoogle/protobuf/empty.proto\"\xd2\x01\n\x13\x46utureDetailMessage\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0e\n\x06symbol\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x04 \x01(\t\x12\x10\n\x08limit_up\x18\x05 \x01(\x01\x12\x12\n\nlimit_down\x18\x06 \x01(\x01\x12\x11\n\treference\x18\x07 \x01(\x01\x12\x13\n\x0bupdate_date\x18\x08 \x01(\t\x12\x16\n\x0e\x64\x65livery_month\x18\t \x01(\t\x12\x17\n\x0funderlying_kind\x18\n \x01(\t\"\x17\n\x04\x42\x65\x61t\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x1a\n\x0b\x46unctionErr\x12\x0b\n\x03\x65rr\x18\x01 \x01(\t\"-\n\x07OrderID\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x10\n\x08simulate\x18\x02 \x01(\x08\"X\n\x10StockOrderDetail\x12\x11\n\tstock_num\x18\x01 \x01(\t\x12\r\n\x05price\x18\x02 \x01(\x01\x12\x10\n\x08quantity\x18\x03 \x01(\x03\x12\x10\n\x08simulate\x18\x04 \x01(\x08\">\n\x0bTradeResult\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\r\n\x05\x65rror\x18\x03 \x01(\t\"g\n\rEventResponse\x12\x11\n\tresp_code\x18\x01 \x01(\x03\x12\x12\n\nevent_code\x18\x02 \x01(\x03\x12\x0c\n\x04info\x18\x03 \x01(\t\x12\r\n\x05\x65vent\x18\x04 \x01(\t\x12\x12\n\nevent_time\x18\x05 \x01(\t\"\x14\n\x04\x44\x61te\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\"$\n\x0bStockNumArr\x12\x15\n\rstock_num_arr\x18\x01 \x03(\t\":\n\x13StockNumArrWithDate\x12\x15\n\rstock_num_arr\x18\x01 \x03(\t\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\"A\n\x16StockNumArrWithDateArr\x12\x15\n\rstock_num_arr\x18\x01 \x03(\t\x12\x10\n\x08\x64\x61te_arr\x18\x02 \x03(\t\"K\n\x13StockDetailResponse\x12\x34\n\x05stock\x18\x01 \x03(\x0b\x32%.sinopac_forwarder.StockDetailMessage\"\x8f\x01\n\x12StockDetailMessage\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x02 \x01(\t\x12\x0c\n\x04\x63ode\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x11\n\treference\x18\x05 \x01(\x01\x12\x13\n\x0bupdate_date\x18\x06 \x01(\t\x12\x11\n\tday_trade\x18\x07 \x01(\t\"N\n\x15StockSnapshotResponse\x12\x35\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32\'.sinopac_forwarder.StockSnapshotMessage\"\xb0\x03\n\x14StockSnapshotMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x10\n\x08\x65xchange\x18\x03 \x01(\t\x12\x0c\n\x04open\x18\x04 \x01(\x01\x12\x0c\n\x04high\x18\x05 \x01(\x01\x12\x0b\n\x03low\x18\x06 \x01(\x01\x12\r\n\x05\x63lose\x18\x07 \x01(\x01\x12\x11\n\ttick_type\x18\x08 \x01(\t\x12\x14\n\x0c\x63hange_price\x18\t \x01(\x01\x12\x13\n\x0b\x63hange_rate\x18\n \x01(\x01\x12\x13\n\x0b\x63hange_type\x18\x0b \x01(\t\x12\x15\n\raverage_price\x18\x0c \x01(\x01\x12\x0e\n\x06volume\x18\r \x01(\x03\x12\x14\n\x0ctotal_volume\x18\x0e \x01(\x03\x12\x0e\n\x06\x61mount\x18\x0f \x01(\x03\x12\x14\n\x0ctotal_amount\x18\x10 \x01(\x03\x12\x18\n\x10yesterday_volume\x18\x11 \x01(\x01\x12\x11\n\tbuy_price\x18\x12 \x01(\x01\x12\x12\n\nbuy_volume\x18\x13 \x01(\x01\x12\x12\n\nsell_price\x18\x14 \x01(\x01\x12\x13\n\x0bsell_volume\x18\x15 \x01(\x03\x12\x14\n\x0cvolume_ratio\x18\x16 \x01(\x01\"T\n\x18StockHistoryTickResponse\x12\x38\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32*.sinopac_forwarder.StockHistoryTickMessage\"\xb8\x01\n\x17StockHistoryTickMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0e\n\x06volume\x18\x03 \x01(\x03\x12\x11\n\tbid_price\x18\x04 \x01(\x01\x12\x12\n\nbid_volume\x18\x05 \x01(\x03\x12\x11\n\task_price\x18\x06 \x01(\x01\x12\x12\n\nask_volume\x18\x07 \x01(\x03\x12\x11\n\ttick_type\x18\x08 \x01(\x03\x12\x11\n\tstock_num\x18\t \x01(\t\"T\n\x18StockHistoryKbarResponse\x12\x38\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32*.sinopac_forwarder.StockHistoryKbarMessage\"\x80\x01\n\x17StockHistoryKbarMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0c\n\x04open\x18\x03 \x01(\x01\x12\x0c\n\x04high\x18\x04 \x01(\x01\x12\x0b\n\x03low\x18\x05 \x01(\x01\x12\x0e\n\x06volume\x18\x06 \x01(\x03\x12\x11\n\tstock_num\x18\x07 \x01(\t\"V\n\x19StockHistoryCloseResponse\x12\x39\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32+.sinopac_forwarder.StockHistoryCloseMessage\"E\n\x18StockHistoryCloseMessage\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\r\n\x05\x63lose\x18\x03 \x01(\x01\"0\n\x11VolumeRankRequest\x12\r\n\x05\x63ount\x18\x01 \x01(\x03\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\"R\n\x17StockVolumeRankResponse\x12\x37\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32).sinopac_forwarder.StockVolumeRankMessage\"\x8e\x04\n\x16StockVolumeRankMessage\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\n\n\x02ts\x18\x04 \x01(\x03\x12\x0c\n\x04open\x18\x05 \x01(\x01\x12\x0c\n\x04high\x18\x06 \x01(\x01\x12\x0b\n\x03low\x18\x07 \x01(\x01\x12\r\n\x05\x63lose\x18\x08 \x01(\x01\x12\x13\n\x0bprice_range\x18\t \x01(\x01\x12\x11\n\ttick_type\x18\n \x01(\x03\x12\x14\n\x0c\x63hange_price\x18\x0b \x01(\x01\x12\x13\n\x0b\x63hange_type\x18\x0c \x01(\x03\x12\x15\n\raverage_price\x18\r \x01(\x01\x12\x0e\n\x06volume\x18\x0e \x01(\x03\x12\x14\n\x0ctotal_volume\x18\x0f \x01(\x03\x12\x0e\n\x06\x61mount\x18\x10 \x01(\x03\x12\x14\n\x0ctotal_amount\x18\x11 \x01(\x03\x12\x18\n\x10yesterday_volume\x18\x12 \x01(\x03\x12\x14\n\x0cvolume_ratio\x18\x13 \x01(\x01\x12\x11\n\tbuy_price\x18\x14 \x01(\x01\x12\x12\n\nbuy_volume\x18\x15 \x01(\x03\x12\x12\n\nsell_price\x18\x16 \x01(\x01\x12\x13\n\x0bsell_volume\x18\x17 \x01(\x03\x12\x12\n\nbid_orders\x18\x18 \x01(\x03\x12\x13\n\x0b\x62id_volumes\x18\x19 \x01(\x03\x12\x12\n\nask_orders\x18\x1a \x01(\x03\x12\x13\n\x0b\x61sk_volumes\x18\x1b \x01(\x03\"%\n\x11SubscribeResponse\x12\x10\n\x08\x66\x61il_arr\x18\x01 \x03(\t\"\xaf\x03\n\x19StockRealTimeTickResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x11\n\tdate_time\x18\x02 \x01(\t\x12\x0c\n\x04open\x18\x03 \x01(\x01\x12\x11\n\tavg_price\x18\x04 \x01(\x01\x12\r\n\x05\x63lose\x18\x05 \x01(\x01\x12\x0c\n\x04high\x18\x06 \x01(\x01\x12\x0b\n\x03low\x18\x07 \x01(\x01\x12\x0e\n\x06\x61mount\x18\x08 \x01(\x01\x12\x14\n\x0ctotal_amount\x18\t \x01(\x01\x12\x0e\n\x06volume\x18\n \x01(\x03\x12\x14\n\x0ctotal_volume\x18\x0b \x01(\x03\x12\x11\n\ttick_type\x18\x0c \x01(\x03\x12\x10\n\x08\x63hg_type\x18\r \x01(\x03\x12\x11\n\tprice_chg\x18\x0e \x01(\x01\x12\x0f\n\x07pct_chg\x18\x0f \x01(\x01\x12\x1a\n\x12\x62id_side_total_vol\x18\x10 \x01(\x03\x12\x1a\n\x12\x61sk_side_total_vol\x18\x11 \x01(\x03\x12\x1a\n\x12\x62id_side_total_cnt\x18\x12 \x01(\x03\x12\x1a\n\x12\x61sk_side_total_cnt\x18\x13 \x01(\x03\x12\x0f\n\x07suspend\x18\x14 \x01(\x03\x12\x10\n\x08simtrade\x18\x15 \x01(\x03\"\xdb\x01\n\x1bStockRealTimeBidAskResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x11\n\tdate_time\x18\x02 \x01(\t\x12\x11\n\tbid_price\x18\x03 \x03(\x01\x12\x12\n\nbid_volume\x18\x04 \x03(\x03\x12\x14\n\x0c\x64iff_bid_vol\x18\x05 \x03(\x03\x12\x11\n\task_price\x18\x06 \x03(\x01\x12\x12\n\nask_volume\x18\x07 \x03(\x03\x12\x14\n\x0c\x64iff_ask_vol\x18\x08 \x03(\x03\x12\x0f\n\x07suspend\x18\t \x01(\x03\x12\x10\n\x08simtrade\x18\n \x01(\x03\"H\n\x13StockOrderStatusArr\x12\x31\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32#.sinopac_forwarder.StockOrderStatus\"\x87\x01\n\x10StockOrderStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x63tion\x18\x03 \x01(\t\x12\r\n\x05price\x18\x04 \x01(\x01\x12\x10\n\x08quantity\x18\x05 \x01(\x03\x12\x10\n\x08order_id\x18\x06 \x01(\t\x12\x12\n\norder_time\x18\x07 \x01(\t2\x8d\x01\n\x0bHealthCheck\x12\x41\n\tHeartbeat\x12\x17.sinopac_forwarder.Beat\x1a\x17.sinopac_forwarder.Beat(\x01\x30\x01\x12;\n\tTerminate\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty2\x8c\x0e\n\x10SinopacForwarder\x12U\n\x11GetAllStockDetail\x12\x16.google.protobuf.Empty\x1a&.sinopac_forwarder.StockDetailResponse\"\x00\x12Y\n\x13GetAllStockSnapshot\x12\x16.google.protobuf.Empty\x1a(.sinopac_forwarder.StockSnapshotResponse\"\x00\x12\x66\n\x18GetStockSnapshotByNumArr\x12\x1e.sinopac_forwarder.StockNumArr\x1a(.sinopac_forwarder.StockSnapshotResponse\"\x00\x12X\n\x13GetStockSnapshotTSE\x12\x16.google.protobuf.Empty\x1a\'.sinopac_forwarder.StockSnapshotMessage\"\x00\x12l\n\x13GetStockHistoryTick\x12&.sinopac_forwarder.StockNumArrWithDate\x1a+.sinopac_forwarder.StockHistoryTickResponse\"\x00\x12l\n\x13GetStockHistoryKbar\x12&.sinopac_forwarder.StockNumArrWithDate\x1a+.sinopac_forwarder.StockHistoryKbarResponse\"\x00\x12n\n\x14GetStockHistoryClose\x12&.sinopac_forwarder.StockNumArrWithDate\x1a,.sinopac_forwarder.StockHistoryCloseResponse\"\x00\x12z\n\x1dGetStockHistoryCloseByDateArr\x12).sinopac_forwarder.StockNumArrWithDateArr\x1a,.sinopac_forwarder.StockHistoryCloseResponse\"\x00\x12`\n\x16GetStockTSEHistoryTick\x12\x17.sinopac_forwarder.Date\x1a+.sinopac_forwarder.StockHistoryTickResponse\"\x00\x12`\n\x16GetStockTSEHistoryKbar\x12\x17.sinopac_forwarder.Date\x1a+.sinopac_forwarder.StockHistoryKbarResponse\"\x00\x12\x62\n\x17GetStockTSEHistoryClose\x12\x17.sinopac_forwarder.Date\x1a,.sinopac_forwarder.StockHistoryCloseResponse\"\x00\x12h\n\x12GetStockVolumeRank\x12$.sinopac_forwarder.VolumeRankRequest\x1a*.sinopac_forwarder.StockVolumeRankResponse\"\x00\x12\\\n\x12SubscribeStockTick\x12\x1e.sinopac_forwarder.StockNumArr\x1a$.sinopac_forwarder.SubscribeResponse\"\x00\x12^\n\x14UnSubscribeStockTick\x12\x1e.sinopac_forwarder.StockNumArr\x1a$.sinopac_forwarder.SubscribeResponse\"\x00\x12S\n\x17UnSubscribeStockAllTick\x12\x16.google.protobuf.Empty\x1a\x1e.sinopac_forwarder.FunctionErr\"\x00\x12^\n\x14SubscribeStockBidAsk\x12\x1e.sinopac_forwarder.StockNumArr\x1a$.sinopac_forwarder.SubscribeResponse\"\x00\x12`\n\x16UnSubscribeStockBidAsk\x12\x1e.sinopac_forwarder.StockNumArr\x1a$.sinopac_forwarder.SubscribeResponse\"\x00\x12U\n\x19UnSubscribeStockAllBidAsk\x12\x16.google.protobuf.Empty\x1a\x1e.sinopac_forwarder.FunctionErr\"\x00\x32\xdd\x04\n\x0cTradeService\x12Q\n\x08\x42uyStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\tSellStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12W\n\x0eSellFirstStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12K\n\x0b\x43\x61ncelStock\x12\x1a.sinopac_forwarder.OrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\x12GetOrderStatusByID\x12\x1a.sinopac_forwarder.OrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12U\n\x11GetOrderStatusArr\x12\x16.google.protobuf.Empty\x1a&.sinopac_forwarder.StockOrderStatusArr\"\x00\x12U\n\x19GetNonBlockOrderStatusArr\x12\x16.google.protobuf.Empty\x1a\x1e.sinopac_forwarder.FunctionErr\"\x00\x32h\n\x0f\x46utureForwarder\x12U\n\x10GetFIMTXSnapshot\x12\x16.google.protobuf.Empty\x1a\'.sinopac_forwarder.StockSnapshotMessage\"\x00\x42\x06Z\x04./pbb\x06proto3')
 
 
 
+_FUTUREDETAILMESSAGE = DESCRIPTOR.message_types_by_name['FutureDetailMessage']
 _BEAT = DESCRIPTOR.message_types_by_name['Beat']
 _FUNCTIONERR = DESCRIPTOR.message_types_by_name['FunctionErr']
 _ORDERID = DESCRIPTOR.message_types_by_name['OrderID']
@@ -47,6 +48,13 @@ _STOCKREALTIMETICKRESPONSE = DESCRIPTOR.message_types_by_name['StockRealTimeTick
 _STOCKREALTIMEBIDASKRESPONSE = DESCRIPTOR.message_types_by_name['StockRealTimeBidAskResponse']
 _STOCKORDERSTATUSARR = DESCRIPTOR.message_types_by_name['StockOrderStatusArr']
 _STOCKORDERSTATUS = DESCRIPTOR.message_types_by_name['StockOrderStatus']
+FutureDetailMessage = _reflection.GeneratedProtocolMessageType('FutureDetailMessage', (_message.Message,), {
+  'DESCRIPTOR' : _FUTUREDETAILMESSAGE,
+  '__module__' : 'sinopac_forwarder_pb2'
+  # @@protoc_insertion_point(class_scope:sinopac_forwarder.FutureDetailMessage)
+  })
+_sym_db.RegisterMessage(FutureDetailMessage)
+
 Beat = _reflection.GeneratedProtocolMessageType('Beat', (_message.Message,), {
   'DESCRIPTOR' : _BEAT,
   '__module__' : 'sinopac_forwarder_pb2'
@@ -246,70 +254,75 @@ _sym_db.RegisterMessage(StockOrderStatus)
 _HEALTHCHECK = DESCRIPTOR.services_by_name['HealthCheck']
 _SINOPACFORWARDER = DESCRIPTOR.services_by_name['SinopacForwarder']
 _TRADESERVICE = DESCRIPTOR.services_by_name['TradeService']
+_FUTUREFORWARDER = DESCRIPTOR.services_by_name['FutureForwarder']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\004./pb'
-  _BEAT._serialized_start=75
-  _BEAT._serialized_end=98
-  _FUNCTIONERR._serialized_start=100
-  _FUNCTIONERR._serialized_end=126
-  _ORDERID._serialized_start=128
-  _ORDERID._serialized_end=173
-  _STOCKORDERDETAIL._serialized_start=175
-  _STOCKORDERDETAIL._serialized_end=263
-  _TRADERESULT._serialized_start=265
-  _TRADERESULT._serialized_end=327
-  _EVENTRESPONSE._serialized_start=329
-  _EVENTRESPONSE._serialized_end=432
-  _DATE._serialized_start=434
-  _DATE._serialized_end=454
-  _STOCKNUMARR._serialized_start=456
-  _STOCKNUMARR._serialized_end=492
-  _STOCKNUMARRWITHDATE._serialized_start=494
-  _STOCKNUMARRWITHDATE._serialized_end=552
-  _STOCKNUMARRWITHDATEARR._serialized_start=554
-  _STOCKNUMARRWITHDATEARR._serialized_end=619
-  _STOCKDETAILRESPONSE._serialized_start=621
-  _STOCKDETAILRESPONSE._serialized_end=696
-  _STOCKDETAILMESSAGE._serialized_start=699
-  _STOCKDETAILMESSAGE._serialized_end=842
-  _STOCKSNAPSHOTRESPONSE._serialized_start=844
-  _STOCKSNAPSHOTRESPONSE._serialized_end=922
-  _STOCKSNAPSHOTMESSAGE._serialized_start=925
-  _STOCKSNAPSHOTMESSAGE._serialized_end=1357
-  _STOCKHISTORYTICKRESPONSE._serialized_start=1359
-  _STOCKHISTORYTICKRESPONSE._serialized_end=1443
-  _STOCKHISTORYTICKMESSAGE._serialized_start=1446
-  _STOCKHISTORYTICKMESSAGE._serialized_end=1630
-  _STOCKHISTORYKBARRESPONSE._serialized_start=1632
-  _STOCKHISTORYKBARRESPONSE._serialized_end=1716
-  _STOCKHISTORYKBARMESSAGE._serialized_start=1719
-  _STOCKHISTORYKBARMESSAGE._serialized_end=1847
-  _STOCKHISTORYCLOSERESPONSE._serialized_start=1849
-  _STOCKHISTORYCLOSERESPONSE._serialized_end=1935
-  _STOCKHISTORYCLOSEMESSAGE._serialized_start=1937
-  _STOCKHISTORYCLOSEMESSAGE._serialized_end=2006
-  _VOLUMERANKREQUEST._serialized_start=2008
-  _VOLUMERANKREQUEST._serialized_end=2056
-  _STOCKVOLUMERANKRESPONSE._serialized_start=2058
-  _STOCKVOLUMERANKRESPONSE._serialized_end=2140
-  _STOCKVOLUMERANKMESSAGE._serialized_start=2143
-  _STOCKVOLUMERANKMESSAGE._serialized_end=2669
-  _SUBSCRIBERESPONSE._serialized_start=2671
-  _SUBSCRIBERESPONSE._serialized_end=2708
-  _STOCKREALTIMETICKRESPONSE._serialized_start=2711
-  _STOCKREALTIMETICKRESPONSE._serialized_end=3142
-  _STOCKREALTIMEBIDASKRESPONSE._serialized_start=3145
-  _STOCKREALTIMEBIDASKRESPONSE._serialized_end=3364
-  _STOCKORDERSTATUSARR._serialized_start=3366
-  _STOCKORDERSTATUSARR._serialized_end=3438
-  _STOCKORDERSTATUS._serialized_start=3441
-  _STOCKORDERSTATUS._serialized_end=3576
-  _HEALTHCHECK._serialized_start=3579
-  _HEALTHCHECK._serialized_end=3720
-  _SINOPACFORWARDER._serialized_start=3723
-  _SINOPACFORWARDER._serialized_end=5527
-  _TRADESERVICE._serialized_start=5530
-  _TRADESERVICE._serialized_end=6135
+  _FUTUREDETAILMESSAGE._serialized_start=76
+  _FUTUREDETAILMESSAGE._serialized_end=286
+  _BEAT._serialized_start=288
+  _BEAT._serialized_end=311
+  _FUNCTIONERR._serialized_start=313
+  _FUNCTIONERR._serialized_end=339
+  _ORDERID._serialized_start=341
+  _ORDERID._serialized_end=386
+  _STOCKORDERDETAIL._serialized_start=388
+  _STOCKORDERDETAIL._serialized_end=476
+  _TRADERESULT._serialized_start=478
+  _TRADERESULT._serialized_end=540
+  _EVENTRESPONSE._serialized_start=542
+  _EVENTRESPONSE._serialized_end=645
+  _DATE._serialized_start=647
+  _DATE._serialized_end=667
+  _STOCKNUMARR._serialized_start=669
+  _STOCKNUMARR._serialized_end=705
+  _STOCKNUMARRWITHDATE._serialized_start=707
+  _STOCKNUMARRWITHDATE._serialized_end=765
+  _STOCKNUMARRWITHDATEARR._serialized_start=767
+  _STOCKNUMARRWITHDATEARR._serialized_end=832
+  _STOCKDETAILRESPONSE._serialized_start=834
+  _STOCKDETAILRESPONSE._serialized_end=909
+  _STOCKDETAILMESSAGE._serialized_start=912
+  _STOCKDETAILMESSAGE._serialized_end=1055
+  _STOCKSNAPSHOTRESPONSE._serialized_start=1057
+  _STOCKSNAPSHOTRESPONSE._serialized_end=1135
+  _STOCKSNAPSHOTMESSAGE._serialized_start=1138
+  _STOCKSNAPSHOTMESSAGE._serialized_end=1570
+  _STOCKHISTORYTICKRESPONSE._serialized_start=1572
+  _STOCKHISTORYTICKRESPONSE._serialized_end=1656
+  _STOCKHISTORYTICKMESSAGE._serialized_start=1659
+  _STOCKHISTORYTICKMESSAGE._serialized_end=1843
+  _STOCKHISTORYKBARRESPONSE._serialized_start=1845
+  _STOCKHISTORYKBARRESPONSE._serialized_end=1929
+  _STOCKHISTORYKBARMESSAGE._serialized_start=1932
+  _STOCKHISTORYKBARMESSAGE._serialized_end=2060
+  _STOCKHISTORYCLOSERESPONSE._serialized_start=2062
+  _STOCKHISTORYCLOSERESPONSE._serialized_end=2148
+  _STOCKHISTORYCLOSEMESSAGE._serialized_start=2150
+  _STOCKHISTORYCLOSEMESSAGE._serialized_end=2219
+  _VOLUMERANKREQUEST._serialized_start=2221
+  _VOLUMERANKREQUEST._serialized_end=2269
+  _STOCKVOLUMERANKRESPONSE._serialized_start=2271
+  _STOCKVOLUMERANKRESPONSE._serialized_end=2353
+  _STOCKVOLUMERANKMESSAGE._serialized_start=2356
+  _STOCKVOLUMERANKMESSAGE._serialized_end=2882
+  _SUBSCRIBERESPONSE._serialized_start=2884
+  _SUBSCRIBERESPONSE._serialized_end=2921
+  _STOCKREALTIMETICKRESPONSE._serialized_start=2924
+  _STOCKREALTIMETICKRESPONSE._serialized_end=3355
+  _STOCKREALTIMEBIDASKRESPONSE._serialized_start=3358
+  _STOCKREALTIMEBIDASKRESPONSE._serialized_end=3577
+  _STOCKORDERSTATUSARR._serialized_start=3579
+  _STOCKORDERSTATUSARR._serialized_end=3651
+  _STOCKORDERSTATUS._serialized_start=3654
+  _STOCKORDERSTATUS._serialized_end=3789
+  _HEALTHCHECK._serialized_start=3792
+  _HEALTHCHECK._serialized_end=3933
+  _SINOPACFORWARDER._serialized_start=3936
+  _SINOPACFORWARDER._serialized_end=5740
+  _TRADESERVICE._serialized_start=5743
+  _TRADESERVICE._serialized_end=6348
+  _FUTUREFORWARDER._serialized_start=6350
+  _FUTUREFORWARDER._serialized_end=6454
 # @@protoc_insertion_point(module_scope)

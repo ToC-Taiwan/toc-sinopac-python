@@ -11,6 +11,44 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+class FutureDetailMessage(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    CODE_FIELD_NUMBER: builtins.int
+    SYMBOL_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    CATEGORY_FIELD_NUMBER: builtins.int
+    LIMIT_UP_FIELD_NUMBER: builtins.int
+    LIMIT_DOWN_FIELD_NUMBER: builtins.int
+    REFERENCE_FIELD_NUMBER: builtins.int
+    UPDATE_DATE_FIELD_NUMBER: builtins.int
+    DELIVERY_MONTH_FIELD_NUMBER: builtins.int
+    UNDERLYING_KIND_FIELD_NUMBER: builtins.int
+    code: typing.Text
+    symbol: typing.Text
+    name: typing.Text
+    category: typing.Text
+    limit_up: builtins.float
+    limit_down: builtins.float
+    reference: builtins.float
+    update_date: typing.Text
+    delivery_month: typing.Text
+    underlying_kind: typing.Text
+    def __init__(self,
+        *,
+        code: typing.Text = ...,
+        symbol: typing.Text = ...,
+        name: typing.Text = ...,
+        category: typing.Text = ...,
+        limit_up: builtins.float = ...,
+        limit_down: builtins.float = ...,
+        reference: builtins.float = ...,
+        update_date: typing.Text = ...,
+        delivery_month: typing.Text = ...,
+        underlying_kind: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["category",b"category","code",b"code","delivery_month",b"delivery_month","limit_down",b"limit_down","limit_up",b"limit_up","name",b"name","reference",b"reference","symbol",b"symbol","underlying_kind",b"underlying_kind","update_date",b"update_date"]) -> None: ...
+global___FutureDetailMessage = FutureDetailMessage
+
 class Beat(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     MESSAGE_FIELD_NUMBER: builtins.int

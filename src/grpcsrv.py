@@ -448,6 +448,20 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         return sinopac_forwarder_pb2.FunctionErr(err=WORKERS.unsubscribe_all_bidask())
 
 
+class gRPCFuturesForwarder(sinopac_forwarder_pb2_grpc.FutureForwarderServicer):
+    """
+    gRPCFuturesForwarder _summary_
+
+    Args:
+        sinopac_forwarder_pb2_grpc (_type_): _description_
+    """
+
+    def GetFIMTXSnapshot(self, request, _):
+        worker = WORKERS.get(True)
+        snapshots = worker.snapshots([worker.get_contract_fimtx()])
+        return sinopac_snapshot_to_pb(snapshots[0])
+
+
 class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
     def BuyStock(self, request, _):
         """
@@ -760,6 +774,7 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     # gRPC servicer
     health_servicer = gRPCHealthCheck()
     sinopac_forwarder_servicer = gRPCSinopacForwarder()
+    future_forwarder_servicer = gRPCFuturesForwarder()
     trade_servicer = gRPCTradeMethod()
 
     # set call back
@@ -786,6 +801,9 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     )
     sinopac_forwarder_pb2_grpc.add_SinopacForwarderServicer_to_server(
         sinopac_forwarder_servicer, server
+    )
+    sinopac_forwarder_pb2_grpc.add_FutureForwarderServicer_to_server(
+        future_forwarder_servicer, server
     )
     sinopac_forwarder_pb2_grpc.add_TradeServiceServicer_to_server(
         trade_servicer, server

@@ -206,6 +206,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         return self.__api.Contracts.Indexs.TSE.TSE001
 
+    def get_contract_fimtx(self):
+        """
+        get_contract_fimtx _summary_
+
+        Returns:
+            _type_: _description_
+        """
+        return self.__api.Contracts.Futures.MXF.MXFR2
+
     def get_contract_by_stock_num(self, num):
         """
         get_contract_by_stock_num _summary_
@@ -717,10 +726,7 @@ def event_logger_cb(resp_code: int, event_code: int, info: str, event: str):
     if event_code == 12:
         os._exit(1)
 
-    logger.info(
-        "event logger:\nresp_code: %d\nevent_code: %d\ninfo: %s\nevent: %s",
-        resp_code,
-        event_code,
-        info,
-        event,
-    )
+    logger.info("resp_code: %d", resp_code)
+    logger.info("event_code: %d", event_code)
+    logger.info("info: %s", info)
+    logger.info("event: %s", event)
