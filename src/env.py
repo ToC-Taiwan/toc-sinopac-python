@@ -10,6 +10,7 @@ class RequiredEnv:  # pylint: disable=too-many-instance-attributes
     def __init__(self):
 
         self.deployment = os.environ.get("DEPLOYMENT")
+        self.log_format = os.environ.get("LOG_FORMAT")
         self.grpc_port = os.environ.get("GRPC_PORT")
         self.person_id = os.environ.get("PERSON_ID")
         self.password = os.environ.get("PASSWORD")
@@ -25,6 +26,8 @@ class RequiredEnv:  # pylint: disable=too-many-instance-attributes
 
         if self.deployment is None:
             raise Exception("Missing environment DEPLOYMENT")
+        if self.log_format is None:
+            raise Exception("Missing environment LOG_FORMAT")
         if self.grpc_port is None:
             raise Exception("Missing environment GRPC_PORT")
         if self.person_id is None:

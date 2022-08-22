@@ -92,6 +92,7 @@ docker inspect bridge
 
 ```sh
 echo 'DEPLOYMENT=prod
+LOG_FORMAT=console
 GRPC_PORT=56666
 PERSON_ID=F127522501
 PASSWORD=E2rgilaal

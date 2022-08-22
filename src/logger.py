@@ -7,7 +7,7 @@ log_format = str()
 extension_name = str()
 env = RequiredEnv()
 
-if env.deployment == "prod":
+if env.deployment == "json":
     log_format = '{"time":"%(asctime)s","user":"%(name)s","level":"%(levelname)s","message":"%(message)s"}'
     extension_name = "json"
 else:
