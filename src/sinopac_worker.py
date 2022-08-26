@@ -6,7 +6,7 @@ from logger import logger
 from sinopac import Sinopac
 
 
-class SinopacWorker:
+class SinopacWorker:  # pylint: disable=too-many-instance-attributes
     def __init__(self, main_worker: Sinopac, workers: list[Sinopac], request_limt: int):
         self.main_worker = main_worker
         self.workers = workers
@@ -18,6 +18,7 @@ class SinopacWorker:
         self.sub_lock = threading.Lock()
         self.stock_tick_sub_dict: dict[str, int] = {}
         self.stock_bidask_sub_dict: dict[str, int] = {}
+        self.future_tick_sub_dict: dict[str, int] = {}
         # request workder limit
         self.request_limit = request_limt
         self.request_worker_timestamp = int()
@@ -111,6 +112,47 @@ class SinopacWorker:
                     return result
         return None
 
+    def subscribe_future_tick(self, code):
+        """
+        subscribe_future_tick _summary_
+
+        Args:
+            code (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        with self.sub_lock:
+            if code in self.future_tick_sub_dict:
+                return None
+            idx = self.subscribe_count.index(min(self.subscribe_count))
+            result = self.workers[idx].subscribe_future_tick(code)
+            if result is not None:
+                return result
+            self.subscribe_count[idx] += 1
+            self.future_tick_sub_dict[code] = idx
+        return None
+
+    def unsubscribe_future_tick(self, code):
+        """
+        unsubscribe_future_tick _summary_
+
+        Args:
+            code (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        with self.sub_lock:
+            if code in self.future_tick_sub_dict:
+                idx = self.future_tick_sub_dict[code]
+                self.subscribe_count[idx] -= 1
+                del self.future_tick_sub_dict[code]
+                result = self.workers[idx].unsubscribe_future_tick(code)
+                if result is not None:
+                    return result
+        return None
+
     def subscribe_stock_bidask(self, stock_num):
         """
         subscribe_stock_bidask _summary_
@@ -158,12 +200,21 @@ class SinopacWorker:
         """
         fail_arr = []
         if len(self.stock_tick_sub_dict) != 0:
-            logger.info("unsubscribe all tick")
+            logger.info("unsubscribe all stock tick")
             for stock_num in list(self.stock_tick_sub_dict):
                 if self.unsubscribe_stock_tick(stock_num) is not None:
                     fail_arr.append(stock_num)
         if len(fail_arr) != 0:
-            return f"unsubscribe_all_tick fail: {fail_arr}"
+            return f"unsubscribe_all_stock_tick fail: {fail_arr}"
+
+        fail_arr = []
+        if len(self.future_tick_sub_dict) != 0:
+            logger.info("unsubscribe all future tick")
+            for code in list(self.future_tick_sub_dict):
+                if self.unsubscribe_future_tick(code) is not None:
+                    fail_arr.append(code)
+        if len(fail_arr) != 0:
+            return f"unsubscribe_all_future_tick fail: {fail_arr}"
         return ""
 
     def unsubscribe_all_bidask(self):
@@ -190,15 +241,25 @@ class SinopacWorker:
         for worker in self.workers:
             worker.set_event_callback(func)
 
-    def set_quote_cb(self, func):
+    def set_stock_quote_cb(self, func):
         """
-        set_quote_cb _summary_
+        set_stock_quote_cb _summary_
 
         Args:
             func (_type_): _description_
         """
         for worker in self.workers:
             worker.set_on_tick_stk_v1_callback(func)
+
+    def set_future_quote_cb(self, func):
+        """
+        set_future_quote_cb _summary_
+
+        Args:
+            func (_type_): _description_
+        """
+        for worker in self.workers:
+            worker.set_on_tick_fop_v1_callback(func)
 
     def set_bid_ask_cb(self, func):
         """

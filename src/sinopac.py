@@ -19,6 +19,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         self.__login_status = int()
         # public
         self.stock_num_list = []
+        self.future_code_list = []
         self.order_status_list = []
         # lock
         self.__login_lock = threading.Lock()
@@ -109,6 +110,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         self.__api.quote.set_on_tick_stk_v1_callback(func)
 
+    def set_on_tick_fop_v1_callback(self, func):
+        """
+        set_on_tick_fop_v1_callback _summary_
+
+        Args:
+            func (_type_): _description_
+        """
+        self.__api.quote.set_on_tick_fop_v1_callback(func)
+
     def set_on_bidask_stk_v1_callback(self, func):
         """
         set_on_bidask_stk_v1_callback _summary_
@@ -149,6 +159,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         fill_stock_num_list _summary_
         """
+        for future_arr in self.__api.Contracts.Futures:
+            for future in future_arr:
+                self.future_code_list.append(future.code)
+
         for contract_arr in self.__api.Contracts.Stocks:
             for contract in contract_arr:
                 if (
@@ -158,9 +172,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                     self.stock_num_list.append(contract.code)
                     self.__current_simulation_count_map[contract.code] = 0
         while True:
-            if len(self.stock_num_list) != 0:
+            if len(self.stock_num_list) != 0 and len(self.future_code_list) != 0:
                 break
         logger.info("filling stock_num_list, total: %d", len(self.stock_num_list))
+        logger.info("filling future_code_list, total: %d", len(self.future_code_list))
 
     def update_order_status_instant(self):
         """
@@ -206,15 +221,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         return self.__api.Contracts.Indexs.TSE.TSE001
 
-    def get_contract_fimtx(self):
-        """
-        get_contract_fimtx _summary_
-
-        Returns:
-            _type_: _description_
-        """
-        return self.__api.Contracts.Futures.MXF.MXFR2
-
     def get_contract_by_stock_num(self, num):
         """
         get_contract_by_stock_num _summary_
@@ -226,6 +232,18 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             _type_: _description_
         """
         return self.__api.Contracts.Stocks[num]
+
+    def get_contract_by_future_code(self, num):
+        """
+        get_contract_by_future_code _summary_
+
+        Args:
+            num (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        return self.__api.Contracts.Futures[num]
 
     def ticks(self, num, date):
         """
@@ -352,6 +370,46 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return None
         except Exception:  # pylint: disable=broad-except
             return stock_num
+
+    def subscribe_future_tick(self, code):
+        """
+        subscribe_future_tick _summary_
+
+        Args:
+            code (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        try:
+            self.__api.quote.subscribe(
+                self.get_contract_by_future_code(code),
+                quote_type=sj.constant.QuoteType.Tick,
+                version=sj.constant.QuoteVersion.v1,
+            )
+            return None
+        except Exception:  # pylint: disable=broad-except
+            return code
+
+    def unsubscribe_future_tick(self, code):
+        """
+        unsubscribe_future_tick _summary_
+
+        Args:
+            code (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        try:
+            self.__api.quote.unsubscribe(
+                self.get_contract_by_future_code(code),
+                quote_type=sj.constant.QuoteType.Tick,
+                version=sj.constant.QuoteVersion.v1,
+            )
+            return None
+        except Exception:  # pylint: disable=broad-except
+            return code
 
     def subscribe_stock_bidask(self, stock_num):
         """

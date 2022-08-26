@@ -11,42 +11,60 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+class FutureDetailResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    FUTURE_FIELD_NUMBER: builtins.int
+    @property
+    def future(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___FutureDetailMessage]: ...
+    def __init__(self,
+        *,
+        future: typing.Optional[typing.Iterable[global___FutureDetailMessage]] = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["future",b"future"]) -> None: ...
+global___FutureDetailResponse = FutureDetailResponse
+
 class FutureDetailMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     CODE_FIELD_NUMBER: builtins.int
     SYMBOL_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     CATEGORY_FIELD_NUMBER: builtins.int
+    DELIVERY_MONTH_FIELD_NUMBER: builtins.int
+    DELIVERY_DATE_FIELD_NUMBER: builtins.int
+    UNDERLYING_KIND_FIELD_NUMBER: builtins.int
+    UNIT_FIELD_NUMBER: builtins.int
     LIMIT_UP_FIELD_NUMBER: builtins.int
     LIMIT_DOWN_FIELD_NUMBER: builtins.int
     REFERENCE_FIELD_NUMBER: builtins.int
     UPDATE_DATE_FIELD_NUMBER: builtins.int
-    DELIVERY_MONTH_FIELD_NUMBER: builtins.int
-    UNDERLYING_KIND_FIELD_NUMBER: builtins.int
     code: typing.Text
     symbol: typing.Text
     name: typing.Text
     category: typing.Text
+    delivery_month: typing.Text
+    delivery_date: typing.Text
+    underlying_kind: typing.Text
+    unit: builtins.int
     limit_up: builtins.float
     limit_down: builtins.float
     reference: builtins.float
     update_date: typing.Text
-    delivery_month: typing.Text
-    underlying_kind: typing.Text
     def __init__(self,
         *,
         code: typing.Text = ...,
         symbol: typing.Text = ...,
         name: typing.Text = ...,
         category: typing.Text = ...,
+        delivery_month: typing.Text = ...,
+        delivery_date: typing.Text = ...,
+        underlying_kind: typing.Text = ...,
+        unit: builtins.int = ...,
         limit_up: builtins.float = ...,
         limit_down: builtins.float = ...,
         reference: builtins.float = ...,
         update_date: typing.Text = ...,
-        delivery_month: typing.Text = ...,
-        underlying_kind: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["category",b"category","code",b"code","delivery_month",b"delivery_month","limit_down",b"limit_down","limit_up",b"limit_up","name",b"name","reference",b"reference","symbol",b"symbol","underlying_kind",b"underlying_kind","update_date",b"update_date"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["category",b"category","code",b"code","delivery_date",b"delivery_date","delivery_month",b"delivery_month","limit_down",b"limit_down","limit_up",b"limit_up","name",b"name","reference",b"reference","symbol",b"symbol","underlying_kind",b"underlying_kind","unit",b"unit","update_date",b"update_date"]) -> None: ...
 global___FutureDetailMessage = FutureDetailMessage
 
 class Beat(google.protobuf.message.Message):
@@ -167,6 +185,18 @@ class StockNumArr(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["stock_num_arr",b"stock_num_arr"]) -> None: ...
 global___StockNumArr = StockNumArr
+
+class FutureCodeArr(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    FUTURE_CODE_ARR_FIELD_NUMBER: builtins.int
+    @property
+    def future_code_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
+    def __init__(self,
+        *,
+        future_code_arr: typing.Optional[typing.Iterable[typing.Text]] = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["future_code_arr",b"future_code_arr"]) -> None: ...
+global___FutureCodeArr = FutureCodeArr
 
 class StockNumArrWithDate(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -640,6 +670,71 @@ class StockRealTimeTickResponse(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["amount",b"amount","ask_side_total_cnt",b"ask_side_total_cnt","ask_side_total_vol",b"ask_side_total_vol","avg_price",b"avg_price","bid_side_total_cnt",b"bid_side_total_cnt","bid_side_total_vol",b"bid_side_total_vol","chg_type",b"chg_type","close",b"close","code",b"code","date_time",b"date_time","high",b"high","low",b"low","open",b"open","pct_chg",b"pct_chg","price_chg",b"price_chg","simtrade",b"simtrade","suspend",b"suspend","tick_type",b"tick_type","total_amount",b"total_amount","total_volume",b"total_volume","volume",b"volume"]) -> None: ...
 global___StockRealTimeTickResponse = StockRealTimeTickResponse
+
+class FutureRealTimeTickResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    CODE_FIELD_NUMBER: builtins.int
+    DATE_TIME_FIELD_NUMBER: builtins.int
+    OPEN_FIELD_NUMBER: builtins.int
+    UNDERLYING_PRICE_FIELD_NUMBER: builtins.int
+    BID_SIDE_TOTAL_VOL_FIELD_NUMBER: builtins.int
+    ASK_SIDE_TOTAL_VOL_FIELD_NUMBER: builtins.int
+    AVG_PRICE_FIELD_NUMBER: builtins.int
+    CLOSE_FIELD_NUMBER: builtins.int
+    HIGH_FIELD_NUMBER: builtins.int
+    LOW_FIELD_NUMBER: builtins.int
+    AMOUNT_FIELD_NUMBER: builtins.int
+    TOTAL_AMOUNT_FIELD_NUMBER: builtins.int
+    VOLUME_FIELD_NUMBER: builtins.int
+    TOTAL_VOLUME_FIELD_NUMBER: builtins.int
+    TICK_TYPE_FIELD_NUMBER: builtins.int
+    CHG_TYPE_FIELD_NUMBER: builtins.int
+    PRICE_CHG_FIELD_NUMBER: builtins.int
+    PCT_CHG_FIELD_NUMBER: builtins.int
+    SIMTRADE_FIELD_NUMBER: builtins.int
+    code: typing.Text
+    date_time: typing.Text
+    open: builtins.float
+    underlying_price: builtins.float
+    bid_side_total_vol: builtins.int
+    ask_side_total_vol: builtins.int
+    avg_price: builtins.float
+    close: builtins.float
+    high: builtins.float
+    low: builtins.float
+    amount: builtins.float
+    total_amount: builtins.float
+    volume: builtins.int
+    total_volume: builtins.int
+    tick_type: builtins.int
+    chg_type: builtins.int
+    price_chg: builtins.float
+    pct_chg: builtins.float
+    simtrade: builtins.int
+    def __init__(self,
+        *,
+        code: typing.Text = ...,
+        date_time: typing.Text = ...,
+        open: builtins.float = ...,
+        underlying_price: builtins.float = ...,
+        bid_side_total_vol: builtins.int = ...,
+        ask_side_total_vol: builtins.int = ...,
+        avg_price: builtins.float = ...,
+        close: builtins.float = ...,
+        high: builtins.float = ...,
+        low: builtins.float = ...,
+        amount: builtins.float = ...,
+        total_amount: builtins.float = ...,
+        volume: builtins.int = ...,
+        total_volume: builtins.int = ...,
+        tick_type: builtins.int = ...,
+        chg_type: builtins.int = ...,
+        price_chg: builtins.float = ...,
+        pct_chg: builtins.float = ...,
+        simtrade: builtins.int = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["amount",b"amount","ask_side_total_vol",b"ask_side_total_vol","avg_price",b"avg_price","bid_side_total_vol",b"bid_side_total_vol","chg_type",b"chg_type","close",b"close","code",b"code","date_time",b"date_time","high",b"high","low",b"low","open",b"open","pct_chg",b"pct_chg","price_chg",b"price_chg","simtrade",b"simtrade","tick_type",b"tick_type","total_amount",b"total_amount","total_volume",b"total_volume","underlying_price",b"underlying_price","volume",b"volume"]) -> None: ...
+global___FutureRealTimeTickResponse = FutureRealTimeTickResponse
 
 class StockRealTimeBidAskResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor

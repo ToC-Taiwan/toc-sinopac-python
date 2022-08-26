@@ -425,6 +425,22 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                 response.fail_arr.append(stock_num)
         return response
 
+    def SubscribeFutureTick(self, request, _):
+        response = sinopac_forwarder_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = WORKERS.subscribe_future_tick(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
+    def UnSubscribeFutureTick(self, request, _):
+        response = sinopac_forwarder_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = WORKERS.unsubscribe_future_tick(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
     def UnSubscribeStockTick(self, request, _):
         response = sinopac_forwarder_pb2.SubscribeResponse()
         for stock_num in request.stock_num_arr:
@@ -456,10 +472,65 @@ class gRPCFuturesForwarder(sinopac_forwarder_pb2_grpc.FutureForwarderServicer):
         sinopac_forwarder_pb2_grpc (_type_): _description_
     """
 
-    def GetFIMTXSnapshot(self, request, _):
-        worker = WORKERS.get(True)
-        snapshots = worker.snapshots([worker.get_contract_fimtx()])
-        return sinopac_snapshot_to_pb(snapshots[0])
+    def GetAllFutureDetail(self, request, _):
+        """
+        GetAllFutureDetail _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = sinopac_forwarder_pb2.FutureDetailResponse()
+        worker = WORKERS.get(False)
+
+        for row in worker.future_code_list:
+            contract = worker.get_contract_by_future_code(row)
+            if contract is None:
+                logger.error("%s has no future data", row)
+                continue
+            response.future.append(
+                sinopac_forwarder_pb2.FutureDetailMessage(
+                    code=contract.code,
+                    symbol=contract.symbol,
+                    name=contract.name,
+                    category=contract.category,
+                    delivery_month=contract.delivery_month,
+                    delivery_date=contract.delivery_date,
+                    underlying_kind=contract.underlying_kind,
+                    unit=contract.unit,
+                    limit_up=contract.limit_up,
+                    limit_down=contract.limit_down,
+                    reference=contract.reference,
+                    update_date=contract.update_date,
+                )
+            )
+        return response
+
+    def GetFutureSnapshotByCodeArr(self, request, _):
+        contracts = []
+        worker = WORKERS.get(False)
+
+        for code in request.future_code_arr:
+            contracts.append(worker.get_contract_by_future_code(code))
+        splits = np.array_split(contracts, WORKERS.count())
+        snapshots = []
+        threads = []
+        for i, split in enumerate(splits):
+            threads.append(
+                threading.Thread(
+                    target=fill_sinopac_snapshot_arr,
+                    args=(split, snapshots, WORKERS.get(True)),
+                )
+            )
+            threads[i].start()
+        for t in threads:
+            t.join()
+        response = sinopac_forwarder_pb2.StockSnapshotResponse()
+        for result in snapshots:
+            response.data.append(sinopac_snapshot_to_pb(result))
+        return response
 
 
 class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
@@ -785,7 +856,8 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     )
 
     WORKERS.set_event_cb(rq.event_callback)
-    WORKERS.set_quote_cb(rq.quote_callback_v1)
+    WORKERS.set_stock_quote_cb(rq.stock_quote_callback_v1)
+    WORKERS.set_future_quote_cb(rq.future_quote_callback_v1)
     WORKERS.set_bid_ask_cb(rq.bid_ask_callback)
     WORKERS.set_order_status_cb(rq.order_status_callback)
 

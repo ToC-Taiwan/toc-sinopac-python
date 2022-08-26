@@ -117,7 +117,42 @@ class RabbitMQS:
                 )
                 self.pika_queue.put(p)
 
-    def quote_callback_v1(self, _, tick: sj.TickSTKv1):
+    def future_quote_callback_v1(self, _, tick: sj.TickFOPv1):
+        """
+        future_quote_callback_v1 _summary_
+
+        Args:
+            tick (sj.TickFOPv1): _description_
+        """
+        p = self.pika_queue.get(block=True)
+        p.ch.basic_publish(
+            exchange=self.exchange,
+            routing_key=f"future_tick:{tick.code}",
+            body=sinopac_forwarder_pb2.FutureRealTimeTickResponse(
+                code=tick.code,
+                date_time=datetime.strftime(tick.datetime, "%Y-%m-%d %H:%M:%S.%f"),
+                open=tick.open,
+                underlying_price=tick.underlying_price,
+                bid_side_total_vol=tick.bid_side_total_vol,
+                ask_side_total_vol=tick.ask_side_total_vol,
+                avg_price=tick.avg_price,
+                close=tick.close,
+                high=tick.high,
+                low=tick.low,
+                amount=tick.amount,
+                total_amount=tick.total_amount,
+                volume=tick.volume,
+                total_volume=tick.total_volume,
+                tick_type=tick.tick_type,
+                chg_type=tick.chg_type,
+                price_chg=tick.price_chg,
+                pct_chg=tick.pct_chg,
+                simtrade=tick.simtrade,
+            ).SerializeToString(),
+        )
+        self.pika_queue.put(p)
+
+    def stock_quote_callback_v1(self, _, tick: sj.TickSTKv1):
         """
         quote_callback_v1 _summary_
 
