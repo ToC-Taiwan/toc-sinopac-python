@@ -28,6 +28,7 @@ class RabbitMQSetting:
                 r = requests.get(
                     url=f"http://{env.rabbitmq_host}:15672/api/health/checks/alarms",
                     headers=headers,
+                    timeout=(5, 10),
                 )
             except requests.exceptions.ConnectionError:
                 time.sleep(1)
@@ -38,6 +39,7 @@ class RabbitMQSetting:
         r = requests.get(
             url=f"http://{env.rabbitmq_host}:15672/api/exchanges",
             headers=headers,
+            timeout=(5, 10),
         )
         if r.status_code != 200:
             raise Exception("RabbitMQ get exchange fail")
@@ -49,6 +51,7 @@ class RabbitMQSetting:
                 r = requests.delete(
                     url=f"http://{env.rabbitmq_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
                     headers=headers,
+                    timeout=(5, 10),
                 )
                 if r.status_code != 204:
                     raise Exception("RabbitMQ exchange delete fail")
@@ -63,6 +66,7 @@ class RabbitMQSetting:
                 }
             ),
             headers=headers,
+            timeout=(5, 10),
         )
         if r.status_code != 201:
             raise Exception("RabbitMQ exchange add fail")
