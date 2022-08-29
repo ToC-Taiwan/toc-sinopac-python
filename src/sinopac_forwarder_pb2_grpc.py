@@ -838,6 +838,26 @@ class TradeServiceStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.FunctionErr.FromString,
                 )
+        self.BuyFuture = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/BuyFuture',
+                request_serializer=sinopac__forwarder__pb2.FutureOrderDetail.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.TradeResult.FromString,
+                )
+        self.SellFuture = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/SellFuture',
+                request_serializer=sinopac__forwarder__pb2.FutureOrderDetail.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.TradeResult.FromString,
+                )
+        self.SellFirstFuture = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/SellFirstFuture',
+                request_serializer=sinopac__forwarder__pb2.FutureOrderDetail.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.TradeResult.FromString,
+                )
+        self.CancelFuture = channel.unary_unary(
+                '/sinopac_forwarder.TradeService/CancelFuture',
+                request_serializer=sinopac__forwarder__pb2.FutureOrderID.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.TradeResult.FromString,
+                )
 
 
 class TradeServiceServicer(object):
@@ -885,6 +905,30 @@ class TradeServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def BuyFuture(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SellFuture(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SellFirstFuture(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CancelFuture(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TradeServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -922,6 +966,26 @@ def add_TradeServiceServicer_to_server(servicer, server):
                     servicer.GetNonBlockOrderStatusArr,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=sinopac__forwarder__pb2.FunctionErr.SerializeToString,
+            ),
+            'BuyFuture': grpc.unary_unary_rpc_method_handler(
+                    servicer.BuyFuture,
+                    request_deserializer=sinopac__forwarder__pb2.FutureOrderDetail.FromString,
+                    response_serializer=sinopac__forwarder__pb2.TradeResult.SerializeToString,
+            ),
+            'SellFuture': grpc.unary_unary_rpc_method_handler(
+                    servicer.SellFuture,
+                    request_deserializer=sinopac__forwarder__pb2.FutureOrderDetail.FromString,
+                    response_serializer=sinopac__forwarder__pb2.TradeResult.SerializeToString,
+            ),
+            'SellFirstFuture': grpc.unary_unary_rpc_method_handler(
+                    servicer.SellFirstFuture,
+                    request_deserializer=sinopac__forwarder__pb2.FutureOrderDetail.FromString,
+                    response_serializer=sinopac__forwarder__pb2.TradeResult.SerializeToString,
+            ),
+            'CancelFuture': grpc.unary_unary_rpc_method_handler(
+                    servicer.CancelFuture,
+                    request_deserializer=sinopac__forwarder__pb2.FutureOrderID.FromString,
+                    response_serializer=sinopac__forwarder__pb2.TradeResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -1052,6 +1116,74 @@ class TradeService(object):
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
+    @staticmethod
+    def BuyFuture(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/BuyFuture',
+            sinopac__forwarder__pb2.FutureOrderDetail.SerializeToString,
+            sinopac__forwarder__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SellFuture(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/SellFuture',
+            sinopac__forwarder__pb2.FutureOrderDetail.SerializeToString,
+            sinopac__forwarder__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SellFirstFuture(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/SellFirstFuture',
+            sinopac__forwarder__pb2.FutureOrderDetail.SerializeToString,
+            sinopac__forwarder__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CancelFuture(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeService/CancelFuture',
+            sinopac__forwarder__pb2.FutureOrderID.SerializeToString,
+            sinopac__forwarder__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
 
 class FutureForwarderStub(object):
     """Missing associated documentation comment in .proto file."""
@@ -1072,6 +1204,21 @@ class FutureForwarderStub(object):
                 request_serializer=sinopac__forwarder__pb2.FutureCodeArr.SerializeToString,
                 response_deserializer=sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
                 )
+        self.GetFutureHistoryTick = channel.unary_unary(
+                '/sinopac_forwarder.FutureForwarder/GetFutureHistoryTick',
+                request_serializer=sinopac__forwarder__pb2.FutureCodeArrWithDate.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockHistoryTickResponse.FromString,
+                )
+        self.GetFutureHistoryClose = channel.unary_unary(
+                '/sinopac_forwarder.FutureForwarder/GetFutureHistoryClose',
+                request_serializer=sinopac__forwarder__pb2.FutureCodeArrWithDate.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockHistoryCloseResponse.FromString,
+                )
+        self.GetFutureHistoryKbar = channel.unary_unary(
+                '/sinopac_forwarder.FutureForwarder/GetFutureHistoryKbar',
+                request_serializer=sinopac__forwarder__pb2.FutureCodeArrWithDate.SerializeToString,
+                response_deserializer=sinopac__forwarder__pb2.StockHistoryKbarResponse.FromString,
+                )
 
 
 class FutureForwarderServicer(object):
@@ -1089,6 +1236,24 @@ class FutureForwarderServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetFutureHistoryTick(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetFutureHistoryClose(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetFutureHistoryKbar(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_FutureForwarderServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -1101,6 +1266,21 @@ def add_FutureForwarderServicer_to_server(servicer, server):
                     servicer.GetFutureSnapshotByCodeArr,
                     request_deserializer=sinopac__forwarder__pb2.FutureCodeArr.FromString,
                     response_serializer=sinopac__forwarder__pb2.StockSnapshotResponse.SerializeToString,
+            ),
+            'GetFutureHistoryTick': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFutureHistoryTick,
+                    request_deserializer=sinopac__forwarder__pb2.FutureCodeArrWithDate.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockHistoryTickResponse.SerializeToString,
+            ),
+            'GetFutureHistoryClose': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFutureHistoryClose,
+                    request_deserializer=sinopac__forwarder__pb2.FutureCodeArrWithDate.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockHistoryCloseResponse.SerializeToString,
+            ),
+            'GetFutureHistoryKbar': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFutureHistoryKbar,
+                    request_deserializer=sinopac__forwarder__pb2.FutureCodeArrWithDate.FromString,
+                    response_serializer=sinopac__forwarder__pb2.StockHistoryKbarResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -1143,5 +1323,56 @@ class FutureForwarder(object):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.FutureForwarder/GetFutureSnapshotByCodeArr',
             sinopac__forwarder__pb2.FutureCodeArr.SerializeToString,
             sinopac__forwarder__pb2.StockSnapshotResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetFutureHistoryTick(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.FutureForwarder/GetFutureHistoryTick',
+            sinopac__forwarder__pb2.FutureCodeArrWithDate.SerializeToString,
+            sinopac__forwarder__pb2.StockHistoryTickResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetFutureHistoryClose(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.FutureForwarder/GetFutureHistoryClose',
+            sinopac__forwarder__pb2.FutureCodeArrWithDate.SerializeToString,
+            sinopac__forwarder__pb2.StockHistoryCloseResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetFutureHistoryKbar(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.FutureForwarder/GetFutureHistoryKbar',
+            sinopac__forwarder__pb2.FutureCodeArrWithDate.SerializeToString,
+            sinopac__forwarder__pb2.StockHistoryKbarResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -6,7 +6,7 @@ from logger import logger
 from sinopac import Sinopac
 
 
-class SinopacWorker:  # pylint: disable=too-many-instance-attributes
+class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     def __init__(self, main_worker: Sinopac, workers: list[Sinopac], request_limt: int):
         self.main_worker = main_worker
         self.workers = workers
@@ -347,3 +347,15 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes
 
     def get_non_block_order_status_arr(self):
         return self.main_worker.update_order_status_instant()
+
+    def buy_future(self, code, price, quantity):
+        return self.main_worker.buy_future(code, price, quantity)
+
+    def sell_future(self, code, price, quantity):
+        return self.main_worker.sell_future(code, price, quantity)
+
+    def sell_first_future(self, code, price, quantity):
+        return self.main_worker.sell_first_future(code, price, quantity)
+
+    def cancel_future(self, order_id):
+        return self.main_worker.cancel_future(order_id)

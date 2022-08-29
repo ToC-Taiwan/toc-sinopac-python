@@ -10,8 +10,6 @@ import shioaji as sj
 from constant import DayTrade, OrderState, SecurityType
 from logger import logger
 
-# from re import search
-
 
 class Sinopac:  # pylint: disable=too-many-public-methods
     def __init__(self):
@@ -265,6 +263,23 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         except TimeoutError:
             return self.ticks(num, date)
 
+    def future_ticks(self, code, date):
+        """
+        future_ticks _summary_
+
+        Args:
+            code (_type_): _description_
+            date (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        contract = self.get_contract_by_future_code(code)
+        try:
+            return self.__api.ticks(contract, date)
+        except TimeoutError:
+            return self.future_ticks(code, date)
+
     def kbars(self, num, date):
         """
         kbars _summary_
@@ -288,6 +303,27 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             )
         except TimeoutError:
             return self.kbars(num, date)
+
+    def future_kbars(self, code, date):
+        """
+        future_kbars _summary_
+
+        Args:
+            code (_type_): _description_
+            date (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        contract = self.get_contract_by_future_code(code)
+        try:
+            return self.__api.kbars(
+                contract=contract,
+                start=date,
+                end=date,
+            )
+        except TimeoutError:
+            return self.future_kbars(code, date)
 
     def get_stock_last_close_by_date(self, num, date):
         """
@@ -316,6 +352,31 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return 0
         except TimeoutError:
             return self.get_stock_last_close_by_date(num, date)
+
+    def get_future_last_close_by_date(self, code, date):
+        """
+        get_future_last_close_by_date _summary_
+
+        Args:
+            code (_type_): _description_
+            date (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        contract = self.get_contract_by_future_code(code)
+        try:
+            ticks = self.__api.quote.ticks(
+                contract=contract,
+                date=date,
+                query_type=sj.constant.TicksQueryType.LastCount,
+                last_cnt=1,
+            )
+            if len(ticks.close) > 0:
+                return ticks.close[0]
+            return 0
+        except TimeoutError:
+            return self.get_future_last_close_by_date(code, date)
 
     def get_stock_volume_rank_by_date(self, count, date):
         """
@@ -742,12 +803,12 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         if order_state == OrderState.TFTOrder:
             if order["contract"]["code"] is None:
-                logger.error("place contract code is None")
+                logger.error("place stock contract code is None")
                 return
 
             contract = self.get_contract_by_stock_num(order["contract"]["code"])
             logger.info(
-                "Place order: %s %s %s %.2f %d %s",
+                "Place stock order: %s %s %s %.2f %d %s",
                 order["contract"]["code"],
                 contract.name,
                 order["order"]["action"],
@@ -763,7 +824,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
 
             contract = self.get_contract_by_stock_num(order["code"])
             logger.info(
-                "Deal order: %s %s %s %.2f %d %s",
+                "Deal stock order: %s %s %s %.2f %d %s",
                 order["code"],
                 contract.name,
                 order["action"],
@@ -771,6 +832,157 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 order["quantity"],
                 order["trade_id"],
             )
+
+        elif order_state == OrderState.FOrder:
+            if order["contract"]["code"] is None:
+                logger.error("place future contract code is None")
+                return
+
+            logger.info(
+                "Place future order: %s %s %.2f %d %s",
+                order["contract"]["code"],
+                order["order"]["action"],
+                order["order"]["price"],
+                order["order"]["quantity"],
+                order["order"]["id"],
+            )
+
+        elif order_state == OrderState.FDeal:
+            if order["code"] is None:
+                logger.error("deal contract code is None")
+                return
+
+            logger.info(
+                "Deal future order: %s %s %.2f %d %s",
+                order["code"],
+                order["action"],
+                order["price"],
+                order["quantity"],
+                order["trade_id"],
+            )
+
+    def buy_future(self, code: str, price: float, quantity: int):
+        """
+        buy_future _summary_
+
+        Args:
+            code (str): _description_
+            price (float): _description_
+            quantity (int): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        order = self.__api.Order(
+            price=price,
+            quantity=quantity,
+            action=sj.constant.Action.Buy,
+            price_type=sj.constant.FuturesPriceType.LMT,
+            order_type=sj.constant.FuturesOrderType.ROD,
+            octype=sj.constant.FuturesOCType.Auto,
+            account=self.__api.futopt_account,
+        )
+        contract = self.get_contract_by_future_code(code)
+        trade = self.__api.place_order(contract=contract, order=order)
+        if trade is not None and trade.order.id != "":
+            return OrderStatus(trade.order.id, trade.status.status, "")
+        return OrderStatus("", "", "unknown error")
+
+    def sell_future(self, code: str, price: float, quantity: int):
+        """
+        sell_future _summary_
+
+        Args:
+            code (str): _description_
+            price (float): _description_
+            quantity (int): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        order = self.__api.Order(
+            price=price,
+            quantity=quantity,
+            action=sj.constant.Action.Sell,
+            price_type=sj.constant.FuturesPriceType.LMT,
+            order_type=sj.constant.FuturesOrderType.ROD,
+            octype=sj.constant.FuturesOCType.Auto,
+            account=self.__api.futopt_account,
+        )
+        contract = self.get_contract_by_future_code(code)
+        trade = self.__api.place_order(contract=contract, order=order)
+        if trade is not None and trade.order.id != "":
+            return OrderStatus(trade.order.id, trade.status.status, "")
+        return OrderStatus("", "", "unknown error")
+
+    def sell_first_future(self, code: str, price: float, quantity: int):
+        """
+        sell_first_future _summary_
+
+        Args:
+            code (str): _description_
+            price (float): _description_
+            quantity (int): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        order = self.__api.Order(
+            price=price,
+            quantity=quantity,
+            action=sj.constant.Action.Sell,
+            price_type=sj.constant.FuturesPriceType.LMT,
+            order_type=sj.constant.FuturesOrderType.ROD,
+            octype=sj.constant.FuturesOCType.Auto,
+            account=self.__api.futopt_account,
+        )
+        contract = self.get_contract_by_future_code(code)
+        trade = self.__api.place_order(contract=contract, order=order)
+        if trade is not None and trade.order.id != "":
+            return OrderStatus(trade.order.id, trade.status.status, "")
+        return OrderStatus("", "", "unknown error")
+
+    def cancel_future(self, order_id: str):
+        """
+        cancel_future _summary_
+
+        Args:
+            order_id (str): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        cancel_order = None
+        times = int()
+        while True:
+            self.update_local_order_status()
+            for order in self.order_status_list:
+                if order.status.id == order_id:
+                    cancel_order = order
+            if cancel_order is not None or times >= 10:
+                break
+            times += 1
+            time.sleep(1)
+        if cancel_order is None:
+            return OrderStatus(order_id, "", "id not found")
+        if cancel_order.status.status == sj.constant.Status.Cancelled:
+            return OrderStatus(order_id, "", "id already cancelled")
+
+        times = 0
+        self.__api.cancel_order(cancel_order)
+        while True:
+            if times >= 10:
+                break
+            self.update_local_order_status()
+            for order in self.order_status_list:
+                if (
+                    order.status.id == order_id
+                    and order.status.status == sj.constant.Status.Cancelled
+                ):
+                    return OrderStatus(order_id, order.status.status, "")
+            times += 1
+            time.sleep(1)
+        return OrderStatus("", "", "cancel future order fail, unknown error")
 
 
 class OrderStatus:

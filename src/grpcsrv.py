@@ -532,6 +532,83 @@ class gRPCFuturesForwarder(sinopac_forwarder_pb2_grpc.FutureForwarderServicer):
             response.data.append(sinopac_snapshot_to_pb(result))
         return response
 
+    def GetFutureHistoryTick(self, request, _):
+        response = sinopac_forwarder_pb2.StockHistoryTickResponse()
+        threads = []
+        for code in request.future_code_arr:
+            t = threading.Thread(
+                target=fill_future_history_tick_response,
+                args=(
+                    code,
+                    request.date,
+                    response,
+                    WORKERS.get(True),
+                ),
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return response
+
+    def GetFutureHistoryClose(self, request, _):
+        """
+        GetFutureHistoryClose _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
+        threads = []
+
+        for code in request.future_code_arr:
+            t = threading.Thread(
+                target=fill_future_history_close_response,
+                args=(
+                    code,
+                    request.date,
+                    response,
+                    WORKERS.get(True),
+                ),
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return response
+
+    def GetFutureHistoryKbar(self, request, _):
+        """
+        GetFutureHistoryKbar _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = sinopac_forwarder_pb2.StockHistoryKbarResponse()
+        threads = []
+
+        for code in request.future_code_arr:
+            t = threading.Thread(
+                target=fill_future_history_kbar_response,
+                args=(
+                    code,
+                    request.date,
+                    response,
+                    WORKERS.get(True),
+                ),
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return response
+
 
 class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
     def BuyStock(self, request, _):
@@ -547,12 +624,11 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
         result = WORKERS.buy_stock(
             request.stock_num, request.price, request.quantity, request.simulate
         )
-        response = sinopac_forwarder_pb2.TradeResult(
+        return sinopac_forwarder_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
             error=result.error,
         )
-        return response
 
     def SellStock(self, request, _):
         """
@@ -567,12 +643,11 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
         result = WORKERS.sell_stock(
             request.stock_num, request.price, request.quantity, request.simulate
         )
-        response = sinopac_forwarder_pb2.TradeResult(
+        return sinopac_forwarder_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
             error=result.error,
         )
-        return response
 
     def SellFirstStock(self, request, _):
         """
@@ -587,12 +662,11 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
         result = WORKERS.sell_first_stock(
             request.stock_num, request.price, request.quantity, request.simulate
         )
-        response = sinopac_forwarder_pb2.TradeResult(
+        return sinopac_forwarder_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
             error=result.error,
         )
-        return response
 
     def CancelStock(self, request, _):
         """
@@ -605,12 +679,11 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
             _type_: _description_
         """
         result = WORKERS.cancel_stock(request.order_id, request.simulate)
-        response = sinopac_forwarder_pb2.TradeResult(
+        return sinopac_forwarder_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
             error=result.error,
         )
-        return response
 
     def GetOrderStatusByID(self, request, _):
         """
@@ -623,12 +696,11 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
             _type_: _description_
         """
         result = WORKERS.get_order_status_by_id(request.order_id, request.simulate)
-        response = sinopac_forwarder_pb2.TradeResult(
+        return sinopac_forwarder_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
             error=result.error,
         )
-        return response
 
     def GetOrderStatusArr(self, request, _):
         """
@@ -677,6 +749,50 @@ class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
         """
         return sinopac_forwarder_pb2.FunctionErr(
             err=WORKERS.get_non_block_order_status_arr()
+        )
+
+    def BuyFuture(self, request, _):
+        result = WORKERS.buy_future(
+            request.code,
+            request.price,
+            request.quantity,
+        )
+        return sinopac_forwarder_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def SellFuture(self, request, _):
+        result = WORKERS.sell_future(
+            request.code,
+            request.price,
+            request.quantity,
+        )
+        return sinopac_forwarder_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def SellFirstFuture(self, request, _):
+        result = WORKERS.sell_first_future(
+            request.code,
+            request.price,
+            request.quantity,
+        )
+        return sinopac_forwarder_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def CancelFuture(self, request, _):
+        result = WORKERS.cancel_future(request.order_id)
+        return sinopac_forwarder_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
         )
 
 
@@ -772,6 +888,48 @@ def fill_history_tick_response(num, date, response, sinopac: Sinopac):
         )
 
 
+def fill_future_history_tick_response(code, date, response, sinopac: Sinopac):
+    """
+    fill_history_future_tick_response _summary_
+
+    Args:
+        code (_type_): _description_
+        date (_type_): _description_
+        response (_type_): _description_
+        sinopac (Sinopac): _description_
+    """
+    ticks = sinopac.future_ticks(code, date)
+    total_count = len(ticks.ts)
+    tmp_length = [
+        len(ticks.close),
+        len(ticks.tick_type),
+        len(ticks.volume),
+        len(ticks.bid_price),
+        len(ticks.bid_volume),
+        len(ticks.ask_price),
+        len(ticks.ask_volume),
+    ]
+
+    for length in tmp_length:
+        if length - total_count != 0:
+            return
+
+    for pos in range(total_count):
+        response.data.append(
+            sinopac_forwarder_pb2.StockHistoryTickMessage(
+                stock_num=code,
+                ts=ticks.ts[pos],
+                close=ticks.close[pos],
+                volume=ticks.volume[pos],
+                bid_price=ticks.bid_price[pos],
+                bid_volume=ticks.bid_volume[pos],
+                ask_price=ticks.ask_price[pos],
+                ask_volume=ticks.ask_volume[pos],
+                tick_type=ticks.tick_type[pos],
+            )
+        )
+
+
 def fill_history_kbar_response(num, date, response, sinopac: Sinopac):
     """
     fill_history_kbar_response _summary_
@@ -810,6 +968,44 @@ def fill_history_kbar_response(num, date, response, sinopac: Sinopac):
         )
 
 
+def fill_future_history_kbar_response(code, date, response, sinopac: Sinopac):
+    """
+    fill_future_history_kbar_response _summary_
+
+    Args:
+        code (_type_): _description_
+        date (_type_): _description_
+        response (_type_): _description_
+        sinopac (Sinopac): _description_
+    """
+    kbar = sinopac.future_kbars(code, date)
+    total_count = len(kbar.ts)
+    tmp_length = [
+        len(kbar.Close),
+        len(kbar.Open),
+        len(kbar.High),
+        len(kbar.Low),
+        len(kbar.Volume),
+    ]
+
+    for length in tmp_length:
+        if length - total_count != 0:
+            return
+
+    for pos in range(total_count):
+        response.data.append(
+            sinopac_forwarder_pb2.StockHistoryKbarMessage(
+                stock_num=code,
+                ts=kbar.ts[pos],
+                close=kbar.Close[pos],
+                open=kbar.Open[pos],
+                high=kbar.High[pos],
+                low=kbar.Low[pos],
+                volume=kbar.Volume[pos],
+            )
+        )
+
+
 def fill_history_close_response(num, date, response, sinopac: Sinopac):
     """
     fill_history_close_response _summary_
@@ -824,6 +1020,25 @@ def fill_history_close_response(num, date, response, sinopac: Sinopac):
         sinopac_forwarder_pb2.StockHistoryCloseMessage(
             code=num,
             close=sinopac.get_stock_last_close_by_date(num, date),
+            date=date,
+        )
+    )
+
+
+def fill_future_history_close_response(code, date, response, sinopac: Sinopac):
+    """
+    fill_future_history_close_response _summary_
+
+    Args:
+        code (_type_): _description_
+        date (_type_): _description_
+        response (_type_): _description_
+        sinopac (Sinopac): _description_
+    """
+    response.data.append(
+        sinopac_forwarder_pb2.StockHistoryCloseMessage(
+            code=code,
+            close=sinopac.get_future_last_close_by_date(code, date),
             date=date,
         )
     )
