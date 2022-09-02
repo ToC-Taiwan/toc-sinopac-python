@@ -27,8 +27,8 @@ py-lint:
   before_script:
     - pip install --no-warn-script-location --no-cache-dir -r requirements.txt
     - pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
+    - export PYTHONPATH=$(pwd)/pb && echo $PYTHONPATH
     - mypy --install-types --non-interactive ./src
-    - export PYTHONPATH=$(pwd)/pb
   script:
     - pylint ./src
     - mypy --config-file=./mypy.ini ./src
