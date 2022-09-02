@@ -5,12 +5,21 @@ from concurrent import futures
 from datetime import datetime
 from queue import Queue
 
+import basic_pb2
+import basic_pb2_grpc
+import common_pb2
 import google.protobuf.empty_pb2
 import grpc
+import health_pb2
+import health_pb2_grpc
+import history_pb2
+import history_pb2_grpc
 import numpy as np
+import stream_pb2
+import stream_pb2_grpc
+import trade_pb2
+import trade_pb2_grpc
 
-import sinopac_forwarder_pb2
-import sinopac_forwarder_pb2_grpc
 from env import RequiredEnv
 from logger import logger
 from rabbitmq import RabbitMQS
@@ -20,7 +29,7 @@ from sinopac_worker import SinopacWorker
 WORKERS: SinopacWorker
 
 
-class gRPCHealthCheck(sinopac_forwarder_pb2_grpc.HealthCheckServicer):
+class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
     def __init__(self):
         self.debug = False
 
@@ -32,7 +41,7 @@ class gRPCHealthCheck(sinopac_forwarder_pb2_grpc.HealthCheckServicer):
                 self.beat_queue.put(beat.message)
             else:
                 self.debug = True
-            yield sinopac_forwarder_pb2.Beat(message=beat.message)
+            yield health_pb2.BeatMessage(message=beat.message)
 
     def beat_timer(self):
         beat_time = datetime.now().timestamp()
@@ -55,7 +64,7 @@ class gRPCHealthCheck(sinopac_forwarder_pb2_grpc.HealthCheckServicer):
         os._exit(1)
 
 
-class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
+class gRPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
     def GetAllStockDetail(self, request, _):
         """
         GetAllStockDetail _summary_
@@ -66,12 +75,12 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         Returns:
             _type_: _description_
         """
-        response = sinopac_forwarder_pb2.StockDetailResponse()
+        response = basic_pb2.StockDetailResponse()
         worker = WORKERS.get(False)
 
         tse_001 = worker.get_contract_tse_001()
         response.stock.append(
-            sinopac_forwarder_pb2.StockDetailMessage(
+            basic_pb2.StockDetailMessage(
                 exchange=tse_001.exchange,
                 category=tse_001.category,
                 code=tse_001.code,
@@ -87,7 +96,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                 logger.error("%s has no stock data", row)
                 continue
             response.stock.append(
-                sinopac_forwarder_pb2.StockDetailMessage(
+                basic_pb2.StockDetailMessage(
                     exchange=contract.exchange,
                     category=contract.category,
                     code=contract.code,
@@ -97,6 +106,538 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
                     day_trade=contract.day_trade,
                 )
             )
+        return response
+
+    def GetAllFutureDetail(self, request, _):
+        """
+        GetAllFutureDetail _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = basic_pb2.FutureDetailResponse()
+        worker = WORKERS.get(False)
+
+        for row in worker.future_code_list:
+            contract = worker.get_contract_by_future_code(row)
+            if contract is None:
+                logger.error("%s has no future data", row)
+                continue
+            response.future.append(
+                basic_pb2.FutureDetailMessage(
+                    code=contract.code,
+                    symbol=contract.symbol,
+                    name=contract.name,
+                    category=contract.category,
+                    delivery_month=contract.delivery_month,
+                    delivery_date=contract.delivery_date,
+                    underlying_kind=contract.underlying_kind,
+                    unit=contract.unit,
+                    limit_up=contract.limit_up,
+                    limit_down=contract.limit_down,
+                    reference=contract.reference,
+                    update_date=contract.update_date,
+                )
+            )
+        return response
+
+
+class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
+    """
+    gRPCFuturesForwarder _summary_
+
+    Args:
+        sinopac_forwarder_pb2_grpc (_type_): _description_
+    """
+
+    def GetStockHistoryTick(self, request, _):
+        """
+        GetStockHistoryTick _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = history_pb2.HistoryTickResponse()
+        threads = []
+        for num in request.stock_num_arr:
+            t = threading.Thread(
+                target=fill_history_tick_response,
+                args=(
+                    num,
+                    request.date,
+                    response,
+                    WORKERS.get(True),
+                ),
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return response
+
+    def GetStockHistoryKbar(self, request, _):
+        """
+        GetStockHistoryKbar _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = history_pb2.HistoryKbarResponse()
+        threads = []
+
+        for num in request.stock_num_arr:
+            t = threading.Thread(
+                target=fill_history_kbar_response,
+                args=(
+                    num,
+                    request.date,
+                    response,
+                    WORKERS.get(True),
+                ),
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return response
+
+    def GetStockHistoryClose(self, request, _):
+        """
+        GetStockHistoryClose _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = history_pb2.HistoryCloseResponse()
+        threads = []
+
+        for num in request.stock_num_arr:
+            t = threading.Thread(
+                target=fill_history_close_response,
+                args=(
+                    num,
+                    request.date,
+                    response,
+                    WORKERS.get(True),
+                ),
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return response
+
+    def GetStockHistoryCloseByDateArr(self, request, _):
+        """
+        GetStockHistoryCloseByDateArr _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = history_pb2.HistoryCloseResponse()
+        threads = []
+
+        for date in request.date_arr:
+            for num in request.stock_num_arr:
+                t = threading.Thread(
+                    target=fill_history_close_response,
+                    args=(
+                        num,
+                        date,
+                        response,
+                        WORKERS.get(True),
+                    ),
+                )
+                threads.append(t)
+                t.start()
+        for t in threads:
+            t.join()
+        return response
+
+    def GetStockTSEHistoryTick(self, request, _):
+        """
+        GetStockTSEHistoryTick _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = history_pb2.HistoryTickResponse()
+
+        t = threading.Thread(
+            target=fill_history_tick_response,
+            args=(
+                "tse_001",
+                request.date,
+                response,
+                WORKERS.get(True),
+            ),
+        )
+        t.start()
+        t.join()
+        return response
+
+    def GetStockTSEHistoryKbar(self, request, _):
+        """
+        GetStockHistoryKbar _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = history_pb2.HistoryKbarResponse()
+
+        t = threading.Thread(
+            target=fill_history_kbar_response,
+            args=(
+                "tse_001",
+                request.date,
+                response,
+                WORKERS.get(True),
+            ),
+        )
+        t.start()
+        t.join()
+        return response
+
+    def GetStockTSEHistoryClose(self, request, _):
+        """
+        GetStockTSEHistoryClose _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = history_pb2.HistoryCloseResponse()
+
+        t = threading.Thread(
+            target=fill_history_close_response,
+            args=(
+                "tse_001",
+                request.date,
+                response,
+                WORKERS.get(True),
+            ),
+        )
+        t.start()
+        t.join()
+        return response
+
+    def GetFutureHistoryTick(self, request, _):
+        response = history_pb2.HistoryTickResponse()
+        threads = []
+        for code in request.future_code_arr:
+            t = threading.Thread(
+                target=fill_future_history_tick_response,
+                args=(
+                    code,
+                    request.date,
+                    response,
+                    WORKERS.get(True),
+                ),
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return response
+
+    def GetFutureHistoryKbar(self, request, _):
+        """
+        GetFutureHistoryKbar _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = history_pb2.HistoryKbarResponse()
+        threads = []
+
+        for code in request.future_code_arr:
+            t = threading.Thread(
+                target=fill_future_history_kbar_response,
+                args=(
+                    code,
+                    request.date,
+                    response,
+                    WORKERS.get(True),
+                ),
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return response
+
+    def GetFutureHistoryClose(self, request, _):
+        """
+        GetFutureHistoryClose _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        response = history_pb2.HistoryCloseResponse()
+        threads = []
+
+        for code in request.future_code_arr:
+            t = threading.Thread(
+                target=fill_future_history_close_response,
+                args=(
+                    code,
+                    request.date,
+                    response,
+                    WORKERS.get(True),
+                ),
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return response
+
+
+class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
+    def BuyStock(self, request, _):
+        """
+        BuyStock _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        result = WORKERS.buy_stock(
+            request.stock_num, request.price, request.quantity, request.simulate
+        )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def SellStock(self, request, _):
+        """
+        SellStock _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        result = WORKERS.sell_stock(
+            request.stock_num, request.price, request.quantity, request.simulate
+        )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def SellFirstStock(self, request, _):
+        """
+        SellFirstStock _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        result = WORKERS.sell_first_stock(
+            request.stock_num, request.price, request.quantity, request.simulate
+        )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def CancelStock(self, request, _):
+        """
+        CancelStock _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        result = WORKERS.cancel_stock(request.order_id, request.simulate)
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def GetOrderStatusByID(self, request, _):
+        """
+        GetOrderStatusByID _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        result = WORKERS.get_order_status_by_id(request.order_id, request.simulate)
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def GetOrderStatusArr(self, request, _):
+        """
+        GetOrderStatusArr _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        arr = WORKERS.get_order_status_arr()
+        response = trade_pb2.StockOrderStatusArr()
+        for order in arr:
+            if order.status.order_datetime is None:
+                order.status.order_datetime = datetime.now()
+            order_price = int()
+            if order.status.modified_price != 0:
+                order_price = order.status.modified_price
+            else:
+                order_price = order.order.price
+            response.data.append(
+                trade_pb2.StockOrderStatus(
+                    code=order.contract.code,
+                    action=order.order.action,
+                    price=order_price,
+                    quantity=order.order.quantity,
+                    order_id=order.status.id,
+                    status=order.status.status,
+                    order_time=datetime.strftime(
+                        order.status.order_datetime, "%Y-%m-%d %H:%M:%S"
+                    ),
+                )
+            )
+        return response
+
+    def GetNonBlockOrderStatusArr(self, request, _):
+        """
+        GetNonBlockOrderStatusArr _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        return common_pb2.ErrorMessage(err=WORKERS.get_non_block_order_status_arr())
+
+    def BuyFuture(self, request, _):
+        result = WORKERS.buy_future(
+            request.code,
+            request.price,
+            request.quantity,
+        )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def SellFuture(self, request, _):
+        result = WORKERS.sell_future(
+            request.code,
+            request.price,
+            request.quantity,
+        )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def SellFirstFuture(self, request, _):
+        result = WORKERS.sell_first_future(
+            request.code,
+            request.price,
+            request.quantity,
+        )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def CancelFuture(self, request, _):
+        result = WORKERS.cancel_future(request.order_id)
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+
+class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
+    def GetStockSnapshotByNumArr(self, request, _):
+        """
+        GetStockSnapshotByNumArr _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        contracts = []
+        worker = WORKERS.get(False)
+
+        for stock in request.stock_num_arr:
+            contracts.append(worker.get_contract_by_stock_num(stock))
+        splits = np.array_split(contracts, WORKERS.count())
+        snapshots = []
+        threads = []
+        for i, split in enumerate(splits):
+            threads.append(
+                threading.Thread(
+                    target=fill_sinopac_snapshot_arr,
+                    args=(split, snapshots, WORKERS.get(True)),
+                )
+            )
+            threads[i].start()
+        for t in threads:
+            t.join()
+        response = stream_pb2.SnapshotResponse()
+        for result in snapshots:
+            response.data.append(sinopac_snapshot_to_pb(result))
         return response
 
     def GetAllStockSnapshot(self, request, _):
@@ -127,7 +668,7 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
             threads[i].start()
         for t in threads:
             t.join()
-        response = sinopac_forwarder_pb2.StockSnapshotResponse()
+        response = stream_pb2.SnapshotResponse()
         for result in snapshots:
             response.data.append(sinopac_snapshot_to_pb(result))
         return response
@@ -146,238 +687,14 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         snapshots = worker.snapshots([worker.get_contract_tse_001()])
         return sinopac_snapshot_to_pb(snapshots[0])
 
-    def GetStockSnapshotByNumArr(self, request, _):
-        """
-        GetStockSnapshotByNumArr _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        contracts = []
-        worker = WORKERS.get(False)
-
-        for stock in request.stock_num_arr:
-            contracts.append(worker.get_contract_by_stock_num(stock))
-        splits = np.array_split(contracts, WORKERS.count())
-        snapshots = []
-        threads = []
-        for i, split in enumerate(splits):
-            threads.append(
-                threading.Thread(
-                    target=fill_sinopac_snapshot_arr,
-                    args=(split, snapshots, WORKERS.get(True)),
-                )
-            )
-            threads[i].start()
-        for t in threads:
-            t.join()
-        response = sinopac_forwarder_pb2.StockSnapshotResponse()
-        for result in snapshots:
-            response.data.append(sinopac_snapshot_to_pb(result))
-        return response
-
-    def GetStockHistoryTick(self, request, _):
-        """
-        GetStockHistoryTick _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.StockHistoryTickResponse()
-        threads = []
-        for num in request.stock_num_arr:
-            t = threading.Thread(
-                target=fill_history_tick_response,
-                args=(
-                    num,
-                    request.date,
-                    response,
-                    WORKERS.get(True),
-                ),
-            )
-            threads.append(t)
-            t.start()
-        for t in threads:
-            t.join()
-        return response
-
-    def GetStockTSEHistoryTick(self, request, _):
-        """
-        GetStockTSEHistoryTick _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.StockHistoryTickResponse()
-
-        t = threading.Thread(
-            target=fill_history_tick_response,
-            args=(
-                "tse_001",
-                request.date,
-                response,
-                WORKERS.get(True),
-            ),
-        )
-        t.start()
-        t.join()
-        return response
-
-    def GetStockHistoryKbar(self, request, _):
-        """
-        GetStockHistoryKbar _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.StockHistoryKbarResponse()
-        threads = []
-
-        for num in request.stock_num_arr:
-            t = threading.Thread(
-                target=fill_history_kbar_response,
-                args=(
-                    num,
-                    request.date,
-                    response,
-                    WORKERS.get(True),
-                ),
-            )
-            threads.append(t)
-            t.start()
-        for t in threads:
-            t.join()
-        return response
-
-    def GetStockTSEHistoryKbar(self, request, _):
-        """
-        GetStockHistoryKbar _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.StockHistoryKbarResponse()
-
-        t = threading.Thread(
-            target=fill_history_kbar_response,
-            args=(
-                "tse_001",
-                request.date,
-                response,
-                WORKERS.get(True),
-            ),
-        )
-        t.start()
-        t.join()
-        return response
-
-    def GetStockHistoryClose(self, request, _):
-        """
-        GetStockHistoryClose _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
-        threads = []
-
-        for num in request.stock_num_arr:
-            t = threading.Thread(
-                target=fill_history_close_response,
-                args=(
-                    num,
-                    request.date,
-                    response,
-                    WORKERS.get(True),
-                ),
-            )
-            threads.append(t)
-            t.start()
-        for t in threads:
-            t.join()
-        return response
-
-    def GetStockHistoryCloseByDateArr(self, request, _):
-        """
-        GetStockHistoryCloseByDateArr _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
-        threads = []
-
-        for date in request.date_arr:
-            for num in request.stock_num_arr:
-                t = threading.Thread(
-                    target=fill_history_close_response,
-                    args=(
-                        num,
-                        date,
-                        response,
-                        WORKERS.get(True),
-                    ),
-                )
-                threads.append(t)
-                t.start()
-        for t in threads:
-            t.join()
-        return response
-
-    def GetStockTSEHistoryClose(self, request, _):
-        """
-        GetStockTSEHistoryClose _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
-
-        t = threading.Thread(
-            target=fill_history_close_response,
-            args=(
-                "tse_001",
-                request.date,
-                response,
-                WORKERS.get(True),
-            ),
-        )
-        t.start()
-        t.join()
-        return response
-
     def GetStockVolumeRank(self, request, _):
-        response = sinopac_forwarder_pb2.StockVolumeRankResponse()
+        response = stream_pb2.StockVolumeRankResponse()
         ranks = WORKERS.get(True).get_stock_volume_rank_by_date(
             request.count, request.date
         )
         for result in ranks:
             response.data.append(
-                sinopac_forwarder_pb2.StockVolumeRankMessage(
+                stream_pb2.StockVolumeRankMessage(
                     date=result.date,
                     code=result.code,
                     name=result.name,
@@ -410,23 +727,39 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         return response
 
     def SubscribeStockTick(self, request, _):
-        response = sinopac_forwarder_pb2.SubscribeResponse()
+        response = stream_pb2.SubscribeResponse()
         for stock_num in request.stock_num_arr:
             result = WORKERS.subscribe_stock_tick(stock_num)
             if result is not None:
                 response.fail_arr.append(stock_num)
         return response
 
+    def UnSubscribeStockTick(self, request, _):
+        response = stream_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = WORKERS.unsubscribe_stock_tick(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
     def SubscribeStockBidAsk(self, request, _):
-        response = sinopac_forwarder_pb2.SubscribeResponse()
+        response = stream_pb2.SubscribeResponse()
         for stock_num in request.stock_num_arr:
             result = WORKERS.subscribe_stock_bidask(stock_num)
             if result is not None:
                 response.fail_arr.append(stock_num)
         return response
 
+    def UnSubscribeStockBidAsk(self, request, _):
+        response = stream_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = WORKERS.unsubscribe_stock_bidask(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
     def SubscribeFutureTick(self, request, _):
-        response = sinopac_forwarder_pb2.SubscribeResponse()
+        response = stream_pb2.SubscribeResponse()
         for code in request.future_code_arr:
             result = WORKERS.subscribe_future_tick(code)
             if result is not None:
@@ -434,79 +767,18 @@ class gRPCSinopacForwarder(sinopac_forwarder_pb2_grpc.SinopacForwarderServicer):
         return response
 
     def UnSubscribeFutureTick(self, request, _):
-        response = sinopac_forwarder_pb2.SubscribeResponse()
+        response = stream_pb2.SubscribeResponse()
         for code in request.future_code_arr:
             result = WORKERS.unsubscribe_future_tick(code)
             if result is not None:
                 response.fail_arr.append(code)
         return response
 
-    def UnSubscribeStockTick(self, request, _):
-        response = sinopac_forwarder_pb2.SubscribeResponse()
-        for stock_num in request.stock_num_arr:
-            result = WORKERS.unsubscribe_stock_tick(stock_num)
-            if result is not None:
-                response.fail_arr.append(stock_num)
-        return response
-
-    def UnSubscribeStockBidAsk(self, request, _):
-        response = sinopac_forwarder_pb2.SubscribeResponse()
-        for stock_num in request.stock_num_arr:
-            result = WORKERS.unsubscribe_stock_bidask(stock_num)
-            if result is not None:
-                response.fail_arr.append(stock_num)
-        return response
-
     def UnSubscribeStockAllTick(self, request, _):
-        return sinopac_forwarder_pb2.FunctionErr(err=WORKERS.unsubscribe_all_tick())
+        return common_pb2.ErrorMessage(err=WORKERS.unsubscribe_all_tick())
 
     def UnSubscribeStockAllBidAsk(self, request, _):
-        return sinopac_forwarder_pb2.FunctionErr(err=WORKERS.unsubscribe_all_bidask())
-
-
-class gRPCFuturesForwarder(sinopac_forwarder_pb2_grpc.FutureForwarderServicer):
-    """
-    gRPCFuturesForwarder _summary_
-
-    Args:
-        sinopac_forwarder_pb2_grpc (_type_): _description_
-    """
-
-    def GetAllFutureDetail(self, request, _):
-        """
-        GetAllFutureDetail _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.FutureDetailResponse()
-        worker = WORKERS.get(False)
-
-        for row in worker.future_code_list:
-            contract = worker.get_contract_by_future_code(row)
-            if contract is None:
-                logger.error("%s has no future data", row)
-                continue
-            response.future.append(
-                sinopac_forwarder_pb2.FutureDetailMessage(
-                    code=contract.code,
-                    symbol=contract.symbol,
-                    name=contract.name,
-                    category=contract.category,
-                    delivery_month=contract.delivery_month,
-                    delivery_date=contract.delivery_date,
-                    underlying_kind=contract.underlying_kind,
-                    unit=contract.unit,
-                    limit_up=contract.limit_up,
-                    limit_down=contract.limit_down,
-                    reference=contract.reference,
-                    update_date=contract.update_date,
-                )
-            )
-        return response
+        return common_pb2.ErrorMessage(err=WORKERS.unsubscribe_all_bidask())
 
     def GetFutureSnapshotByCodeArr(self, request, _):
         contracts = []
@@ -527,276 +799,13 @@ class gRPCFuturesForwarder(sinopac_forwarder_pb2_grpc.FutureForwarderServicer):
             threads[i].start()
         for t in threads:
             t.join()
-        response = sinopac_forwarder_pb2.StockSnapshotResponse()
+        response = stream_pb2.SnapshotResponse()
         for result in snapshots:
             response.data.append(sinopac_snapshot_to_pb(result))
         return response
 
-    def GetFutureHistoryTick(self, request, _):
-        response = sinopac_forwarder_pb2.StockHistoryTickResponse()
-        threads = []
-        for code in request.future_code_arr:
-            t = threading.Thread(
-                target=fill_future_history_tick_response,
-                args=(
-                    code,
-                    request.date,
-                    response,
-                    WORKERS.get(True),
-                ),
-            )
-            threads.append(t)
-            t.start()
-        for t in threads:
-            t.join()
-        return response
 
-    def GetFutureHistoryClose(self, request, _):
-        """
-        GetFutureHistoryClose _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.StockHistoryCloseResponse()
-        threads = []
-
-        for code in request.future_code_arr:
-            t = threading.Thread(
-                target=fill_future_history_close_response,
-                args=(
-                    code,
-                    request.date,
-                    response,
-                    WORKERS.get(True),
-                ),
-            )
-            threads.append(t)
-            t.start()
-        for t in threads:
-            t.join()
-        return response
-
-    def GetFutureHistoryKbar(self, request, _):
-        """
-        GetFutureHistoryKbar _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        response = sinopac_forwarder_pb2.StockHistoryKbarResponse()
-        threads = []
-
-        for code in request.future_code_arr:
-            t = threading.Thread(
-                target=fill_future_history_kbar_response,
-                args=(
-                    code,
-                    request.date,
-                    response,
-                    WORKERS.get(True),
-                ),
-            )
-            threads.append(t)
-            t.start()
-        for t in threads:
-            t.join()
-        return response
-
-
-class gRPCTradeMethod(sinopac_forwarder_pb2_grpc.TradeServiceServicer):
-    def BuyStock(self, request, _):
-        """
-        BuyStock _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        result = WORKERS.buy_stock(
-            request.stock_num, request.price, request.quantity, request.simulate
-        )
-        return sinopac_forwarder_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-    def SellStock(self, request, _):
-        """
-        SellStock _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        result = WORKERS.sell_stock(
-            request.stock_num, request.price, request.quantity, request.simulate
-        )
-        return sinopac_forwarder_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-    def SellFirstStock(self, request, _):
-        """
-        SellFirstStock _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        result = WORKERS.sell_first_stock(
-            request.stock_num, request.price, request.quantity, request.simulate
-        )
-        return sinopac_forwarder_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-    def CancelStock(self, request, _):
-        """
-        CancelStock _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        result = WORKERS.cancel_stock(request.order_id, request.simulate)
-        return sinopac_forwarder_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-    def GetOrderStatusByID(self, request, _):
-        """
-        GetOrderStatusByID _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        result = WORKERS.get_order_status_by_id(request.order_id, request.simulate)
-        return sinopac_forwarder_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-    def GetOrderStatusArr(self, request, _):
-        """
-        GetOrderStatusArr _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        arr = WORKERS.get_order_status_arr()
-        response = sinopac_forwarder_pb2.StockOrderStatusArr()
-        for order in arr:
-            if order.status.order_datetime is None:
-                order.status.order_datetime = datetime.now()
-            order_price = int()
-            if order.status.modified_price != 0:
-                order_price = order.status.modified_price
-            else:
-                order_price = order.order.price
-            response.data.append(
-                sinopac_forwarder_pb2.StockOrderStatus(
-                    code=order.contract.code,
-                    action=order.order.action,
-                    price=order_price,
-                    quantity=order.order.quantity,
-                    order_id=order.status.id,
-                    status=order.status.status,
-                    order_time=datetime.strftime(
-                        order.status.order_datetime, "%Y-%m-%d %H:%M:%S"
-                    ),
-                )
-            )
-        return response
-
-    def GetNonBlockOrderStatusArr(self, request, _):
-        """
-        GetNonBlockOrderStatusArr _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        return sinopac_forwarder_pb2.FunctionErr(
-            err=WORKERS.get_non_block_order_status_arr()
-        )
-
-    def BuyFuture(self, request, _):
-        result = WORKERS.buy_future(
-            request.code,
-            request.price,
-            request.quantity,
-        )
-        return sinopac_forwarder_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-    def SellFuture(self, request, _):
-        result = WORKERS.sell_future(
-            request.code,
-            request.price,
-            request.quantity,
-        )
-        return sinopac_forwarder_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-    def SellFirstFuture(self, request, _):
-        result = WORKERS.sell_first_future(
-            request.code,
-            request.price,
-            request.quantity,
-        )
-        return sinopac_forwarder_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-    def CancelFuture(self, request, _):
-        result = WORKERS.cancel_future(request.order_id)
-        return sinopac_forwarder_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-
-def sinopac_snapshot_to_pb(result) -> sinopac_forwarder_pb2.StockSnapshotMessage:
+def sinopac_snapshot_to_pb(result) -> stream_pb2.SnapshotMessage:
     """
     sinopac_snapshot_to_pb _summary_
 
@@ -806,7 +815,7 @@ def sinopac_snapshot_to_pb(result) -> sinopac_forwarder_pb2.StockSnapshotMessage
     Returns:
         sinopac_forwarder_pb2.StockSnapshotMessage: _description_
     """
-    return sinopac_forwarder_pb2.StockSnapshotMessage(
+    return stream_pb2.SnapshotMessage(
         ts=result.ts,
         code=result.code,
         exchange=result.exchange,
@@ -874,8 +883,8 @@ def fill_history_tick_response(num, date, response, sinopac: Sinopac):
 
     for pos in range(total_count):
         response.data.append(
-            sinopac_forwarder_pb2.StockHistoryTickMessage(
-                stock_num=num,
+            history_pb2.HistoryTickMessage(
+                code=num,
                 ts=ticks.ts[pos],
                 close=ticks.close[pos],
                 volume=ticks.volume[pos],
@@ -916,8 +925,8 @@ def fill_future_history_tick_response(code, date, response, sinopac: Sinopac):
 
     for pos in range(total_count):
         response.data.append(
-            sinopac_forwarder_pb2.StockHistoryTickMessage(
-                stock_num=code,
+            history_pb2.HistoryTickMessage(
+                code=code,
                 ts=ticks.ts[pos],
                 close=ticks.close[pos],
                 volume=ticks.volume[pos],
@@ -956,8 +965,8 @@ def fill_history_kbar_response(num, date, response, sinopac: Sinopac):
 
     for pos in range(total_count):
         response.data.append(
-            sinopac_forwarder_pb2.StockHistoryKbarMessage(
-                stock_num=num,
+            history_pb2.HistoryKbarMessage(
+                code=num,
                 ts=kbar.ts[pos],
                 close=kbar.Close[pos],
                 open=kbar.Open[pos],
@@ -994,8 +1003,8 @@ def fill_future_history_kbar_response(code, date, response, sinopac: Sinopac):
 
     for pos in range(total_count):
         response.data.append(
-            sinopac_forwarder_pb2.StockHistoryKbarMessage(
-                stock_num=code,
+            history_pb2.HistoryKbarMessage(
+                code=code,
                 ts=kbar.ts[pos],
                 close=kbar.Close[pos],
                 open=kbar.Open[pos],
@@ -1017,7 +1026,7 @@ def fill_history_close_response(num, date, response, sinopac: Sinopac):
         sinopac (Sinopac): _description_
     """
     response.data.append(
-        sinopac_forwarder_pb2.StockHistoryCloseMessage(
+        history_pb2.HistoryCloseMessage(
             code=num,
             close=sinopac.get_stock_last_close_by_date(num, date),
             date=date,
@@ -1036,7 +1045,7 @@ def fill_future_history_close_response(code, date, response, sinopac: Sinopac):
         sinopac (Sinopac): _description_
     """
     response.data.append(
-        sinopac_forwarder_pb2.StockHistoryCloseMessage(
+        history_pb2.HistoryCloseMessage(
             code=code,
             close=sinopac.get_future_last_close_by_date(code, date),
             date=date,
@@ -1059,9 +1068,10 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
 
     # gRPC servicer
     health_servicer = gRPCHealthCheck()
-    sinopac_forwarder_servicer = gRPCSinopacForwarder()
-    future_forwarder_servicer = gRPCFuturesForwarder()
-    trade_servicer = gRPCTradeMethod()
+    basic_servicer = gRPCBasic()
+    history_servicer = gRPCHistory()
+    trade_servicer = gRPCTrade()
+    stream_servicer = gRPCStream()
 
     # set call back
     rq = RabbitMQS(
@@ -1083,18 +1093,13 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
             ("grpc.max_receive_message_length", 1024 * 1024 * 1024),
         ],
     )
-    sinopac_forwarder_pb2_grpc.add_HealthCheckServicer_to_server(
-        health_servicer, server
+    health_pb2_grpc.add_HealthCheckInterfaceServicer_to_server(health_servicer, server)
+    basic_pb2_grpc.add_BasicDataInterfaceServicer_to_server(basic_servicer, server)
+    history_pb2_grpc.add_HistoryDataInterfaceServicer_to_server(
+        history_servicer, server
     )
-    sinopac_forwarder_pb2_grpc.add_SinopacForwarderServicer_to_server(
-        sinopac_forwarder_servicer, server
-    )
-    sinopac_forwarder_pb2_grpc.add_FutureForwarderServicer_to_server(
-        future_forwarder_servicer, server
-    )
-    sinopac_forwarder_pb2_grpc.add_TradeServiceServicer_to_server(
-        trade_servicer, server
-    )
+    trade_pb2_grpc.add_TradeInterfaceServicer_to_server(trade_servicer, server)
+    stream_pb2_grpc.add_StreamDataInterfaceServicer_to_server(stream_servicer, server)
 
     server.add_insecure_port(f"[::]:{port}")
     server.start()

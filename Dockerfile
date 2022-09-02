@@ -8,6 +8,8 @@ RUN mkdir toc-sinopac-python
 WORKDIR /toc-sinopac-python
 COPY . .
 
+ENV PYTHONPATH=/toc-sinopac-python/pb
+
 RUN apt update -y && \
     apt install -y tzdata && \
     apt autoremove -y && \

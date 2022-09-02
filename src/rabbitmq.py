@@ -4,10 +4,10 @@ import time
 from datetime import datetime
 from queue import Queue
 
+import common_pb2
 import pika
 import shioaji as sj
-
-import sinopac_forwarder_pb2
+import trade_pb2
 
 logging.getLogger("pika").setLevel(logging.WARNING)
 
@@ -73,7 +73,7 @@ class RabbitMQS:
         p.ch.basic_publish(
             exchange=self.exchange,
             routing_key="event",
-            body=sinopac_forwarder_pb2.EventResponse(
+            body=common_pb2.EventMessage(
                 resp_code=resp_code,
                 event_code=event_code,
                 info=info,
@@ -103,7 +103,7 @@ class RabbitMQS:
                 p.ch.basic_publish(
                     exchange=self.exchange,
                     routing_key="order",
-                    body=sinopac_forwarder_pb2.StockOrderStatus(
+                    body=trade_pb2.StockOrderStatus(
                         code=order.contract.code,
                         action=order.order.action,
                         price=order_price,
@@ -128,7 +128,7 @@ class RabbitMQS:
         p.ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"future_tick:{tick.code}",
-            body=sinopac_forwarder_pb2.FutureRealTimeTickResponse(
+            body=common_pb2.FutureRealTimeTickMessage(
                 code=tick.code,
                 date_time=datetime.strftime(tick.datetime, "%Y-%m-%d %H:%M:%S.%f"),
                 open=tick.open,
@@ -163,7 +163,7 @@ class RabbitMQS:
         p.ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"tick:{tick.code}",
-            body=sinopac_forwarder_pb2.StockRealTimeTickResponse(
+            body=common_pb2.StockRealTimeTickMessage(
                 code=tick.code,
                 date_time=datetime.strftime(tick.datetime, "%Y-%m-%d %H:%M:%S.%f"),
                 open=tick.open,
@@ -200,7 +200,7 @@ class RabbitMQS:
         p.ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"bid_ask:{bidask.code}",
-            body=sinopac_forwarder_pb2.StockRealTimeBidAskResponse(
+            body=common_pb2.StockRealTimeBidAskMessage(
                 code=bidask.code,
                 date_time=datetime.strftime(bidask.datetime, "%Y-%m-%d %H:%M:%S.%f"),
                 suspend=bidask.suspend,
