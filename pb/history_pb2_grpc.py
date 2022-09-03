@@ -2,8 +2,8 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import common_pb2 as pb_dot_common__pb2
-import history_pb2 as pb_dot_history__pb2
+import common_pb2 as common__pb2
+import history_pb2 as history__pb2
 
 
 class HistoryDataInterfaceStub(object):
@@ -16,55 +16,55 @@ class HistoryDataInterfaceStub(object):
             channel: A grpc.Channel.
         """
         self.GetStockHistoryTick = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetStockHistoryTick",
-            request_serializer=pb_dot_common__pb2.StockNumArrWithDate.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryTickResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetStockHistoryTick',
+                request_serializer=common__pb2.StockNumArrWithDate.SerializeToString,
+                response_deserializer=history__pb2.HistoryTickResponse.FromString,
+                )
         self.GetStockHistoryKbar = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetStockHistoryKbar",
-            request_serializer=pb_dot_common__pb2.StockNumArrWithDate.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryKbarResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetStockHistoryKbar',
+                request_serializer=common__pb2.StockNumArrWithDate.SerializeToString,
+                response_deserializer=history__pb2.HistoryKbarResponse.FromString,
+                )
         self.GetStockHistoryClose = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetStockHistoryClose",
-            request_serializer=pb_dot_common__pb2.StockNumArrWithDate.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryCloseResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetStockHistoryClose',
+                request_serializer=common__pb2.StockNumArrWithDate.SerializeToString,
+                response_deserializer=history__pb2.HistoryCloseResponse.FromString,
+                )
         self.GetStockHistoryCloseByDateArr = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetStockHistoryCloseByDateArr",
-            request_serializer=pb_dot_common__pb2.StockNumArrWithDateArr.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryCloseResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetStockHistoryCloseByDateArr',
+                request_serializer=common__pb2.StockNumArrWithDateArr.SerializeToString,
+                response_deserializer=history__pb2.HistoryCloseResponse.FromString,
+                )
         self.GetStockTSEHistoryTick = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryTick",
-            request_serializer=pb_dot_common__pb2.Date.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryTickResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryTick',
+                request_serializer=common__pb2.Date.SerializeToString,
+                response_deserializer=history__pb2.HistoryTickResponse.FromString,
+                )
         self.GetStockTSEHistoryKbar = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryKbar",
-            request_serializer=pb_dot_common__pb2.Date.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryKbarResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryKbar',
+                request_serializer=common__pb2.Date.SerializeToString,
+                response_deserializer=history__pb2.HistoryKbarResponse.FromString,
+                )
         self.GetStockTSEHistoryClose = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryClose",
-            request_serializer=pb_dot_common__pb2.Date.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryCloseResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryClose',
+                request_serializer=common__pb2.Date.SerializeToString,
+                response_deserializer=history__pb2.HistoryCloseResponse.FromString,
+                )
         self.GetFutureHistoryTick = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryTick",
-            request_serializer=pb_dot_common__pb2.FutureCodeArrWithDate.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryTickResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryTick',
+                request_serializer=common__pb2.FutureCodeArrWithDate.SerializeToString,
+                response_deserializer=history__pb2.HistoryTickResponse.FromString,
+                )
         self.GetFutureHistoryClose = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryClose",
-            request_serializer=pb_dot_common__pb2.FutureCodeArrWithDate.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryCloseResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryClose',
+                request_serializer=common__pb2.FutureCodeArrWithDate.SerializeToString,
+                response_deserializer=history__pb2.HistoryCloseResponse.FromString,
+                )
         self.GetFutureHistoryKbar = channel.unary_unary(
-            "/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryKbar",
-            request_serializer=pb_dot_common__pb2.FutureCodeArrWithDate.SerializeToString,
-            response_deserializer=pb_dot_history__pb2.HistoryKbarResponse.FromString,
-        )
+                '/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryKbar',
+                request_serializer=common__pb2.FutureCodeArrWithDate.SerializeToString,
+                response_deserializer=history__pb2.HistoryKbarResponse.FromString,
+                )
 
 
 class HistoryDataInterfaceServicer(object):
@@ -73,413 +73,292 @@ class HistoryDataInterfaceServicer(object):
     def GetStockHistoryTick(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetStockHistoryKbar(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetStockHistoryClose(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetStockHistoryCloseByDateArr(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetStockTSEHistoryTick(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetStockTSEHistoryKbar(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetStockTSEHistoryClose(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetFutureHistoryTick(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetFutureHistoryClose(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetFutureHistoryKbar(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_HistoryDataInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "GetStockHistoryTick": grpc.unary_unary_rpc_method_handler(
-            servicer.GetStockHistoryTick,
-            request_deserializer=pb_dot_common__pb2.StockNumArrWithDate.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryTickResponse.SerializeToString,
-        ),
-        "GetStockHistoryKbar": grpc.unary_unary_rpc_method_handler(
-            servicer.GetStockHistoryKbar,
-            request_deserializer=pb_dot_common__pb2.StockNumArrWithDate.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryKbarResponse.SerializeToString,
-        ),
-        "GetStockHistoryClose": grpc.unary_unary_rpc_method_handler(
-            servicer.GetStockHistoryClose,
-            request_deserializer=pb_dot_common__pb2.StockNumArrWithDate.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryCloseResponse.SerializeToString,
-        ),
-        "GetStockHistoryCloseByDateArr": grpc.unary_unary_rpc_method_handler(
-            servicer.GetStockHistoryCloseByDateArr,
-            request_deserializer=pb_dot_common__pb2.StockNumArrWithDateArr.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryCloseResponse.SerializeToString,
-        ),
-        "GetStockTSEHistoryTick": grpc.unary_unary_rpc_method_handler(
-            servicer.GetStockTSEHistoryTick,
-            request_deserializer=pb_dot_common__pb2.Date.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryTickResponse.SerializeToString,
-        ),
-        "GetStockTSEHistoryKbar": grpc.unary_unary_rpc_method_handler(
-            servicer.GetStockTSEHistoryKbar,
-            request_deserializer=pb_dot_common__pb2.Date.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryKbarResponse.SerializeToString,
-        ),
-        "GetStockTSEHistoryClose": grpc.unary_unary_rpc_method_handler(
-            servicer.GetStockTSEHistoryClose,
-            request_deserializer=pb_dot_common__pb2.Date.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryCloseResponse.SerializeToString,
-        ),
-        "GetFutureHistoryTick": grpc.unary_unary_rpc_method_handler(
-            servicer.GetFutureHistoryTick,
-            request_deserializer=pb_dot_common__pb2.FutureCodeArrWithDate.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryTickResponse.SerializeToString,
-        ),
-        "GetFutureHistoryClose": grpc.unary_unary_rpc_method_handler(
-            servicer.GetFutureHistoryClose,
-            request_deserializer=pb_dot_common__pb2.FutureCodeArrWithDate.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryCloseResponse.SerializeToString,
-        ),
-        "GetFutureHistoryKbar": grpc.unary_unary_rpc_method_handler(
-            servicer.GetFutureHistoryKbar,
-            request_deserializer=pb_dot_common__pb2.FutureCodeArrWithDate.FromString,
-            response_serializer=pb_dot_history__pb2.HistoryKbarResponse.SerializeToString,
-        ),
+            'GetStockHistoryTick': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockHistoryTick,
+                    request_deserializer=common__pb2.StockNumArrWithDate.FromString,
+                    response_serializer=history__pb2.HistoryTickResponse.SerializeToString,
+            ),
+            'GetStockHistoryKbar': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockHistoryKbar,
+                    request_deserializer=common__pb2.StockNumArrWithDate.FromString,
+                    response_serializer=history__pb2.HistoryKbarResponse.SerializeToString,
+            ),
+            'GetStockHistoryClose': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockHistoryClose,
+                    request_deserializer=common__pb2.StockNumArrWithDate.FromString,
+                    response_serializer=history__pb2.HistoryCloseResponse.SerializeToString,
+            ),
+            'GetStockHistoryCloseByDateArr': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockHistoryCloseByDateArr,
+                    request_deserializer=common__pb2.StockNumArrWithDateArr.FromString,
+                    response_serializer=history__pb2.HistoryCloseResponse.SerializeToString,
+            ),
+            'GetStockTSEHistoryTick': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockTSEHistoryTick,
+                    request_deserializer=common__pb2.Date.FromString,
+                    response_serializer=history__pb2.HistoryTickResponse.SerializeToString,
+            ),
+            'GetStockTSEHistoryKbar': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockTSEHistoryKbar,
+                    request_deserializer=common__pb2.Date.FromString,
+                    response_serializer=history__pb2.HistoryKbarResponse.SerializeToString,
+            ),
+            'GetStockTSEHistoryClose': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockTSEHistoryClose,
+                    request_deserializer=common__pb2.Date.FromString,
+                    response_serializer=history__pb2.HistoryCloseResponse.SerializeToString,
+            ),
+            'GetFutureHistoryTick': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFutureHistoryTick,
+                    request_deserializer=common__pb2.FutureCodeArrWithDate.FromString,
+                    response_serializer=history__pb2.HistoryTickResponse.SerializeToString,
+            ),
+            'GetFutureHistoryClose': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFutureHistoryClose,
+                    request_deserializer=common__pb2.FutureCodeArrWithDate.FromString,
+                    response_serializer=history__pb2.HistoryCloseResponse.SerializeToString,
+            ),
+            'GetFutureHistoryKbar': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFutureHistoryKbar,
+                    request_deserializer=common__pb2.FutureCodeArrWithDate.FromString,
+                    response_serializer=history__pb2.HistoryKbarResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "sinopac_forwarder.HistoryDataInterface", rpc_method_handlers
-    )
+            'sinopac_forwarder.HistoryDataInterface', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class HistoryDataInterface(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetStockHistoryTick(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetStockHistoryTick(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetStockHistoryTick",
-            pb_dot_common__pb2.StockNumArrWithDate.SerializeToString,
-            pb_dot_history__pb2.HistoryTickResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetStockHistoryTick',
+            common__pb2.StockNumArrWithDate.SerializeToString,
+            history__pb2.HistoryTickResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetStockHistoryKbar(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetStockHistoryKbar(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetStockHistoryKbar",
-            pb_dot_common__pb2.StockNumArrWithDate.SerializeToString,
-            pb_dot_history__pb2.HistoryKbarResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetStockHistoryKbar',
+            common__pb2.StockNumArrWithDate.SerializeToString,
+            history__pb2.HistoryKbarResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetStockHistoryClose(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetStockHistoryClose(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetStockHistoryClose",
-            pb_dot_common__pb2.StockNumArrWithDate.SerializeToString,
-            pb_dot_history__pb2.HistoryCloseResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetStockHistoryClose',
+            common__pb2.StockNumArrWithDate.SerializeToString,
+            history__pb2.HistoryCloseResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetStockHistoryCloseByDateArr(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetStockHistoryCloseByDateArr(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetStockHistoryCloseByDateArr",
-            pb_dot_common__pb2.StockNumArrWithDateArr.SerializeToString,
-            pb_dot_history__pb2.HistoryCloseResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetStockHistoryCloseByDateArr',
+            common__pb2.StockNumArrWithDateArr.SerializeToString,
+            history__pb2.HistoryCloseResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetStockTSEHistoryTick(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetStockTSEHistoryTick(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryTick",
-            pb_dot_common__pb2.Date.SerializeToString,
-            pb_dot_history__pb2.HistoryTickResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryTick',
+            common__pb2.Date.SerializeToString,
+            history__pb2.HistoryTickResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetStockTSEHistoryKbar(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetStockTSEHistoryKbar(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryKbar",
-            pb_dot_common__pb2.Date.SerializeToString,
-            pb_dot_history__pb2.HistoryKbarResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryKbar',
+            common__pb2.Date.SerializeToString,
+            history__pb2.HistoryKbarResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetStockTSEHistoryClose(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetStockTSEHistoryClose(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryClose",
-            pb_dot_common__pb2.Date.SerializeToString,
-            pb_dot_history__pb2.HistoryCloseResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryClose',
+            common__pb2.Date.SerializeToString,
+            history__pb2.HistoryCloseResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetFutureHistoryTick(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetFutureHistoryTick(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryTick",
-            pb_dot_common__pb2.FutureCodeArrWithDate.SerializeToString,
-            pb_dot_history__pb2.HistoryTickResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryTick',
+            common__pb2.FutureCodeArrWithDate.SerializeToString,
+            history__pb2.HistoryTickResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetFutureHistoryClose(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetFutureHistoryClose(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryClose",
-            pb_dot_common__pb2.FutureCodeArrWithDate.SerializeToString,
-            pb_dot_history__pb2.HistoryCloseResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryClose',
+            common__pb2.FutureCodeArrWithDate.SerializeToString,
+            history__pb2.HistoryCloseResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetFutureHistoryKbar(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetFutureHistoryKbar(request,
             target,
-            "/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryKbar",
-            pb_dot_common__pb2.FutureCodeArrWithDate.SerializeToString,
-            pb_dot_history__pb2.HistoryKbarResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryKbar',
+            common__pb2.FutureCodeArrWithDate.SerializeToString,
+            history__pb2.HistoryKbarResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

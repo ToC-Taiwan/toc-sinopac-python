@@ -348,14 +348,14 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-pu
     def get_non_block_order_status_arr(self):
         return self.main_worker.update_order_status_instant()
 
-    def buy_future(self, code, price, quantity):
-        return self.main_worker.buy_future(code, price, quantity)
+    def buy_future(self, code, price, quantity, sim):
+        return self.main_worker.buy_future(code, price, quantity, sim)
 
-    def sell_future(self, code, price, quantity):
-        return self.main_worker.sell_future(code, price, quantity)
+    def sell_future(self, code, price, quantity, sim):
+        return self.main_worker.sell_future(code, price, quantity, sim)
 
-    def sell_first_future(self, code, price, quantity):
-        return self.main_worker.sell_first_future(code, price, quantity)
+    def sell_first_future(self, code, price, quantity, sim):
+        return self.main_worker.sell_first_future(code, price, quantity, sim)
 
-    def cancel_future(self, order_id):
-        return self.main_worker.cancel_future(order_id)
+    def cancel_future(self, order_id, sim):
+        return self.main_worker.cancel_future(order_id, sim)

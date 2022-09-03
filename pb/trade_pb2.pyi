@@ -45,17 +45,20 @@ class FutureOrderDetail(google.protobuf.message.Message):
     CODE_FIELD_NUMBER: builtins.int
     PRICE_FIELD_NUMBER: builtins.int
     QUANTITY_FIELD_NUMBER: builtins.int
+    SIMULATE_FIELD_NUMBER: builtins.int
     code: builtins.str
     price: builtins.float
     quantity: builtins.int
+    simulate: builtins.bool
     def __init__(
         self,
         *,
         code: builtins.str = ...,
         price: builtins.float = ...,
         quantity: builtins.int = ...,
+        simulate: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["code", b"code", "price", b"price", "quantity", b"quantity"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["code", b"code", "price", b"price", "quantity", b"quantity", "simulate", b"simulate"]) -> None: ...
 
 global___FutureOrderDetail = FutureOrderDetail
 
@@ -100,13 +103,16 @@ class FutureOrderID(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ORDER_ID_FIELD_NUMBER: builtins.int
+    SIMULATE_FIELD_NUMBER: builtins.int
     order_id: builtins.str
+    simulate: builtins.bool
     def __init__(
         self,
         *,
         order_id: builtins.str = ...,
+        simulate: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["order_id", b"order_id"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["order_id", b"order_id", "simulate", b"simulate"]) -> None: ...
 
 global___FutureOrderID = FutureOrderID
 

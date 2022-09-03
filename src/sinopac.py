@@ -593,7 +593,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             )
             threading.Thread(
                 target=self.finish_simulation_order,
-                args=(sim_order, random.randrange(15) + 1),
+                args=(sim_order, random.randrange(5) + 1),
             ).start()
             return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
@@ -647,7 +647,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 )
             threading.Thread(
                 target=self.finish_simulation_order,
-                args=(sim_order, random.randrange(15) + 1),
+                args=(sim_order, random.randrange(5) + 1),
             ).start()
             return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
@@ -702,7 +702,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 )
             threading.Thread(
                 target=self.finish_simulation_order,
-                args=(sim_order, random.randrange(15) + 1),
+                args=(sim_order, random.randrange(5) + 1),
             ).start()
             return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
@@ -861,7 +861,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 order["trade_id"],
             )
 
-    def buy_future(self, code: str, price: float, quantity: int):
+    def buy_future(self, code: str, price: float, quantity: int, sim: bool):
         """
         buy_future _summary_
 
@@ -869,6 +869,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             code (str): _description_
             price (float): _description_
             quantity (int): _description_
+            sim (bool): _description_
 
         Returns:
             _type_: _description_
@@ -883,12 +884,37 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             account=self.__api.futopt_account,
         )
         contract = self.get_contract_by_future_code(code)
-        trade = self.__api.place_order(contract=contract, order=order)
-        if trade is not None and trade.order.id != "":
-            return OrderStatus(trade.order.id, trade.status.status, "")
+        if sim is False:
+            trade = self.__api.place_order(contract=contract, order=order)
+            if trade is not None and trade.order.id != "":
+                return OrderStatus(trade.order.id, trade.status.status, "")
+        else:
+            with self.__simulation_lock:
+                if self.__current_simulation_count_map[code] < 0:
+                    if quantity + self.__current_simulation_count_map[code] > 0:
+                        return OrderStatus("", "", "buy later quantity is too big")
+            sim_order = sj.order.Trade(
+                contract=contract,
+                order=order,
+                status=sj.order.OrderStatus(
+                    id="".join(
+                        random.choice(string.ascii_lowercase + string.octdigits)
+                        for _ in range(8)
+                    ),
+                    status=sj.constant.Status.Submitted,
+                    status_code="",
+                    order_datetime=datetime.now(),
+                    deals=[],
+                ),
+            )
+            threading.Thread(
+                target=self.finish_simulation_order,
+                args=(sim_order, random.randrange(5) + 1),
+            ).start()
+            return OrderStatus(sim_order.status.id, sim_order.status.status, "")
         return OrderStatus("", "", "unknown error")
 
-    def sell_future(self, code: str, price: float, quantity: int):
+    def sell_future(self, code: str, price: float, quantity: int, sim: bool):
         """
         sell_future _summary_
 
@@ -896,6 +922,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             code (str): _description_
             price (float): _description_
             quantity (int): _description_
+            sim (bool): _description_
 
         Returns:
             _type_: _description_
@@ -910,12 +937,36 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             account=self.__api.futopt_account,
         )
         contract = self.get_contract_by_future_code(code)
-        trade = self.__api.place_order(contract=contract, order=order)
-        if trade is not None and trade.order.id != "":
-            return OrderStatus(trade.order.id, trade.status.status, "")
+        if sim is False:
+            trade = self.__api.place_order(contract=contract, order=order)
+            if trade is not None and trade.order.id != "":
+                return OrderStatus(trade.order.id, trade.status.status, "")
+        else:
+            with self.__simulation_lock:
+                if quantity > self.__current_simulation_count_map[code]:
+                    return OrderStatus("", "", "quantity is too big")
+                sim_order = sj.order.Trade(
+                    contract=contract,
+                    order=order,
+                    status=sj.order.OrderStatus(
+                        id="".join(
+                            random.choice(string.ascii_lowercase + string.octdigits)
+                            for _ in range(8)
+                        ),
+                        status=sj.constant.Status.Submitted,
+                        status_code="",
+                        order_datetime=datetime.now(),
+                        deals=[],
+                    ),
+                )
+            threading.Thread(
+                target=self.finish_simulation_order,
+                args=(sim_order, random.randrange(5) + 1),
+            ).start()
+            return OrderStatus(sim_order.status.id, sim_order.status.status, "")
         return OrderStatus("", "", "unknown error")
 
-    def sell_first_future(self, code: str, price: float, quantity: int):
+    def sell_first_future(self, code: str, price: float, quantity: int, sim: bool):
         """
         sell_first_future _summary_
 
@@ -923,6 +974,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             code (str): _description_
             price (float): _description_
             quantity (int): _description_
+            sim (bool): _description_
 
         Returns:
             _type_: _description_
@@ -937,51 +989,84 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             account=self.__api.futopt_account,
         )
         contract = self.get_contract_by_future_code(code)
-        trade = self.__api.place_order(contract=contract, order=order)
-        if trade is not None and trade.order.id != "":
-            return OrderStatus(trade.order.id, trade.status.status, "")
+        if sim is False:
+            trade = self.__api.place_order(contract=contract, order=order)
+            if trade is not None and trade.order.id != "":
+                return OrderStatus(trade.order.id, trade.status.status, "")
+        else:
+            with self.__simulation_lock:
+                if self.__current_simulation_count_map[code] > 0:
+                    return OrderStatus("", "", "can not sell first")
+                sim_order = sj.order.Trade(
+                    contract=contract,
+                    order=order,
+                    status=sj.order.OrderStatus(
+                        id="".join(
+                            random.choice(string.ascii_lowercase + string.octdigits)
+                            for _ in range(8)
+                        ),
+                        status=sj.constant.Status.Submitted,
+                        status_code="",
+                        order_datetime=datetime.now(),
+                        deals=[],
+                    ),
+                )
+            threading.Thread(
+                target=self.finish_simulation_order,
+                args=(sim_order, random.randrange(5) + 1),
+            ).start()
+            return OrderStatus(sim_order.status.id, sim_order.status.status, "")
         return OrderStatus("", "", "unknown error")
 
-    def cancel_future(self, order_id: str):
+    def cancel_future(self, order_id: str, sim: bool):
         """
         cancel_future _summary_
 
         Args:
             order_id (str): _description_
+            sim (bool): _description_
 
         Returns:
             _type_: _description_
         """
-        cancel_order = None
-        times = int()
-        while True:
-            self.update_local_order_status()
-            for order in self.order_status_list:
-                if order.status.id == order_id:
-                    cancel_order = order
-            if cancel_order is not None or times >= 10:
-                break
-            times += 1
-            time.sleep(1)
-        if cancel_order is None:
-            return OrderStatus(order_id, "", "id not found")
-        if cancel_order.status.status == sj.constant.Status.Cancelled:
-            return OrderStatus(order_id, "", "id already cancelled")
-
-        times = 0
-        self.__api.cancel_order(cancel_order)
-        while True:
-            if times >= 10:
-                break
-            self.update_local_order_status()
+        if sim is False:
+            cancel_order = None
+            times = int()
+            while True:
+                self.update_local_order_status()
+                for order in self.order_status_list:
+                    if order.status.id == order_id:
+                        cancel_order = order
+                if cancel_order is not None or times >= 10:
+                    break
+                times += 1
+                time.sleep(1)
+            if cancel_order is None:
+                return OrderStatus(order_id, "", "id not found")
+            if cancel_order.status.status == sj.constant.Status.Cancelled:
+                return OrderStatus(order_id, "", "id already cancelled")
+            times = 0
+            self.__api.cancel_order(cancel_order)
+            while True:
+                if times >= 10:
+                    break
+                self.update_local_order_status()
+                for order in self.order_status_list:
+                    if (
+                        order.status.id == order_id
+                        and order.status.status == sj.constant.Status.Cancelled
+                    ):
+                        return OrderStatus(order_id, order.status.status, "")
+                times += 1
+                time.sleep(1)
+        else:
             for order in self.order_status_list:
                 if (
                     order.status.id == order_id
-                    and order.status.status == sj.constant.Status.Cancelled
+                    and order.status.status != sj.constant.Status.Cancelled
                 ):
+                    order.status.status = sj.constant.Status.Cancelled
                     return OrderStatus(order_id, order.status.status, "")
-            times += 1
-            time.sleep(1)
         return OrderStatus("", "", "cancel future order fail, unknown error")
 
 

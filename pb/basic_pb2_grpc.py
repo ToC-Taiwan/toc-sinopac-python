@@ -2,8 +2,8 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
+import basic_pb2 as basic__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-import basic_pb2 as pb_dot_basic__pb2
 
 
 class BasicDataInterfaceStub(object):
@@ -16,15 +16,15 @@ class BasicDataInterfaceStub(object):
             channel: A grpc.Channel.
         """
         self.GetAllStockDetail = channel.unary_unary(
-            "/sinopac_forwarder.BasicDataInterface/GetAllStockDetail",
-            request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            response_deserializer=pb_dot_basic__pb2.StockDetailResponse.FromString,
-        )
+                '/sinopac_forwarder.BasicDataInterface/GetAllStockDetail',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=basic__pb2.StockDetailResponse.FromString,
+                )
         self.GetAllFutureDetail = channel.unary_unary(
-            "/sinopac_forwarder.BasicDataInterface/GetAllFutureDetail",
-            request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            response_deserializer=pb_dot_basic__pb2.FutureDetailResponse.FromString,
-        )
+                '/sinopac_forwarder.BasicDataInterface/GetAllFutureDetail',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=basic__pb2.FutureDetailResponse.FromString,
+                )
 
 
 class BasicDataInterfaceServicer(object):
@@ -33,93 +33,68 @@ class BasicDataInterfaceServicer(object):
     def GetAllStockDetail(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetAllFutureDetail(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_BasicDataInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "GetAllStockDetail": grpc.unary_unary_rpc_method_handler(
-            servicer.GetAllStockDetail,
-            request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            response_serializer=pb_dot_basic__pb2.StockDetailResponse.SerializeToString,
-        ),
-        "GetAllFutureDetail": grpc.unary_unary_rpc_method_handler(
-            servicer.GetAllFutureDetail,
-            request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            response_serializer=pb_dot_basic__pb2.FutureDetailResponse.SerializeToString,
-        ),
+            'GetAllStockDetail': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllStockDetail,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=basic__pb2.StockDetailResponse.SerializeToString,
+            ),
+            'GetAllFutureDetail': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllFutureDetail,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=basic__pb2.FutureDetailResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "sinopac_forwarder.BasicDataInterface", rpc_method_handlers
-    )
+            'sinopac_forwarder.BasicDataInterface', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class BasicDataInterface(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetAllStockDetail(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetAllStockDetail(request,
             target,
-            "/sinopac_forwarder.BasicDataInterface/GetAllStockDetail",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.BasicDataInterface/GetAllStockDetail',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            pb_dot_basic__pb2.StockDetailResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            basic__pb2.StockDetailResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetAllFutureDetail(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetAllFutureDetail(request,
             target,
-            "/sinopac_forwarder.BasicDataInterface/GetAllFutureDetail",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.BasicDataInterface/GetAllFutureDetail',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            pb_dot_basic__pb2.FutureDetailResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            basic__pb2.FutureDetailResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

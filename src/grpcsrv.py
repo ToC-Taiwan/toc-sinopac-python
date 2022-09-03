@@ -566,6 +566,7 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             request.code,
             request.price,
             request.quantity,
+            request.simulate,
         )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
@@ -578,6 +579,7 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             request.code,
             request.price,
             request.quantity,
+            request.simulate,
         )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
@@ -590,6 +592,7 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             request.code,
             request.price,
             request.quantity,
+            request.simulate,
         )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
@@ -598,7 +601,10 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def CancelFuture(self, request, _):
-        result = WORKERS.cancel_future(request.order_id)
+        result = WORKERS.cancel_future(
+            request.order_id,
+            request.simulate,
+        )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
