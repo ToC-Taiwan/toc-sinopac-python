@@ -80,6 +80,7 @@ docker-deploy:
       -v /$SERVER_USER/toc-sinopac-python-logs:/toc-sinopac-python/logs \
       -v /$SERVER_USER/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
       -dt $IMAGE_TAG"
+  when: manual
   environment:
     name: review/$CI_COMMIT_REF_NAME
     on_stop: stop_production
