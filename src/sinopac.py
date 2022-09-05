@@ -160,6 +160,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         for future_arr in self.__api.Contracts.Futures:
             for future in future_arr:
                 self.future_code_list.append(future.code)
+                self.__current_simulation_count_map[future.code] = 0
 
         for contract_arr in self.__api.Contracts.Stocks:
             for contract in contract_arr:
