@@ -11,14 +11,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
-      - run: pip install --no-warn-script-location --no-cache-dir -r requirements.txt
-      - run: pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
-      - run: export PYTHONPATH=$(pwd)/pb && echo $PYTHONPATH && export PYLINTHOME=$(pwd)
-      - run: mypy --install-types --non-interactive ./src
-      - run: ./scripts/lint-code.sh
+          python-version: "3.10.6"
+
+      - name: Install Requirements
+        run: |
+          pip install --no-warn-script-location --no-cache-dir -r requirements.txt
+          pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
+          mypy --install-types --non-interactive ./src
+
+      - name: Lint
+        run: |
+          export PYTHONPATH=$(pwd)/pb
+          echo $PYTHONPATH
+          export PYLINTHOME=$(pwd)
+          echo $PYLINTHOME
+          ./scripts/lint-code.sh
 
   build:
     needs: Lint
