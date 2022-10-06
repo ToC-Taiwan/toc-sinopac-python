@@ -1,0 +1,39 @@
+name: TOC SINOPAC PYTHON
+run-name: ${{ github.actor }} is running TOC SINOPAC PYTHON Actions 🚀
+on: [push]
+
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - run: python my_script.py
+      - run: pip install --no-warn-script-location --no-cache-dir -r requirements.txt
+      - run: pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
+      - run: export PYTHONPATH=$(pwd)/pb && echo $PYTHONPATH
+      - run: mypy --install-types --non-interactive ./src
+      - run: pylint ./src
+      - run: mypy --config-file=./mypy.ini ./src
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v3.1.1
+        with:
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
+          build-args: |
+            "SSH_PRIVATE_KEY=${{ secrets.TIMHSU_KEY }}"
