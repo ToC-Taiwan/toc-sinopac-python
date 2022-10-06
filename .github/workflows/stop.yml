@@ -1,0 +1,24 @@
+name: Stop-Deployment
+run-name: ${{ github.actor }} is stopping deployment
+
+concurrency:
+  group: production
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Stop-Deployment:
+    needs: Build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: deploying
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.TRADER_HOST }}
+          username: ${{ secrets.TRADER_USERNAME }}
+          key: ${{ secrets.TRADER_KEY }}
+          script: |
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
