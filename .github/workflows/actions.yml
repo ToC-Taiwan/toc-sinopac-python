@@ -18,8 +18,7 @@ jobs:
       - run: pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
       - run: export PYTHONPATH=$(pwd)/pb && echo $PYTHONPATH && export PYLINTHOME=$(pwd)
       - run: mypy --install-types --non-interactive ./src
-      - run: pylint ./src
-      - run: mypy --config-file=./mypy.ini ./src
+      - run: ./scripts/lint-code.sh
 
   build:
     needs: Lint

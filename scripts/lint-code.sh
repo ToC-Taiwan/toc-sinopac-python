@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mypy --install-types --non-interactive ./src && pylint ./src
+mypy --config-file=./mypy.ini ./src && pylint ./src
