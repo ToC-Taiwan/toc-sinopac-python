@@ -65,7 +65,7 @@ jobs:
 
   Deployment:
     needs: Build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: production
     steps:
       - name: deploying
