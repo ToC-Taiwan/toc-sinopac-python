@@ -1,4 +1,4 @@
-name: TOC SINOPAC PYTHON
+name: Lint and Build
 run-name: ${{ github.actor }} is running TOC SINOPAC PYTHON Actions 🚀
 
 on:
@@ -31,7 +31,7 @@ jobs:
           echo $PYLINTHOME
           ./scripts/lint-code.sh
 
-  build:
+  Build:
     needs: Lint
     runs-on: ubuntu-latest
     steps:
