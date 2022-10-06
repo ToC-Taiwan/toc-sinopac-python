@@ -75,5 +75,21 @@ jobs:
           username: ${{ secrets.TRADER_USERNAME }}
           key: ${{ secrets.TRADER_KEY }}
           script: |
+            mkdir -p ~/toc-sinopac-python-env"
+            echo ${{ secrets.SINOPAC_ENV }} > ~/toc-sinopac-python-env/.env
+
+            docker kill toc-sinopac-python || true
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest || true
+            docker system prune --volumes -f
+
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
+            docker run \
+              --name toc-sinopac-python \
+              --network tocvlan \
+              --ip=172.20.10.227 \
+              --restart always \
+              -e TZ="Asia/Taipei" \
+              -v ~/toc-sinopac-python-logs:/toc-sinopac-python/logs \
+              -v ~/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
+              -dt $IMAGE_TAG
