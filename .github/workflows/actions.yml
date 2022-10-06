@@ -10,7 +10,6 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - run: python my_script.py
       - run: pip install --no-warn-script-location --no-cache-dir -r requirements.txt
       - run: pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
       - run: export PYTHONPATH=$(pwd)/pb && echo $PYTHONPATH
