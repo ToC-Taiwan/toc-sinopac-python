@@ -1,5 +1,9 @@
-name: Lint and Build
+name: Lint, Build, and Deployment
 run-name: ${{ github.actor }} is running TOC SINOPAC PYTHON Actions 🚀
+
+concurrency:
+  group: production
+  cancel-in-progress: true
 
 on:
   push:
@@ -53,3 +57,18 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
           build-args: |
             "SSH_PRIVATE_KEY=${{ secrets.TIMHSU_KEY }}"
+
+  Deployment:
+    needs: Build
+    runs-on: self-hosted
+    environment: production
+    steps:
+      - name: deploying
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.TRADER_HOST }}
+          username: ${{ secrets.TRADER_USERNAME }}
+          key: ${{ secrets.TRADER_KEY }}
+          script: |
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
