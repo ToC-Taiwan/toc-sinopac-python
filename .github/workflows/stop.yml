@@ -10,7 +10,6 @@ on:
 
 jobs:
   Stop-Deployment:
-    needs: Build
     runs-on: ubuntu-latest
     environment: production
     steps:
