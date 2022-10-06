@@ -12,7 +12,7 @@ jobs:
           python-version: "3.10"
       - run: pip install --no-warn-script-location --no-cache-dir -r requirements.txt
       - run: pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
-      - run: export PYTHONPATH=$(pwd)/pb && echo $PYTHONPATH
+      - run: export PYTHONPATH=$(pwd)/pb && echo $PYTHONPATH && export PYLINTHOME=$(pwd)
       - run: mypy --install-types --non-interactive ./src
       - run: pylint ./src
       - run: mypy --config-file=./mypy.ini ./src
