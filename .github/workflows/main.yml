@@ -75,7 +75,7 @@ jobs:
           username: ${{ secrets.TRADER_USERNAME }}
           key: ${{ secrets.TRADER_KEY }}
           script: |
-            mkdir -p ~/toc-sinopac-python-env"
+            mkdir -p ~/toc-sinopac-python-env
             echo ${{ secrets.SINOPAC_ENV }} > ~/toc-sinopac-python-env/.env
 
             docker kill toc-sinopac-python || true
