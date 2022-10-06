@@ -92,4 +92,4 @@ jobs:
               -e TZ="Asia/Taipei" \
               -v ~/toc-sinopac-python-logs:/toc-sinopac-python/logs \
               -v ~/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
-              -dt $IMAGE_TAG
+              -dt ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
