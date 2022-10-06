@@ -1,17 +1,12 @@
 name: Stop-Deployment
 run-name: ${{ github.actor }} is stopping deployment
 
-concurrency:
-  group: production
-  cancel-in-progress: true
-
 on:
   workflow_dispatch:
 
 jobs:
   Stop-Deployment:
     runs-on: ubuntu-latest
-    environment: production
     steps:
       - name: deploying
         uses: appleboy/ssh-action@master
@@ -21,3 +16,10 @@ jobs:
           key: ${{ secrets.TRADER_KEY }}
           script: |
             docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
+
+      - name: deactivate deployments
+        uses: strumwolf/delete-deployment-environment@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: production
+          onlyDeactivateDeployments: true
