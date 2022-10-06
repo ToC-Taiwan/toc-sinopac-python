@@ -60,7 +60,7 @@ jobs:
 
   Deployment:
     needs: Build
-    runs-on: self-hosted
+    runs-on: [self-hosted, Linux, X64]
     environment: production
     steps:
       - name: deploying
