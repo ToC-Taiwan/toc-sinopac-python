@@ -1,4 +1,4 @@
-name: Lint, Build, and Deployment
+name: Workflow
 run-name: ${{ github.actor }} is running TOC SINOPAC PYTHON Actions 🚀
 
 concurrency:
@@ -60,8 +60,6 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
-          build-args: |
-            "SSH_PRIVATE_KEY=${{ secrets.TIMHSU_KEY }}"
 
   Deployment:
     needs: Build
@@ -75,12 +73,13 @@ jobs:
           username: ${{ secrets.TRADER_USERNAME }}
           key: ${{ secrets.TRADER_KEY }}
           script: |
-            mkdir -p ~/toc-sinopac-python-env
-            echo "${{ secrets.SINOPAC_ENV }}" > ~/toc-sinopac-python-env/.env
-
             docker kill toc-sinopac-python || true
             docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest || true
             docker system prune --volumes -f
+
+            rm -rf ~/toc-sinopac-python-env && mkdir -p ~/toc-sinopac-python-env && touch ~/toc-sinopac-python-env/.env
+            rm -rf ~/toc-sinopac-python-logs
+            echo "${{ secrets.SINOPAC_ENV }}" > ~/toc-sinopac-python-env/.env
 
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
