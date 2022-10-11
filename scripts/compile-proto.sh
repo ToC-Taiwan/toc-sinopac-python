@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rm -rf toc-trade-protobuf
-git clone git@gitlab.tocraw.com:root/toc-trade-protobuf.git
+git clone git@github.com:ToC-Taiwan/toc-trade-protobuf.git
 
 rm -rf pb
 mkdir pb
