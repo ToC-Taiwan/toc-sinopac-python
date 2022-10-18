@@ -126,6 +126,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         self.__api.quote.set_on_bidask_stk_v1_callback(func)
 
+    def set_on_bidask_fop_v1_callback(self, func):
+        """
+        set_on_bidask_fop_v1_callback _summary_
+
+        Args:
+            func (_type_): _description_
+        """
+        self.__api.quote.set_on_bidask_fop_v1_callback(func)
+
     def set_order_callback(self, func):
         """
         set_order_callback _summary_
