@@ -764,6 +764,22 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
                 response.fail_arr.append(stock_num)
         return response
 
+    def SubscribeFutureBidAsk(self, request, _):
+        response = stream_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = WORKERS.subscribe_future_bidask(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
+    def UnSubscribeFutureBidAsk(self, request, _):
+        response = stream_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = WORKERS.unsubscribe_future_bidask(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
     def SubscribeFutureTick(self, request, _):
         response = stream_pb2.SubscribeResponse()
         for code in request.future_code_arr:
@@ -1089,7 +1105,8 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     WORKERS.set_event_cb(rq.event_callback)
     WORKERS.set_stock_quote_cb(rq.stock_quote_callback_v1)
     WORKERS.set_future_quote_cb(rq.future_quote_callback_v1)
-    WORKERS.set_bid_ask_cb(rq.bid_ask_callback)
+    WORKERS.set_stock_bid_ask_cb(rq.stock_bid_ask_callback)
+    WORKERS.set_future_bid_ask_cb(rq.future_bid_ask_callback)
     WORKERS.set_order_status_cb(rq.order_status_callback)
 
     server = grpc.server(

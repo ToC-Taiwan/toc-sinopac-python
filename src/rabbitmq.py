@@ -189,13 +189,7 @@ class RabbitMQS:
         )
         self.pika_queue.put(p)
 
-    def bid_ask_callback(self, _, bidask: sj.BidAskSTKv1):
-        """
-        bid_ask_callback _summary_
-
-        Args:
-            bidask (sj.BidAskSTKv1): _description_
-        """
+    def stock_bid_ask_callback(self, _, bidask: sj.BidAskSTKv1):
         p = self.pika_queue.get(block=True)
         p.ch.basic_publish(
             exchange=self.exchange,
@@ -211,6 +205,32 @@ class RabbitMQS:
                 ask_price=bidask.ask_price,
                 ask_volume=bidask.ask_volume,
                 diff_ask_vol=bidask.diff_ask_vol,
+            ).SerializeToString(),
+        )
+        self.pika_queue.put(p)
+
+    def future_bid_ask_callback(self, _, bidask: sj.BidAskFOPv1):
+        p = self.pika_queue.get(block=True)
+        p.ch.basic_publish(
+            exchange=self.exchange,
+            routing_key=f"future_bid_ask:{bidask.code}",
+            body=common_pb2.FutureRealTimeBidAskMessage(
+                code=bidask.code,
+                date_time=datetime.strftime(bidask.datetime, "%Y-%m-%d %H:%M:%S.%f"),
+                bid_total_vol=bidask.bid_total_vol,
+                ask_total_vol=bidask.ask_total_vol,
+                simtrade=bidask.simtrade,
+                bid_price=bidask.bid_price,
+                bid_volume=bidask.bid_volume,
+                diff_bid_vol=bidask.diff_bid_vol,
+                ask_price=bidask.ask_price,
+                ask_volume=bidask.ask_volume,
+                diff_ask_vol=bidask.diff_ask_vol,
+                first_derived_bid_price=bidask.first_derived_bid_price,
+                first_derived_ask_price=bidask.first_derived_ask_price,
+                first_derived_bid_vol=bidask.first_derived_bid_vol,
+                first_derived_ask_vol=bidask.first_derived_ask_vol,
+                underlying_price=bidask.underlying_price,
             ).SerializeToString(),
         )
         self.pika_queue.put(p)

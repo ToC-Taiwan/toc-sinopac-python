@@ -19,6 +19,7 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-pu
         self.stock_tick_sub_dict: dict[str, int] = {}
         self.stock_bidask_sub_dict: dict[str, int] = {}
         self.future_tick_sub_dict: dict[str, int] = {}
+        self.future_bidask_sub_dict: dict[str, int] = {}
         # request workder limit
         self.request_limit = request_limt
         self.request_worker_timestamp = int()
@@ -194,6 +195,29 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-pu
                     return result
         return None
 
+    def subscribe_future_bidask(self, code):
+        with self.sub_lock:
+            if code in self.future_bidask_sub_dict:
+                return None
+            idx = self.subscribe_count.index(min(self.subscribe_count))
+            result = self.workers[idx].subscribe_future_bidask(code)
+            if result is not None:
+                return result
+            self.subscribe_count[idx] += 1
+            self.future_bidask_sub_dict[code] = idx
+        return None
+
+    def unsubscribe_future_bidask(self, code):
+        with self.sub_lock:
+            if code in self.future_bidask_sub_dict:
+                idx = self.future_bidask_sub_dict[code]
+                self.subscribe_count[idx] -= 1
+                del self.future_bidask_sub_dict[code]
+                result = self.workers[idx].unsubscribe_future_bidask(code)
+                if result is not None:
+                    return result
+        return None
+
     def unsubscribe_all_tick(self):
         """
         unsubscribe_all_tick _summary_
@@ -261,15 +285,13 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-pu
         for worker in self.workers:
             worker.set_on_tick_fop_v1_callback(func)
 
-    def set_bid_ask_cb(self, func):
-        """
-        set_bid_ask_cb _summary_
-
-        Args:
-            func (_type_): _description_
-        """
+    def set_stock_bid_ask_cb(self, func):
         for worker in self.workers:
             worker.set_on_bidask_stk_v1_callback(func)
+
+    def set_future_bid_ask_cb(self, func):
+        for worker in self.workers:
+            worker.set_on_bidask_fop_v1_callback(func)
 
     def set_order_status_cb(self, func):
         """

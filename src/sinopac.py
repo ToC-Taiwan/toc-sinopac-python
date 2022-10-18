@@ -507,6 +507,28 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         except Exception:  # pylint: disable=broad-except
             return stock_num
 
+    def subscribe_future_bidask(self, code):
+        try:
+            self.__api.quote.subscribe(
+                self.get_contract_by_future_code(code),
+                quote_type=sj.constant.QuoteType.BidAsk,
+                version=sj.constant.QuoteVersion.v1,
+            )
+            return None
+        except Exception:  # pylint: disable=broad-except
+            return code
+
+    def unsubscribe_future_bidask(self, code):
+        try:
+            self.__api.quote.unsubscribe(
+                self.get_contract_by_future_code(code),
+                quote_type=sj.constant.QuoteType.BidAsk,
+                version=sj.constant.QuoteVersion.v1,
+            )
+            return None
+        except Exception:  # pylint: disable=broad-except
+            return code
+
     def finish_simulation_order(self, order: sj.order.Trade, wait: int):
         """
         finish_simulation_order: buy stock will be sell after wait seconds,
