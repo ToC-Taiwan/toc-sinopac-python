@@ -231,6 +231,71 @@ class StockRealTimeBidAskMessage(google.protobuf.message.Message):
 
 global___StockRealTimeBidAskMessage = StockRealTimeBidAskMessage
 
+class FutureRealTimeBidAskMessage(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CODE_FIELD_NUMBER: builtins.int
+    DATE_TIME_FIELD_NUMBER: builtins.int
+    BID_TOTAL_VOL_FIELD_NUMBER: builtins.int
+    ASK_TOTAL_VOL_FIELD_NUMBER: builtins.int
+    BID_PRICE_FIELD_NUMBER: builtins.int
+    BID_VOLUME_FIELD_NUMBER: builtins.int
+    DIFF_BID_VOL_FIELD_NUMBER: builtins.int
+    ASK_PRICE_FIELD_NUMBER: builtins.int
+    ASK_VOLUME_FIELD_NUMBER: builtins.int
+    DIFF_ASK_VOL_FIELD_NUMBER: builtins.int
+    FIRST_DERIVED_BID_PRICE_FIELD_NUMBER: builtins.int
+    FIRST_DERIVED_ASK_PRICE_FIELD_NUMBER: builtins.int
+    FIRST_DERIVED_BID_VOL_FIELD_NUMBER: builtins.int
+    FIRST_DERIVED_ASK_VOL_FIELD_NUMBER: builtins.int
+    UNDERLYING_PRICE_FIELD_NUMBER: builtins.int
+    SIMTRADE_FIELD_NUMBER: builtins.int
+    code: builtins.str
+    date_time: builtins.str
+    bid_total_vol: builtins.int
+    ask_total_vol: builtins.int
+    @property
+    def bid_price(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
+    @property
+    def bid_volume(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]: ...
+    @property
+    def diff_bid_vol(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]: ...
+    @property
+    def ask_price(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
+    @property
+    def ask_volume(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]: ...
+    @property
+    def diff_ask_vol(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]: ...
+    first_derived_bid_price: builtins.float
+    first_derived_ask_price: builtins.float
+    first_derived_bid_vol: builtins.int
+    first_derived_ask_vol: builtins.int
+    underlying_price: builtins.float
+    simtrade: builtins.int
+    def __init__(
+        self,
+        *,
+        code: builtins.str = ...,
+        date_time: builtins.str = ...,
+        bid_total_vol: builtins.int = ...,
+        ask_total_vol: builtins.int = ...,
+        bid_price: collections.abc.Iterable[builtins.float] | None = ...,
+        bid_volume: collections.abc.Iterable[builtins.int] | None = ...,
+        diff_bid_vol: collections.abc.Iterable[builtins.int] | None = ...,
+        ask_price: collections.abc.Iterable[builtins.float] | None = ...,
+        ask_volume: collections.abc.Iterable[builtins.int] | None = ...,
+        diff_ask_vol: collections.abc.Iterable[builtins.int] | None = ...,
+        first_derived_bid_price: builtins.float = ...,
+        first_derived_ask_price: builtins.float = ...,
+        first_derived_bid_vol: builtins.int = ...,
+        first_derived_ask_vol: builtins.int = ...,
+        underlying_price: builtins.float = ...,
+        simtrade: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["ask_price", b"ask_price", "ask_total_vol", b"ask_total_vol", "ask_volume", b"ask_volume", "bid_price", b"bid_price", "bid_total_vol", b"bid_total_vol", "bid_volume", b"bid_volume", "code", b"code", "date_time", b"date_time", "diff_ask_vol", b"diff_ask_vol", "diff_bid_vol", b"diff_bid_vol", "first_derived_ask_price", b"first_derived_ask_price", "first_derived_ask_vol", b"first_derived_ask_vol", "first_derived_bid_price", b"first_derived_bid_price", "first_derived_bid_vol", b"first_derived_bid_vol", "simtrade", b"simtrade", "underlying_price", b"underlying_price"]) -> None: ...
+
+global___FutureRealTimeBidAskMessage = FutureRealTimeBidAskMessage
+
 class ErrorMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

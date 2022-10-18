@@ -66,6 +66,16 @@ class StreamDataInterfaceStub(object):
                 request_serializer=common__pb2.FutureCodeArr.SerializeToString,
                 response_deserializer=stream__pb2.SubscribeResponse.FromString,
                 )
+        self.SubscribeFutureBidAsk = channel.unary_unary(
+                '/sinopac_forwarder.StreamDataInterface/SubscribeFutureBidAsk',
+                request_serializer=common__pb2.FutureCodeArr.SerializeToString,
+                response_deserializer=stream__pb2.SubscribeResponse.FromString,
+                )
+        self.UnSubscribeFutureBidAsk = channel.unary_unary(
+                '/sinopac_forwarder.StreamDataInterface/UnSubscribeFutureBidAsk',
+                request_serializer=common__pb2.FutureCodeArr.SerializeToString,
+                response_deserializer=stream__pb2.SubscribeResponse.FromString,
+                )
         self.UnSubscribeStockAllTick = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockAllTick',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -146,6 +156,18 @@ class StreamDataInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SubscribeFutureBidAsk(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UnSubscribeFutureBidAsk(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def UnSubscribeStockAllTick(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -214,6 +236,16 @@ def add_StreamDataInterfaceServicer_to_server(servicer, server):
             ),
             'UnSubscribeFutureTick': grpc.unary_unary_rpc_method_handler(
                     servicer.UnSubscribeFutureTick,
+                    request_deserializer=common__pb2.FutureCodeArr.FromString,
+                    response_serializer=stream__pb2.SubscribeResponse.SerializeToString,
+            ),
+            'SubscribeFutureBidAsk': grpc.unary_unary_rpc_method_handler(
+                    servicer.SubscribeFutureBidAsk,
+                    request_deserializer=common__pb2.FutureCodeArr.FromString,
+                    response_serializer=stream__pb2.SubscribeResponse.SerializeToString,
+            ),
+            'UnSubscribeFutureBidAsk': grpc.unary_unary_rpc_method_handler(
+                    servicer.UnSubscribeFutureBidAsk,
                     request_deserializer=common__pb2.FutureCodeArr.FromString,
                     response_serializer=stream__pb2.SubscribeResponse.SerializeToString,
             ),
@@ -407,6 +439,40 @@ class StreamDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeFutureTick',
+            common__pb2.FutureCodeArr.SerializeToString,
+            stream__pb2.SubscribeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SubscribeFutureBidAsk(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/SubscribeFutureBidAsk',
+            common__pb2.FutureCodeArr.SerializeToString,
+            stream__pb2.SubscribeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UnSubscribeFutureBidAsk(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeFutureBidAsk',
             common__pb2.FutureCodeArr.SerializeToString,
             stream__pb2.SubscribeResponse.FromString,
             options, channel_credentials,

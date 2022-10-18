@@ -16,3 +16,5 @@ pip install -U \
   pika \
   requests
 pip freeze > requirements.txt
+
+git add requirements.txt
