@@ -253,6 +253,15 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-pu
                     fail_arr.append(stock_num)
         if len(fail_arr) != 0:
             return f"unsubscribe_all_bidask fail: {fail_arr}"
+
+        fail_arr = []
+        if len(self.future_bidask_sub_dict) != 0:
+            logger.info("unsubscribe all future bidask")
+            for code in list(self.future_bidask_sub_dict):
+                if self.unsubscribe_future_bidask(code) is not None:
+                    fail_arr.append(code)
+        if len(fail_arr) != 0:
+            return f"unsubscribe_all_future_bidask fail: {fail_arr}"
         return ""
 
     def set_event_cb(self, func):
