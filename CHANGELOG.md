@@ -1,6 +1,8 @@
-# [](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v0.0.3...v) (2022-10-11)
+# [](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.0.0...v) (2022-10-18)
 
 ## CHANGELOG
+
+## [1.0.0](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v0.0.3...v1.0.0) (2022-10-18)
 
 ### Bug Fixes
 
@@ -12,12 +14,17 @@
 * **actions:** remove redundant command ([4240e0b](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/4240e0b79ff40449416f7cffa58d3ad78db225dc))
 * **actions:** remove redundant double quote in mkdir of env ([23f5c8f](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/23f5c8fe07291f5884a160f50d6b2ed2607a2e1d))
 * **build:** fix docker build fail ([f06c6d8](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/f06c6d8abf519b9fb1d196251334e90bfe22b90d))
+* **callback:** add missing future bidask callback set ([363cf25](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/363cf259ec99aaea1afc19fa1afd1855a96201f3))
+* **commit:** add missing commit file ([2140e8d](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/2140e8da61b758c9175911c9d42412f309751a05))
 * **deployment:** change runner lable in actions ([a1f5869](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/a1f5869022206df8730f5807082d1ae3075f4a80))
 * **docker:** add missing copy file to image ([177a6fa](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/177a6face128cdd9c9e3f5a4c86c1e0e19338cc4))
 * **protobuf:** modify proto file import way ([cf575bc](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/cf575bc70f8696e2ddac23b62b246bfaec996e87))
+* **proto:** fix wrong type of suspend and simtrade ([b8df4e6](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/b8df4e6e92bb8cdecc749bc8ecc523a013ff1c20))
+* **pylint:** add no-menber disable, recompile protobuf ([0709282](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/0709282e2c64cff6e1e1e8ea82a6973054262472))
 * **recursive:** fix kbar, ticks, close recursive arguments wrong ([df9ff43](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/df9ff43b0312ea392047102abae3d9bea7637361))
 * **request:** add missing timeout in request ([ae99a6e](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/ae99a6e242709ee98a5d4d8b5f184acd227185e1))
 * **simulation:** fix future code does not initial in current count map ([01047ad](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/01047ad4c8a4dcb2529cd69fe264ada9dfe6b9d2))
+* **unsubscribe:** add unsubscribe future bidask in unsubscribe_all_bidask ([843a072](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/843a07261db4cac539b75bfc83805aa53ee8887f))
 
 ### Features
 
@@ -36,6 +43,7 @@
 * **log:** modify order callback log, add exit if reconnect in login ([1a5aa1d](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/1a5aa1d2a4a275d2e8c267fa5f7f929c67b1d557))
 * **protobuf:** use new format of toc trade protobuf ([b85bd04](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/b85bd04662fb043c5213db3ff7147a6b54452322))
 * **shiaoji:** upgrade to 0.3.6.dev3 ([2baf611](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/2baf611be2ec4e7b4adbb4da3338f4bd4bccbd9f))
+* **subscribe:** add subscribe future bidask ([16e3c2d](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/16e3c2df12f9679d12fa03ca0100512ca7534b76))
 
 ## [0.0.3](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v0.0.2...v0.0.3) (2022-08-06)
 
