@@ -247,7 +247,7 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-pu
         """
         fail_arr = []
         if len(self.stock_bidask_sub_dict) != 0:
-            logger.info("unsubscribe all bidask")
+            logger.info("unsubscribe all stock bidask")
             for stock_num in list(self.stock_bidask_sub_dict):
                 if self.unsubscribe_stock_bidask(stock_num) is not None:
                     fail_arr.append(stock_num)

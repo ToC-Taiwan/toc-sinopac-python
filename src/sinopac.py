@@ -69,7 +69,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             ca_passwd=ca_passwd,
             person_id=person_id,
         )
-        self.fill_stock_num_list()
+        self.fill_stock_num_list(is_main)
         if is_main is True:
             self.set_order_callback(self.place_order_callback)
             logger.info(self.__api.stock_account)
@@ -85,9 +85,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         with self.__login_lock:
             if security_type.value in [item.value for item in SecurityType]:
-                self.__login_status += 25
+                self.__login_status += 1
                 logger.info(
-                    "login progress: %d%%, %s", self.__login_status, security_type
+                    "login progress: %d/4, %s", self.__login_status, security_type
                 )
 
     def set_event_callback(self, func):
@@ -162,7 +162,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         return self.__api.list_accounts()
 
-    def fill_stock_num_list(self):
+    def fill_stock_num_list(self, is_main: bool):
         """
         fill_stock_num_list _summary_
         """
@@ -182,8 +182,11 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         while True:
             if len(self.stock_num_list) != 0 and len(self.future_code_list) != 0:
                 break
-        logger.info("filling stock_num_list, total: %d", len(self.stock_num_list))
-        logger.info("filling future_code_list, total: %d", len(self.future_code_list))
+        if is_main is True:
+            logger.info("filling stock_num_list, total: %d", len(self.stock_num_list))
+            logger.info(
+                "filling future_code_list, total: %d", len(self.future_code_list)
+            )
 
     def update_order_status_instant(self):
         """
@@ -1113,7 +1116,8 @@ def event_logger_cb(resp_code: int, event_code: int, info: str, event: str):
     if event_code == 12:
         os._exit(1)
 
-    logger.info("resp_code: %d", resp_code)
-    logger.info("event_code: %d", event_code)
-    logger.info("info: %s", info)
-    logger.info("event: %s", event)
+    if event_code != 0:
+        logger.info("resp_code: %d", resp_code)
+        logger.info("event_code: %d", event_code)
+        logger.info("info: %s", info)
+        logger.info("event: %s", event)
