@@ -6,7 +6,7 @@ from logger import logger
 from sinopac import Sinopac
 
 
-class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-public-methods
+class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     def __init__(self, main_worker: Sinopac, workers: list[Sinopac], request_limt: int):
         self.main_worker = main_worker
         self.workers = workers
@@ -25,15 +25,6 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-pu
         self.request_worker_timestamp = int()
         self.request_worker_times = int()
 
-    def get_main(self):
-        """
-        get_main _summary_
-
-        Returns:
-            Sinopac: _description_
-        """
-        return self.main_worker
-
     def get(self, fetch: bool):
         """
         get_worker _summary_
@@ -48,11 +39,9 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-pu
             if gap >= 1000:
                 self.request_worker_timestamp = now
                 self.request_worker_times = 0
-                # logger.info("Reset request timesatmp")
 
             elif fetch is True and self.request_worker_times >= self.request_limit:
                 rest_time = 1 - (gap / 1000)
-                # logger.info("Rest time: %.3f", rest_time)
                 time.sleep(rest_time)
                 return self.get(fetch)
 
@@ -60,7 +49,7 @@ class SinopacWorker:  # pylint: disable=too-many-instance-attributes,too-many-pu
             self.request_count[idx] += 1
             if fetch is True:
                 self.request_worker_times += 1
-                # logger.info("Request times: %d", self.request_worker_times)
+
             return self.workers[idx]
 
     def count(self):

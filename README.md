@@ -6,53 +6,9 @@
 [![OS](https://img.shields.io/badge/OS-Linux-orange?logo=linux&logoColor=orange)](https://www.linux.org/)
 [![Container](https://img.shields.io/badge/Container-Docker-blue?logo=docker&logoColor=blue)](https://www.docker.com/)
 
-## Tools
+## Reference
 
-### Conventional Commit
-
-- install git cz tool global
-
-```sh
-npm install -g commitizen
-npm install -g cz-conventional-changelog
-npm install -g conventional-changelog-cli
-echo '{ "path": "cz-conventional-changelog" }' > ~/.czrc
-```
-
-### Pre-commit
-
-- install git pre-commit tool global
-
-```sh
-pip install --no-warn-script-location --no-cache-dir pre-commit
-```
-
-- install/modify from config
-
-```sh
-pre-commit autoupdate
-pre-commit install
-```
-
-- dry run pre-commit
-
-```sh
-pre-commit run --all-files
-```
-
-### Modify CHANGELOG
-
-- First Time
-
-```sh
-conventional-changelog -p angular -i CHANGELOG.md -s -r 0
-```
-
-- From Last semver tag
-
-```sh
-conventional-changelog -p angular -i CHANGELOG.md -s
-```
+- Schedule restart at 08:20, 14:40 every day
 
 ## Initialize
 
@@ -60,9 +16,9 @@ conventional-changelog -p angular -i CHANGELOG.md -s
 pip install --no-warn-script-location --no-cache-dir -U -r requirements.txt
 ```
 
-## RabbitMQ
+## RabbitMQ for development
 
-- @macOS
+- For macOS
 
 ```sh
 docker stop toc-rabbitmq
@@ -88,15 +44,14 @@ curl -i -u admin:password -H "content-type:application/json" \
 docker inspect bridge
 ```
 
-### Run Local
+## .env example
 
 ```sh
-echo 'DEPLOYMENT=prod
-LOG_FORMAT=console
+echo 'LOG_FORMAT=console
 GRPC_PORT=56666
 PERSON_ID=F127522501
-PASSWORD=E2rgilaal
-CA_PASSWORD=E2iairlol
+PASSWORD=EEE2rgilaal
+CA_PASSWORD=EEE2iairlol
 REQUEST_LIMIT_PER_SECOND=50
 RABBITMQ_HOST=172.17.0.3
 RABBITMQ_USER=admin
@@ -106,6 +61,8 @@ RABBITMQ_URL=amqp://admin:password@172.17.0.3:5672/%2f
 CONNECTION_COUNT=5
 '> ./.env
 ```
+
+### RUN
 
 ```sh
 python -BOO ./src/main.py

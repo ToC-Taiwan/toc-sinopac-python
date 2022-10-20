@@ -15,16 +15,16 @@ class Sinopac:  # pylint: disable=too-many-public-methods
     def __init__(self):
         self.__api = sj.Shioaji()
         self.__login_status = int()
-        # public
+
         self.stock_num_list = []
         self.future_code_list = []
         self.order_status_list = []
-        # lock
+
         self.__login_lock = threading.Lock()
         self.__order_status_lock = threading.Lock()
         self.__simulation_lock = threading.Lock()
         # simulate trade
-        self.__current_simulation_count_map = {}  # key: stock_num, value: count
+        self.__current_simulation_count_map = {}  # key: stock_num or code, value: count
 
     def login(self, person_id: str, passwd: str, ca_passwd: str, is_main: bool):
         """
@@ -69,7 +69,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             ca_passwd=ca_passwd,
             person_id=person_id,
         )
-        self.fill_stock_num_list(is_main)
+        self.fill_stock_num_list()
         if is_main is True:
             self.set_order_callback(self.place_order_callback)
             logger.info(self.__api.stock_account)
@@ -162,7 +162,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         return self.__api.list_accounts()
 
-    def fill_stock_num_list(self, is_main: bool):
+    def fill_stock_num_list(self):
         """
         fill_stock_num_list _summary_
         """
@@ -182,11 +182,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         while True:
             if len(self.stock_num_list) != 0 and len(self.future_code_list) != 0:
                 break
-        if is_main is True:
-            logger.info("filling stock_num_list, total: %d", len(self.stock_num_list))
-            logger.info(
-                "filling future_code_list, total: %d", len(self.future_code_list)
-            )
+        logger.info("filling stock_num_list, total: %d", len(self.stock_num_list))
+        logger.info("filling future_code_list, total: %d", len(self.future_code_list))
 
     def update_order_status_instant(self):
         """
@@ -256,7 +253,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         return self.__api.Contracts.Futures[num]
 
-    def ticks(self, num, date):
+    def stock_ticks(self, num, date):
         """
         ticks _summary_
 
@@ -274,7 +271,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             return self.__api.ticks(contract, date)
         except TimeoutError:
-            return self.ticks(num, date)
+            return self.stock_ticks(num, date)
 
     def future_ticks(self, code, date):
         """
@@ -293,7 +290,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         except TimeoutError:
             return self.future_ticks(code, date)
 
-    def kbars(self, num, date):
+    def stock_kbars(self, num, date):
         """
         kbars _summary_
 
@@ -315,7 +312,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 end=date,
             )
         except TimeoutError:
-            return self.kbars(num, date)
+            return self.stock_kbars(num, date)
 
     def future_kbars(self, code, date):
         """
@@ -1113,11 +1110,11 @@ class OrderStatus:
 
 
 def event_logger_cb(resp_code: int, event_code: int, info: str, event: str):
-    if event_code == 12:
-        os._exit(1)
-
     if event_code != 0:
         logger.info("resp_code: %d", resp_code)
         logger.info("event_code: %d", event_code)
         logger.info("info: %s", info)
         logger.info("event: %s", event)
+
+    if event_code == 12:
+        os._exit(1)

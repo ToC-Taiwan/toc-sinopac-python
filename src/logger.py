@@ -7,7 +7,7 @@ log_format = str()
 extension_name = str()
 env = RequiredEnv()
 
-if env.deployment == "json":
+if env.log_format == "json":
     log_format = '{"time":"%(asctime)s","user":"%(name)s","level":"%(levelname)s","message":"%(message)s"}'
     extension_name = "json"
 else:
@@ -16,7 +16,7 @@ else:
 
 console_handler = logging.StreamHandler()
 file_handler = logging.FileHandler(
-    f'./logs/{datetime.now().strftime("%Y-%m-%d")}.{extension_name}'
+    f'./logs/{datetime.now().strftime("%Y-%m-%d")}-toc-sinopac-python.{extension_name}'
 )
 console_handler.setFormatter(logging.Formatter(log_format))
 file_handler.setFormatter(logging.Formatter(log_format))

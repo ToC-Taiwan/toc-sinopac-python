@@ -24,9 +24,9 @@ from env import RequiredEnv
 from logger import logger
 from rabbitmq import RabbitMQS
 from sinopac import Sinopac
-from sinopac_worker import SinopacWorker
+from sinopac_worker import SinopacWorkerPool
 
-WORKERS: SinopacWorker
+WORKERS: SinopacWorkerPool
 
 
 class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
@@ -167,7 +167,7 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         threads = []
         for num in request.stock_num_arr:
             t = threading.Thread(
-                target=fill_history_tick_response,
+                target=fill_stock_history_tick_response,
                 args=(
                     num,
                     request.date,
@@ -196,7 +196,7 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
 
         for num in request.stock_num_arr:
             t = threading.Thread(
-                target=fill_history_kbar_response,
+                target=fill_stock_history_kbar_response,
                 args=(
                     num,
                     request.date,
@@ -225,7 +225,7 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
 
         for num in request.stock_num_arr:
             t = threading.Thread(
-                target=fill_history_close_response,
+                target=fill_stock_history_close_response,
                 args=(
                     num,
                     request.date,
@@ -255,7 +255,7 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         for date in request.date_arr:
             for num in request.stock_num_arr:
                 t = threading.Thread(
-                    target=fill_history_close_response,
+                    target=fill_stock_history_close_response,
                     args=(
                         num,
                         date,
@@ -282,7 +282,7 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         response = history_pb2.HistoryTickResponse()
 
         t = threading.Thread(
-            target=fill_history_tick_response,
+            target=fill_stock_history_tick_response,
             args=(
                 "tse_001",
                 request.date,
@@ -307,7 +307,7 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         response = history_pb2.HistoryKbarResponse()
 
         t = threading.Thread(
-            target=fill_history_kbar_response,
+            target=fill_stock_history_kbar_response,
             args=(
                 "tse_001",
                 request.date,
@@ -332,7 +332,7 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         response = history_pb2.HistoryCloseResponse()
 
         t = threading.Thread(
-            target=fill_history_close_response,
+            target=fill_stock_history_close_response,
             args=(
                 "tse_001",
                 request.date,
@@ -634,7 +634,7 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         for i, split in enumerate(splits):
             threads.append(
                 threading.Thread(
-                    target=fill_sinopac_snapshot_arr,
+                    target=fill_snapshot_arr,
                     args=(split, snapshots, WORKERS.get(True)),
                 )
             )
@@ -667,7 +667,7 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         for i, split in enumerate(splits):
             threads.append(
                 threading.Thread(
-                    target=fill_sinopac_snapshot_arr,
+                    target=fill_snapshot_arr,
                     args=(split, snapshots, WORKERS.get(True)),
                 )
             )
@@ -764,22 +764,6 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
                 response.fail_arr.append(stock_num)
         return response
 
-    def SubscribeFutureBidAsk(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for code in request.future_code_arr:
-            result = WORKERS.subscribe_future_bidask(code)
-            if result is not None:
-                response.fail_arr.append(code)
-        return response
-
-    def UnSubscribeFutureBidAsk(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for code in request.future_code_arr:
-            result = WORKERS.unsubscribe_future_bidask(code)
-            if result is not None:
-                response.fail_arr.append(code)
-        return response
-
     def SubscribeFutureTick(self, request, _):
         response = stream_pb2.SubscribeResponse()
         for code in request.future_code_arr:
@@ -792,6 +776,22 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         response = stream_pb2.SubscribeResponse()
         for code in request.future_code_arr:
             result = WORKERS.unsubscribe_future_tick(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
+    def SubscribeFutureBidAsk(self, request, _):
+        response = stream_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = WORKERS.subscribe_future_bidask(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
+    def UnSubscribeFutureBidAsk(self, request, _):
+        response = stream_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = WORKERS.unsubscribe_future_bidask(code)
             if result is not None:
                 response.fail_arr.append(code)
         return response
@@ -814,7 +814,7 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         for i, split in enumerate(splits):
             threads.append(
                 threading.Thread(
-                    target=fill_sinopac_snapshot_arr,
+                    target=fill_snapshot_arr,
                     args=(split, snapshots, WORKERS.get(True)),
                 )
             )
@@ -863,31 +863,31 @@ def sinopac_snapshot_to_pb(result) -> stream_pb2.SnapshotMessage:
     )
 
 
-def fill_sinopac_snapshot_arr(contracts, snapshots, sinopac: Sinopac):
+def fill_snapshot_arr(contracts, snapshots, worker: Sinopac):
     """
-    fill_sinopac_snapshot_arr _summary_
+    fill_snapshot_arr _summary_
 
     Args:
         contracts (_type_): _description_
         snapshots (_type_): _description_
-        sinopac (Sinopac): _description_
+        worker (Sinopac): _description_
     """
-    data = sinopac.snapshots(contracts)
+    data = worker.snapshots(contracts)
     if data is not None:
         snapshots.extend(data)
 
 
-def fill_history_tick_response(num, date, response, sinopac: Sinopac):
+def fill_stock_history_tick_response(num, date, response, worker: Sinopac):
     """
-    fill_history_tick_response _summary_
+    fill_stock_history_tick_response _summary_
 
     Args:
         num (_type_): _description_
         date (_type_): _description_
         response (_type_): _description_
-        sinopac (Sinopac): _description_
+        worker (Sinopac): _description_
     """
-    ticks = sinopac.ticks(num, date)
+    ticks = worker.stock_ticks(num, date)
     total_count = len(ticks.ts)
     tmp_length = [
         len(ticks.close),
@@ -919,17 +919,17 @@ def fill_history_tick_response(num, date, response, sinopac: Sinopac):
         )
 
 
-def fill_future_history_tick_response(code, date, response, sinopac: Sinopac):
+def fill_future_history_tick_response(code, date, response, worker: Sinopac):
     """
-    fill_history_future_tick_response _summary_
+    fill_future_history_tick_response _summary_
 
     Args:
         code (_type_): _description_
         date (_type_): _description_
         response (_type_): _description_
-        sinopac (Sinopac): _description_
+        worker (Sinopac): _description_
     """
-    ticks = sinopac.future_ticks(code, date)
+    ticks = worker.future_ticks(code, date)
     total_count = len(ticks.ts)
     tmp_length = [
         len(ticks.close),
@@ -961,17 +961,17 @@ def fill_future_history_tick_response(code, date, response, sinopac: Sinopac):
         )
 
 
-def fill_history_kbar_response(num, date, response, sinopac: Sinopac):
+def fill_stock_history_kbar_response(num, date, response, worker: Sinopac):
     """
-    fill_history_kbar_response _summary_
+    fill_stock_history_kbar_response _summary_
 
     Args:
         num (_type_): _description_
         date (_type_): _description_
         response (_type_): _description_
-        sinopac (Sinopac): _description_
+        worker (Sinopac): _description_
     """
-    kbar = sinopac.kbars(num, date)
+    kbar = worker.stock_kbars(num, date)
     total_count = len(kbar.ts)
     tmp_length = [
         len(kbar.Close),
@@ -1037,9 +1037,9 @@ def fill_future_history_kbar_response(code, date, response, sinopac: Sinopac):
         )
 
 
-def fill_history_close_response(num, date, response, sinopac: Sinopac):
+def fill_stock_history_close_response(num, date, response, sinopac: Sinopac):
     """
-    fill_history_close_response _summary_
+    fill_stock_history_close_response _summary_
 
     Args:
         num (_type_): _description_
@@ -1086,7 +1086,7 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
         cfg (RequiredEnv): _description_
     """
     global WORKERS  # pylint: disable=global-statement
-    WORKERS = SinopacWorker(main_worker, workers, cfg.request_limit_per_second)
+    WORKERS = SinopacWorkerPool(main_worker, workers, cfg.request_limit_per_second)
 
     # gRPC servicer
     health_servicer = gRPCHealthCheck()
