@@ -944,7 +944,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             )
             threading.Thread(
                 target=self.finish_simulation_order,
-                args=(sim_order, random.randrange(5) + 1),
+                args=(sim_order, 1),
             ).start()
             return OrderStatus(sim_order.status.id, sim_order.status.status, "")
         return OrderStatus("", "", "unknown error")
@@ -996,7 +996,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 )
             threading.Thread(
                 target=self.finish_simulation_order,
-                args=(sim_order, random.randrange(5) + 1),
+                args=(sim_order, 1),
             ).start()
             return OrderStatus(sim_order.status.id, sim_order.status.status, "")
         return OrderStatus("", "", "unknown error")
@@ -1048,7 +1048,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 )
             threading.Thread(
                 target=self.finish_simulation_order,
-                args=(sim_order, random.randrange(5) + 1),
+                args=(sim_order, 1),
             ).start()
             return OrderStatus(sim_order.status.id, sim_order.status.status, "")
         return OrderStatus("", "", "unknown error")
