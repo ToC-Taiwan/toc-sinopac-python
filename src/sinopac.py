@@ -61,7 +61,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                     logger.info("system maintenance, wait %d sec", wait)
 
         while True:
-            if self.__login_status == 100:
+            if self.__login_status == 4:
                 break
 
         self.__api.activate_ca(
