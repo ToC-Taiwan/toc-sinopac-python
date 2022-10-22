@@ -31,25 +31,29 @@ WORKERS: SinopacWorkerPool
 
 class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
     def __init__(self):
+        self.beat_time = float()
         self.debug = False
 
     def Heartbeat(self, request_iterator, _):
+        logger.info("heartbeat from machine trading")
         self.beat_queue: Queue = Queue()
         threading.Thread(target=self.beat_timer).start()
         for beat in request_iterator:
-            if beat.message != "debug":
-                self.beat_queue.put(beat.message)
-            else:
+            self.beat_time = datetime.now().timestamp()
+            self.beat_queue.put(beat.message)
+            if beat.message == "debug":
                 self.debug = True
             yield health_pb2.BeatMessage(message=beat.message)
 
     def beat_timer(self):
-        beat_time = datetime.now().timestamp()
+        self.beat_time = datetime.now().timestamp()
         while True:
-            if datetime.now().timestamp() > beat_time + 10:
+            if datetime.now().timestamp() > self.beat_time + 10:
                 if self.debug is True:
                     WORKERS.unsubscribe_all_tick()
                     WORKERS.unsubscribe_all_bidask()
+                    logger.info("stop machine trading heartbeat")
+                    return
                 else:
                     logger.error("machine trading not responding")
                     os._exit(1)
@@ -57,7 +61,6 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
                 time.sleep(1)
                 continue
             self.beat_queue.get()
-            beat_time = datetime.now().timestamp()
 
     def Terminate(self, request, _):
         threading.Thread(target=self.wait_and_terminate).start()
