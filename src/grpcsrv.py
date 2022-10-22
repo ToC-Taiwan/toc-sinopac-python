@@ -54,9 +54,8 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
                     WORKERS.unsubscribe_all_bidask()
                     logger.info("stop machine trading heartbeat")
                     return
-                else:
-                    logger.error("machine trading not responding")
-                    os._exit(1)
+                logger.error("machine trading not responding")
+                os._exit(1)
             if self.beat_queue.empty():
                 time.sleep(1)
                 continue
