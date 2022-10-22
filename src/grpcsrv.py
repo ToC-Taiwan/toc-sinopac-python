@@ -46,9 +46,13 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
     def beat_timer(self):
         beat_time = datetime.now().timestamp()
         while True:
-            if datetime.now().timestamp() > beat_time + 10 and self.debug is False:
-                logger.error("machine trading not responding")
-                os._exit(1)
+            if datetime.now().timestamp() > beat_time + 10:
+                if self.debug is True:
+                    WORKERS.unsubscribe_all_tick()
+                    WORKERS.unsubscribe_all_bidask()
+                else:
+                    logger.error("machine trading not responding")
+                    os._exit(1)
             if self.beat_queue.empty():
                 time.sleep(1)
                 continue
