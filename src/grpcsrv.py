@@ -43,6 +43,8 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
             self.beat_queue.put(beat.message)
             if beat.message == "debug":
                 self.debug = True
+            else:
+                self.debug = False
             yield health_pb2.BeatMessage(message=beat.message)
 
     def beat_timer(self):
@@ -52,7 +54,7 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
                 if self.debug is True:
                     WORKERS.unsubscribe_all_tick()
                     WORKERS.unsubscribe_all_bidask()
-                    logger.info("stop machine trading heartbeat")
+                    WORKERS.clear_simulation_order()
                     return
                 logger.error("machine trading not responding")
                 os._exit(1)
