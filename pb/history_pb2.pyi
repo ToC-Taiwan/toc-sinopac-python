@@ -16,6 +16,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class HistoryTickResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -31,6 +32,7 @@ class HistoryTickResponse(google.protobuf.message.Message):
 
 global___HistoryTickResponse = HistoryTickResponse
 
+@typing_extensions.final
 class HistoryTickMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -69,6 +71,7 @@ class HistoryTickMessage(google.protobuf.message.Message):
 
 global___HistoryTickMessage = HistoryTickMessage
 
+@typing_extensions.final
 class HistoryKbarResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -84,6 +87,7 @@ class HistoryKbarResponse(google.protobuf.message.Message):
 
 global___HistoryKbarResponse = HistoryKbarResponse
 
+@typing_extensions.final
 class HistoryKbarMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -116,6 +120,7 @@ class HistoryKbarMessage(google.protobuf.message.Message):
 
 global___HistoryKbarMessage = HistoryKbarMessage
 
+@typing_extensions.final
 class HistoryCloseResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -131,6 +136,7 @@ class HistoryCloseResponse(google.protobuf.message.Message):
 
 global___HistoryCloseResponse = HistoryCloseResponse
 
+@typing_extensions.final
 class HistoryCloseMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

@@ -16,6 +16,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class VolumeRankRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -33,6 +34,7 @@ class VolumeRankRequest(google.protobuf.message.Message):
 
 global___VolumeRankRequest = VolumeRankRequest
 
+@typing_extensions.final
 class SnapshotResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -48,6 +50,7 @@ class SnapshotResponse(google.protobuf.message.Message):
 
 global___SnapshotResponse = SnapshotResponse
 
+@typing_extensions.final
 class SnapshotMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -125,6 +128,7 @@ class SnapshotMessage(google.protobuf.message.Message):
 
 global___SnapshotMessage = SnapshotMessage
 
+@typing_extensions.final
 class StockVolumeRankResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -140,6 +144,7 @@ class StockVolumeRankResponse(google.protobuf.message.Message):
 
 global___StockVolumeRankResponse = StockVolumeRankResponse
 
+@typing_extensions.final
 class StockVolumeRankMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -232,6 +237,7 @@ class StockVolumeRankMessage(google.protobuf.message.Message):
 
 global___StockVolumeRankMessage = StockVolumeRankMessage
 
+@typing_extensions.final
 class SubscribeResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

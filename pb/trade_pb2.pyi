@@ -16,6 +16,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class StockOrderDetail(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -39,6 +40,7 @@ class StockOrderDetail(google.protobuf.message.Message):
 
 global___StockOrderDetail = StockOrderDetail
 
+@typing_extensions.final
 class FutureOrderDetail(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -62,6 +64,7 @@ class FutureOrderDetail(google.protobuf.message.Message):
 
 global___FutureOrderDetail = FutureOrderDetail
 
+@typing_extensions.final
 class TradeResult(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -82,6 +85,7 @@ class TradeResult(google.protobuf.message.Message):
 
 global___TradeResult = TradeResult
 
+@typing_extensions.final
 class OrderID(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -99,6 +103,7 @@ class OrderID(google.protobuf.message.Message):
 
 global___OrderID = OrderID
 
+@typing_extensions.final
 class FutureOrderID(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -116,6 +121,7 @@ class FutureOrderID(google.protobuf.message.Message):
 
 global___FutureOrderID = FutureOrderID
 
+@typing_extensions.final
 class StockOrderStatusArr(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -131,6 +137,7 @@ class StockOrderStatusArr(google.protobuf.message.Message):
 
 global___StockOrderStatusArr = StockOrderStatusArr
 
+@typing_extensions.final
 class StockOrderStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

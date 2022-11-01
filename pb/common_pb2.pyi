@@ -16,6 +16,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class EventMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -42,6 +43,7 @@ class EventMessage(google.protobuf.message.Message):
 
 global___EventMessage = EventMessage
 
+@typing_extensions.final
 class StockRealTimeTickMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -116,6 +118,7 @@ class StockRealTimeTickMessage(google.protobuf.message.Message):
 
 global___StockRealTimeTickMessage = StockRealTimeTickMessage
 
+@typing_extensions.final
 class StockRealTimeBidAskMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -163,6 +166,7 @@ class StockRealTimeBidAskMessage(google.protobuf.message.Message):
 
 global___StockRealTimeBidAskMessage = StockRealTimeBidAskMessage
 
+@typing_extensions.final
 class FutureRealTimeTickMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -231,6 +235,7 @@ class FutureRealTimeTickMessage(google.protobuf.message.Message):
 
 global___FutureRealTimeTickMessage = FutureRealTimeTickMessage
 
+@typing_extensions.final
 class FutureRealTimeBidAskMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -296,6 +301,7 @@ class FutureRealTimeBidAskMessage(google.protobuf.message.Message):
 
 global___FutureRealTimeBidAskMessage = FutureRealTimeBidAskMessage
 
+@typing_extensions.final
 class ErrorMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -310,6 +316,7 @@ class ErrorMessage(google.protobuf.message.Message):
 
 global___ErrorMessage = ErrorMessage
 
+@typing_extensions.final
 class Date(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -324,6 +331,7 @@ class Date(google.protobuf.message.Message):
 
 global___Date = Date
 
+@typing_extensions.final
 class StockNumArr(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -339,6 +347,7 @@ class StockNumArr(google.protobuf.message.Message):
 
 global___StockNumArr = StockNumArr
 
+@typing_extensions.final
 class StockNumArrWithDate(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -357,6 +366,7 @@ class StockNumArrWithDate(google.protobuf.message.Message):
 
 global___StockNumArrWithDate = StockNumArrWithDate
 
+@typing_extensions.final
 class StockNumArrWithDateArr(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -376,6 +386,7 @@ class StockNumArrWithDateArr(google.protobuf.message.Message):
 
 global___StockNumArrWithDateArr = StockNumArrWithDateArr
 
+@typing_extensions.final
 class FutureCodeArr(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -391,6 +402,7 @@ class FutureCodeArr(google.protobuf.message.Message):
 
 global___FutureCodeArr = FutureCodeArr
 
+@typing_extensions.final
 class FutureCodeArrWithDate(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

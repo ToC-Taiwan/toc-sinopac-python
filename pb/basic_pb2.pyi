@@ -16,6 +16,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class StockDetailResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -31,6 +32,7 @@ class StockDetailResponse(google.protobuf.message.Message):
 
 global___StockDetailResponse = StockDetailResponse
 
+@typing_extensions.final
 class StockDetailMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -63,6 +65,7 @@ class StockDetailMessage(google.protobuf.message.Message):
 
 global___StockDetailMessage = StockDetailMessage
 
+@typing_extensions.final
 class FutureDetailResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -78,6 +81,7 @@ class FutureDetailResponse(google.protobuf.message.Message):
 
 global___FutureDetailResponse = FutureDetailResponse
 
+@typing_extensions.final
 class FutureDetailMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
