@@ -25,6 +25,9 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
         self.request_worker_timestamp = int()
         self.request_worker_times = int()
 
+    def get_sj_version(self):
+        return self.main_worker.get_sj_version()
+
     def get(self, fetch: bool):
         """
         get_worker _summary_

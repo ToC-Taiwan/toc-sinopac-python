@@ -1134,5 +1134,6 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
 
     server.add_insecure_port(f"[::]:{port}")
     server.start()
+    logger.info("shioaji version: %s", WORKERS.get_sj_version())
     logger.info("gRPC Server started at port %s", port)
     server.wait_for_termination()

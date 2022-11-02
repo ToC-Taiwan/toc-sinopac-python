@@ -26,6 +26,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         # simulate trade
         self.__current_simulation_count_map = {}  # key: stock_num or code, value: count
 
+    def get_sj_version(self):
+        return sj.__version__
+
     def login(self, person_id: str, passwd: str, ca_passwd: str, is_main: bool):
         """
         login _summary_
