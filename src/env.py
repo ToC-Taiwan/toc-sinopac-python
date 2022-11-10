@@ -13,13 +13,15 @@ class RequiredEnv:  # pylint: disable=too-many-instance-attributes
         self.person_id = os.environ.get("PERSON_ID")
         self.password = os.environ.get("PASSWORD")
         self.ca_password = os.environ.get("CA_PASSWORD")
-        self.request_limit_per_second = int(os.environ.get("REQUEST_LIMIT_PER_SECOND"))
+        self.request_limit_per_second = int(
+            str(os.environ.get("REQUEST_LIMIT_PER_SECOND"))
+        )
         self.rabbitmq_host = os.environ.get("RABBITMQ_HOST")
         self.rabbitmq_user = os.environ.get("RABBITMQ_USER")
         self.rabbitmq_password = os.environ.get("RABBITMQ_PASSWORD")
         self.rabbitmq_exchange = os.environ.get("RABBITMQ_EXCHANGE")
         self.rabbitmq_url = os.environ.get("RABBITMQ_URL")
-        self.connection_count = int(os.environ.get("CONNECTION_COUNT"))
+        self.connection_count = int(str(os.environ.get("CONNECTION_COUNT")))
 
         if self.log_format is None:
             raise Exception("Missing environment LOG_FORMAT")

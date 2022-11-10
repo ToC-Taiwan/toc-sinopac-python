@@ -4,6 +4,8 @@ pip freeze > requirements.txt && \
 pip uninstall -y -r requirements.txt
 rm -rf requirements.txt
 
+pip install --upgrade pip
+
 pip install -U \
   --no-warn-script-location \
   --no-cache-dir \

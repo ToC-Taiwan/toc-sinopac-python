@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mypy --config-file=./mypy.ini ./src && pylint ./src
+mypy --check-untyped-defs --config-file=./mypy.ini ./src && pylint ./src

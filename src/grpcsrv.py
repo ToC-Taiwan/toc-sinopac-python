@@ -19,6 +19,7 @@ import stream_pb2
 import stream_pb2_grpc
 import trade_pb2
 import trade_pb2_grpc
+from shioaji.data import Snapshot
 
 from env import RequiredEnv
 from logger import logger
@@ -35,7 +36,7 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
         self.debug = False
 
     def Heartbeat(self, request_iterator, _):
-        logger.info("heartbeat from machine trading")
+        logger.info("toc machine trading connected")
         self.beat_queue: Queue = Queue()
         threading.Thread(target=self.beat_timer).start()
         for beat in request_iterator:
@@ -56,7 +57,7 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
                     WORKERS.unsubscribe_all_bidask()
                     WORKERS.clear_simulation_order()
                     return
-                logger.error("machine trading not responding")
+                logger.error("toc machine trading not responding, terminate")
                 os._exit(1)
             if self.beat_queue.empty():
                 time.sleep(1)
@@ -637,7 +638,7 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         for stock in request.stock_num_arr:
             contracts.append(worker.get_contract_by_stock_num(stock))
         splits = np.array_split(contracts, WORKERS.count())
-        snapshots = []
+        snapshots: list[Snapshot] = []
         threads = []
         for i, split in enumerate(splits):
             threads.append(
@@ -670,7 +671,7 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         for stock in worker.stock_num_list:
             contracts.append(worker.get_contract_by_stock_num(stock))
         splits = np.array_split(contracts, WORKERS.count())
-        snapshots = []
+        snapshots: list[Snapshot] = []
         threads = []
         for i, split in enumerate(splits):
             threads.append(
@@ -817,7 +818,7 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         for code in request.future_code_arr:
             contracts.append(worker.get_contract_by_future_code(code))
         splits = np.array_split(contracts, WORKERS.count())
-        snapshots = []
+        snapshots: list[Snapshot] = []
         threads = []
         for i, split in enumerate(splits):
             threads.append(
@@ -1105,8 +1106,8 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
 
     # set call back
     rq = RabbitMQS(
-        cfg.rabbitmq_url,
-        cfg.rabbitmq_exchange,
+        str(cfg.rabbitmq_url),
+        str(cfg.rabbitmq_exchange),
         128,
     )
 

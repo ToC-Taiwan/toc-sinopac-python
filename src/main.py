@@ -26,11 +26,15 @@ SINOPAC_WORKER_POOL: list[Sinopac] = []
 for i in range(connection_count):
     logger.info("establish connection %d", i + 1)
     is_main = bool(i == 0)
-    new_connection = Sinopac().login(person_id, password, ca_password, is_main)
+    new_connection = Sinopac().login(
+        str(person_id), str(password), str(ca_password), is_main
+    )
     if is_main is True:
         MAIN_WORKER = new_connection
         # if do not let main worker be the first worker in the pool, then continue
         continue
     SINOPAC_WORKER_POOL.append(new_connection)
 
-serve(port=grpc_port, main_worker=MAIN_WORKER, workers=SINOPAC_WORKER_POOL, cfg=env)
+serve(
+    port=str(grpc_port), main_worker=MAIN_WORKER, workers=SINOPAC_WORKER_POOL, cfg=env
+)

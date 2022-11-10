@@ -1105,10 +1105,19 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "cancel future order fail, unknown error")
 
     def clear_simulation_order(self):
+        clear_count = int()
         for stock in self.stock_num_list:
-            self.__current_simulation_count_map[stock] = 0
+            s = self.__current_simulation_count_map[stock]
+            if s != 0:
+                self.__current_simulation_count_map[stock] = 0
+                clear_count += 1
         for future in self.future_code_list:
-            self.__current_simulation_count_map[future] = 0
+            f = self.__current_simulation_count_map[future]
+            if f != 0:
+                self.__current_simulation_count_map[future] = 0
+                clear_count += 1
+        if clear_count > 0:
+            logger.info("clear %d simulation order", clear_count)
 
 
 class OrderStatus:
