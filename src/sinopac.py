@@ -63,6 +63,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 elif wait % 5 == 0:
                     logger.info("system maintenance, wait %d sec", wait)
 
+        except TimeoutError:
+            logger.error("timeout error")
+            os._exit(1)
+
         while True:
             if self.__login_status == 4:
                 break
