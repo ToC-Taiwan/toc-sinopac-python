@@ -64,7 +64,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                     logger.info("system maintenance, wait %d sec", wait)
 
         except TimeoutError:
-            logger.error("timeout error")
+            logger.error("timeout error, retry after 60 sec")
+            time.sleep(60)
             os._exit(1)
 
         while True:
