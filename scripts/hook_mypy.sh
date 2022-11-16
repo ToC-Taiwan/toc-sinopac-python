@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mypy --config-file=./mypy.ini ./src > mypy_result
+mypy --check-untyped-defs --config-file=./mypy.ini ./src > mypy_result
 if grep error mypy_result
 then
 	exit 1

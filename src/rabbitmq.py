@@ -107,7 +107,7 @@ class RabbitMQS:
                         code=order.contract.code,
                         action=order.order.action,
                         price=order_price,
-                        quantity=order.order.quantity,
+                        quantity=order.status.deal_quantity,
                         order_id=order.status.id,
                         status=order.status.status,
                         order_time=datetime.strftime(
