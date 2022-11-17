@@ -31,6 +31,11 @@ class StreamDataInterfaceStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotMessage.FromString,
                 )
+        self.GetStockSnapshotOTC = channel.unary_unary(
+                '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotOTC',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=stream__pb2.SnapshotMessage.FromString,
+                )
         self.GetStockVolumeRank = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/GetStockVolumeRank',
                 request_serializer=stream__pb2.VolumeRankRequest.SerializeToString,
@@ -109,6 +114,12 @@ class StreamDataInterfaceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetStockSnapshotTSE(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStockSnapshotOTC(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -201,6 +212,11 @@ def add_StreamDataInterfaceServicer_to_server(servicer, server):
             ),
             'GetStockSnapshotTSE': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotTSE,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=stream__pb2.SnapshotMessage.SerializeToString,
+            ),
+            'GetStockSnapshotOTC': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockSnapshotOTC,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=stream__pb2.SnapshotMessage.SerializeToString,
             ),
@@ -320,6 +336,23 @@ class StreamDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotTSE',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            stream__pb2.SnapshotMessage.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetStockSnapshotOTC(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotOTC',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.SnapshotMessage.FromString,
             options, channel_credentials,

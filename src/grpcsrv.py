@@ -702,6 +702,20 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         snapshots = worker.snapshots([worker.get_contract_tse_001()])
         return sinopac_snapshot_to_pb(snapshots[0])
 
+    def GetStockSnapshotOTC(self, request, _):
+        """
+        GetStockSnapshotOTC _summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        worker = WORKERS.get(True)
+        snapshots = worker.snapshots([worker.get_contract_otc_101()])
+        return sinopac_snapshot_to_pb(snapshots[0])
+
     def GetStockVolumeRank(self, request, _):
         response = stream_pb2.StockVolumeRankResponse()
         ranks = WORKERS.get(True).get_stock_volume_rank_by_date(

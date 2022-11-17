@@ -237,6 +237,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         """
         return self.__api.Contracts.Indexs.TSE.TSE001
 
+    def get_contract_otc_101(self):
+        """
+        get_contract_otc_101 _summary_
+
+        Returns:
+            _type_: _description_
+        """
+        return self.__api.Contracts.Indexs.OTC.OTC101
+
     def get_contract_by_stock_num(self, num):
         """
         get_contract_by_stock_num _summary_
