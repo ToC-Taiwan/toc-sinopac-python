@@ -21,13 +21,16 @@ class YahooFinancePrice(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     PRICE_FIELD_NUMBER: builtins.int
+    LAST_FIELD_NUMBER: builtins.int
     price: builtins.float
+    last: builtins.float
     def __init__(
         self,
         *,
         price: builtins.float = ...,
+        last: builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["price", b"price"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["last", b"last", "price", b"price"]) -> None: ...
 
 global___YahooFinancePrice = YahooFinancePrice
 

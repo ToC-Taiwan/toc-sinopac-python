@@ -627,10 +627,18 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         self.source = source
 
     def GetNasdaq(self, request, _):
-        return stream_pb2.YahooFinancePrice(price=self.source.get_nasdaq())
+        arr = self.source.get_nasdaq()
+        return stream_pb2.YahooFinancePrice(
+            price=arr[0],
+            last=arr[1],
+        )
 
     def GetNasdaqFuture(self, request, _):
-        return stream_pb2.YahooFinancePrice(price=self.source.get_nasdaq_future())
+        arr = self.source.get_nasdaq_future()
+        return stream_pb2.YahooFinancePrice(
+            price=arr[0],
+            last=arr[1],
+        )
 
     def GetStockSnapshotByNumArr(self, request, _):
         """
