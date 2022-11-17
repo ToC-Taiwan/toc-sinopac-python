@@ -36,6 +36,16 @@ class StreamDataInterfaceStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotMessage.FromString,
                 )
+        self.GetNasdaq = channel.unary_unary(
+                '/sinopac_forwarder.StreamDataInterface/GetNasdaq',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=stream__pb2.YahooFinancePrice.FromString,
+                )
+        self.GetNasdaqFuture = channel.unary_unary(
+                '/sinopac_forwarder.StreamDataInterface/GetNasdaqFuture',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=stream__pb2.YahooFinancePrice.FromString,
+                )
         self.GetStockVolumeRank = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/GetStockVolumeRank',
                 request_serializer=stream__pb2.VolumeRankRequest.SerializeToString,
@@ -120,6 +130,18 @@ class StreamDataInterfaceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetStockSnapshotOTC(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetNasdaq(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetNasdaqFuture(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -219,6 +241,16 @@ def add_StreamDataInterfaceServicer_to_server(servicer, server):
                     servicer.GetStockSnapshotOTC,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=stream__pb2.SnapshotMessage.SerializeToString,
+            ),
+            'GetNasdaq': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetNasdaq,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=stream__pb2.YahooFinancePrice.SerializeToString,
+            ),
+            'GetNasdaqFuture': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetNasdaqFuture,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=stream__pb2.YahooFinancePrice.SerializeToString,
             ),
             'GetStockVolumeRank': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockVolumeRank,
@@ -355,6 +387,40 @@ class StreamDataInterface(object):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotOTC',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.SnapshotMessage.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetNasdaq(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetNasdaq',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            stream__pb2.YahooFinancePrice.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetNasdaqFuture(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetNasdaqFuture',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            stream__pb2.YahooFinancePrice.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

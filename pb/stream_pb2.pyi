@@ -17,6 +17,21 @@ else:
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
+class YahooFinancePrice(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PRICE_FIELD_NUMBER: builtins.int
+    price: builtins.float
+    def __init__(
+        self,
+        *,
+        price: builtins.float = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["price", b"price"]) -> None: ...
+
+global___YahooFinancePrice = YahooFinancePrice
+
+@typing_extensions.final
 class VolumeRankRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

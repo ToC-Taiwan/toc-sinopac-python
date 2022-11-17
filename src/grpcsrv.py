@@ -26,6 +26,7 @@ from logger import logger
 from rabbitmq import RabbitMQS
 from sinopac import Sinopac
 from sinopac_worker import SinopacWorkerPool
+from yahoo_finance import Yahoo
 
 WORKERS: SinopacWorkerPool
 
@@ -622,6 +623,15 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
 
 
 class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
+    def __init__(self, source: Yahoo):
+        self.source = source
+
+    def GetNasdaq(self, request, _):
+        return self.source.get_nasdaq()
+
+    def GetNasdaqFuture(self, request, _):
+        return self.source.get_nasdaq_future()
+
     def GetStockSnapshotByNumArr(self, request, _):
         """
         GetStockSnapshotByNumArr _summary_
@@ -1116,7 +1126,7 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     basic_servicer = gRPCBasic()
     history_servicer = gRPCHistory()
     trade_servicer = gRPCTrade()
-    stream_servicer = gRPCStream()
+    stream_servicer = gRPCStream(source=Yahoo())
 
     # set call back
     rq = RabbitMQS(

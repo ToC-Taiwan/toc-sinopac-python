@@ -16,7 +16,8 @@ pip install -U \
   numpy \
   schedule \
   pika \
-  requests
+  requests \
+  yfinance
 pip freeze > requirements.txt
 
 git add requirements.txt
