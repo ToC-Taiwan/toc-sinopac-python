@@ -71,6 +71,11 @@ class TradeInterfaceStub(object):
                 request_serializer=trade__pb2.FutureOrderID.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
+        self.GetFuturePosition = channel.unary_unary(
+                '/sinopac_forwarder.TradeInterface/GetFuturePosition',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=trade__pb2.FuturePositionArr.FromString,
+                )
 
 
 class TradeInterfaceServicer(object):
@@ -142,6 +147,12 @@ class TradeInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetFuturePosition(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TradeInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -199,6 +210,11 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
                     servicer.CancelFuture,
                     request_deserializer=trade__pb2.FutureOrderID.FromString,
                     response_serializer=trade__pb2.TradeResult.SerializeToString,
+            ),
+            'GetFuturePosition': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFuturePosition,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=trade__pb2.FuturePositionArr.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -394,5 +410,22 @@ class TradeInterface(object):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/CancelFuture',
             trade__pb2.FutureOrderID.SerializeToString,
             trade__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetFuturePosition(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetFuturePosition',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            trade__pb2.FuturePositionArr.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

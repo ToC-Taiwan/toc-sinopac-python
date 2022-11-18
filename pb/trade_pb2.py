@@ -15,7 +15,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 import common_pb2 as common__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\x11sinopac_forwarder\x1a\x1bgoogle/protobuf/empty.proto\x1a\x0c\x63ommon.proto\"X\n\x10StockOrderDetail\x12\x11\n\tstock_num\x18\x01 \x01(\t\x12\r\n\x05price\x18\x02 \x01(\x01\x12\x10\n\x08quantity\x18\x03 \x01(\x03\x12\x10\n\x08simulate\x18\x04 \x01(\x08\"T\n\x11\x46utureOrderDetail\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\r\n\x05price\x18\x02 \x01(\x01\x12\x10\n\x08quantity\x18\x03 \x01(\x03\x12\x10\n\x08simulate\x18\x04 \x01(\x08\">\n\x0bTradeResult\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\r\n\x05\x65rror\x18\x03 \x01(\t\"-\n\x07OrderID\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x10\n\x08simulate\x18\x02 \x01(\x08\"3\n\rFutureOrderID\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x10\n\x08simulate\x18\x02 \x01(\x08\"H\n\x13StockOrderStatusArr\x12\x31\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32#.sinopac_forwarder.StockOrderStatus\"\x87\x01\n\x10StockOrderStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x63tion\x18\x03 \x01(\t\x12\r\n\x05price\x18\x04 \x01(\x01\x12\x10\n\x08quantity\x18\x05 \x01(\x03\x12\x10\n\x08order_id\x18\x06 \x01(\t\x12\x12\n\norder_time\x18\x07 \x01(\t2\xba\x07\n\x0eTradeInterface\x12Q\n\x08\x42uyStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\tSellStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12W\n\x0eSellFirstStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12K\n\x0b\x43\x61ncelStock\x12\x1a.sinopac_forwarder.OrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\x12GetOrderStatusByID\x12\x1a.sinopac_forwarder.OrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12U\n\x11GetOrderStatusArr\x12\x16.google.protobuf.Empty\x1a&.sinopac_forwarder.StockOrderStatusArr\"\x00\x12V\n\x19GetNonBlockOrderStatusArr\x12\x16.google.protobuf.Empty\x1a\x1f.sinopac_forwarder.ErrorMessage\"\x00\x12S\n\tBuyFuture\x12$.sinopac_forwarder.FutureOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12T\n\nSellFuture\x12$.sinopac_forwarder.FutureOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12Y\n\x0fSellFirstFuture\x12$.sinopac_forwarder.FutureOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\x0c\x43\x61ncelFuture\x12 .sinopac_forwarder.FutureOrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x42\x06Z\x04./pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btrade.proto\x12\x11sinopac_forwarder\x1a\x1bgoogle/protobuf/empty.proto\x1a\x0c\x63ommon.proto\"s\n\x0e\x46uturePosition\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x10\n\x08quantity\x18\x03 \x01(\x05\x12\r\n\x05price\x18\x04 \x01(\x01\x12\x12\n\nlast_price\x18\x05 \x01(\x01\x12\x0b\n\x03pnl\x18\x06 \x01(\x01\"L\n\x11\x46uturePositionArr\x12\x37\n\x0cposition_arr\x18\x01 \x03(\x0b\x32!.sinopac_forwarder.FuturePosition\"X\n\x10StockOrderDetail\x12\x11\n\tstock_num\x18\x01 \x01(\t\x12\r\n\x05price\x18\x02 \x01(\x01\x12\x10\n\x08quantity\x18\x03 \x01(\x03\x12\x10\n\x08simulate\x18\x04 \x01(\x08\"T\n\x11\x46utureOrderDetail\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\r\n\x05price\x18\x02 \x01(\x01\x12\x10\n\x08quantity\x18\x03 \x01(\x03\x12\x10\n\x08simulate\x18\x04 \x01(\x08\">\n\x0bTradeResult\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t\x12\r\n\x05\x65rror\x18\x03 \x01(\t\"-\n\x07OrderID\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x10\n\x08simulate\x18\x02 \x01(\x08\"3\n\rFutureOrderID\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x10\n\x08simulate\x18\x02 \x01(\x08\"H\n\x13StockOrderStatusArr\x12\x31\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32#.sinopac_forwarder.StockOrderStatus\"\x87\x01\n\x10StockOrderStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x0e\n\x06\x61\x63tion\x18\x03 \x01(\t\x12\r\n\x05price\x18\x04 \x01(\x01\x12\x10\n\x08quantity\x18\x05 \x01(\x03\x12\x10\n\x08order_id\x18\x06 \x01(\t\x12\x12\n\norder_time\x18\x07 \x01(\t2\x8f\x08\n\x0eTradeInterface\x12Q\n\x08\x42uyStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\tSellStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12W\n\x0eSellFirstStock\x12#.sinopac_forwarder.StockOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12K\n\x0b\x43\x61ncelStock\x12\x1a.sinopac_forwarder.OrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\x12GetOrderStatusByID\x12\x1a.sinopac_forwarder.OrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12U\n\x11GetOrderStatusArr\x12\x16.google.protobuf.Empty\x1a&.sinopac_forwarder.StockOrderStatusArr\"\x00\x12V\n\x19GetNonBlockOrderStatusArr\x12\x16.google.protobuf.Empty\x1a\x1f.sinopac_forwarder.ErrorMessage\"\x00\x12S\n\tBuyFuture\x12$.sinopac_forwarder.FutureOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12T\n\nSellFuture\x12$.sinopac_forwarder.FutureOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12Y\n\x0fSellFirstFuture\x12$.sinopac_forwarder.FutureOrderDetail\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12R\n\x0c\x43\x61ncelFuture\x12 .sinopac_forwarder.FutureOrderID\x1a\x1e.sinopac_forwarder.TradeResult\"\x00\x12S\n\x11GetFuturePosition\x12\x16.google.protobuf.Empty\x1a$.sinopac_forwarder.FuturePositionArr\"\x00\x42\x06Z\x04./pbb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'trade_pb2', globals())
@@ -23,20 +23,24 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\004./pb'
-  _STOCKORDERDETAIL._serialized_start=77
-  _STOCKORDERDETAIL._serialized_end=165
-  _FUTUREORDERDETAIL._serialized_start=167
-  _FUTUREORDERDETAIL._serialized_end=251
-  _TRADERESULT._serialized_start=253
-  _TRADERESULT._serialized_end=315
-  _ORDERID._serialized_start=317
-  _ORDERID._serialized_end=362
-  _FUTUREORDERID._serialized_start=364
-  _FUTUREORDERID._serialized_end=415
-  _STOCKORDERSTATUSARR._serialized_start=417
-  _STOCKORDERSTATUSARR._serialized_end=489
-  _STOCKORDERSTATUS._serialized_start=492
-  _STOCKORDERSTATUS._serialized_end=627
-  _TRADEINTERFACE._serialized_start=630
-  _TRADEINTERFACE._serialized_end=1584
+  _FUTUREPOSITION._serialized_start=77
+  _FUTUREPOSITION._serialized_end=192
+  _FUTUREPOSITIONARR._serialized_start=194
+  _FUTUREPOSITIONARR._serialized_end=270
+  _STOCKORDERDETAIL._serialized_start=272
+  _STOCKORDERDETAIL._serialized_end=360
+  _FUTUREORDERDETAIL._serialized_start=362
+  _FUTUREORDERDETAIL._serialized_end=446
+  _TRADERESULT._serialized_start=448
+  _TRADERESULT._serialized_end=510
+  _ORDERID._serialized_start=512
+  _ORDERID._serialized_end=557
+  _FUTUREORDERID._serialized_start=559
+  _FUTUREORDERID._serialized_end=610
+  _STOCKORDERSTATUSARR._serialized_start=612
+  _STOCKORDERSTATUSARR._serialized_end=684
+  _STOCKORDERSTATUS._serialized_start=687
+  _STOCKORDERSTATUS._serialized_end=822
+  _TRADEINTERFACE._serialized_start=825
+  _TRADEINTERFACE._serialized_end=1864
 # @@protoc_insertion_point(module_scope)

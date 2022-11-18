@@ -17,6 +17,60 @@ else:
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
+class FuturePosition(google.protobuf.message.Message):
+    """code (str): contract id.
+    direction (Action): action. {Buy, Sell}
+    quantity (int): quantity.
+    price (float): the average price.
+    last_price (float): last price.
+    pnl (float): unrealized profit.
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CODE_FIELD_NUMBER: builtins.int
+    DIRECTION_FIELD_NUMBER: builtins.int
+    QUANTITY_FIELD_NUMBER: builtins.int
+    PRICE_FIELD_NUMBER: builtins.int
+    LAST_PRICE_FIELD_NUMBER: builtins.int
+    PNL_FIELD_NUMBER: builtins.int
+    code: builtins.str
+    direction: builtins.str
+    quantity: builtins.int
+    price: builtins.float
+    last_price: builtins.float
+    pnl: builtins.float
+    def __init__(
+        self,
+        *,
+        code: builtins.str = ...,
+        direction: builtins.str = ...,
+        quantity: builtins.int = ...,
+        price: builtins.float = ...,
+        last_price: builtins.float = ...,
+        pnl: builtins.float = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["code", b"code", "direction", b"direction", "last_price", b"last_price", "pnl", b"pnl", "price", b"price", "quantity", b"quantity"]) -> None: ...
+
+global___FuturePosition = FuturePosition
+
+@typing_extensions.final
+class FuturePositionArr(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    POSITION_ARR_FIELD_NUMBER: builtins.int
+    @property
+    def position_arr(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___FuturePosition]: ...
+    def __init__(
+        self,
+        *,
+        position_arr: collections.abc.Iterable[global___FuturePosition] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["position_arr", b"position_arr"]) -> None: ...
+
+global___FuturePositionArr = FuturePositionArr
+
+@typing_extensions.final
 class StockOrderDetail(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

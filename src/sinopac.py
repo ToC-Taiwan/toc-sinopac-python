@@ -204,6 +204,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             self.__api.update_status(timeout=0, cb=self.order_status_callback)
             return None
 
+    def list_positions(self):
+        return self.__api.list_positions(self.__api.futopt_account)
+
     def update_local_order_status(self):
         """
         update_local_order_status _summary_
