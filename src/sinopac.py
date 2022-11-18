@@ -206,7 +206,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
 
     def list_positions(self):
         try:
-            self.__api.list_positions(self.__api.futopt_account)
+            return self.__api.list_positions(self.__api.futopt_account)
         except TimeoutError:
             return None
 
