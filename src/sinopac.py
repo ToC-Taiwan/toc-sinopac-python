@@ -68,6 +68,11 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             time.sleep(60)
             os._exit(1)
 
+        except ValueError:
+            logger.error("value error, retry after 15 sec")
+            time.sleep(15)
+            os._exit(1)
+
         while True:
             if self.__login_status == 4:
                 break
