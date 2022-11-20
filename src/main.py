@@ -1,4 +1,7 @@
 """SINOPAC PYTHON API FORWARDER"""
+import os
+import time
+
 from cron import init_schedule_job
 from env import RequiredEnv
 from grpcsrv import serve
@@ -35,6 +38,15 @@ for i in range(connection_count):
         continue
     SINOPAC_WORKER_POOL.append(new_connection)
 
-serve(
-    port=str(grpc_port), main_worker=MAIN_WORKER, workers=SINOPAC_WORKER_POOL, cfg=env
-)
+try:
+    serve(
+        port=str(grpc_port),
+        main_worker=MAIN_WORKER,
+        workers=SINOPAC_WORKER_POOL,
+        cfg=env,
+    )
+
+except RuntimeError:
+    logger.error("runtime error, retry after 30 seconds")
+    time.sleep(30)
+    os._exit(1)
