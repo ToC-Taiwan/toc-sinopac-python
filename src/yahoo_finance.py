@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+
 import yfinance as yf
 
 
@@ -10,16 +12,13 @@ class Yahoo:
                 and "regularMarketPrice" in t.info
                 and "previousClose" in t.info
             ):
-                if (
-                    t.info["regularMarketPrice"] is None
-                    or t.info["previousClose"] is None
-                ):
-                    return [0.0, 0.0]
-
                 return [
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
+            return [0.0, 0.0]
+
+        except JSONDecodeError:
             return [0.0, 0.0]
 
         except TypeError:
@@ -33,16 +32,13 @@ class Yahoo:
                 and "regularMarketPrice" in t.info
                 and "previousClose" in t.info
             ):
-                if (
-                    t.info["regularMarketPrice"] is None
-                    or t.info["previousClose"] is None
-                ):
-                    return [0.0, 0.0]
-
                 return [
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
+            return [0.0, 0.0]
+
+        except JSONDecodeError:
             return [0.0, 0.0]
 
         except TypeError:
