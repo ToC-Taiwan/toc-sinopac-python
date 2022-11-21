@@ -16,13 +16,13 @@ class Yahoo:
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
-            return [0.0, 0.0]
+            return self.get_nasdaq()
 
         except JSONDecodeError:
-            return [0.0, 0.0]
+            return self.get_nasdaq()
 
         except TypeError:
-            return [0.0, 0.0]
+            return self.get_nasdaq()
 
     def get_nasdaq_future(self):
         try:
@@ -36,10 +36,10 @@ class Yahoo:
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
-            return [0.0, 0.0]
+            return self.get_nasdaq_future()
 
         except JSONDecodeError:
-            return [0.0, 0.0]
+            return self.get_nasdaq_future()
 
         except TypeError:
-            return [0.0, 0.0]
+            return self.get_nasdaq_future()
