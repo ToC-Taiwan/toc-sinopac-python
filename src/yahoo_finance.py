@@ -14,7 +14,9 @@ class Yahoo:
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
-        except KeyError:
+            return [0.0, 0.0]
+
+        except TypeError:
             return [0.0, 0.0]
 
     def get_nasdaq_future(self):
@@ -29,5 +31,7 @@ class Yahoo:
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
-        except KeyError:
+            return [0.0, 0.0]
+
+        except TypeError:
             return [0.0, 0.0]
