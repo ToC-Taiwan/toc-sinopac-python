@@ -17,11 +17,11 @@ jobs:
           key: ${{ secrets.TRADER_KEY }}
           script: |
             docker kill toc-sinopac-python || true
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest || true
             docker system prune --volumes -f
+            docker rmi $(docker images '${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python' -a -q) || true
 
       - name: deactivate deployments
-        uses: strumwolf/delete-deployment-environment@v2
+        uses: strumwolf/delete-deployment-environment@v2.2.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment: production

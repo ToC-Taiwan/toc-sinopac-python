@@ -1,5 +1,5 @@
 name: Workflow
-run-name: ${{ github.actor }} is running TOC SINOPAC PYTHON Actions 🚀
+run-name: ${{ github.actor }} is running TOC SINOPAC PYTHON Actions 🐇
 
 concurrency:
   group: production
@@ -72,6 +72,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set Tag
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: deploying
         uses: appleboy/ssh-action@master
         with:
@@ -81,15 +88,17 @@ jobs:
           key: ${{ secrets.TRADER_KEY }}
           script: |
             docker kill toc-sinopac-python || true
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest || true
             docker system prune --volumes -f
+            docker rmi $(docker images '${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python' -a -q) || true
 
             rm -rf ~/toc-sinopac-python-env && mkdir -p ~/toc-sinopac-python-env && touch ~/toc-sinopac-python-env/.env
             rm -rf ~/toc-sinopac-python-logs
+
             echo "${{ secrets.SINOPAC_ENV }}" > ~/toc-sinopac-python-env/.env
 
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:${{ steps.vars.outputs.sha_short }}
+
             docker run \
               --name toc-sinopac-python \
               --network tocvlan \
@@ -98,4 +107,4 @@ jobs:
               -e TZ="Asia/Taipei" \
               -v ~/toc-sinopac-python-logs:/toc-sinopac-python/logs \
               -v ~/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
-              -dt ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
+              -dt ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:${{ steps.vars.outputs.sha_short }}
