@@ -2,27 +2,37 @@ name: Stop-Deployment
 run-name: ${{ github.actor }} is stopping deployment
 
 on:
-  workflow_dispatch:
+    workflow_dispatch:
+
+env:
+    REGISTRY: ghcr.io
 
 jobs:
-  Stop-Deployment:
-    runs-on: ubuntu-latest
-    steps:
-      - name: deploying
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.TRADER_HOST }}
-          port: ${{ secrets.TRADER_PORT }}
-          username: ${{ secrets.TRADER_USERNAME }}
-          key: ${{ secrets.TRADER_KEY }}
-          script: |
-            docker kill toc-sinopac-python || true
-            docker system prune --volumes -f
-            docker rmi $(docker images '${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python' -a -q) || true
+    Stop-Deployment:
+        runs-on: ubuntu-latest
+        env:
+            REPOSITORY: "${{ github.repository }}"
 
-      - name: deactivate deployments
-        uses: strumwolf/delete-deployment-environment@v2.2.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          environment: production
-          onlyDeactivateDeployments: true
+        steps:
+            - name: set local env
+              run: |
+                  echo "REPOSITORY_LC=${REPOSITORY,,}" >> ${GITHUB_ENV}
+
+            - name: deploying
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.TRADER_HOST }}
+                  port: ${{ secrets.TRADER_PORT }}
+                  username: ${{ secrets.TRADER_USERNAME }}
+                  key: ${{ secrets.TRADER_KEY }}
+                  script: |
+                      docker kill toc-sinopac-python || true
+                      docker system prune --volumes -f
+                      docker rmi $(docker images '${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}' -a -q) || true
+
+            - name: deactivate deployments
+              uses: strumwolf/delete-deployment-environment@v2
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  environment: production
+                  onlyDeactivateDeployments: true

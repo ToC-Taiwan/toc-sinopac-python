@@ -2,109 +2,117 @@ name: Workflow
 run-name: ${{ github.actor }} is running TOC SINOPAC PYTHON Actions 🐇
 
 concurrency:
-  group: production
-  cancel-in-progress: true
+    group: production
+    cancel-in-progress: true
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+    workflow_dispatch:
+    push:
+        branches:
+            - main
+env:
+    REGISTRY: ghcr.io
 
 jobs:
-  Lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+    Lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10.8"
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.10.8"
 
-      - name: Install Requirements
-        run: |
-          pip install --no-warn-script-location --no-cache-dir -r requirements.txt
-          pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
-          mypy --install-types --non-interactive ./src
+            - name: Install Requirements
+              run: |
+                  pip install --no-warn-script-location --no-cache-dir -r requirements.txt
+                  pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
+                  mypy --install-types --non-interactive ./src
 
-      - name: Lint
-        run: |
-          export PYTHONPATH=$(pwd)/pb
-          echo $PYTHONPATH
-          export PYLINTHOME=$(pwd)
-          echo $PYLINTHOME
-          ./scripts/lint-code.sh
+            - name: Lint
+              run: |
+                  export PYTHONPATH=$(pwd)/pb
+                  echo $PYTHONPATH
+                  export PYLINTHOME=$(pwd)
+                  echo $PYLINTHOME
+                  ./scripts/lint-code.sh
 
-  Build:
-    needs: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    Build:
+        needs: Lint
+        env:
+            REPOSITORY: "${{ github.repository }}"
+            SHA: ${{ github.sha }}
 
-      - name: Set outputs
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        runs-on: ubuntu-latest
+        steps:
+            - name: set local env
+              run: |
+                  echo "REPOSITORY_LC=${REPOSITORY,,}" >> ${GITHUB_ENV}
+                  echo "SHORT_SHA=$(echo ${SHA} | cut -c1-7)" >> ${GITHUB_ENV}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+            - name: Checkout
+              uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+            - name: Log in to the Container registry
+              uses: docker/login-action@v2
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+            - name: Build and push
+              uses: docker/build-push-action@v3
+              with:
+                  push: true
+                  tags: |
+                      ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
+                      ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:latest
 
-      - name: Build and push
-        uses: docker/build-push-action@v3.1.1
-        with:
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:${{ steps.vars.outputs.sha_short }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:latest
+    Deployment:
+        needs: Build
+        runs-on: ubuntu-latest
+        env:
+            REPOSITORY: "${{ github.repository }}"
+            SHA: ${{ github.sha }}
 
-  Deployment:
-    needs: Build
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+        environment: production
+        steps:
+            - name: set local env
+              run: |
+                  echo "REPOSITORY_LC=${REPOSITORY,,}" >> ${GITHUB_ENV}
+                  echo "SHORT_SHA=$(echo ${SHA} | cut -c1-7)" >> ${GITHUB_ENV}
 
-      - name: Set Tag
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+            - name: Checkout
+              uses: actions/checkout@v3
 
-      - name: deploying
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.TRADER_HOST }}
-          port: ${{ secrets.TRADER_PORT }}
-          username: ${{ secrets.TRADER_USERNAME }}
-          key: ${{ secrets.TRADER_KEY }}
-          script: |
-            docker kill toc-sinopac-python || true
-            docker system prune --volumes -f
-            docker rmi $(docker images '${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python' -a -q) || true
+            - name: deploying
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.TRADER_HOST }}
+                  port: ${{ secrets.TRADER_PORT }}
+                  username: ${{ secrets.TRADER_USERNAME }}
+                  key: ${{ secrets.TRADER_KEY }}
+                  script: |
+                      docker kill toc-sinopac-python || true
+                      docker system prune --volumes -f
+                      docker rmi $(docker images '${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}' -a -q) || true
 
-            rm -rf ~/toc-sinopac-python-env && mkdir -p ~/toc-sinopac-python-env && touch ~/toc-sinopac-python-env/.env
-            rm -rf ~/toc-sinopac-python-logs
+                      rm -rf ~/toc-sinopac-python-env && mkdir -p ~/toc-sinopac-python-env && touch ~/toc-sinopac-python-env/.env
+                      rm -rf ~/toc-sinopac-python-logs
 
-            echo "${{ secrets.SINOPAC_ENV }}" > ~/toc-sinopac-python-env/.env
+                      echo "${{ secrets.SINOPAC_ENV }}" > ~/toc-sinopac-python-env/.env
 
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:${{ steps.vars.outputs.sha_short }}
+                      docker login ${{ env.REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+                      docker pull ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
 
-            docker run \
-              --name toc-sinopac-python \
-              --network tocvlan \
-              --ip=172.20.10.227 \
-              --restart always \
-              -e TZ="Asia/Taipei" \
-              -v ~/toc-sinopac-python-logs:/toc-sinopac-python/logs \
-              -v ~/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
-              -dt ${{ secrets.DOCKERHUB_USERNAME }}/toc-sinopac-python:${{ steps.vars.outputs.sha_short }}
+                      docker run \
+                        --name toc-sinopac-python \
+                        --network tocvlan \
+                        --ip=172.20.10.227 \
+                        --restart always \
+                        -e TZ="Asia/Taipei" \
+                        -v ~/toc-sinopac-python-logs:/toc-sinopac-python/logs \
+                        -v ~/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
+                        -dt ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
