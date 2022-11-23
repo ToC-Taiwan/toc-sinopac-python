@@ -1,10 +1,6 @@
 name: Workflow
 run-name: ${{ github.actor }} is running TOC SINOPAC PYTHON Actions 🐇
 
-concurrency:
-    group: production
-    cancel-in-progress: true
-
 on:
     workflow_dispatch:
     push:
@@ -77,7 +73,6 @@ jobs:
             REPOSITORY: "${{ github.repository }}"
             SHA: ${{ github.sha }}
 
-        environment: production
         steps:
             - name: set local env
               run: |

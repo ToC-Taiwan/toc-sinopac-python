@@ -29,10 +29,3 @@ jobs:
                       docker kill toc-sinopac-python || true
                       docker system prune --volumes -f
                       docker rmi $(docker images '${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}' -a -q) || true
-
-            - name: deactivate deployments
-              uses: strumwolf/delete-deployment-environment@v2
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  environment: production
-                  onlyDeactivateDeployments: true
