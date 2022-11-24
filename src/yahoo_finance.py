@@ -2,7 +2,7 @@ from http.client import RemoteDisconnected
 from json import JSONDecodeError
 
 import yfinance as yf
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError as RequestsConnectionError
 from urllib3.exceptions import ProtocolError
 
 from logger import logger
@@ -38,8 +38,8 @@ class Yahoo:
         except ProtocolError:
             logger.warning("ProtocolError from get_nasdaq")
             return self.get_nasdaq()
-        except ConnectionError:
-            logger.warning("ConnectionError from get_nasdaq")
+        except RequestsConnectionError:
+            logger.warning("RequestsConnectionError from get_nasdaq")
             return self.get_nasdaq()
 
     def get_nasdaq_future(self):
@@ -71,6 +71,6 @@ class Yahoo:
         except ProtocolError:
             logger.warning("ProtocolError from get_nasdaq_future")
             return self.get_nasdaq_future()
-        except ConnectionError:
-            logger.warning("ConnectionError from get_nasdaq_future")
+        except RequestsConnectionError:
+            logger.warning("RequestsConnectionError from get_nasdaq_future")
             return self.get_nasdaq_future()
