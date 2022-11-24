@@ -1,6 +1,9 @@
+from http.client import RemoteDisconnected
 from json import JSONDecodeError
 
 import yfinance as yf
+
+from logger import logger
 
 
 class Yahoo:
@@ -19,9 +22,16 @@ class Yahoo:
             return self.get_nasdaq()
 
         except JSONDecodeError:
+            logger.warning("JSONDecodeError from get_nasdaq")
             return self.get_nasdaq()
-
         except TypeError:
+            logger.warning("TypeError from get_nasdaq")
+            return self.get_nasdaq()
+        except RemoteDisconnected:
+            logger.warning("RemoteDisconnected from get_nasdaq")
+            return self.get_nasdaq()
+        except ConnectionError:
+            logger.warning("ConnectionError from get_nasdaq")
             return self.get_nasdaq()
 
     def get_nasdaq_future(self):
@@ -39,7 +49,14 @@ class Yahoo:
             return self.get_nasdaq_future()
 
         except JSONDecodeError:
+            logger.warning("JSONDecodeError from get_nasdaq_future")
             return self.get_nasdaq_future()
-
         except TypeError:
+            logger.warning("TypeError from get_nasdaq_future")
+            return self.get_nasdaq_future()
+        except RemoteDisconnected:
+            logger.warning("RemoteDisconnected from get_nasdaq_future")
+            return self.get_nasdaq_future()
+        except ConnectionError:
+            logger.warning("ConnectionError from get_nasdaq_future")
             return self.get_nasdaq_future()
