@@ -41,6 +41,9 @@ class Yahoo:
         except RequestsConnectionError:
             logger.warning("RequestsConnectionError from get_nasdaq")
             return self.get_nasdaq()
+        except KeyError:
+            logger.warning("KeyError from get_nasdaq")
+            return self.get_nasdaq()
 
     def get_nasdaq_future(self):
         try:
@@ -73,4 +76,7 @@ class Yahoo:
             return self.get_nasdaq_future()
         except RequestsConnectionError:
             logger.warning("RequestsConnectionError from get_nasdaq_future")
+            return self.get_nasdaq_future()
+        except KeyError:
+            logger.warning("KeyError from get_nasdaq_future")
             return self.get_nasdaq_future()
