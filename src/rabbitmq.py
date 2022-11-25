@@ -99,7 +99,7 @@ class RabbitMQS:
                     order_price = order.status.modified_price
                 else:
                     order_price = order.order.price
-                qty = order.status.order_quantity
+                qty = order.order.quantity
                 if order.status.deal_quantity not in (0, qty):
                     qty = order.status.deal_quantity
 
