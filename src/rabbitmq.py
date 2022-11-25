@@ -99,6 +99,13 @@ class RabbitMQS:
                     order_price = order.status.modified_price
                 else:
                     order_price = order.order.price
+                qty = order.status.order_quantity
+                if (
+                    order.status.deal_quantity != 0
+                    and order.status.deal_quantity != qty
+                ):
+                    qty = order.status.deal_quantity
+
                 p = self.pika_queue.get(block=True)
                 p.ch.basic_publish(
                     exchange=self.exchange,
@@ -107,7 +114,7 @@ class RabbitMQS:
                         code=order.contract.code,
                         action=order.order.action,
                         price=order_price,
-                        quantity=order.status.deal_quantity,
+                        quantity=qty,
                         order_id=order.status.id,
                         status=order.status.status,
                         order_time=datetime.strftime(
