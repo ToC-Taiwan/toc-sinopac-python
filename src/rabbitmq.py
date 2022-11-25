@@ -100,10 +100,7 @@ class RabbitMQS:
                 else:
                     order_price = order.order.price
                 qty = order.status.order_quantity
-                if (
-                    order.status.deal_quantity != 0
-                    and order.status.deal_quantity != qty
-                ):
+                if order.status.deal_quantity not in (0, qty):
                     qty = order.status.deal_quantity
 
                 p = self.pika_queue.get(block=True)
