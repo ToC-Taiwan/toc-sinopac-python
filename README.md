@@ -58,8 +58,7 @@ RABBITMQ_USER=admin
 RABBITMQ_PASSWORD=password
 RABBITMQ_EXCHANGE=toc
 RABBITMQ_URL=amqp://admin:password@172.17.0.3:5672/%2f
-CONNECTION_COUNT=5
-'> ./.env
+CONNECTION_COUNT=2'> ./.env
 ```
 
 ### RUN
