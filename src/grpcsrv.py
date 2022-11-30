@@ -433,6 +433,9 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
 
 
 class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
+    def __init__(self, rq: RabbitMQS):
+        self.rq = rq
+
     def GetFuturePosition(self, request, _):
         response = trade_pb2.FuturePositionArr()
         result = WORKERS.get_future_position()
@@ -541,9 +544,9 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def GetOrderStatusArr(self, request, _):
+    def GetOrderStatusArrFromMQ(self, request, _):
         """
-        GetOrderStatusArr _summary_
+        GetOrderStatusArrFromMQ _summary_
 
         Args:
             request (_type_): _description_
@@ -552,29 +555,13 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             _type_: _description_
         """
         arr = WORKERS.get_order_status_arr()
-        response = trade_pb2.StockOrderStatusArr()
         for order in arr:
             if order.status.order_datetime is None:
                 order.status.order_datetime = datetime.now()
-            order_price = int()
             if order.status.modified_price != 0:
-                order_price = order.status.modified_price
-            else:
-                order_price = order.order.price
-            response.data.append(
-                trade_pb2.StockOrderStatus(
-                    code=order.contract.code,
-                    action=order.order.action,
-                    price=order_price,
-                    quantity=order.order.quantity,
-                    order_id=order.status.id,
-                    status=order.status.status,
-                    order_time=datetime.strftime(
-                        order.status.order_datetime, "%Y-%m-%d %H:%M:%S"
-                    ),
-                )
-            )
-        return response
+                order.order.price = order.status.modified_price
+            self.rq.send_order(order)
+        return common_pb2.ErrorMessage(err="")
 
     def GetNonBlockOrderStatusArr(self, request, _):
         """
@@ -1146,19 +1133,19 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
     global WORKERS  # pylint: disable=global-statement
     WORKERS = SinopacWorkerPool(main_worker, workers, cfg.request_limit_per_second)
 
-    # gRPC servicer
-    health_servicer = gRPCHealthCheck()
-    basic_servicer = gRPCBasic()
-    history_servicer = gRPCHistory()
-    trade_servicer = gRPCTrade()
-    stream_servicer = gRPCStream(source=Yahoo())
-
     # set call back
     rq = RabbitMQS(
         str(cfg.rabbitmq_url),
         str(cfg.rabbitmq_exchange),
         128,
     )
+
+    # gRPC servicer
+    health_servicer = gRPCHealthCheck()
+    basic_servicer = gRPCBasic()
+    history_servicer = gRPCHistory()
+    trade_servicer = gRPCTrade(rq=rq)
+    stream_servicer = gRPCStream(source=Yahoo())
 
     WORKERS.set_event_cb(rq.event_callback)
     WORKERS.set_stock_quote_cb(rq.stock_quote_callback_v1)

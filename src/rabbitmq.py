@@ -238,3 +238,23 @@ class RabbitMQS:
             ).SerializeToString(),
         )
         self.pika_queue.put(p)
+
+    def send_order(self, order: sj.order.Trade):
+        with self.order_cb_lock:
+            p = self.pika_queue.get(block=True)
+            p.ch.basic_publish(
+                exchange=self.exchange,
+                routing_key="order",
+                body=trade_pb2.StockOrderStatus(
+                    code=order.contract.code,
+                    action=order.order.action,
+                    price=order.order.price,
+                    quantity=order.order.quantity,
+                    order_id=order.status.id,
+                    status=order.status.status,
+                    order_time=datetime.strftime(
+                        order.status.order_datetime, "%Y-%m-%d %H:%M:%S"
+                    ),
+                ).SerializeToString(),
+            )
+            self.pika_queue.put(p)
