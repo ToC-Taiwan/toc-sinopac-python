@@ -223,6 +223,13 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             self.__api.update_status()
             self.order_status_list = self.__api.list_trades()
 
+    def clear_local_order_status(self):
+        """
+        clear_local_order_status _summary_
+        """
+        with self.__order_status_lock:
+            self.order_status_list = []
+
     def snapshots(self, contracts):
         """
         snapshots _summary_

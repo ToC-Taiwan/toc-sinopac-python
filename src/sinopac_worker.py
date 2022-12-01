@@ -388,7 +388,8 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
         return self.main_worker.cancel_future(order_id, sim)
 
     def clear_simulation_order(self):
-        return self.main_worker.clear_simulation_order()
+        self.main_worker.clear_local_order_status()
+        self.main_worker.clear_simulation_order()
 
     def get_future_position(self):
         return self.main_worker.list_positions()
