@@ -60,15 +60,6 @@ class RabbitMQS:
         threading.Thread(target=self.send_heartbeat).start()
 
     def event_callback(self, resp_code: int, event_code: int, info: str, event: str):
-        """
-        event_callback _summary_
-
-        Args:
-            resp_code (int): _description_
-            event_code (int): _description_
-            info (str): _description_
-            event (str): _description_
-        """
         p = self.pika_queue.get(block=True)
         p.ch.basic_publish(
             exchange=self.exchange,
@@ -84,12 +75,6 @@ class RabbitMQS:
         self.pika_queue.put(p)
 
     def order_status_callback(self, reply: list[sj.order.Trade]):
-        """
-        order_status_callback _summary_
-
-        Args:
-            reply (list[sj.order.Trade]): _description_
-        """
         with self.order_cb_lock:
             for order in reply:
                 if order.status.order_datetime is None:
@@ -122,12 +107,6 @@ class RabbitMQS:
                 self.pika_queue.put(p)
 
     def stock_quote_callback_v1(self, _, tick: sj.TickSTKv1):
-        """
-        quote_callback_v1 _summary_
-
-        Args:
-            tick (sj.TickSTKv1): _description_
-        """
         p = self.pika_queue.get(block=True)
         p.ch.basic_publish(
             exchange=self.exchange,
@@ -159,12 +138,6 @@ class RabbitMQS:
         self.pika_queue.put(p)
 
     def future_quote_callback_v1(self, _, tick: sj.TickFOPv1):
-        """
-        future_quote_callback_v1 _summary_
-
-        Args:
-            tick (sj.TickFOPv1): _description_
-        """
         p = self.pika_queue.get(block=True)
         p.ch.basic_publish(
             exchange=self.exchange,

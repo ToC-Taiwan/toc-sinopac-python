@@ -11,6 +11,20 @@ from constant import DayTrade, OrderState, SecurityType
 from logger import logger
 
 
+class OrderStatus:
+    def __init__(self, order_id: str, status: str, error: str):
+        self.order_id = order_id
+        self.status = status
+        self.error = error
+
+
+class SinopacUser:
+    def __init__(self, person_id: str, password: str, ca_password: str):
+        self.person_id = person_id
+        self.password = password
+        self.ca_password = ca_password
+
+
 class Sinopac:  # pylint: disable=too-many-public-methods
     def __init__(self):
         self.__api = sj.Shioaji()
@@ -23,31 +37,20 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         self.__login_lock = threading.Lock()
         self.__order_status_lock = threading.Lock()
         self.__simulation_lock = threading.Lock()
+
         # simulate trade
-        self.__current_simulation_count_map = {}  # key: stock_num or code, value: count
+        self.__simulation_count_map = {}  # key: stock_num or code, value: count
 
     def get_sj_version(self):
         return sj.__version__
 
-    def login(self, person_id: str, passwd: str, ca_passwd: str, is_main: bool):
-        """
-        login _summary_
-
-        Args:
-            person_id (str): _description_
-            passwd (str): _description_
-            ca_passwd (str): _description_
-            is_main (bool): _description_
-
-        Returns:
-            _type_: _description_
-        """
+    def login(self, user: SinopacUser, is_main: bool):
         # before gRPC set cb, using logger to save event
         self.set_event_callback(event_logger_cb)
         try:
             self.__api.login(
-                person_id=person_id,
-                passwd=passwd,
+                person_id=user.person_id,
+                passwd=user.password,
                 contracts_cb=self.login_cb,
                 subscribe_trade=is_main,
             )
@@ -78,24 +81,21 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 break
 
         self.__api.activate_ca(
-            ca_path=f"./data/{person_id}.pfx",
-            ca_passwd=ca_passwd,
-            person_id=person_id,
+            ca_path=f"./data/{user.person_id}.pfx",
+            ca_passwd=user.ca_password,
+            person_id=user.person_id,
         )
+
         self.fill_stock_num_list()
+        self.fill_future_code_list()
         if is_main is True:
             self.set_order_callback(self.place_order_callback)
             logger.info(self.__api.stock_account)
             logger.info(self.__api.futopt_account)
+
         return self
 
     def login_cb(self, security_type):
-        """
-        login_cb _summary_
-
-        Args:
-            security_type (_type_): _description_
-        """
         with self.__login_lock:
             if security_type.value in [item.value for item in SecurityType]:
                 self.__login_status += 1
@@ -104,86 +104,30 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 )
 
     def set_event_callback(self, func):
-        """
-        set_event_callback _summary_
-
-        Args:
-            func (_type_): _description_
-        """
         self.__api.quote.set_event_callback(func)
 
     def set_on_tick_stk_v1_callback(self, func):
-        """
-        set_on_tick_stk_v1_callback _summary_
-
-        Args:
-            func (_type_): _description_
-        """
         self.__api.quote.set_on_tick_stk_v1_callback(func)
 
     def set_on_tick_fop_v1_callback(self, func):
-        """
-        set_on_tick_fop_v1_callback _summary_
-
-        Args:
-            func (_type_): _description_
-        """
         self.__api.quote.set_on_tick_fop_v1_callback(func)
 
     def set_on_bidask_stk_v1_callback(self, func):
-        """
-        set_on_bidask_stk_v1_callback _summary_
-
-        Args:
-            func (_type_): _description_
-        """
         self.__api.quote.set_on_bidask_stk_v1_callback(func)
 
     def set_on_bidask_fop_v1_callback(self, func):
-        """
-        set_on_bidask_fop_v1_callback _summary_
-
-        Args:
-            func (_type_): _description_
-        """
         self.__api.quote.set_on_bidask_fop_v1_callback(func)
 
     def set_order_callback(self, func):
-        """
-        set_order_callback _summary_
-
-        Args:
-            func (_type_): _description_
-        """
         self.__api.set_order_callback(func)
 
     def set_order_status_callback(self, func):
-        """
-        set_order_status_callback _summary_
-
-        Args:
-            func (_type_): _description_
-        """
         self.order_status_callback = func
 
     def list_accounts(self):
-        """
-        list_accounts _summary_
-
-        Returns:
-            _type_: _description_
-        """
         return self.__api.list_accounts()
 
     def fill_stock_num_list(self):
-        """
-        fill_stock_num_list _summary_
-        """
-        for future_arr in self.__api.Contracts.Futures:
-            for future in future_arr:
-                self.future_code_list.append(future.code)
-                self.__current_simulation_count_map[future.code] = 0
-
         for contract_arr in self.__api.Contracts.Stocks:
             for contract in contract_arr:
                 if (
@@ -191,17 +135,25 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                     and contract.category != "00"
                 ):
                     self.stock_num_list.append(contract.code)
-                    self.__current_simulation_count_map[contract.code] = 0
-        while True:
-            if len(self.stock_num_list) != 0 and len(self.future_code_list) != 0:
-                break
-        logger.info("filling stock_num_list, total: %d", len(self.stock_num_list))
-        logger.info("filling future_code_list, total: %d", len(self.future_code_list))
+                    self.__simulation_count_map[contract.code] = 0
+        if len(self.stock_num_list) != 0:
+            logger.info("filling stock_num_list, total: %d", len(self.stock_num_list))
+        else:
+            raise Exception("stock_num_list is empty")
+
+    def fill_future_code_list(self):
+        for future_arr in self.__api.Contracts.Futures:
+            for future in future_arr:
+                self.future_code_list.append(future.code)
+                self.__simulation_count_map[future.code] = 0
+        if len(self.future_code_list) != 0:
+            logger.info(
+                "filling future_code_list, total: %d", len(self.future_code_list)
+            )
+        else:
+            raise Exception("future_code_list is empty")
 
     def update_order_status_instant(self):
-        """
-        update_order_status_instant _summary_
-        """
         if self.order_status_callback is None:
             return "order_status_callback is None"
 
@@ -216,30 +168,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return None
 
     def update_local_order_status(self):
-        """
-        update_local_order_status _summary_
-        """
         with self.__order_status_lock:
             self.__api.update_status()
             self.order_status_list = self.__api.list_trades()
 
     def clear_local_order_status(self):
-        """
-        clear_local_order_status _summary_
-        """
         with self.__order_status_lock:
             self.order_status_list = []
 
     def snapshots(self, contracts):
-        """
-        snapshots _summary_
-
-        Args:
-            contracts (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         try:
             return self.__api.snapshots(contracts)
         except TimeoutError:
@@ -247,58 +184,24 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return None
 
     def get_contract_tse_001(self):
-        """
-        get_contract_tse_001 _summary_
-
-        Returns:
-            _type_: _description_
-        """
         return self.__api.Contracts.Indexs.TSE.TSE001
 
     def get_contract_otc_101(self):
-        """
-        get_contract_otc_101 _summary_
-
-        Returns:
-            _type_: _description_
-        """
         return self.__api.Contracts.Indexs.OTC.OTC101
 
     def get_contract_by_stock_num(self, num):
-        """
-        get_contract_by_stock_num _summary_
-
-        Args:
-            num (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         return self.__api.Contracts.Stocks[num]
 
-    def get_contract_by_future_code(self, num):
-        """
-        get_contract_by_future_code _summary_
+    def get_contract_by_future_code(self, code):
+        return self.__api.Contracts.Futures[code]
 
-        Args:
-            num (_type_): _description_
+    def get_contract_name_by_stock_num(self, num) -> str:
+        return str(self.__api.Contracts.Stocks[num].name)
 
-        Returns:
-            _type_: _description_
-        """
-        return self.__api.Contracts.Futures[num]
+    def get_contract_name_by_future_code(self, code) -> str:
+        return str(self.__api.Contracts.Futures[code].name)
 
     def stock_ticks(self, num, date):
-        """
-        ticks _summary_
-
-        Args:
-            num (_type_): _description_
-            date (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         contract = self.get_contract_by_stock_num(num)
         if num == "tse_001":
             contract = self.get_contract_tse_001()
@@ -309,33 +212,12 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return self.stock_ticks(num, date)
 
     def future_ticks(self, code, date):
-        """
-        future_ticks _summary_
-
-        Args:
-            code (_type_): _description_
-            date (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        contract = self.get_contract_by_future_code(code)
         try:
-            return self.__api.ticks(contract, date)
+            return self.__api.ticks(self.get_contract_by_future_code(code), date)
         except TimeoutError:
             return self.future_ticks(code, date)
 
     def stock_kbars(self, num, date):
-        """
-        kbars _summary_
-
-        Args:
-            num (_type_): _description_
-            date (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         contract = self.get_contract_by_stock_num(num)
         if num == "tse_001":
             contract = self.get_contract_tse_001()
@@ -350,20 +232,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return self.stock_kbars(num, date)
 
     def future_kbars(self, code, date):
-        """
-        future_kbars _summary_
-
-        Args:
-            code (_type_): _description_
-            date (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        contract = self.get_contract_by_future_code(code)
         try:
             return self.__api.kbars(
-                contract=contract,
+                contract=self.get_contract_by_future_code(code),
                 start=date,
                 end=date,
             )
@@ -371,16 +242,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return self.future_kbars(code, date)
 
     def get_stock_last_close_by_date(self, num, date):
-        """
-        get_stock_last_close_by_date _summary_
-
-        Args:
-            num (_type_): _description_
-            date (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         contract = self.get_contract_by_stock_num(num)
         if num == "tse_001":
             contract = self.get_contract_tse_001()
@@ -399,16 +260,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return self.get_stock_last_close_by_date(num, date)
 
     def get_future_last_close_by_date(self, code, date):
-        """
-        get_future_last_close_by_date _summary_
-
-        Args:
-            code (_type_): _description_
-            date (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         contract = self.get_contract_by_future_code(code)
         try:
             ticks = self.__api.quote.ticks(
@@ -424,16 +275,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return self.get_future_last_close_by_date(code, date)
 
     def get_stock_volume_rank_by_date(self, count, date):
-        """
-        get_stock_volume_rank_by_date _summary_
-
-        Args:
-            count (_type_): _description_
-            date (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         return self.__api.scanners(
             scanner_type=sj.constant.ScannerType.VolumeRank,
             count=count,
@@ -441,15 +282,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         )
 
     def subscribe_stock_tick(self, stock_num):
-        """
-        subscribe_stock_tick _summary_
-
-        Args:
-            stock_num (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         try:
             self.__api.quote.subscribe(
                 self.__api.Contracts.Stocks[stock_num],
@@ -461,12 +293,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return stock_num
 
     def unsubscribe_stock_tick(self, stock_num):
-        """
-        unsubscribe_stock_tick _summary_
-
-        Args:
-            stock_num (_type_): _description_
-        """
         try:
             self.__api.quote.unsubscribe(
                 self.__api.Contracts.Stocks[stock_num],
@@ -478,15 +304,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return stock_num
 
     def subscribe_future_tick(self, code):
-        """
-        subscribe_future_tick _summary_
-
-        Args:
-            code (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         try:
             self.__api.quote.subscribe(
                 self.get_contract_by_future_code(code),
@@ -498,15 +315,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return code
 
     def unsubscribe_future_tick(self, code):
-        """
-        unsubscribe_future_tick _summary_
-
-        Args:
-            code (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         try:
             self.__api.quote.unsubscribe(
                 self.get_contract_by_future_code(code),
@@ -518,12 +326,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return code
 
     def subscribe_stock_bidask(self, stock_num):
-        """
-        subscribe_stock_bidask _summary_
-
-        Args:
-            stock_num (_type_): _description_
-        """
         try:
             self.__api.quote.subscribe(
                 self.__api.Contracts.Stocks[stock_num],
@@ -535,12 +337,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return stock_num
 
     def unsubscribe_stock_bidask(self, stock_num):
-        """
-        unsubscribe_stock_bidask _summary_
-
-        Args:
-            stock_num (_type_): _description_
-        """
         try:
             self.__api.quote.unsubscribe(
                 self.__api.Contracts.Stocks[stock_num],
@@ -574,29 +370,17 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return code
 
     def finish_simulation_order(self, order: sj.order.Trade, wait: int):
-        """
-        finish_simulation_order: buy stock will be sell after wait seconds,
-        sell stock will be buy after wait seconds
-
-        Args:
-            order (sj.order.Trade): sinopac original order
-            wait (int): unit is second
-        """
         self.order_status_list.append(order)
         with self.__simulation_lock:
             buy_later = False
             if (
                 order.order.action == sj.constant.Action.Buy
-                and self.__current_simulation_count_map[order.contract.code] < 0
+                and self.__simulation_count_map[order.contract.code] < 0
             ):
                 buy_later = True
-                self.__current_simulation_count_map[
-                    order.contract.code
-                ] += order.order.quantity
+                self.__simulation_count_map[order.contract.code] += order.order.quantity
             if order.order.action == sj.constant.Action.Sell:
-                self.__current_simulation_count_map[
-                    order.contract.code
-                ] -= order.order.quantity
+                self.__simulation_count_map[order.contract.code] -= order.order.quantity
 
         time.sleep(wait)
         with self.__simulation_lock:
@@ -607,23 +391,11 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                         sim.order.action == sj.constant.Action.Buy
                         and buy_later is False
                     ):
-                        self.__current_simulation_count_map[
+                        self.__simulation_count_map[
                             sim.contract.code
                         ] += sim.order.quantity
 
     def buy_stock(self, stock_num: str, price: float, quantity: int, sim: bool):
-        """
-        buy_stock _summary_
-
-        Args:
-            stock_num (str): _description_
-            price (float): _description_
-            quantity (int): _description_
-            sim (bool): _description_
-
-        Returns:
-            _type_: _description_
-        """
         order = self.__api.Order(
             price=price,
             quantity=quantity,
@@ -641,8 +413,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if self.__current_simulation_count_map[stock_num] < 0:
-                    if quantity + self.__current_simulation_count_map[stock_num] > 0:
+                if self.__simulation_count_map[stock_num] < 0:
+                    if quantity + self.__simulation_count_map[stock_num] > 0:
                         return OrderStatus("", "", "buy later quantity is too big")
             sim_order = sj.order.Trade(
                 contract=contract,
@@ -667,18 +439,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "unknown error")
 
     def sell_stock(self, stock_num: str, price: float, quantity: int, sim: bool):
-        """
-        sell_stock _summary_
-
-        Args:
-            stock_num (_type_): _description_
-            price (_type_): _description_
-            quantity (_type_): _description_
-            sim (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         order = self.__api.Order(
             price=price,
             quantity=quantity,
@@ -696,7 +456,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if quantity > self.__current_simulation_count_map[stock_num]:
+                if quantity > self.__simulation_count_map[stock_num]:
                     return OrderStatus("", "", "quantity is too big")
                 sim_order = sj.order.Trade(
                     contract=contract,
@@ -721,18 +481,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "unknown error")
 
     def sell_first_stock(self, stock_num: str, price: float, quantity: int, sim: bool):
-        """
-        sell_first_stock _summary_
-
-        Args:
-            stock_num (_type_): _description_
-            price (_type_): _description_
-            quantity (_type_): _description_
-            sim (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         order = self.__api.Order(
             price=price,
             quantity=quantity,
@@ -751,7 +499,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if self.__current_simulation_count_map[stock_num] > 0:
+                if self.__simulation_count_map[stock_num] > 0:
                     return OrderStatus("", "", "can not sell first")
                 sim_order = sj.order.Trade(
                     contract=contract,
@@ -776,16 +524,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "unknown error")
 
     def cancel_stock(self, order_id: str, sim: bool):
-        """
-        cancel_stock _summary_
-
-        Args:
-            order_id (_type_): _description_
-            sim (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         if sim is False:
             cancel_order = None
             times = int()
@@ -829,16 +567,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "cancel order fail, unknown error")
 
     def get_order_status_from_local_by_order_id(self, order_id: str, sim: bool):
-        """
-        get_order_status_from_local_by_order_id _summary_
-
-        Args:
-            order_id (_type_): _description_
-            sim (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         if sim is False:
             self.update_local_order_status()
 
@@ -852,32 +580,19 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "unknown error")
 
     def get_order_status(self):
-        """
-        get_order_status _summary_
-
-        Returns:
-            _type_: _description_
-        """
         return self.order_status_list
 
     def place_order_callback(self, order_state: OrderState, order: dict):
-        """
-        place_order_callback _summary_
-
-        Args:
-            order_state (_type_): _description_
-            order (dict): _description_
-        """
         if order_state == OrderState.TFTOrder:
             if order["contract"]["code"] is None:
                 logger.error("place stock contract code is None")
                 return
 
-            contract = self.get_contract_by_stock_num(order["contract"]["code"])
             logger.info(
-                "Place stock order: %s %s %s %.2f %d %s",
+                "%s stock order: %s %s %s %.2f %d %s",
+                order["operation"]["op_type"],
                 order["contract"]["code"],
-                contract.name,
+                self.get_contract_name_by_stock_num(order["contract"]["code"]),
                 order["order"]["action"],
                 order["order"]["price"],
                 order["order"]["quantity"],
@@ -889,11 +604,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 logger.error("deal contract code is None")
                 return
 
-            contract = self.get_contract_by_stock_num(order["code"])
             logger.info(
                 "Deal stock order: %s %s %s %.2f %d %s",
                 order["code"],
-                contract.name,
+                self.get_contract_name_by_stock_num(order["contract"]["code"]),
                 order["action"],
                 order["price"],
                 order["quantity"],
@@ -906,8 +620,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return
 
             logger.info(
-                "Place future order: %s %s %.2f %d %s",
+                "%s future order: %s %s %s %.2f %d %s",
+                order["operation"]["op_type"],
                 order["contract"]["code"],
+                self.get_contract_name_by_future_code(order["contract"]["code"]),
                 order["order"]["action"],
                 order["order"]["price"],
                 order["order"]["quantity"],
@@ -920,8 +636,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return
 
             logger.info(
-                "Deal future order: %s %s %.2f %d %s",
+                "Deal future order: %s %s %s %.2f %d %s",
                 order["code"],
+                self.get_contract_name_by_future_code(order["code"]),
                 order["action"],
                 order["price"],
                 order["quantity"],
@@ -929,18 +646,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             )
 
     def buy_future(self, code: str, price: float, quantity: int, sim: bool):
-        """
-        buy_future _summary_
-
-        Args:
-            code (str): _description_
-            price (float): _description_
-            quantity (int): _description_
-            sim (bool): _description_
-
-        Returns:
-            _type_: _description_
-        """
         order = self.__api.Order(
             price=price,
             quantity=quantity,
@@ -957,8 +662,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if self.__current_simulation_count_map[code] < 0:
-                    if quantity + self.__current_simulation_count_map[code] > 0:
+                if self.__simulation_count_map[code] < 0:
+                    if quantity + self.__simulation_count_map[code] > 0:
                         return OrderStatus("", "", "buy later quantity is too big")
             sim_order = sj.order.Trade(
                 contract=contract,
@@ -982,18 +687,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "unknown error")
 
     def sell_future(self, code: str, price: float, quantity: int, sim: bool):
-        """
-        sell_future _summary_
-
-        Args:
-            code (str): _description_
-            price (float): _description_
-            quantity (int): _description_
-            sim (bool): _description_
-
-        Returns:
-            _type_: _description_
-        """
         order = self.__api.Order(
             price=price,
             quantity=quantity,
@@ -1010,7 +703,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if quantity > self.__current_simulation_count_map[code]:
+                if quantity > self.__simulation_count_map[code]:
                     return OrderStatus("", "", "quantity is too big")
                 sim_order = sj.order.Trade(
                     contract=contract,
@@ -1034,18 +727,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "unknown error")
 
     def sell_first_future(self, code: str, price: float, quantity: int, sim: bool):
-        """
-        sell_first_future _summary_
-
-        Args:
-            code (str): _description_
-            price (float): _description_
-            quantity (int): _description_
-            sim (bool): _description_
-
-        Returns:
-            _type_: _description_
-        """
         order = self.__api.Order(
             price=price,
             quantity=quantity,
@@ -1062,7 +743,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return OrderStatus(trade.order.id, trade.status.status, "")
         else:
             with self.__simulation_lock:
-                if self.__current_simulation_count_map[code] > 0:
+                if self.__simulation_count_map[code] > 0:
                     return OrderStatus("", "", "can not sell first")
                 sim_order = sj.order.Trade(
                     contract=contract,
@@ -1086,16 +767,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "unknown error")
 
     def cancel_future(self, order_id: str, sim: bool):
-        """
-        cancel_future _summary_
-
-        Args:
-            order_id (str): _description_
-            sim (bool): _description_
-
-        Returns:
-            _type_: _description_
-        """
         if sim is False:
             cancel_order = None
             times = int()
@@ -1139,24 +810,17 @@ class Sinopac:  # pylint: disable=too-many-public-methods
     def clear_simulation_order(self):
         clear_count = int()
         for stock in self.stock_num_list:
-            s = self.__current_simulation_count_map[stock]
+            s = self.__simulation_count_map[stock]
             if s != 0:
-                self.__current_simulation_count_map[stock] = 0
+                self.__simulation_count_map[stock] = 0
                 clear_count += 1
         for future in self.future_code_list:
-            f = self.__current_simulation_count_map[future]
+            f = self.__simulation_count_map[future]
             if f != 0:
-                self.__current_simulation_count_map[future] = 0
+                self.__simulation_count_map[future] = 0
                 clear_count += 1
         if clear_count > 0:
             logger.info("clear %d simulation order", clear_count)
-
-
-class OrderStatus:
-    def __init__(self, order_id: str, status: str, error: str):
-        self.order_id = order_id
-        self.status = status
-        self.error = error
 
 
 def event_logger_cb(resp_code: int, event_code: int, info: str, event: str):

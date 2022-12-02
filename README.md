@@ -16,34 +16,6 @@
 pip install --no-warn-script-location --no-cache-dir -U -r requirements.txt
 ```
 
-## RabbitMQ for development
-
-- For macOS
-
-```sh
-docker stop toc-rabbitmq
-docker system prune --volumes -f
-
-docker run -d \
-  --restart always \
-  --name toc-rabbitmq \
-  -e RABBITMQ_DEFAULT_USER=admin \
-  -e RABBITMQ_DEFAULT_PASS=password \
-  -p 5672:5672 \
-  -p 15672:15672 \
-  rabbitmq:3.10.5-management
-
-while ! nc -z 127.0.0.1 15672; do
-  sleep 0.1 # wait for 1/10 of the second before check again
-done
-
-curl -i -u admin:password -H "content-type:application/json" \
-  -XPUT -d'{"type":"direct","durable":true}' \
-  http://127.0.0.1:15672/api/exchanges/%2F/toc
-
-docker inspect bridge
-```
-
 ## .env example
 
 ```sh

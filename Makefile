@@ -1,6 +1,3 @@
-include .env
-export
-
 run: ### run
 	@python -BOO ./src/main.py
 .PHONY: run

@@ -76,15 +76,6 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
 
 class gRPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
     def GetAllStockDetail(self, request, _):
-        """
-        GetAllStockDetail _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = basic_pb2.StockDetailResponse()
         worker = WORKERS.get(False)
 
@@ -119,15 +110,6 @@ class gRPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
         return response
 
     def GetAllFutureDetail(self, request, _):
-        """
-        GetAllFutureDetail _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = basic_pb2.FutureDetailResponse()
         worker = WORKERS.get(False)
 
@@ -156,23 +138,7 @@ class gRPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
 
 class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
-    """
-    gRPCFuturesForwarder _summary_
-
-    Args:
-        sinopac_forwarder_pb2_grpc (_type_): _description_
-    """
-
     def GetStockHistoryTick(self, request, _):
-        """
-        GetStockHistoryTick _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = history_pb2.HistoryTickResponse()
         threads = []
         for num in request.stock_num_arr:
@@ -192,15 +158,6 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         return response
 
     def GetStockHistoryKbar(self, request, _):
-        """
-        GetStockHistoryKbar _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = history_pb2.HistoryKbarResponse()
         threads = []
 
@@ -221,15 +178,6 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         return response
 
     def GetStockHistoryClose(self, request, _):
-        """
-        GetStockHistoryClose _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = history_pb2.HistoryCloseResponse()
         threads = []
 
@@ -250,15 +198,6 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         return response
 
     def GetStockHistoryCloseByDateArr(self, request, _):
-        """
-        GetStockHistoryCloseByDateArr _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = history_pb2.HistoryCloseResponse()
         threads = []
 
@@ -280,15 +219,6 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         return response
 
     def GetStockTSEHistoryTick(self, request, _):
-        """
-        GetStockTSEHistoryTick _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = history_pb2.HistoryTickResponse()
 
         t = threading.Thread(
@@ -305,15 +235,6 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         return response
 
     def GetStockTSEHistoryKbar(self, request, _):
-        """
-        GetStockHistoryKbar _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = history_pb2.HistoryKbarResponse()
 
         t = threading.Thread(
@@ -330,15 +251,6 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         return response
 
     def GetStockTSEHistoryClose(self, request, _):
-        """
-        GetStockTSEHistoryClose _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = history_pb2.HistoryCloseResponse()
 
         t = threading.Thread(
@@ -374,15 +286,6 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         return response
 
     def GetFutureHistoryKbar(self, request, _):
-        """
-        GetFutureHistoryKbar _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = history_pb2.HistoryKbarResponse()
         threads = []
 
@@ -403,15 +306,6 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         return response
 
     def GetFutureHistoryClose(self, request, _):
-        """
-        GetFutureHistoryClose _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         response = history_pb2.HistoryCloseResponse()
         threads = []
 
@@ -454,15 +348,6 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         return response
 
     def BuyStock(self, request, _):
-        """
-        BuyStock _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         result = WORKERS.buy_stock(
             request.stock_num, request.price, request.quantity, request.simulate
         )
@@ -473,15 +358,6 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def SellStock(self, request, _):
-        """
-        SellStock _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         result = WORKERS.sell_stock(
             request.stock_num, request.price, request.quantity, request.simulate
         )
@@ -492,15 +368,6 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def SellFirstStock(self, request, _):
-        """
-        SellFirstStock _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         result = WORKERS.sell_first_stock(
             request.stock_num, request.price, request.quantity, request.simulate
         )
@@ -511,15 +378,6 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def CancelStock(self, request, _):
-        """
-        CancelStock _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         result = WORKERS.cancel_stock(request.order_id, request.simulate)
         return trade_pb2.TradeResult(
             order_id=result.order_id,
@@ -528,15 +386,6 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def GetOrderStatusByID(self, request, _):
-        """
-        GetOrderStatusByID _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         result = WORKERS.get_order_status_by_id(request.order_id, request.simulate)
         return trade_pb2.TradeResult(
             order_id=result.order_id,
@@ -545,15 +394,6 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def GetOrderStatusArrFromMQ(self, request, _):
-        """
-        GetOrderStatusArrFromMQ _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         arr = WORKERS.get_order_status_arr()
         for order in arr:
             if order.status.order_datetime is None:
@@ -564,15 +404,6 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         return common_pb2.ErrorMessage(err="")
 
     def GetNonBlockOrderStatusArr(self, request, _):
-        """
-        GetNonBlockOrderStatusArr _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         return common_pb2.ErrorMessage(err=WORKERS.get_non_block_order_status_arr())
 
     def BuyFuture(self, request, _):
@@ -645,15 +476,6 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         )
 
     def GetStockSnapshotByNumArr(self, request, _):
-        """
-        GetStockSnapshotByNumArr _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         contracts = []
         worker = WORKERS.get(False)
 
@@ -678,15 +500,6 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         return response
 
     def GetAllStockSnapshot(self, request, _):
-        """
-        GetAllStockSnapshot _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         contracts = []
         worker = WORKERS.get(False)
 
@@ -711,29 +524,11 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         return response
 
     def GetStockSnapshotTSE(self, request, _):
-        """
-        GetStockSnapshotTSE _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         worker = WORKERS.get(True)
         snapshots = worker.snapshots([worker.get_contract_tse_001()])
         return sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockSnapshotOTC(self, request, _):
-        """
-        GetStockSnapshotOTC _summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
         worker = WORKERS.get(True)
         snapshots = worker.snapshots([worker.get_contract_otc_101()])
         return sinopac_snapshot_to_pb(snapshots[0])
@@ -873,15 +668,6 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
 
 
 def sinopac_snapshot_to_pb(result) -> stream_pb2.SnapshotMessage:
-    """
-    sinopac_snapshot_to_pb _summary_
-
-    Args:
-        result (_type_): _description_
-
-    Returns:
-        sinopac_forwarder_pb2.StockSnapshotMessage: _description_
-    """
     return stream_pb2.SnapshotMessage(
         ts=result.ts,
         code=result.code,
@@ -909,29 +695,12 @@ def sinopac_snapshot_to_pb(result) -> stream_pb2.SnapshotMessage:
 
 
 def fill_snapshot_arr(contracts, snapshots, worker: Sinopac):
-    """
-    fill_snapshot_arr _summary_
-
-    Args:
-        contracts (_type_): _description_
-        snapshots (_type_): _description_
-        worker (Sinopac): _description_
-    """
     data = worker.snapshots(contracts)
     if data is not None:
         snapshots.extend(data)
 
 
 def fill_stock_history_tick_response(num, date, response, worker: Sinopac):
-    """
-    fill_stock_history_tick_response _summary_
-
-    Args:
-        num (_type_): _description_
-        date (_type_): _description_
-        response (_type_): _description_
-        worker (Sinopac): _description_
-    """
     ticks = worker.stock_ticks(num, date)
     total_count = len(ticks.ts)
     tmp_length = [
@@ -965,15 +734,6 @@ def fill_stock_history_tick_response(num, date, response, worker: Sinopac):
 
 
 def fill_future_history_tick_response(code, date, response, worker: Sinopac):
-    """
-    fill_future_history_tick_response _summary_
-
-    Args:
-        code (_type_): _description_
-        date (_type_): _description_
-        response (_type_): _description_
-        worker (Sinopac): _description_
-    """
     ticks = worker.future_ticks(code, date)
     total_count = len(ticks.ts)
     tmp_length = [
@@ -1007,15 +767,6 @@ def fill_future_history_tick_response(code, date, response, worker: Sinopac):
 
 
 def fill_stock_history_kbar_response(num, date, response, worker: Sinopac):
-    """
-    fill_stock_history_kbar_response _summary_
-
-    Args:
-        num (_type_): _description_
-        date (_type_): _description_
-        response (_type_): _description_
-        worker (Sinopac): _description_
-    """
     kbar = worker.stock_kbars(num, date)
     total_count = len(kbar.ts)
     tmp_length = [
@@ -1045,15 +796,6 @@ def fill_stock_history_kbar_response(num, date, response, worker: Sinopac):
 
 
 def fill_future_history_kbar_response(code, date, response, sinopac: Sinopac):
-    """
-    fill_future_history_kbar_response _summary_
-
-    Args:
-        code (_type_): _description_
-        date (_type_): _description_
-        response (_type_): _description_
-        sinopac (Sinopac): _description_
-    """
     kbar = sinopac.future_kbars(code, date)
     total_count = len(kbar.ts)
     tmp_length = [
@@ -1083,15 +825,6 @@ def fill_future_history_kbar_response(code, date, response, sinopac: Sinopac):
 
 
 def fill_stock_history_close_response(num, date, response, sinopac: Sinopac):
-    """
-    fill_stock_history_close_response _summary_
-
-    Args:
-        num (_type_): _description_
-        date (_type_): _description_
-        response (_type_): _description_
-        sinopac (Sinopac): _description_
-    """
     response.data.append(
         history_pb2.HistoryCloseMessage(
             code=num,
@@ -1102,15 +835,6 @@ def fill_stock_history_close_response(num, date, response, sinopac: Sinopac):
 
 
 def fill_future_history_close_response(code, date, response, sinopac: Sinopac):
-    """
-    fill_future_history_close_response _summary_
-
-    Args:
-        code (_type_): _description_
-        date (_type_): _description_
-        response (_type_): _description_
-        sinopac (Sinopac): _description_
-    """
     response.data.append(
         history_pb2.HistoryCloseMessage(
             code=code,
@@ -1121,15 +845,6 @@ def fill_future_history_close_response(code, date, response, sinopac: Sinopac):
 
 
 def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: RequiredEnv):
-    """
-    serve _summary_
-
-    Args:
-        port (str): _description_
-        main_worker (Sinopac): _description_
-        workers (list[Sinopac]): _description_
-        cfg (RequiredEnv): _description_
-    """
     global WORKERS  # pylint: disable=global-statement
     WORKERS = SinopacWorkerPool(main_worker, workers, cfg.request_limit_per_second)
 

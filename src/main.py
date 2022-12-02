@@ -7,7 +7,7 @@ from env import RequiredEnv
 from grpcsrv import serve
 from logger import logger
 from rabbitmq_setting import RabbitMQSetting
-from sinopac import Sinopac
+from sinopac import Sinopac, SinopacUser
 
 env = RequiredEnv()
 person_id = env.person_id
@@ -30,7 +30,7 @@ for i in range(connection_count):
     logger.info("establish connection %d", i + 1)
     is_main = bool(i == 0)
     new_connection = Sinopac().login(
-        str(person_id), str(password), str(ca_password), is_main
+        SinopacUser(person_id, password, ca_password), is_main
     )
     if is_main is True:
         MAIN_WORKER = new_connection

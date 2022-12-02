@@ -5,49 +5,17 @@ import yfinance as yf
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from urllib3.exceptions import ProtocolError
 
-from logger import logger
-
 
 class Yahoo:
     def get_nasdaq(self):
-        try:
-            t = yf.Ticker("^IXIC")
-            if (
-                t is not None
-                and "regularMarketPrice" in t.info
-                and "previousClose" in t.info
-            ):
-                return [
-                    float(t.info["regularMarketPrice"]),
-                    float(t.info["previousClose"]),
-                ]
-            return self.get_nasdaq()
-
-        except JSONDecodeError:
-            logger.warning("JSONDecodeError from get_nasdaq")
-            return self.get_nasdaq()
-        except TypeError:
-            logger.warning("TypeError from get_nasdaq")
-            return self.get_nasdaq()
-        except RemoteDisconnected:
-            logger.warning("RemoteDisconnected from get_nasdaq")
-            return self.get_nasdaq()
-        except ConnectionResetError:
-            logger.warning("ConnectionResetError from get_nasdaq")
-            return self.get_nasdaq()
-        except ProtocolError:
-            logger.warning("ProtocolError from get_nasdaq")
-            return self.get_nasdaq()
-        except RequestsConnectionError:
-            logger.warning("RequestsConnectionError from get_nasdaq")
-            return self.get_nasdaq()
-        except KeyError:
-            logger.warning("KeyError from get_nasdaq")
-            return self.get_nasdaq()
+        return self.get_price("^IXIC")
 
     def get_nasdaq_future(self):
+        return self.get_price("NQ=F")
+
+    def get_price(self, code: str):
         try:
-            t = yf.Ticker("NQ=F")
+            t = yf.Ticker(code)
             if (
                 t is not None
                 and "regularMarketPrice" in t.info
@@ -57,26 +25,19 @@ class Yahoo:
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
-            return self.get_nasdaq_future()
+            return self.get_price(code)
 
         except JSONDecodeError:
-            logger.warning("JSONDecodeError from get_nasdaq_future")
-            return self.get_nasdaq_future()
+            return self.get_price(code)
         except TypeError:
-            logger.warning("TypeError from get_nasdaq_future")
-            return self.get_nasdaq_future()
+            return self.get_price(code)
         except RemoteDisconnected:
-            logger.warning("RemoteDisconnected from get_nasdaq_future")
-            return self.get_nasdaq_future()
+            return self.get_price(code)
         except ConnectionResetError:
-            logger.warning("ConnectionResetError from get_nasdaq_future")
-            return self.get_nasdaq_future()
+            return self.get_price(code)
         except ProtocolError:
-            logger.warning("ProtocolError from get_nasdaq_future")
-            return self.get_nasdaq_future()
+            return self.get_price(code)
         except RequestsConnectionError:
-            logger.warning("RequestsConnectionError from get_nasdaq_future")
-            return self.get_nasdaq_future()
+            return self.get_price(code)
         except KeyError:
-            logger.warning("KeyError from get_nasdaq_future")
-            return self.get_nasdaq_future()
+            return self.get_price(code)
