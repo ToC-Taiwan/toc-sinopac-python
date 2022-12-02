@@ -33,7 +33,7 @@ jobs:
                   echo $PYTHONPATH
                   export PYLINTHOME=$(pwd)
                   echo $PYLINTHOME
-                  ./scripts/lint-code.sh
+                  mypy --check-untyped-defs --config-file=./mypy.ini ./src && pylint ./src
 
     Build:
         needs: Lint
