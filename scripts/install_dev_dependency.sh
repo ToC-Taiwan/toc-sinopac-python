@@ -9,5 +9,6 @@ pip install -U \
   black \
   mypy \
   pylint
+
 mypy --install-types --non-interactive ./src
 pre-commit install

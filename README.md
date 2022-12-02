@@ -47,26 +47,29 @@ docker inspect bridge
 ## .env example
 
 ```sh
-echo 'LOG_FORMAT=console
-GRPC_PORT=56666
-PERSON_ID=F127522501
-PASSWORD=EEE2rgilaal
-CA_PASSWORD=EEE2iairlol
-REQUEST_LIMIT_PER_SECOND=50
-RABBITMQ_HOST=172.17.0.3
-RABBITMQ_USER=admin
-RABBITMQ_PASSWORD=password
-RABBITMQ_EXCHANGE=toc
-RABBITMQ_URL=amqp://admin:password@172.17.0.3:5672/%2f
-CONNECTION_COUNT=2'> ./.env
+cp .env.template .env
 ```
 
-### RUN
+### Make
+
+- show help
 
 ```sh
-python -BOO ./src/main.py
+make help
+```
+
+- run
+
+```sh
+make
+```
+
+- update dependencies
+
+```sh
+make update
 ```
 
 ## Authors
 
-- [__Tim Hsu__](https://github.com/Chindada)
+- [**Tim Hsu**](https://github.com/Chindada)

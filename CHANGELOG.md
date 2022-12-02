@@ -1,8 +1,53 @@
-# [](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.0.0...v) (2022-10-18)
+# [](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.1.0...v) (2022-12-02)
 
 ## CHANGELOG
 
-## [1.0.0](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v0.0.3...v1.0.0) (2022-10-18)
+# [1.1.0](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.0.0...v1.1.0) (2022-12-01)
+
+### Bug Fixes
+
+* **grpc:** catch runtime error when serve grpc ([29e53c9](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/29e53c92b8390d4628bc73b841e540edcb09408d))
+* **grpc:** fix wrong return of rpc method ([e1cef8f](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/e1cef8f2c09cfd725318237ba0f14810207249c9))
+* **heartbeat:** fix debug prod mode in the same time does not terminate, add clear simulation order ([0222c0d](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/0222c0d16acc2b5fa29853612f174dea4140c853))
+* **heartbeat:** fix unsubscribe at wrong time ([22ff825](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/22ff825b9b615c7579d2429001ad3b2d6627dc8d))
+* **lint:** fix lint error ([59713ae](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/59713ae13a63441b706ee22ede178155b862d627))
+* **lint:** fix lint error ([52e795d](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/52e795d91eb79254f654389743ed8a407722198a))
+* **lint:** fix lint Unnecessary "else" after "return" ([9717265](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/97172654d3100a947f910d555239587ce57e7c77))
+* **lint:** fix missing return of list position ([ef543fa](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/ef543faeed6625419ebdb7522cd8fe02e381a375))
+* **lint:** fix Redefining built-in request connection error ([83cbfc2](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/83cbfc23261fb77d84c37e5b6f066990cfe77251))
+* **login:** catch sinopac login timeout error ([e925848](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/e925848379df2095759c652de007fc35cbbb6b98))
+* **login:** fix value error in sinopac login ([3d024d4](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/3d024d42c8aa7f79e2fcac7a90e56a8590dd9d0e))
+* **login:** fix wrong loging status in sinopac login callback ([8648b66](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/8648b66e7504f2c69e546a8cf1b07b33a8af71c5))
+* **order:** fix filled order quntity to deal quntity ([d538d4e](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/d538d4e949bc62cc44608118b48b62a94da978ff))
+* **position:** catch list position error ([693ea9c](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/693ea9cf28235aaae7d9bbfdad79530c545a4c8a))
+* **quantity:** deal quantity should compare to order qty not status qty ([e144bbe](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/e144bbe5b4e17d969d8a7406cfe7b31e7274d0e1))
+* **type:** fix wrong yahoo finace catch error return type ([bb869a4](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/bb869a4e64da7448321162a9199dd93760fea8a1))
+* **yahoo:** add catch ConnectionResetError error ([c5c8024](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/c5c8024f2ddac2267e1f773e4cc47d7c7dc1cdef))
+* **yahoo:** add catch KeyError in yahoo finance ([46554f0](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/46554f0bf185cbb1df67d575730670e812d2b37c))
+* **yahoo:** add catch RemoteDisconnected and ConnectionError in yahoo finance ([ce7eb30](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/ce7eb30640dfdd562471f8c7601eac72f2cc902a))
+* **yahoo:** add check key exist ([2a3953d](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/2a3953db59c5f31728ea371d2096e396a513ae56))
+* **yahoo:** add missing catch urllib3 Protocol error ([85a8907](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/85a890717d1673f602d52fe69ef16eb25326a0f0))
+* **yahoo:** check regularMarketPrice and previousClose is None or not ([5aa87f9](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/5aa87f9f653854516db1a950847424d711486d17))
+* **yahoo:** fix yf.Ticker raise JsonDecode error ([e4240bf](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/e4240bfd6604fd7aaff92e8328371d881ba43149))
+
+### Features
+
+* **debug:** add unsubscribe all tick and bidask when machine trading miss heartbeat in debug mode ([34404dc](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/34404dc6afccf4b20329eb008de2d68a38bb40a3))
+* **dependency:** update shioaji to 0.3.6.dev7 ([b5a798d](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/b5a798d2876efa730ab66035100f43b52c73b946))
+* **log:** change all log extention to .log and modify reademe ([9f6c214](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/9f6c214047724d31e57e207f287863d59c9dcbab))
+* **mypy:** add check-untyped-defs and fix, update python 3.10.8 ([17abd2a](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/17abd2a49ae8e9c6db906516e87d8c1ac932087b))
+* **order:** change get simulate arr to send by mq ([d3d4e45](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/d3d4e45aa4d2c0b21d104dcfef98284b074bb60e))
+* **position:** add get future postion grpc method ([429b2c0](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/429b2c015cbee5c92a9433985e3956a985ab5b00))
+* **quantity:** if deal not equal to original, use deal otherwise use order ([88a3ca1](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/88a3ca1bd065b0b50467387920ee8aa9619daa42))
+* **simulate:** add clear local order list in dev mode ([2bb1cda](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/2bb1cda3a0cd4977c0ffa947bfb53736ad447050))
+* **simulation:** reduce future simulation trade finish time to 1 sec ([b23f040](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/b23f0407d4af93463281acad2c6131d55a0d20d8))
+* **sinopac:** add sleep 60 sec, if sinopac login timeout ([625a3a4](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/625a3a43e7b01bc3c53753c22a4c87e71d61d426))
+* **snapshot:** add GetStockSnapshotOTC rpc ([d572a22](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/d572a220c958ce5f591c10f9c8b2d89ea47d15b2))
+* **stream:** add stream data from yahoo finance for grpc ([9299737](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/92997377a510223f771ff3483e0426a11580dcbf))
+* **yahoo:** add previousClose to yahoo finance price ([63d9152](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/63d9152841af2a88b76fd8f84ca387c161443da2))
+* **yahoo:** add retry fetch if no data return ([5beb142](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/5beb142a1a2d09e6c7040fa07fe04a150d319e6b))
+
+# [1.0.0](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v0.0.3...v1.0.0) (2022-10-18)
 
 ### Bug Fixes
 
