@@ -3,7 +3,7 @@
 import grpc
 
 import basic_pb2 as basic__pb2
-from protobuf import empty_pb2 as protobuf_dot_empty__pb2
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
 class BasicDataInterfaceStub(object):
@@ -17,12 +17,12 @@ class BasicDataInterfaceStub(object):
         """
         self.GetAllStockDetail = channel.unary_unary(
                 '/sinopac_forwarder.BasicDataInterface/GetAllStockDetail',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=basic__pb2.StockDetailResponse.FromString,
                 )
         self.GetAllFutureDetail = channel.unary_unary(
                 '/sinopac_forwarder.BasicDataInterface/GetAllFutureDetail',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=basic__pb2.FutureDetailResponse.FromString,
                 )
 
@@ -47,12 +47,12 @@ def add_BasicDataInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetAllStockDetail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllStockDetail,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=basic__pb2.StockDetailResponse.SerializeToString,
             ),
             'GetAllFutureDetail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllFutureDetail,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=basic__pb2.FutureDetailResponse.SerializeToString,
             ),
     }
@@ -77,7 +77,7 @@ class BasicDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.BasicDataInterface/GetAllStockDetail',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             basic__pb2.StockDetailResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -94,7 +94,7 @@ class BasicDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.BasicDataInterface/GetAllFutureDetail',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             basic__pb2.FutureDetailResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

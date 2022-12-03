@@ -11,10 +11,10 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from protobuf import empty_pb2 as protobuf_dot_empty__pb2
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0chealth.proto\x12\x11sinopac_forwarder\x1a\x14protobuf/empty.proto\"\x1e\n\x0b\x42\x65\x61tMessage\x12\x0f\n\x07message\x18\x01 \x01(\t2\xa4\x01\n\x14HealthCheckInterface\x12O\n\tHeartbeat\x12\x1e.sinopac_forwarder.BeatMessage\x1a\x1e.sinopac_forwarder.BeatMessage(\x01\x30\x01\x12;\n\tTerminate\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.EmptyB\x06Z\x04./pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0chealth.proto\x12\x11sinopac_forwarder\x1a\x1bgoogle/protobuf/empty.proto\"\x1e\n\x0b\x42\x65\x61tMessage\x12\x0f\n\x07message\x18\x01 \x01(\t2\xa4\x01\n\x14HealthCheckInterface\x12O\n\tHeartbeat\x12\x1e.sinopac_forwarder.BeatMessage\x1a\x1e.sinopac_forwarder.BeatMessage(\x01\x30\x01\x12;\n\tTerminate\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.EmptyB\x06Z\x04./pbb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'health_pb2', globals())
@@ -22,8 +22,8 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\004./pb'
-  _BEATMESSAGE._serialized_start=57
-  _BEATMESSAGE._serialized_end=87
-  _HEALTHCHECKINTERFACE._serialized_start=90
-  _HEALTHCHECKINTERFACE._serialized_end=254
+  _BEATMESSAGE._serialized_start=64
+  _BEATMESSAGE._serialized_end=94
+  _HEALTHCHECKINTERFACE._serialized_start=97
+  _HEALTHCHECKINTERFACE._serialized_end=261
 # @@protoc_insertion_point(module_scope)

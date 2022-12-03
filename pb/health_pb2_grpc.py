@@ -2,8 +2,8 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 import health_pb2 as health__pb2
-from protobuf import empty_pb2 as protobuf_dot_empty__pb2
 
 
 class HealthCheckInterfaceStub(object):
@@ -22,8 +22,8 @@ class HealthCheckInterfaceStub(object):
                 )
         self.Terminate = channel.unary_unary(
                 '/sinopac_forwarder.HealthCheckInterface/Terminate',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
 
 
@@ -52,8 +52,8 @@ def add_HealthCheckInterfaceServicer_to_server(servicer, server):
             ),
             'Terminate': grpc.unary_unary_rpc_method_handler(
                     servicer.Terminate,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -94,7 +94,7 @@ class HealthCheckInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HealthCheckInterface/Terminate',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
-            protobuf_dot_empty__pb2.Empty.FromString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

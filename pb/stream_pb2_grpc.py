@@ -3,7 +3,7 @@
 import grpc
 
 import common_pb2 as common__pb2
-from protobuf import empty_pb2 as protobuf_dot_empty__pb2
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 import stream_pb2 as stream__pb2
 
 
@@ -23,27 +23,27 @@ class StreamDataInterfaceStub(object):
                 )
         self.GetAllStockSnapshot = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/GetAllStockSnapshot',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotResponse.FromString,
                 )
         self.GetStockSnapshotTSE = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotTSE',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotMessage.FromString,
                 )
         self.GetStockSnapshotOTC = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotOTC',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotMessage.FromString,
                 )
         self.GetNasdaq = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/GetNasdaq',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.YahooFinancePrice.FromString,
                 )
         self.GetNasdaqFuture = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/GetNasdaqFuture',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.YahooFinancePrice.FromString,
                 )
         self.GetStockVolumeRank = channel.unary_unary(
@@ -93,12 +93,12 @@ class StreamDataInterfaceStub(object):
                 )
         self.UnSubscribeStockAllTick = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockAllTick',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=common__pb2.ErrorMessage.FromString,
                 )
         self.UnSubscribeStockAllBidAsk = channel.unary_unary(
                 '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockAllBidAsk',
-                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=common__pb2.ErrorMessage.FromString,
                 )
         self.GetFutureSnapshotByCodeArr = channel.unary_unary(
@@ -229,27 +229,27 @@ def add_StreamDataInterfaceServicer_to_server(servicer, server):
             ),
             'GetAllStockSnapshot': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllStockSnapshot,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=stream__pb2.SnapshotResponse.SerializeToString,
             ),
             'GetStockSnapshotTSE': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotTSE,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=stream__pb2.SnapshotMessage.SerializeToString,
             ),
             'GetStockSnapshotOTC': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotOTC,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=stream__pb2.SnapshotMessage.SerializeToString,
             ),
             'GetNasdaq': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNasdaq,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=stream__pb2.YahooFinancePrice.SerializeToString,
             ),
             'GetNasdaqFuture': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNasdaqFuture,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=stream__pb2.YahooFinancePrice.SerializeToString,
             ),
             'GetStockVolumeRank': grpc.unary_unary_rpc_method_handler(
@@ -299,12 +299,12 @@ def add_StreamDataInterfaceServicer_to_server(servicer, server):
             ),
             'UnSubscribeStockAllTick': grpc.unary_unary_rpc_method_handler(
                     servicer.UnSubscribeStockAllTick,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=common__pb2.ErrorMessage.SerializeToString,
             ),
             'UnSubscribeStockAllBidAsk': grpc.unary_unary_rpc_method_handler(
                     servicer.UnSubscribeStockAllBidAsk,
-                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=common__pb2.ErrorMessage.SerializeToString,
             ),
             'GetFutureSnapshotByCodeArr': grpc.unary_unary_rpc_method_handler(
@@ -351,7 +351,7 @@ class StreamDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetAllStockSnapshot',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.SnapshotResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -368,7 +368,7 @@ class StreamDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotTSE',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.SnapshotMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -385,7 +385,7 @@ class StreamDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotOTC',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.SnapshotMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -402,7 +402,7 @@ class StreamDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetNasdaq',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.YahooFinancePrice.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -419,7 +419,7 @@ class StreamDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetNasdaqFuture',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.YahooFinancePrice.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -589,7 +589,7 @@ class StreamDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockAllTick',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             common__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -606,7 +606,7 @@ class StreamDataInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockAllBidAsk',
-            protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             common__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
