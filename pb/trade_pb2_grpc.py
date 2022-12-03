@@ -3,7 +3,7 @@
 import grpc
 
 import common_pb2 as common__pb2
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+from protobuf import empty_pb2 as protobuf_dot_empty__pb2
 import trade_pb2 as trade__pb2
 
 
@@ -43,12 +43,12 @@ class TradeInterfaceStub(object):
                 )
         self.GetOrderStatusArrFromMQ = channel.unary_unary(
                 '/sinopac_forwarder.TradeInterface/GetOrderStatusArrFromMQ',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=common__pb2.ErrorMessage.FromString,
                 )
         self.GetNonBlockOrderStatusArr = channel.unary_unary(
                 '/sinopac_forwarder.TradeInterface/GetNonBlockOrderStatusArr',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=common__pb2.ErrorMessage.FromString,
                 )
         self.BuyFuture = channel.unary_unary(
@@ -73,7 +73,7 @@ class TradeInterfaceStub(object):
                 )
         self.GetFuturePosition = channel.unary_unary(
                 '/sinopac_forwarder.TradeInterface/GetFuturePosition',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=trade__pb2.FuturePositionArr.FromString,
                 )
 
@@ -183,12 +183,12 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
             ),
             'GetOrderStatusArrFromMQ': grpc.unary_unary_rpc_method_handler(
                     servicer.GetOrderStatusArrFromMQ,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=common__pb2.ErrorMessage.SerializeToString,
             ),
             'GetNonBlockOrderStatusArr': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNonBlockOrderStatusArr,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=common__pb2.ErrorMessage.SerializeToString,
             ),
             'BuyFuture': grpc.unary_unary_rpc_method_handler(
@@ -213,7 +213,7 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
             ),
             'GetFuturePosition': grpc.unary_unary_rpc_method_handler(
                     servicer.GetFuturePosition,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=trade__pb2.FuturePositionArr.SerializeToString,
             ),
     }
@@ -323,7 +323,7 @@ class TradeInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetOrderStatusArrFromMQ',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            protobuf_dot_empty__pb2.Empty.SerializeToString,
             common__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -340,7 +340,7 @@ class TradeInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetNonBlockOrderStatusArr',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            protobuf_dot_empty__pb2.Empty.SerializeToString,
             common__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -425,7 +425,7 @@ class TradeInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetFuturePosition',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            protobuf_dot_empty__pb2.Empty.SerializeToString,
             trade__pb2.FuturePositionArr.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
