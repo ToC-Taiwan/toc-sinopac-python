@@ -14,6 +14,8 @@ python -m grpc_tools.protoc \
     ./toc-trade-protobuf/*.proto
 
 rm ./pb/common_pb2_grpc.py
+rm ./pb/app_pb2_grpc.py
+
 git add ./pb
 
 rm -rf toc-trade-protobuf
