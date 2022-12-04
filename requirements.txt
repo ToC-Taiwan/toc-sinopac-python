@@ -1,6 +1,7 @@
 appdirs==1.4.4
 certifi==2022.9.24
 charset-normalizer==2.1.1
+colorlog==6.7.0
 filelock==3.4.1
 grpcio==1.51.1
 grpcio-tools==1.51.1
