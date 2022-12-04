@@ -31,7 +31,7 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
     def get_sj_version(self):
         return self.main_worker.get_sj_version()
 
-    def get(self, fetch: bool):
+    def get(self, fetch: bool) -> Sinopac:
         with self.lock:
             now = round(datetime.now().timestamp() * 1000)
             gap = now - self.request_worker_timestamp
@@ -214,20 +214,20 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
     def set_order_status_cb(self, func):
         self.main_worker.set_order_status_callback(func)
 
-    def buy_stock(self, stock_num, price, quantity, sim):
-        return self.main_worker.buy_stock(stock_num, price, quantity, sim)
+    def buy_stock(self, stock_num, price, quantity):
+        return self.main_worker.buy_stock(stock_num, price, quantity)
 
-    def sell_stock(self, stock_num, price, quantity, sim):
-        return self.main_worker.sell_stock(stock_num, price, quantity, sim)
+    def sell_stock(self, stock_num, price, quantity):
+        return self.main_worker.sell_stock(stock_num, price, quantity)
 
-    def sell_first_stock(self, stock_num, price, quantity, sim):
-        return self.main_worker.sell_first_stock(stock_num, price, quantity, sim)
+    def sell_first_stock(self, stock_num, price, quantity):
+        return self.main_worker.sell_first_stock(stock_num, price, quantity)
 
-    def cancel_stock(self, order_id, sim):
-        return self.main_worker.cancel_stock(order_id, sim)
+    def cancel_stock(self, order_id):
+        return self.main_worker.cancel_stock(order_id)
 
-    def get_order_status_by_id(self, order_id, sim):
-        return self.main_worker.get_order_status_from_local_by_order_id(order_id, sim)
+    def get_order_status_by_id(self, order_id):
+        return self.main_worker.get_order_status_from_local_by_order_id(order_id)
 
     def get_order_status_arr(self):
         return self.main_worker.get_order_status()
@@ -235,21 +235,26 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
     def get_non_block_order_status_arr(self):
         return self.main_worker.update_order_status_instant()
 
-    def buy_future(self, code, price, quantity, sim):
-        return self.main_worker.buy_future(code, price, quantity, sim)
+    def buy_future(self, code, price, quantity):
+        return self.main_worker.buy_future(code, price, quantity)
 
-    def sell_future(self, code, price, quantity, sim):
-        return self.main_worker.sell_future(code, price, quantity, sim)
+    def sell_future(self, code, price, quantity):
+        return self.main_worker.sell_future(code, price, quantity)
 
-    def sell_first_future(self, code, price, quantity, sim):
-        return self.main_worker.sell_first_future(code, price, quantity, sim)
+    def sell_first_future(self, code, price, quantity):
+        return self.main_worker.sell_first_future(code, price, quantity)
 
-    def cancel_future(self, order_id, sim):
-        return self.main_worker.cancel_future(order_id, sim)
-
-    def clear_simulation_order(self):
-        self.main_worker.clear_local_order_status()
-        self.main_worker.clear_simulation_order()
+    def cancel_future(self, order_id):
+        return self.main_worker.cancel_future(order_id)
 
     def get_future_position(self):
         return self.main_worker.list_positions()
+
+    def get_stock_num_list(self):
+        return self.main_worker.get_stock_num_list()
+
+    def get_future_code_list(self):
+        return self.main_worker.get_future_code_list()
+
+    def clear_order(self):
+        self.main_worker.clear_local_order_status()

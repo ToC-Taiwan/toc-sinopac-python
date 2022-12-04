@@ -24,6 +24,7 @@ from shioaji.data import Snapshot
 from env import RequiredEnv
 from logger import logger
 from rabbitmq import RabbitMQS
+from simulator import Simulator
 from sinopac import Sinopac
 from sinopac_worker import SinopacWorkerPool
 from yahoo_finance import Yahoo
@@ -32,9 +33,10 @@ WORKERS: SinopacWorkerPool
 
 
 class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
-    def __init__(self):
+    def __init__(self, simulator: Simulator):
         self.beat_time = float()
         self.debug = False
+        self.simulator = simulator
 
     def Heartbeat(self, request_iterator, _):
         logger.info("toc machine trading connected")
@@ -56,7 +58,8 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
                 if self.debug is True:
                     WORKERS.unsubscribe_all_tick()
                     WORKERS.unsubscribe_all_bidask()
-                    WORKERS.clear_simulation_order()
+                    WORKERS.clear_order()
+                    self.simulator.reset_simulator()
                     return
                 logger.error("toc machine trading not responding, terminate")
                 os._exit(1)
@@ -91,7 +94,7 @@ class gRPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
                 day_trade=tse_001.day_trade,
             )
         )
-        for row in worker.stock_num_list:
+        for row in WORKERS.get_stock_num_list():
             contract = worker.get_contract_by_stock_num(row)
             if contract is None:
                 logger.error("%s has no stock data", row)
@@ -113,7 +116,7 @@ class gRPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
         response = basic_pb2.FutureDetailResponse()
         worker = WORKERS.get(False)
 
-        for row in worker.future_code_list:
+        for row in WORKERS.get_future_code_list():
             contract = worker.get_contract_by_future_code(row)
             if contract is None:
                 logger.error("%s has no future data", row)
@@ -327,8 +330,9 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
 
 
 class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
-    def __init__(self, rq: RabbitMQS):
+    def __init__(self, rq: RabbitMQS, simulator: Simulator):
         self.rq = rq
+        self.simulator = simulator
 
     def GetFuturePosition(self, request, _):
         response = trade_pb2.FuturePositionArr()
@@ -348,9 +352,15 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         return response
 
     def BuyStock(self, request, _):
-        result = WORKERS.buy_stock(
-            request.stock_num, request.price, request.quantity, request.simulate
-        )
+        result = None
+        if request.simulate is not True:
+            result = WORKERS.buy_stock(
+                request.stock_num, request.price, request.quantity
+            )
+        else:
+            result = self.simulator.buy_stock(
+                request.stock_num, request.price, request.quantity
+            )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -358,9 +368,15 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def SellStock(self, request, _):
-        result = WORKERS.sell_stock(
-            request.stock_num, request.price, request.quantity, request.simulate
-        )
+        result = None
+        if request.simulate is not True:
+            result = WORKERS.sell_stock(
+                request.stock_num, request.price, request.quantity
+            )
+        else:
+            result = self.simulator.sell_stock(
+                request.stock_num, request.price, request.quantity
+            )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -368,9 +384,15 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def SellFirstStock(self, request, _):
-        result = WORKERS.sell_first_stock(
-            request.stock_num, request.price, request.quantity, request.simulate
-        )
+        result = None
+        if request.simulate is not True:
+            result = WORKERS.sell_first_stock(
+                request.stock_num, request.price, request.quantity
+            )
+        else:
+            result = self.simulator.sell_first_stock(
+                request.stock_num, request.price, request.quantity
+            )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -378,7 +400,11 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def CancelStock(self, request, _):
-        result = WORKERS.cancel_stock(request.order_id, request.simulate)
+        result = None
+        if request.simulate is not True:
+            result = WORKERS.cancel_stock(request.order_id)
+        else:
+            result = self.simulator.cancel_stock(request.order_id)
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -386,7 +412,11 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def GetOrderStatusByID(self, request, _):
-        result = WORKERS.get_order_status_by_id(request.order_id, request.simulate)
+        result = None
+        if request.simulate is not True:
+            result = WORKERS.get_order_status_by_id(request.order_id)
+        else:
+            result = self.simulator.get_order_status_by_id(request.order_id)
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -394,25 +424,38 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def GetOrderStatusArrFromMQ(self, request, _):
-        arr = WORKERS.get_order_status_arr()
-        for order in arr:
-            if order.status.order_datetime is None:
-                order.status.order_datetime = datetime.now()
-            if order.status.modified_price != 0:
-                order.order.price = order.status.modified_price
-            self.rq.send_order(order)
+        arr = None
+        if request.simulate is not True:
+            arr = WORKERS.get_order_status_arr()
+        else:
+            arr = self.simulator.get_order_status()
+
+        if arr is not None:
+            for order in arr:
+                if order.status.order_datetime is None:
+                    order.status.order_datetime = datetime.now()
+                if order.status.modified_price != 0:
+                    order.order.price = order.status.modified_price
+                self.rq.send_order(order)
         return common_pb2.ErrorMessage(err="")
 
     def GetNonBlockOrderStatusArr(self, request, _):
         return common_pb2.ErrorMessage(err=WORKERS.get_non_block_order_status_arr())
 
     def BuyFuture(self, request, _):
-        result = WORKERS.buy_future(
-            request.code,
-            request.price,
-            request.quantity,
-            request.simulate,
-        )
+        result = None
+        if request.simulate is not True:
+            result = WORKERS.buy_future(
+                request.code,
+                request.price,
+                request.quantity,
+            )
+        else:
+            result = self.simulator.buy_future(
+                request.code,
+                request.price,
+                request.quantity,
+            )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -420,12 +463,19 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def SellFuture(self, request, _):
-        result = WORKERS.sell_future(
-            request.code,
-            request.price,
-            request.quantity,
-            request.simulate,
-        )
+        result = None
+        if request.simulate is not True:
+            result = WORKERS.sell_future(
+                request.code,
+                request.price,
+                request.quantity,
+            )
+        else:
+            result = self.simulator.sell_future(
+                request.code,
+                request.price,
+                request.quantity,
+            )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -433,12 +483,19 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def SellFirstFuture(self, request, _):
-        result = WORKERS.sell_first_future(
-            request.code,
-            request.price,
-            request.quantity,
-            request.simulate,
-        )
+        result = None
+        if request.simulate is not True:
+            result = WORKERS.sell_first_future(
+                request.code,
+                request.price,
+                request.quantity,
+            )
+        else:
+            result = self.simulator.sell_first_future(
+                request.code,
+                request.price,
+                request.quantity,
+            )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -446,10 +503,15 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def CancelFuture(self, request, _):
-        result = WORKERS.cancel_future(
-            request.order_id,
-            request.simulate,
-        )
+        result = None
+        if request.simulate is not True:
+            result = WORKERS.cancel_future(
+                request.order_id,
+            )
+        else:
+            result = self.simulator.cancel_future(
+                request.order_id,
+            )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -503,7 +565,7 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         contracts = []
         worker = WORKERS.get(False)
 
-        for stock in worker.stock_num_list:
+        for stock in WORKERS.get_stock_num_list():
             contracts.append(worker.get_contract_by_stock_num(stock))
         splits = np.array_split(contracts, WORKERS.count())
         snapshots: list[Snapshot] = []
@@ -855,11 +917,14 @@ def serve(port: str, main_worker: Sinopac, workers: list[Sinopac], cfg: Required
         128,
     )
 
+    # simulator
+    simulator = Simulator(WORKERS.main_worker)
+
     # gRPC servicer
-    health_servicer = gRPCHealthCheck()
+    health_servicer = gRPCHealthCheck(simulator=simulator)
     basic_servicer = gRPCBasic()
     history_servicer = gRPCHistory()
-    trade_servicer = gRPCTrade(rq=rq)
+    trade_servicer = gRPCTrade(rq=rq, simulator=simulator)
     stream_servicer = gRPCStream(source=Yahoo())
 
     WORKERS.set_event_cb(rq.event_callback)
