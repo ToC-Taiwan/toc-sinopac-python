@@ -3,8 +3,8 @@ import threading
 import time
 
 import shioaji as sj
+from shioaji.constant import DayTrade, OrderState, SecurityType
 
-from constant import DayTrade, OrderState, SecurityType
 from logger import logger
 
 
