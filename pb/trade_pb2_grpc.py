@@ -43,7 +43,7 @@ class TradeInterfaceStub(object):
                 )
         self.GetOrderStatusArrFromMQ = channel.unary_unary(
                 '/sinopac_forwarder.TradeInterface/GetOrderStatusArrFromMQ',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=trade__pb2.Simulate.SerializeToString,
                 response_deserializer=common__pb2.ErrorMessage.FromString,
                 )
         self.GetNonBlockOrderStatusArr = channel.unary_unary(
@@ -183,7 +183,7 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
             ),
             'GetOrderStatusArrFromMQ': grpc.unary_unary_rpc_method_handler(
                     servicer.GetOrderStatusArrFromMQ,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=trade__pb2.Simulate.FromString,
                     response_serializer=common__pb2.ErrorMessage.SerializeToString,
             ),
             'GetNonBlockOrderStatusArr': grpc.unary_unary_rpc_method_handler(
@@ -323,7 +323,7 @@ class TradeInterface(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetOrderStatusArrFromMQ',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            trade__pb2.Simulate.SerializeToString,
             common__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
