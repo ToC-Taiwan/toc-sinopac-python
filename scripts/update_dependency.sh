@@ -17,8 +17,7 @@ pip install -U \
   schedule \
   pika \
   requests \
-  yfinance \
-  colorlog
+  yfinance
 
 pip freeze > requirements.txt
 

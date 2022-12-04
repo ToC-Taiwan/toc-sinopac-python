@@ -1,8 +1,6 @@
 import logging
 from datetime import datetime
 
-import colorlog
-
 from env import RequiredEnv
 
 log_format = str()
@@ -13,12 +11,13 @@ if env.log_format == "json":
 else:
     log_format = "%(levelname)s[%(asctime)s] %(message)s"
 
-color_handler = colorlog.StreamHandler()
+
+console_handler = logging.StreamHandler()
 file_handler = logging.FileHandler(
     f'./logs/{datetime.now().strftime("%Y-%m-%d")}-toc-sinopac-python.log'
 )
 
-color_handler.setFormatter(colorlog.ColoredFormatter(log_format, "%Y-%m-%d %H:%M:%S"))
+console_handler.setFormatter(logging.Formatter(log_format, "%Y-%m-%d %H:%M:%S"))
 file_handler.setFormatter(logging.Formatter(log_format, "%Y-%m-%d %H:%M:%S"))
 
 logging.addLevelName(50, "CRIT")
@@ -28,6 +27,6 @@ logging.addLevelName(20, "INFO")
 logging.addLevelName(10, "DEBU")
 
 logger = logging.getLogger()
+logger.addHandler(console_handler)
 logger.addHandler(file_handler)
-logger.addHandler(color_handler)
 logger.setLevel(logging.INFO)
