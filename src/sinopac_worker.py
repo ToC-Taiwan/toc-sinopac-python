@@ -63,7 +63,11 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
             result = self.workers[idx].subscribe_stock_tick(stock_num)
             if result is not None:
                 return result
-            logger.info("subscribe stock tick %s", stock_num)
+            logger.info(
+                "subscribe stock tick %s %s",
+                stock_num,
+                self.workers[idx].get_contract_name_by_stock_num(stock_num),
+            )
             self.subscribe_count[idx] += 1
             self.stock_tick_sub_dict[stock_num] = idx
         return None
@@ -77,7 +81,11 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
                 result = self.workers[idx].unsubscribe_stock_tick(stock_num)
                 if result is not None:
                     return result
-                logger.info("unsubscribe stock tick %s", stock_num)
+                logger.info(
+                    "unsubscribe stock tick %s %s",
+                    stock_num,
+                    self.workers[idx].get_contract_name_by_stock_num(stock_num),
+                )
         return None
 
     def subscribe_future_tick(self, code):
@@ -88,7 +96,11 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
             result = self.workers[idx].subscribe_future_tick(code)
             if result is not None:
                 return result
-            logger.info("subscribe future tick %s", code)
+            logger.info(
+                "subscribe future tick %s %s",
+                code,
+                self.workers[idx].get_contract_name_by_future_code(code),
+            )
             self.subscribe_count[idx] += 1
             self.future_tick_sub_dict[code] = idx
         return None
@@ -102,7 +114,11 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
                 result = self.workers[idx].unsubscribe_future_tick(code)
                 if result is not None:
                     return result
-                logger.info("unsubscribe future tick %s", code)
+                logger.info(
+                    "unsubscribe future tick %s %s",
+                    code,
+                    self.workers[idx].get_contract_name_by_future_code(code),
+                )
         return None
 
     def subscribe_stock_bidask(self, stock_num):
@@ -113,7 +129,11 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
             result = self.workers[idx].subscribe_stock_bidask(stock_num)
             if result is not None:
                 return result
-            logger.info("subscribe stock bidask %s", stock_num)
+            logger.info(
+                "subscribe stock bidask %s %s",
+                stock_num,
+                self.workers[idx].get_contract_name_by_stock_num(stock_num),
+            )
             self.subscribe_count[idx] += 1
             self.stock_bidask_sub_dict[stock_num] = idx
         return None
@@ -127,7 +147,11 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
                 result = self.workers[idx].unsubscribe_stock_bidask(stock_num)
                 if result is not None:
                     return result
-                logger.info("unsubscribe stock bidask %s", stock_num)
+                logger.info(
+                    "unsubscribe stock bidask %s %s",
+                    stock_num,
+                    self.workers[idx].get_contract_name_by_stock_num(stock_num),
+                )
         return None
 
     def subscribe_future_bidask(self, code):
@@ -138,7 +162,11 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
             result = self.workers[idx].subscribe_future_bidask(code)
             if result is not None:
                 return result
-            logger.info("subscribe future bidask %s", code)
+            logger.info(
+                "subscribe future bidask %s %s",
+                code,
+                self.workers[idx].get_contract_name_by_future_code(code),
+            )
             self.subscribe_count[idx] += 1
             self.future_bidask_sub_dict[code] = idx
         return None
@@ -152,7 +180,11 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
                 result = self.workers[idx].unsubscribe_future_bidask(code)
                 if result is not None:
                     return result
-                logger.info("unsubscribe future bidask %s", code)
+                logger.info(
+                    "unsubscribe future bidask %s %s",
+                    code,
+                    self.workers[idx].get_contract_name_by_future_code(code),
+                )
         return None
 
     def unsubscribe_all_tick(self):

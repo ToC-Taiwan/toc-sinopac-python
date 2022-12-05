@@ -28,21 +28,38 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         self.__login_lock = threading.Lock()
         self.__login_status = int()
 
-        self.stock_num_list = []
-        self.future_code_list = []
+        self.stock_num_list: list[str] = []
+        self.future_code_list: list[str] = []
 
         self.__order_status_lock = threading.Lock()
-        self.order_status_list = []
+        self.order_status_list: list[sj.order.Trade] = []
 
     def get_sj_version(self):
-        return sj.__version__
+        return str(sj.__version__)
 
-    def get_sj_api(self):
+    def get_sj_api(self) -> sj.Shioaji:
         return self.__api
+
+    def event_logger_cb(self, resp_code: int, event_code: int, info: str, event: str):
+        if event_code != 0:
+            logger.info("resp_code: %d", resp_code)
+            logger.info("event_code: %d", event_code)
+            logger.info("info: %s", info)
+            logger.info("event: %s", event)
+
+        if event_code == 12:
+            os._exit(1)
+
+    def login_cb(self, security_type):
+        with self.__login_lock:
+            if security_type.value in [item.value for item in SecurityType]:
+                self.__login_status += 1
+                # logger.info("%s: %d/4", security_type, self.__login_status)
 
     def login(self, user: SinopacUser, is_main: bool):
         # before gRPC set cb, using logger to save event
-        self.set_event_callback(event_logger_cb)
+        self.set_event_callback(self.event_logger_cb)
+
         try:
             self.__api.login(
                 person_id=user.person_id,
@@ -52,23 +69,21 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             )
 
         except sj.error.SystemMaintenance:
-            logger.error("503 system maintenance, terminate after 75 sec")
+            logger.error("login 503 system maintenance, terminate after 75 sec")
             wait = 75
             while True:
                 time.sleep(1)
                 wait -= 1
                 if wait == 0:
                     os._exit(1)
-                elif wait % 5 == 0:
-                    logger.info("system maintenance, wait %d sec", wait)
 
         except TimeoutError:
-            logger.error("timeout error, retry after 60 sec")
+            logger.error("login timeout error, terminate after 60 sec")
             time.sleep(60)
             os._exit(1)
 
         except ValueError:
-            logger.error("value error, retry after 15 sec")
+            logger.error("login value error, terminate after 15 sec")
             time.sleep(15)
             os._exit(1)
 
@@ -86,18 +101,14 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             self.fill_stock_num_list()
             self.fill_future_code_list()
             self.set_order_callback(self.place_order_callback)
-            logger.info(self.__api.stock_account)
-            logger.info(self.__api.futopt_account)
+            logger.info(
+                "stock account sign status: %s", self.__api.stock_account.signed
+            )
+            logger.info(
+                "future account sign status: %s", self.__api.futopt_account.signed
+            )
 
         return self
-
-    def login_cb(self, security_type):
-        with self.__login_lock:
-            if security_type.value in [item.value for item in SecurityType]:
-                self.__login_status += 1
-                logger.info(
-                    "login progress: %d/4, %s", self.__login_status, security_type
-                )
 
     def set_event_callback(self, func):
         self.__api.quote.set_event_callback(func)
@@ -120,9 +131,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
     def set_order_status_callback(self, func):
         self.order_status_callback = func
 
-    def list_accounts(self):
-        return self.__api.list_accounts()
-
     def fill_stock_num_list(self):
         for contract_arr in self.__api.Contracts.Stocks:
             for contract in contract_arr:
@@ -132,7 +140,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 ):
                     self.stock_num_list.append(contract.code)
         if len(self.stock_num_list) != 0:
-            logger.info("filling stock_num_list, total: %d", len(self.stock_num_list))
+            logger.info("total stock: %d", len(self.stock_num_list))
         else:
             raise Exception("stock_num_list is empty")
 
@@ -144,14 +152,18 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             for future in future_arr:
                 self.future_code_list.append(future.code)
         if len(self.future_code_list) != 0:
-            logger.info(
-                "filling future_code_list, total: %d", len(self.future_code_list)
-            )
+            logger.info("total future: %d", len(self.future_code_list))
         else:
             raise Exception("future_code_list is empty")
 
     def get_future_code_list(self):
         return self.future_code_list
+
+    def list_positions(self):
+        try:
+            return self.__api.list_positions(self.__api.futopt_account)
+        except TimeoutError:
+            return None
 
     def update_order_status_instant(self):
         if self.order_status_callback is None:
@@ -159,12 +171,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
 
         with self.__order_status_lock:
             self.__api.update_status(timeout=0, cb=self.order_status_callback)
-            return None
-
-    def list_positions(self):
-        try:
-            return self.__api.list_positions(self.__api.futopt_account)
-        except TimeoutError:
             return None
 
     def update_local_order_status(self):
@@ -607,14 +613,3 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             times += 1
             time.sleep(1)
         return OrderStatus("", "", "cancel future fail")
-
-
-def event_logger_cb(resp_code: int, event_code: int, info: str, event: str):
-    if event_code != 0:
-        logger.info("resp_code: %d", resp_code)
-        logger.info("event_code: %d", event_code)
-        logger.info("info: %s", info)
-        logger.info("event: %s", event)
-
-    if event_code == 12:
-        os._exit(1)

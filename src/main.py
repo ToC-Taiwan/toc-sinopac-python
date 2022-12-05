@@ -37,6 +37,7 @@ for i in range(connection_count):
         # if do not let main worker be the first worker in the pool, then continue
         continue
     SINOPAC_WORKER_POOL.append(new_connection)
+    logger.info("establish connection done")
 
 try:
     serve(
