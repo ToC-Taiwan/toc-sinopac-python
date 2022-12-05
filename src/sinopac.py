@@ -471,7 +471,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return self.order_status_list
 
     def place_order_callback(self, order_state: OrderState, res: dict):
-        if order_state == OrderState.FOrder or order_state == OrderState.TFTOrder:
+        if order_state in (OrderState.FOrder, OrderState.TFTOrder):
             if res["contract"]["code"] is None:
                 logger.error("place order code is none")
                 return
@@ -485,7 +485,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 res["order"]["id"],
             )
 
-        elif order_state == OrderState.FDeal or order_state == OrderState.TFTDeal:
+        elif order_state in (OrderState.FDeal, OrderState.TFTDeal):
             if res["code"] is None:
                 logger.error("deal order code is none")
                 return
