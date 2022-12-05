@@ -470,67 +470,32 @@ class Sinopac:  # pylint: disable=too-many-public-methods
     def get_order_status(self):
         return self.order_status_list
 
-    def place_order_callback(self, order_state: OrderState, order: dict):
-        if order_state == OrderState.TFTOrder:
-            if order["contract"]["code"] is None:
-                logger.error("place stock contract code is None")
+    def place_order_callback(self, order_state: OrderState, res: dict):
+        if order_state == OrderState.FOrder or order_state == OrderState.TFTOrder:
+            if res["contract"]["code"] is None:
+                logger.error("place order code is none")
                 return
-
             logger.info(
-                "%s stock order: %s %s %s %.2f %d %s",
-                order["operation"]["op_type"],
-                order["contract"]["code"],
-                self.get_contract_name_by_stock_num(order["contract"]["code"]),
-                order["order"]["action"],
-                order["order"]["price"],
-                order["order"]["quantity"],
-                order["order"]["id"],
+                "%s order: %s %s %.2f %d %s",
+                res["operation"]["op_type"],
+                res["contract"]["code"],
+                res["order"]["action"],
+                res["order"]["price"],
+                res["order"]["quantity"],
+                res["order"]["id"],
             )
 
-        elif order_state == OrderState.TFTDeal:
-            if order["code"] is None:
-                logger.error("deal contract code is None")
+        elif order_state == OrderState.FDeal or order_state == OrderState.TFTDeal:
+            if res["code"] is None:
+                logger.error("deal order code is none")
                 return
-
             logger.info(
-                "Deal stock order: %s %s %s %.2f %d %s",
-                order["code"],
-                self.get_contract_name_by_stock_num(order["contract"]["code"]),
-                order["action"],
-                order["price"],
-                order["quantity"],
-                order["trade_id"],
-            )
-
-        elif order_state == OrderState.FOrder:
-            if order["contract"]["code"] is None:
-                logger.error("place future contract code is None")
-                return
-
-            logger.info(
-                "%s future order: %s %s %s %.2f %d %s",
-                order["operation"]["op_type"],
-                order["contract"]["code"],
-                self.get_contract_name_by_future_code(order["contract"]["code"]),
-                order["order"]["action"],
-                order["order"]["price"],
-                order["order"]["quantity"],
-                order["order"]["id"],
-            )
-
-        elif order_state == OrderState.FDeal:
-            if order["code"] is None:
-                logger.error("deal contract code is None")
-                return
-
-            logger.info(
-                "Deal future order: %s %s %s %.2f %d %s",
-                order["code"],
-                self.get_contract_name_by_future_code(order["code"]),
-                order["action"],
-                order["price"],
-                order["quantity"],
-                order["trade_id"],
+                "Deal future order: %s %s %.2f %d %s",
+                res["code"],
+                res["action"],
+                res["price"],
+                res["quantity"],
+                res["trade_id"],
             )
 
     def buy_future(self, code: str, price: float, quantity: int):
