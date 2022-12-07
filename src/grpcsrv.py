@@ -333,6 +333,7 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
     def __init__(self, rq: RabbitMQS, simulator: Simulator):
         self.rq = rq
         self.simulator = simulator
+        self.send_order_lock = threading.Lock()
 
     def GetFuturePosition(self, request, _):
         response = trade_pb2.FuturePositionArr()
@@ -424,16 +425,17 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def GetOrderStatusArrFromMQ(self, request, _):
-        arr = None
-        if request.simulate is not True:
-            arr = WORKERS.get_order_status_arr()
-        else:
-            arr = self.simulator.get_order_status()
+        with self.send_order_lock:
+            arr = None
+            if request.simulate is not True:
+                arr = WORKERS.get_order_status_arr()
+            else:
+                arr = self.simulator.get_order_status()
 
-        if arr is not None:
-            for order in arr:
-                self.rq.send_order(order)
-        return common_pb2.ErrorMessage(err="")
+            if arr is not None:
+                for order in arr:
+                    self.rq.send_order(order)
+            return common_pb2.ErrorMessage(err="")
 
     def GetNonBlockOrderStatusArr(self, request, _):
         return common_pb2.ErrorMessage(err=WORKERS.get_non_block_order_status_arr())
