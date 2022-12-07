@@ -107,6 +107,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             logger.info(
                 "future account sign status: %s", self.__api.futopt_account.signed
             )
+            self.update_local_order_status()
 
         return self
 
