@@ -471,6 +471,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return self.order_status_list
 
     def place_order_callback(self, order_state: OrderState, res: dict):
+        self.update_local_order_status()
         if order_state in (OrderState.FOrder, OrderState.TFTOrder):
             if res["contract"]["code"] is None:
                 logger.error("place order code is none")

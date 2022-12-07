@@ -432,10 +432,6 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
 
         if arr is not None:
             for order in arr:
-                if order.status.order_datetime is None:
-                    order.status.order_datetime = datetime.now()
-                if order.status.modified_price != 0:
-                    order.order.price = order.status.modified_price
                 self.rq.send_order(order)
         return common_pb2.ErrorMessage(err="")
 

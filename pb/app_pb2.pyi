@@ -31,6 +31,8 @@ class _WSTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTyp
     TYPE_FUTURE_POSITION: _WSType.ValueType  # 4
     TYPE_ASSIST_STATUS: _WSType.ValueType  # 5
     TYPE_ERR_MESSAGE: _WSType.ValueType  # 6
+    TYPE_KBAR_ARR: _WSType.ValueType  # 7
+    TYPE_FUTURE_DETAIL: _WSType.ValueType  # 8
 
 class WSType(_WSType, metaclass=_WSTypeEnumTypeWrapper): ...
 
@@ -41,6 +43,8 @@ TYPE_TRADE_INDEX: WSType.ValueType  # 3
 TYPE_FUTURE_POSITION: WSType.ValueType  # 4
 TYPE_ASSIST_STATUS: WSType.ValueType  # 5
 TYPE_ERR_MESSAGE: WSType.ValueType  # 6
+TYPE_KBAR_ARR: WSType.ValueType  # 7
+TYPE_FUTURE_DETAIL: WSType.ValueType  # 8
 global___WSType = WSType
 
 @typing_extensions.final
@@ -55,6 +59,8 @@ class WSMessage(google.protobuf.message.Message):
     FUTURE_POSITION_FIELD_NUMBER: builtins.int
     ASSIT_STATUS_FIELD_NUMBER: builtins.int
     ERR_MESSAGE_FIELD_NUMBER: builtins.int
+    HISTORY_KBAR_FIELD_NUMBER: builtins.int
+    FUTURE_DETAIL_FIELD_NUMBER: builtins.int
     type: global___WSType.ValueType
     @property
     def future_tick(self) -> global___WSFutureTick: ...
@@ -70,6 +76,10 @@ class WSMessage(google.protobuf.message.Message):
     def assit_status(self) -> global___WSAssitStatus: ...
     @property
     def err_message(self) -> global___WSErrMessage: ...
+    @property
+    def history_kbar(self) -> global___WSHistoryKbarMessage: ...
+    @property
+    def future_detail(self) -> global___WSFutureDetail: ...
     def __init__(
         self,
         *,
@@ -81,12 +91,62 @@ class WSMessage(google.protobuf.message.Message):
         future_position: global___WSFuturePosition | None = ...,
         assit_status: global___WSAssitStatus | None = ...,
         err_message: global___WSErrMessage | None = ...,
+        history_kbar: global___WSHistoryKbarMessage | None = ...,
+        future_detail: global___WSFutureDetail | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["assit_status", b"assit_status", "data", b"data", "err_message", b"err_message", "future_order", b"future_order", "future_position", b"future_position", "future_tick", b"future_tick", "period_trade_volume", b"period_trade_volume", "trade_index", b"trade_index"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["assit_status", b"assit_status", "data", b"data", "err_message", b"err_message", "future_order", b"future_order", "future_position", b"future_position", "future_tick", b"future_tick", "period_trade_volume", b"period_trade_volume", "trade_index", b"trade_index", "type", b"type"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["data", b"data"]) -> typing_extensions.Literal["future_tick", "future_order", "period_trade_volume", "trade_index", "future_position", "assit_status", "err_message"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["assit_status", b"assit_status", "data", b"data", "err_message", b"err_message", "future_detail", b"future_detail", "future_order", b"future_order", "future_position", b"future_position", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "period_trade_volume", b"period_trade_volume", "trade_index", b"trade_index"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["assit_status", b"assit_status", "data", b"data", "err_message", b"err_message", "future_detail", b"future_detail", "future_order", b"future_order", "future_position", b"future_position", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "period_trade_volume", b"period_trade_volume", "trade_index", b"trade_index", "type", b"type"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["data", b"data"]) -> typing_extensions.Literal["future_tick", "future_order", "period_trade_volume", "trade_index", "future_position", "assit_status", "err_message", "history_kbar", "future_detail"] | None: ...
 
 global___WSMessage = WSMessage
+
+@typing_extensions.final
+class WSFutureDetail(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CODE_FIELD_NUMBER: builtins.int
+    SYMBOL_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    CATEGORY_FIELD_NUMBER: builtins.int
+    DELIVERY_MONTH_FIELD_NUMBER: builtins.int
+    DELIVERY_DATE_FIELD_NUMBER: builtins.int
+    UNDERLYING_KIND_FIELD_NUMBER: builtins.int
+    UNIT_FIELD_NUMBER: builtins.int
+    LIMIT_UP_FIELD_NUMBER: builtins.int
+    LIMIT_DOWN_FIELD_NUMBER: builtins.int
+    REFERENCE_FIELD_NUMBER: builtins.int
+    UPDATE_DATE_FIELD_NUMBER: builtins.int
+    code: builtins.str
+    symbol: builtins.str
+    name: builtins.str
+    category: builtins.str
+    delivery_month: builtins.str
+    delivery_date: builtins.str
+    underlying_kind: builtins.str
+    unit: builtins.int
+    limit_up: builtins.float
+    limit_down: builtins.float
+    reference: builtins.float
+    update_date: builtins.str
+    def __init__(
+        self,
+        *,
+        code: builtins.str = ...,
+        symbol: builtins.str = ...,
+        name: builtins.str = ...,
+        category: builtins.str = ...,
+        delivery_month: builtins.str = ...,
+        delivery_date: builtins.str = ...,
+        underlying_kind: builtins.str = ...,
+        unit: builtins.int = ...,
+        limit_up: builtins.float = ...,
+        limit_down: builtins.float = ...,
+        reference: builtins.float = ...,
+        update_date: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["category", b"category", "code", b"code", "delivery_date", b"delivery_date", "delivery_month", b"delivery_month", "limit_down", b"limit_down", "limit_up", b"limit_up", "name", b"name", "reference", b"reference", "symbol", b"symbol", "underlying_kind", b"underlying_kind", "unit", b"unit", "update_date", b"update_date"]) -> None: ...
+
+global___WSFutureDetail = WSFutureDetail
 
 @typing_extensions.final
 class WSErrMessage(google.protobuf.message.Message):
@@ -451,3 +511,49 @@ class WSAssitStatus(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["running", b"running"]) -> None: ...
 
 global___WSAssitStatus = WSAssitStatus
+
+@typing_extensions.final
+class WSHistoryKbarMessage(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ARR_FIELD_NUMBER: builtins.int
+    @property
+    def arr(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Kbar]: ...
+    def __init__(
+        self,
+        *,
+        arr: collections.abc.Iterable[global___Kbar] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["arr", b"arr"]) -> None: ...
+
+global___WSHistoryKbarMessage = WSHistoryKbarMessage
+
+@typing_extensions.final
+class Kbar(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    KBAR_TIME_FIELD_NUMBER: builtins.int
+    OPEN_FIELD_NUMBER: builtins.int
+    HIGH_FIELD_NUMBER: builtins.int
+    CLOSE_FIELD_NUMBER: builtins.int
+    LOW_FIELD_NUMBER: builtins.int
+    VOLUME_FIELD_NUMBER: builtins.int
+    kbar_time: builtins.str
+    open: builtins.float
+    high: builtins.float
+    close: builtins.float
+    low: builtins.float
+    volume: builtins.int
+    def __init__(
+        self,
+        *,
+        kbar_time: builtins.str = ...,
+        open: builtins.float = ...,
+        high: builtins.float = ...,
+        close: builtins.float = ...,
+        low: builtins.float = ...,
+        volume: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["close", b"close", "high", b"high", "kbar_time", b"kbar_time", "low", b"low", "open", b"open", "volume", b"volume"]) -> None: ...
+
+global___Kbar = Kbar
