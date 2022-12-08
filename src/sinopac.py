@@ -212,6 +212,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         contract = self.get_contract_by_stock_num(num)
         if num == "tse_001":
             contract = self.get_contract_tse_001()
+        elif num == "otc_101":
+            contract = self.get_contract_otc_101()
 
         try:
             return self.__api.ticks(contract, date)
@@ -228,6 +230,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         contract = self.get_contract_by_stock_num(num)
         if num == "tse_001":
             contract = self.get_contract_tse_001()
+        elif num == "otc_101":
+            contract = self.get_contract_otc_101()
 
         try:
             return self.__api.kbars(
@@ -252,6 +256,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         contract = self.get_contract_by_stock_num(num)
         if num == "tse_001":
             contract = self.get_contract_tse_001()
+        elif num == "otc_101":
+            contract = self.get_contract_otc_101()
 
         try:
             ticks = self.__api.quote.ticks(

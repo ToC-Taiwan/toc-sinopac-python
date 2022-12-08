@@ -50,6 +50,11 @@ class HistoryDataInterfaceStub(object):
                 request_serializer=common__pb2.Date.SerializeToString,
                 response_deserializer=history__pb2.HistoryCloseResponse.FromString,
                 )
+        self.GetOTCHistoryKbar = channel.unary_unary(
+                '/sinopac_forwarder.HistoryDataInterface/GetOTCHistoryKbar',
+                request_serializer=common__pb2.Date.SerializeToString,
+                response_deserializer=history__pb2.HistoryKbarResponse.FromString,
+                )
         self.GetFutureHistoryTick = channel.unary_unary(
                 '/sinopac_forwarder.HistoryDataInterface/GetFutureHistoryTick',
                 request_serializer=common__pb2.FutureCodeArrWithDate.SerializeToString,
@@ -112,6 +117,12 @@ class HistoryDataInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetOTCHistoryKbar(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetFutureHistoryTick(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -167,6 +178,11 @@ def add_HistoryDataInterfaceServicer_to_server(servicer, server):
                     servicer.GetStockTSEHistoryClose,
                     request_deserializer=common__pb2.Date.FromString,
                     response_serializer=history__pb2.HistoryCloseResponse.SerializeToString,
+            ),
+            'GetOTCHistoryKbar': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOTCHistoryKbar,
+                    request_deserializer=common__pb2.Date.FromString,
+                    response_serializer=history__pb2.HistoryKbarResponse.SerializeToString,
             ),
             'GetFutureHistoryTick': grpc.unary_unary_rpc_method_handler(
                     servicer.GetFutureHistoryTick,
@@ -309,6 +325,23 @@ class HistoryDataInterface(object):
         return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetStockTSEHistoryClose',
             common__pb2.Date.SerializeToString,
             history__pb2.HistoryCloseResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetOTCHistoryKbar(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HistoryDataInterface/GetOTCHistoryKbar',
+            common__pb2.Date.SerializeToString,
+            history__pb2.HistoryKbarResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

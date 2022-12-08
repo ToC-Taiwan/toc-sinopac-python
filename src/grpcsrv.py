@@ -270,6 +270,22 @@ class gRPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         t.join()
         return response
 
+    def GetOTCHistoryKbar(self, request, _):
+        response = history_pb2.HistoryKbarResponse()
+
+        t = threading.Thread(
+            target=fill_stock_history_kbar_response,
+            args=(
+                "otc_101",
+                request.date,
+                response,
+                WORKERS.get(True),
+            ),
+        )
+        t.start()
+        t.join()
+        return response
+
     def GetFutureHistoryTick(self, request, _):
         response = history_pb2.HistoryTickResponse()
         threads = []
@@ -432,7 +448,11 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
                 arr = WORKERS.get_order_status_arr()
             else:
                 arr = self.simulator.get_order_status()
-            return common_pb2.ErrorMessage(err=self.rq.send_order(arr))
+            threading.Thread(
+                target=self.rq.send_order,
+                args=(arr,),
+            ).start()
+            return common_pb2.ErrorMessage(err="")
 
     def GetNonBlockOrderStatusArr(self, request, _):
         return common_pb2.ErrorMessage(err=WORKERS.get_non_block_order_status_arr())
