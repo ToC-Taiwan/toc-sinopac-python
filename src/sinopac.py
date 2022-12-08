@@ -3,7 +3,8 @@ import threading
 import time
 
 import shioaji as sj
-from shioaji.constant import DayTrade, OrderState, SecurityType
+from shioaji.constant import DayTrade, OrderState, SecurityType, Status
+from shioaji.error import SystemMaintenance
 
 from logger import logger
 
@@ -25,14 +26,12 @@ class SinopacUser:
 class Sinopac:  # pylint: disable=too-many-public-methods
     def __init__(self):
         self.__api = sj.Shioaji()
-        self.__login_lock = threading.Lock()
+        self.__login_status_lock = threading.Lock()
         self.__login_status = int()
-
         self.stock_num_list: list[str] = []
         self.future_code_list: list[str] = []
-
-        self.__order_status_lock = threading.Lock()
-        self.order_status_list: list[sj.order.Trade] = []
+        self.__order_arr_lock = threading.Lock()
+        self.order_arr: list[sj.order.Trade] = []
 
     def get_sj_version(self):
         return str(sj.__version__)
@@ -48,13 +47,14 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             logger.info("event: %s", event)
 
         if event_code == 12:
+            logger.error(event)
             os._exit(1)
 
     def login_cb(self, security_type):
-        with self.__login_lock:
+        with self.__login_status_lock:
             if security_type.value in [item.value for item in SecurityType]:
                 self.__login_status += 1
-                # logger.info("%s: %d/4", security_type, self.__login_status)
+                logger.info("%s: %d/4", security_type, self.__login_status)
 
     def login(self, user: SinopacUser, is_main: bool):
         # before gRPC set cb, using logger to save event
@@ -68,14 +68,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 subscribe_trade=is_main,
             )
 
-        except sj.error.SystemMaintenance:
+        except SystemMaintenance:
             logger.error("login 503 system maintenance, terminate after 75 sec")
-            wait = 75
-            while True:
-                time.sleep(1)
-                wait -= 1
-                if wait == 0:
-                    os._exit(1)
+            time.sleep(75)
+            os._exit(1)
 
         except TimeoutError:
             logger.error("login timeout error, terminate after 60 sec")
@@ -170,24 +166,60 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         if self.order_status_callback is None:
             raise Exception("order_status_callback is None")
 
-        with self.__order_status_lock:
+        with self.__order_arr_lock:
             self.__api.update_status(timeout=0, cb=self.order_status_callback)
             return None
 
     def update_local_order_status(self):
-        with self.__order_status_lock:
+        with self.__order_arr_lock:
             self.__api.update_status()
-            self.order_status_list = self.__api.list_trades()
+            self.order_arr = self.__api.list_trades()
+
+    def get_order_status(self):
+        return self.order_arr
 
     def clear_local_order_status(self):
-        with self.__order_status_lock:
-            self.order_status_list = []
+        with self.__order_arr_lock:
+            self.order_arr = []
 
-    def snapshots(self, contracts):
-        try:
-            return self.__api.snapshots(contracts)
-        except TimeoutError:
-            return self.snapshots(contracts)
+    def get_order_status_from_local_by_order_id(self, order_id: str):
+        self.update_local_order_status()
+        if len(self.order_arr) == 0:
+            return OrderStatus("", "", "order list is empty")
+
+        for order in self.order_arr:
+            if order.status.id == order_id:
+                return OrderStatus(order_id, order.status.status, "")
+        return OrderStatus("", "", "order not found")
+
+    def place_order_callback(self, order_state: OrderState, res: dict):
+        self.update_local_order_status()
+        if order_state in (OrderState.FOrder, OrderState.TFTOrder):
+            if res["contract"]["code"] is None:
+                logger.error("place order code is none")
+                return
+            logger.info(
+                "%s order: %s %s %.2f %d %s",
+                res["operation"]["op_type"],
+                res["contract"]["code"],
+                res["order"]["action"],
+                res["order"]["price"],
+                res["order"]["quantity"],
+                res["order"]["id"],
+            )
+
+        elif order_state in (OrderState.FDeal, OrderState.TFTDeal):
+            if res["code"] is None:
+                logger.error("deal order code is none")
+                return
+            logger.info(
+                "Deal future order: %s %s %.2f %d %s",
+                res["code"],
+                res["action"],
+                res["price"],
+                res["quantity"],
+                res["trade_id"],
+            )
 
     def get_contract_tse_001(self):
         return self.__api.Contracts.Indexs.TSE.TSE001
@@ -206,6 +238,12 @@ class Sinopac:  # pylint: disable=too-many-public-methods
 
     def get_contract_name_by_future_code(self, code) -> str:
         return str(self.__api.Contracts.Futures[code].name)
+
+    def snapshots(self, contracts):
+        try:
+            return self.__api.snapshots(contracts)
+        except TimeoutError:
+            return self.snapshots(contracts)
 
     def stock_ticks(self, num, date):
         contract = self.get_contract_by_stock_num(num)
@@ -435,7 +473,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         times = int()
         while True:
             self.update_local_order_status()
-            for order in self.order_status_list:
+            for order in self.order_arr:
                 if order.status.id == order_id:
                     cancel_order = order
             if cancel_order is not None or times >= 10:
@@ -444,7 +482,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             time.sleep(1)
         if cancel_order is None:
             return OrderStatus(order_id, "", "id not found")
-        if cancel_order.status.status == sj.constant.Status.Cancelled:
+        if cancel_order.status.status == Status.Cancelled:
             return OrderStatus(order_id, "", "id already cancelled")
 
         times = 0
@@ -453,57 +491,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             if times >= 10:
                 break
             self.update_local_order_status()
-            for order in self.order_status_list:
+            for order in self.order_arr:
                 if (
                     order.status.id == order_id
-                    and order.status.status == sj.constant.Status.Cancelled
+                    and order.status.status == Status.Cancelled
                 ):
                     return OrderStatus(order_id, order.status.status, "")
             times += 1
             time.sleep(1)
         return OrderStatus("", "", "cancel stock fail")
-
-    def get_order_status_from_local_by_order_id(self, order_id: str):
-        self.update_local_order_status()
-        if len(self.order_status_list) == 0:
-            return OrderStatus("", "", "order list is empty")
-
-        for order in self.order_status_list:
-            if order.status.id == order_id:
-                return OrderStatus(order_id, order.status.status, "")
-        return OrderStatus("", "", "order not found")
-
-    def get_order_status(self):
-        return self.order_status_list
-
-    def place_order_callback(self, order_state: OrderState, res: dict):
-        self.update_local_order_status()
-        if order_state in (OrderState.FOrder, OrderState.TFTOrder):
-            if res["contract"]["code"] is None:
-                logger.error("place order code is none")
-                return
-            logger.info(
-                "%s order: %s %s %.2f %d %s",
-                res["operation"]["op_type"],
-                res["contract"]["code"],
-                res["order"]["action"],
-                res["order"]["price"],
-                res["order"]["quantity"],
-                res["order"]["id"],
-            )
-
-        elif order_state in (OrderState.FDeal, OrderState.TFTDeal):
-            if res["code"] is None:
-                logger.error("deal order code is none")
-                return
-            logger.info(
-                "Deal future order: %s %s %.2f %d %s",
-                res["code"],
-                res["action"],
-                res["price"],
-                res["quantity"],
-                res["trade_id"],
-            )
 
     def buy_future(self, code: str, price: float, quantity: int):
         order = self.__api.Order(
@@ -558,7 +554,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         times = int()
         while True:
             self.update_local_order_status()
-            for order in self.order_status_list:
+            for order in self.order_arr:
                 if order.status.id == order_id:
                     cancel_order = order
             if cancel_order is not None or times >= 10:
@@ -567,7 +563,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             time.sleep(1)
         if cancel_order is None:
             return OrderStatus(order_id, "", "id not found")
-        if cancel_order.status.status == sj.constant.Status.Cancelled:
+        if cancel_order.status.status == Status.Cancelled:
             return OrderStatus(order_id, "", "id already cancelled")
 
         times = 0
@@ -576,10 +572,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             if times >= 10:
                 break
             self.update_local_order_status()
-            for order in self.order_status_list:
+            for order in self.order_arr:
                 if (
                     order.status.id == order_id
-                    and order.status.status == sj.constant.Status.Cancelled
+                    and order.status.status == Status.Cancelled
                 ):
                     return OrderStatus(order_id, order.status.status, "")
             times += 1
