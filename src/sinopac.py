@@ -54,7 +54,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         with self.__login_status_lock:
             if security_type.value in [item.value for item in SecurityType]:
                 self.__login_status += 1
-                logger.info("%s: %d/4", security_type, self.__login_status)
+                logger.info(
+                    "login progress: %d/4, %s", self.__login_status, security_type
+                )
 
     def login(self, user: SinopacUser, is_main: bool):
         # before gRPC set cb, using logger to save event
