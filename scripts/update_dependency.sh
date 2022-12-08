@@ -17,7 +17,8 @@ pip install -U \
   schedule \
   pika \
   requests \
-  yfinance
+  yfinance \
+  prometheus-client
 
 pip freeze > requirements.txt
 

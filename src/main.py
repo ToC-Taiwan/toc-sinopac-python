@@ -2,6 +2,8 @@
 import os
 import time
 
+from prometheus_client import start_http_server
+
 from cron import init_schedule_job
 from env import RequiredEnv
 from grpcsrv import serve
@@ -15,6 +17,8 @@ password = env.password
 ca_password = env.ca_password
 grpc_port = env.grpc_port
 connection_count = env.connection_count
+
+start_http_server(8887)
 
 # add schedule to exit the program
 init_schedule_job()
