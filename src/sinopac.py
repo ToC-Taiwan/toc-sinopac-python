@@ -173,26 +173,30 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return None
 
     def update_local_order_status(self):
+        self.__api.update_status()
         with self.__order_arr_lock:
-            self.__api.update_status()
             self.order_arr = self.__api.list_trades()
 
     def get_order_status(self):
-        return self.order_arr
-
-    def clear_local_order_status(self):
         with self.__order_arr_lock:
-            self.order_arr = []
+            return self.order_arr
+
+    def get_order_from_local_by_order_id(self, order_id: str) -> sj.order.Trade:
+        with self.__order_arr_lock:
+            for order in self.order_arr:
+                if order.status.id == order_id:
+                    return order
+            return None
 
     def get_order_status_from_local_by_order_id(self, order_id: str):
-        self.update_local_order_status()
-        if len(self.order_arr) == 0:
-            return OrderStatus("", "", "order list is empty")
+        with self.__order_arr_lock:
+            if len(self.order_arr) == 0:
+                return OrderStatus("", "", "order list is empty")
 
-        for order in self.order_arr:
-            if order.status.id == order_id:
-                return OrderStatus(order_id, order.status.status, "")
-        return OrderStatus("", "", "order not found")
+            for order in self.order_arr:
+                if order.status.id == order_id:
+                    return OrderStatus(order_id, order.status.status, "")
+            return OrderStatus("", "", "order not found")
 
     def place_order_callback(self, order_state: OrderState, res: dict):
         self.update_local_order_status()
@@ -471,34 +475,20 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "sell first stock fail")
 
     def cancel_stock(self, order_id: str):
-        cancel_order = None
-        times = int()
-        while True:
-            self.update_local_order_status()
-            for order in self.order_arr:
-                if order.status.id == order_id:
-                    cancel_order = order
-            if cancel_order is not None or times >= 10:
-                break
-            times += 1
-            time.sleep(1)
+        cancel_order = self.get_order_from_local_by_order_id(order_id)
         if cancel_order is None:
             return OrderStatus(order_id, "", "id not found")
         if cancel_order.status.status == Status.Cancelled:
             return OrderStatus(order_id, "", "id already cancelled")
 
-        times = 0
+        times = int()
         self.__api.cancel_order(cancel_order)
         while True:
             if times >= 10:
                 break
-            self.update_local_order_status()
-            for order in self.order_arr:
-                if (
-                    order.status.id == order_id
-                    and order.status.status == Status.Cancelled
-                ):
-                    return OrderStatus(order_id, order.status.status, "")
+            cancel_order = self.get_order_from_local_by_order_id(order_id)
+            if cancel_order.status.status == Status.Cancelled:
+                return OrderStatus(order_id, cancel_order.status.status, "")
             times += 1
             time.sleep(1)
         return OrderStatus("", "", "cancel stock fail")
@@ -552,34 +542,20 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "sell first future fail")
 
     def cancel_future(self, order_id: str):
-        cancel_order = None
-        times = int()
-        while True:
-            self.update_local_order_status()
-            for order in self.order_arr:
-                if order.status.id == order_id:
-                    cancel_order = order
-            if cancel_order is not None or times >= 10:
-                break
-            times += 1
-            time.sleep(1)
+        cancel_order = self.get_order_from_local_by_order_id(order_id)
         if cancel_order is None:
             return OrderStatus(order_id, "", "id not found")
         if cancel_order.status.status == Status.Cancelled:
             return OrderStatus(order_id, "", "id already cancelled")
 
-        times = 0
+        times = int()
         self.__api.cancel_order(cancel_order)
         while True:
             if times >= 10:
                 break
-            self.update_local_order_status()
-            for order in self.order_arr:
-                if (
-                    order.status.id == order_id
-                    and order.status.status == Status.Cancelled
-                ):
-                    return OrderStatus(order_id, order.status.status, "")
+            cancel_order = self.get_order_from_local_by_order_id(order_id)
+            if cancel_order.status.status == Status.Cancelled:
+                return OrderStatus(order_id, cancel_order.status.status, "")
             times += 1
             time.sleep(1)
         return OrderStatus("", "", "cancel future fail")

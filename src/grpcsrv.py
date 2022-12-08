@@ -59,7 +59,6 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
                 if self.debug is True:
                     WORKERS.unsubscribe_all_tick()
                     WORKERS.unsubscribe_all_bidask()
-                    WORKERS.clear_order()
                     self.simulator.reset_simulator()
                     return
                 logger.error("toc machine trading not responding, terminate")

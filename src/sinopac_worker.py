@@ -287,6 +287,3 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
 
     def get_future_code_list(self):
         return self.main_worker.get_future_code_list()
-
-    def clear_order(self):
-        self.main_worker.clear_local_order_status()
