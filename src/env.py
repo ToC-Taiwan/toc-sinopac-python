@@ -57,7 +57,7 @@ class RequiredEnv:  # pylint: disable=too-many-instance-attributes
         self.connection_count = int(str(os.environ.get("CONNECTION_COUNT")))
         if self.connection_count is None:
             raise Exception("Missing environment CONNECTION_COUNT")
-        if self.connection_count < 2:
-            raise Exception("CONNECTION_COUNT must be greater than 2")
+        if self.connection_count <= 1:
+            raise Exception("CONNECTION_COUNT must be greater than 1")
         if self.connection_count > 5:
-            raise Exception("CONNECTION_COUNT must be less than 5")
+            raise Exception("CONNECTION_COUNT must be less or equal to 5")

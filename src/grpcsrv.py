@@ -40,7 +40,7 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
         self.simulator = simulator
 
     def Heartbeat(self, request_iterator, _):
-        logger.info("toc machine trading connected")
+        logger.info("new grpc client connected")
         self.beat_queue: Queue = Queue()
         threading.Thread(target=self.beat_timer).start()
         for beat in request_iterator:

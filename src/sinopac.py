@@ -47,7 +47,6 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             logger.info("event: %s", event)
 
         if event_code == 12:
-            logger.error(event)
             os._exit(1)
 
     def login_cb(self, security_type):
@@ -206,7 +205,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 return
             logger.info(
                 "%s order: %s %s %.2f %d %s",
-                res["operation"]["op_type"],
+                str(res["operation"]["op_type"]).lower(),
                 res["contract"]["code"],
                 res["order"]["action"],
                 res["order"]["price"],
@@ -219,7 +218,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 logger.error("deal order code is none")
                 return
             logger.info(
-                "Deal future order: %s %s %.2f %d %s",
+                "deal order: %s %s %.2f %d %s",
                 res["code"],
                 res["action"],
                 res["price"],

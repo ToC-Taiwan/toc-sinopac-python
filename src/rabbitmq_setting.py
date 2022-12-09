@@ -47,7 +47,7 @@ class RabbitMQSetting:
         exchange_arr = r.json()
         for ex in exchange_arr:
             if ex["name"] == env.rabbitmq_exchange:
-                logger.warning("Delete exchange %s", ex["name"])
+                logger.warning("delete exchange %s", ex["name"])
                 r = requests.delete(
                     url=f"http://{env.rabbitmq_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
                     headers=headers,
