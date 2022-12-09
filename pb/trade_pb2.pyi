@@ -176,23 +176,23 @@ class FutureOrderID(google.protobuf.message.Message):
 global___FutureOrderID = FutureOrderID
 
 @typing_extensions.final
-class StockOrderStatusArr(google.protobuf.message.Message):
+class OrderStatusArr(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATA_FIELD_NUMBER: builtins.int
     @property
-    def data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___StockOrderStatus]: ...
+    def data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___OrderStatus]: ...
     def __init__(
         self,
         *,
-        data: collections.abc.Iterable[global___StockOrderStatus] | None = ...,
+        data: collections.abc.Iterable[global___OrderStatus] | None = ...,
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["data", b"data"]) -> None: ...
 
-global___StockOrderStatusArr = StockOrderStatusArr
+global___OrderStatusArr = OrderStatusArr
 
 @typing_extensions.final
-class StockOrderStatus(google.protobuf.message.Message):
+class OrderStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STATUS_FIELD_NUMBER: builtins.int
@@ -222,19 +222,4 @@ class StockOrderStatus(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["action", b"action", "code", b"code", "order_id", b"order_id", "order_time", b"order_time", "price", b"price", "quantity", b"quantity", "status", b"status"]) -> None: ...
 
-global___StockOrderStatus = StockOrderStatus
-
-@typing_extensions.final
-class Simulate(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    SIMULATE_FIELD_NUMBER: builtins.int
-    simulate: builtins.bool
-    def __init__(
-        self,
-        *,
-        simulate: builtins.bool = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["simulate", b"simulate"]) -> None: ...
-
-global___Simulate = Simulate
+global___OrderStatus = OrderStatus

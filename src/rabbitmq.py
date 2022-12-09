@@ -92,7 +92,7 @@ class RabbitMQS:
                 p.ch.basic_publish(
                     exchange=self.exchange,
                     routing_key="order",
-                    body=trade_pb2.StockOrderStatus(
+                    body=trade_pb2.OrderStatus(
                         code=order.contract.code,
                         action=order.order.action,
                         price=order_price,
@@ -212,7 +212,11 @@ class RabbitMQS:
         )
         self.pika_queue.put(p)
 
-    def send_order(self, arr: list[sj.order.Trade]):
+    def send_order_arr(self, arr: list[sj.order.Trade]):
+        if len(arr) == 0:
+            return
+
+        result = trade_pb2.OrderStatusArr()
         for order in arr:
             if order.status.order_datetime is None:
                 order.status.order_datetime = datetime.now()
@@ -227,11 +231,8 @@ class RabbitMQS:
             if order.status.deal_quantity not in (0, qty):
                 qty = order.status.deal_quantity
 
-            p = self.pika_queue.get(block=True)
-            p.ch.basic_publish(
-                exchange=self.exchange,
-                routing_key="order",
-                body=trade_pb2.StockOrderStatus(
+            result.data.append(
+                trade_pb2.OrderStatus(
                     code=order.contract.code,
                     action=order.order.action,
                     price=order_price,
@@ -239,8 +240,16 @@ class RabbitMQS:
                     order_id=order.status.id,
                     status=order.status.status,
                     order_time=datetime.strftime(
-                        order.status.order_datetime, "%Y-%m-%d %H:%M:%S"
+                        order.status.order_datetime,
+                        "%Y-%m-%d %H:%M:%S",
                     ),
-                ).SerializeToString(),
+                )
             )
-            self.pika_queue.put(p)
+
+        p = self.pika_queue.get(block=True)
+        p.ch.basic_publish(
+            exchange=self.exchange,
+            routing_key="order_arr",
+            body=result.SerializeToString(),
+        )
+        self.pika_queue.put(p)

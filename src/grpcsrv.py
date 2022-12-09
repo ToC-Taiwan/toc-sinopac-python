@@ -441,18 +441,12 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
 
     def GetLocalOrderStatusArr(self, request, _):
         with self.send_order_lock:
-            threading.Thread(
-                target=self.rq.send_order,
-                args=(WORKERS.get_order_status_arr(),),
-            ).start()
+            self.rq.send_order_arr(WORKERS.get_order_status_arr())
             return google.protobuf.empty_pb2.Empty()  # pylint: disable=no-member
 
     def GetSimulateOrderStatusArr(self, request, _):
         with self.send_order_lock:
-            threading.Thread(
-                target=self.rq.send_order,
-                args=(self.simulator.get_order_status(),),
-            ).start()
+            self.rq.send_order_arr(self.simulator.get_order_status())
             return google.protobuf.empty_pb2.Empty()  # pylint: disable=no-member
 
     def GetNonBlockOrderStatusArr(self, request, _):
