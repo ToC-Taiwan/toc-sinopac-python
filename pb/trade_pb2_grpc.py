@@ -41,10 +41,15 @@ class TradeInterfaceStub(object):
                 request_serializer=trade__pb2.OrderID.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
-        self.GetOrderStatusArrFromMQ = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/GetOrderStatusArrFromMQ',
-                request_serializer=trade__pb2.Simulate.SerializeToString,
-                response_deserializer=common__pb2.ErrorMessage.FromString,
+        self.GetLocalOrderStatusArr = channel.unary_unary(
+                '/sinopac_forwarder.TradeInterface/GetLocalOrderStatusArr',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.GetSimulateOrderStatusArr = channel.unary_unary(
+                '/sinopac_forwarder.TradeInterface/GetSimulateOrderStatusArr',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.GetNonBlockOrderStatusArr = channel.unary_unary(
                 '/sinopac_forwarder.TradeInterface/GetNonBlockOrderStatusArr',
@@ -111,7 +116,13 @@ class TradeInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetOrderStatusArrFromMQ(self, request, context):
+    def GetLocalOrderStatusArr(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSimulateOrderStatusArr(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -181,10 +192,15 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
                     request_deserializer=trade__pb2.OrderID.FromString,
                     response_serializer=trade__pb2.TradeResult.SerializeToString,
             ),
-            'GetOrderStatusArrFromMQ': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetOrderStatusArrFromMQ,
-                    request_deserializer=trade__pb2.Simulate.FromString,
-                    response_serializer=common__pb2.ErrorMessage.SerializeToString,
+            'GetLocalOrderStatusArr': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetLocalOrderStatusArr,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'GetSimulateOrderStatusArr': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSimulateOrderStatusArr,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
             'GetNonBlockOrderStatusArr': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNonBlockOrderStatusArr,
@@ -312,7 +328,7 @@ class TradeInterface(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetOrderStatusArrFromMQ(request,
+    def GetLocalOrderStatusArr(request,
             target,
             options=(),
             channel_credentials=None,
@@ -322,9 +338,26 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetOrderStatusArrFromMQ',
-            trade__pb2.Simulate.SerializeToString,
-            common__pb2.ErrorMessage.FromString,
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetLocalOrderStatusArr',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetSimulateOrderStatusArr(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetSimulateOrderStatusArr',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

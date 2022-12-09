@@ -20,7 +20,6 @@ import stream_pb2_grpc
 import trade_pb2
 import trade_pb2_grpc
 from shioaji.data import Snapshot
-from shioaji.order import Trade
 
 from env import RequiredEnv
 from logger import logger
@@ -440,18 +439,21 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def GetOrderStatusArrFromMQ(self, request, _):
+    def GetLocalOrderStatusArr(self, request, _):
         with self.send_order_lock:
-            arr: list[Trade] = []
-            if request.simulate is not True:
-                arr = WORKERS.get_order_status_arr()
-            else:
-                arr = self.simulator.get_order_status()
             threading.Thread(
                 target=self.rq.send_order,
-                args=(arr,),
+                args=(WORKERS.get_order_status_arr(),),
             ).start()
-            return common_pb2.ErrorMessage(err="")
+            return google.protobuf.empty_pb2.Empty()  # pylint: disable=no-member
+
+    def GetSimulateOrderStatusArr(self, request, _):
+        with self.send_order_lock:
+            threading.Thread(
+                target=self.rq.send_order,
+                args=(self.simulator.get_order_status(),),
+            ).start()
+            return google.protobuf.empty_pb2.Empty()  # pylint: disable=no-member
 
     def GetNonBlockOrderStatusArr(self, request, _):
         return common_pb2.ErrorMessage(err=WORKERS.get_non_block_order_status_arr())

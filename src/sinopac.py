@@ -165,15 +165,15 @@ class Sinopac:  # pylint: disable=too-many-public-methods
 
     def update_order_status_instant(self):
         if self.order_status_callback is None:
-            raise Exception("order_status_callback is None")
+            return "order_status_callback is None"
 
         with self.__order_arr_lock:
             self.__api.update_status(timeout=0, cb=self.order_status_callback)
             return None
 
     def update_local_order_status(self):
-        self.__api.update_status()
         with self.__order_arr_lock:
+            self.__api.update_status()
             self.order_arr = self.__api.list_trades()
 
     def get_order_status(self):

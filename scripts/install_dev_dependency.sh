@@ -10,5 +10,5 @@ pip install -U \
   mypy \
   pylint
 
-mypy --install-types --non-interactive ./src
+mypy --install-types --non-interactive --check-untyped-defs --config-file=./mypy.ini ./src
 pre-commit install
