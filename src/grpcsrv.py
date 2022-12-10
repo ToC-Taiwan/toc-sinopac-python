@@ -20,6 +20,7 @@ import stream_pb2_grpc
 import trade_pb2
 import trade_pb2_grpc
 from shioaji.data import Snapshot
+from shioaji.error import TokenError
 
 from env import RequiredEnv
 from logger import logger
@@ -597,12 +598,20 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
 
     def GetStockSnapshotTSE(self, request, _):
         worker = WORKERS.get(True)
-        snapshots = worker.snapshots([worker.get_contract_tse_001()])
+        try:
+            snapshots = worker.snapshots([worker.get_contract_tse_001()])
+        except TokenError:
+            logger.error("token error")
+            os._exit(1)
         return sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockSnapshotOTC(self, request, _):
         worker = WORKERS.get(True)
-        snapshots = worker.snapshots([worker.get_contract_otc_101()])
+        try:
+            snapshots = worker.snapshots([worker.get_contract_otc_101()])
+        except TokenError:
+            logger.error("token error")
+            os._exit(1)
         return sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockVolumeRank(self, request, _):
@@ -767,7 +776,12 @@ def sinopac_snapshot_to_pb(result) -> stream_pb2.SnapshotMessage:
 
 
 def fill_snapshot_arr(contracts, snapshots, worker: Sinopac):
-    data = worker.snapshots(contracts)
+    try:
+        data = worker.snapshots(contracts)
+    except TokenError:
+        logger.error("Token Error")
+        os._exit(1)
+
     if data is not None:
         snapshots.extend(data)
 

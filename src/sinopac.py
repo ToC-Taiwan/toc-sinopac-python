@@ -249,9 +249,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return self.__api.snapshots(contracts)
         except TimeoutError:
             return self.snapshots(contracts)
-        except TokenError:
-            logger.error("token error")
-            os._exit(1)
+        except TokenError as e:
+            raise TokenError from e
 
     def stock_ticks(self, num, date):
         contract = self.get_contract_by_stock_num(num)
