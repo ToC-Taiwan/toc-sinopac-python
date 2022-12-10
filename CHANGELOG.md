@@ -1,6 +1,36 @@
-# [](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.1.0...v) (2022-12-02)
+# [](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.2.0...v) (2022-12-10)
 
 ## CHANGELOG
+
+# [1.2.0](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.1.0...v1.2.0) (2022-12-09)
+
+### Bug Fixes
+
+* **ci:** fix missing lint script ([ad633c5](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/ad633c57c65e0e91aa10cfd18ffa80e6b13f33a4))
+* **lint:** fix R1714: Consider merging these comparisons with 'in' ([09caf67](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/09caf675b252343417a725f31616a524df597dd0))
+* **lock:** add missing lock for get local orders, remove clear local order method ([88d1afd](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/88d1afd4997f90e308920cc56dd1657b388a275a))
+* **log:** fix wrong message in place order callback, lower all log ([647ed9d](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/647ed9d5ebebcef6e93ae0dd5cffd2f9e69c2c40))
+* **order:** add update order status for main sinopac worker after login ([a8278ce](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/a8278ce6240fe19cae2a278960985240f82d8d35))
+* **order:** fix place order callback cannot has name from local contract ([8dfac5e](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/8dfac5ef38251e288d92383b9e35cbacf4804480))
+* **order:** move update status into lock, split simulate and prod order get method ([9462f36](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/9462f362725124ca14477afa0090132a844a0096))
+* **timeout:** fix snapshots, position timeout cause exception ([eea82fa](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/eea82fa52710d7baf1f014f509abb579fc64515e))
+
+### Features
+
+* **grpc:** add otc kbar, use threading to increase speed of get order from mq ([6a754ca](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/6a754ca38cae2055d62515f837793947a7a3dd01))
+* **lock:** add lock for GetOrderStatusArrFromMQ ([c7e09bf](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/c7e09bf1505c5a0232ae06657be2f2ddf2147463))
+* **log:** add color in logger module ([a81b4fe](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/a81b4fe07d80aa04ca54fe51672c71d62f3a11d8))
+* **logger:** modify log format, remove redundant constant ([f8660a4](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/f8660a4d3786b08913afef3dabebadd04931da8b))
+* **monitor:** add prometheus client and listen 8887 ([159418a](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/159418ae0ce763c207fa077da99fb23609141eca))
+* **mq:** add send order arr to mq ([5db2377](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/5db23778b9d9d9f64b4d0227e6fad4dae5cc1317))
+* **order:** add update order status when place order cb ([a723e5c](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/a723e5c6a1388db1c74e16446fe4cad8fd00d273))
+* **order:** increase efficency of send order to mq ([77d174c](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/77d174cefc382f4b9e1eaa6cd3be172991907a95))
+* **proto:** update latest toc trade protobuf ([1354dca](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/1354dca0288fa4682acf2ee6faca39bced15d648))
+* **simulator:** split simulate trade from sinpac to a single simulate class ([8825148](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/88251482e1bf9c0ddea814f4adca2ff68a102963))
+
+### Reverts
+
+* **log:** due to user root, no color, revert to console logger ([d1ba769](https://github.com/ToC-Taiwan/toc-sinopac-python/commit/d1ba769770f007dc154d8d66a9d8aa66600cb40f))
 
 # [1.1.0](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.0.0...v1.1.0) (2022-12-01)
 

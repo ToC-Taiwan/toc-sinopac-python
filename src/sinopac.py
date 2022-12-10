@@ -4,7 +4,7 @@ import time
 
 import shioaji as sj
 from shioaji.constant import DayTrade, OrderState, SecurityType, Status
-from shioaji.error import SystemMaintenance
+from shioaji.error import SystemMaintenance, TokenError
 
 from logger import logger
 
@@ -249,6 +249,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return self.__api.snapshots(contracts)
         except TimeoutError:
             return self.snapshots(contracts)
+        except TokenError:
+            logger.error("token error")
+            os._exit(1)
 
     def stock_ticks(self, num, date):
         contract = self.get_contract_by_stock_num(num)
