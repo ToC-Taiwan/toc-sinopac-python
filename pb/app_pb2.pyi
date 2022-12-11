@@ -26,25 +26,23 @@ class _WSTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTyp
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     TYPE_FUTURE_TICK: _WSType.ValueType  # 0
     TYPE_FUTURE_ORDER: _WSType.ValueType  # 1
-    TYPE_PERIOD_TRADE_VOLUME: _WSType.ValueType  # 2
-    TYPE_TRADE_INDEX: _WSType.ValueType  # 3
-    TYPE_FUTURE_POSITION: _WSType.ValueType  # 4
-    TYPE_ASSIST_STATUS: _WSType.ValueType  # 5
-    TYPE_ERR_MESSAGE: _WSType.ValueType  # 6
-    TYPE_KBAR_ARR: _WSType.ValueType  # 7
-    TYPE_FUTURE_DETAIL: _WSType.ValueType  # 8
+    TYPE_TRADE_INDEX: _WSType.ValueType  # 2
+    TYPE_FUTURE_POSITION: _WSType.ValueType  # 3
+    TYPE_ASSIST_STATUS: _WSType.ValueType  # 4
+    TYPE_ERR_MESSAGE: _WSType.ValueType  # 5
+    TYPE_KBAR_ARR: _WSType.ValueType  # 6
+    TYPE_FUTURE_DETAIL: _WSType.ValueType  # 7
 
 class WSType(_WSType, metaclass=_WSTypeEnumTypeWrapper): ...
 
 TYPE_FUTURE_TICK: WSType.ValueType  # 0
 TYPE_FUTURE_ORDER: WSType.ValueType  # 1
-TYPE_PERIOD_TRADE_VOLUME: WSType.ValueType  # 2
-TYPE_TRADE_INDEX: WSType.ValueType  # 3
-TYPE_FUTURE_POSITION: WSType.ValueType  # 4
-TYPE_ASSIST_STATUS: WSType.ValueType  # 5
-TYPE_ERR_MESSAGE: WSType.ValueType  # 6
-TYPE_KBAR_ARR: WSType.ValueType  # 7
-TYPE_FUTURE_DETAIL: WSType.ValueType  # 8
+TYPE_TRADE_INDEX: WSType.ValueType  # 2
+TYPE_FUTURE_POSITION: WSType.ValueType  # 3
+TYPE_ASSIST_STATUS: WSType.ValueType  # 4
+TYPE_ERR_MESSAGE: WSType.ValueType  # 5
+TYPE_KBAR_ARR: WSType.ValueType  # 6
+TYPE_FUTURE_DETAIL: WSType.ValueType  # 7
 global___WSType = WSType
 
 @typing_extensions.final
@@ -54,7 +52,6 @@ class WSMessage(google.protobuf.message.Message):
     TYPE_FIELD_NUMBER: builtins.int
     FUTURE_TICK_FIELD_NUMBER: builtins.int
     FUTURE_ORDER_FIELD_NUMBER: builtins.int
-    PERIOD_TRADE_VOLUME_FIELD_NUMBER: builtins.int
     TRADE_INDEX_FIELD_NUMBER: builtins.int
     FUTURE_POSITION_FIELD_NUMBER: builtins.int
     ASSIT_STATUS_FIELD_NUMBER: builtins.int
@@ -66,8 +63,6 @@ class WSMessage(google.protobuf.message.Message):
     def future_tick(self) -> global___WSFutureTick: ...
     @property
     def future_order(self) -> global___WSFutureOrder: ...
-    @property
-    def period_trade_volume(self) -> global___WSPeriodTradeVolume: ...
     @property
     def trade_index(self) -> global___WSTradeIndex: ...
     @property
@@ -86,7 +81,6 @@ class WSMessage(google.protobuf.message.Message):
         type: global___WSType.ValueType = ...,
         future_tick: global___WSFutureTick | None = ...,
         future_order: global___WSFutureOrder | None = ...,
-        period_trade_volume: global___WSPeriodTradeVolume | None = ...,
         trade_index: global___WSTradeIndex | None = ...,
         future_position: global___WSFuturePosition | None = ...,
         assit_status: global___WSAssitStatus | None = ...,
@@ -94,9 +88,9 @@ class WSMessage(google.protobuf.message.Message):
         history_kbar: global___WSHistoryKbarMessage | None = ...,
         future_detail: global___WSFutureDetail | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["assit_status", b"assit_status", "data", b"data", "err_message", b"err_message", "future_detail", b"future_detail", "future_order", b"future_order", "future_position", b"future_position", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "period_trade_volume", b"period_trade_volume", "trade_index", b"trade_index"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["assit_status", b"assit_status", "data", b"data", "err_message", b"err_message", "future_detail", b"future_detail", "future_order", b"future_order", "future_position", b"future_position", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "period_trade_volume", b"period_trade_volume", "trade_index", b"trade_index", "type", b"type"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["data", b"data"]) -> typing_extensions.Literal["future_tick", "future_order", "period_trade_volume", "trade_index", "future_position", "assit_status", "err_message", "history_kbar", "future_detail"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["assit_status", b"assit_status", "data", b"data", "err_message", b"err_message", "future_detail", b"future_detail", "future_order", b"future_order", "future_position", b"future_position", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "trade_index", b"trade_index"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["assit_status", b"assit_status", "data", b"data", "err_message", b"err_message", "future_detail", b"future_detail", "future_order", b"future_order", "future_position", b"future_position", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "trade_index", b"trade_index", "type", b"type"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["data", b"data"]) -> typing_extensions.Literal["future_tick", "future_order", "trade_index", "future_position", "assit_status", "err_message", "history_kbar", "future_detail"] | None: ...
 
 global___WSMessage = WSMessage
 
@@ -292,53 +286,6 @@ class WSFutureTick(google.protobuf.message.Message):
 global___WSFutureTick = WSFutureTick
 
 @typing_extensions.final
-class OutInVolume(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    OUT_VOLUME_FIELD_NUMBER: builtins.int
-    IN_VOLUME_FIELD_NUMBER: builtins.int
-    out_volume: builtins.int
-    in_volume: builtins.int
-    def __init__(
-        self,
-        *,
-        out_volume: builtins.int = ...,
-        in_volume: builtins.int = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["in_volume", b"in_volume", "out_volume", b"out_volume"]) -> None: ...
-
-global___OutInVolume = OutInVolume
-
-@typing_extensions.final
-class WSPeriodTradeVolume(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    FIRST_PERIOD_FIELD_NUMBER: builtins.int
-    SECOND_PERIOD_FIELD_NUMBER: builtins.int
-    THIRD_PERIOD_FIELD_NUMBER: builtins.int
-    FOURTH_PERIOD_FIELD_NUMBER: builtins.int
-    @property
-    def first_period(self) -> global___OutInVolume: ...
-    @property
-    def second_period(self) -> global___OutInVolume: ...
-    @property
-    def third_period(self) -> global___OutInVolume: ...
-    @property
-    def fourth_period(self) -> global___OutInVolume: ...
-    def __init__(
-        self,
-        *,
-        first_period: global___OutInVolume | None = ...,
-        second_period: global___OutInVolume | None = ...,
-        third_period: global___OutInVolume | None = ...,
-        fourth_period: global___OutInVolume | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["first_period", b"first_period", "fourth_period", b"fourth_period", "second_period", b"second_period", "third_period", b"third_period"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["first_period", b"first_period", "fourth_period", b"fourth_period", "second_period", b"second_period", "third_period", b"third_period"]) -> None: ...
-
-global___WSPeriodTradeVolume = WSPeriodTradeVolume
-
-@typing_extensions.final
 class WSTradeIndex(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -347,20 +294,20 @@ class WSTradeIndex(google.protobuf.message.Message):
     NASDAQ_FIELD_NUMBER: builtins.int
     NF_FIELD_NUMBER: builtins.int
     @property
-    def tse(self) -> global___WSStockSnapShot: ...
+    def tse(self) -> global___WSIndexStatus: ...
     @property
-    def otc(self) -> global___WSStockSnapShot: ...
+    def otc(self) -> global___WSIndexStatus: ...
     @property
-    def nasdaq(self) -> global___WSYahooPrice: ...
+    def nasdaq(self) -> global___WSIndexStatus: ...
     @property
-    def nf(self) -> global___WSYahooPrice: ...
+    def nf(self) -> global___WSIndexStatus: ...
     def __init__(
         self,
         *,
-        tse: global___WSStockSnapShot | None = ...,
-        otc: global___WSStockSnapShot | None = ...,
-        nasdaq: global___WSYahooPrice | None = ...,
-        nf: global___WSYahooPrice | None = ...,
+        tse: global___WSIndexStatus | None = ...,
+        otc: global___WSIndexStatus | None = ...,
+        nasdaq: global___WSIndexStatus | None = ...,
+        nf: global___WSIndexStatus | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["nasdaq", b"nasdaq", "nf", b"nf", "otc", b"otc", "tse", b"tse"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["nasdaq", b"nasdaq", "nf", b"nf", "otc", b"otc", "tse", b"tse"]) -> None: ...
@@ -368,88 +315,22 @@ class WSTradeIndex(google.protobuf.message.Message):
 global___WSTradeIndex = WSTradeIndex
 
 @typing_extensions.final
-class WSStockSnapShot(google.protobuf.message.Message):
+class WSIndexStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    STOCK_NUM_FIELD_NUMBER: builtins.int
-    STOCK_NAME_FIELD_NUMBER: builtins.int
-    SNAP_TIME_FIELD_NUMBER: builtins.int
-    OPEN_FIELD_NUMBER: builtins.int
-    HIGH_FIELD_NUMBER: builtins.int
-    LOW_FIELD_NUMBER: builtins.int
-    CLOSE_FIELD_NUMBER: builtins.int
-    TICK_TYPE_FIELD_NUMBER: builtins.int
+    BREAK_COUNT_FIELD_NUMBER: builtins.int
     PRICE_CHG_FIELD_NUMBER: builtins.int
-    PCT_CHG_FIELD_NUMBER: builtins.int
-    CHG_TYPE_FIELD_NUMBER: builtins.int
-    VOLUME_FIELD_NUMBER: builtins.int
-    VOLUME_SUM_FIELD_NUMBER: builtins.int
-    AMOUNT_FIELD_NUMBER: builtins.int
-    AMOUNT_SUM_FIELD_NUMBER: builtins.int
-    YESTERDAY_VOLUME_FIELD_NUMBER: builtins.int
-    VOLUME_RATIO_FIELD_NUMBER: builtins.int
-    stock_num: builtins.str
-    stock_name: builtins.str
-    snap_time: builtins.str
-    open: builtins.float
-    high: builtins.float
-    low: builtins.float
-    close: builtins.float
-    tick_type: builtins.str
+    break_count: builtins.int
     price_chg: builtins.float
-    pct_chg: builtins.float
-    chg_type: builtins.str
-    volume: builtins.int
-    volume_sum: builtins.int
-    amount: builtins.int
-    amount_sum: builtins.int
-    yesterday_volume: builtins.float
-    volume_ratio: builtins.float
     def __init__(
         self,
         *,
-        stock_num: builtins.str = ...,
-        stock_name: builtins.str = ...,
-        snap_time: builtins.str = ...,
-        open: builtins.float = ...,
-        high: builtins.float = ...,
-        low: builtins.float = ...,
-        close: builtins.float = ...,
-        tick_type: builtins.str = ...,
+        break_count: builtins.int = ...,
         price_chg: builtins.float = ...,
-        pct_chg: builtins.float = ...,
-        chg_type: builtins.str = ...,
-        volume: builtins.int = ...,
-        volume_sum: builtins.int = ...,
-        amount: builtins.int = ...,
-        amount_sum: builtins.int = ...,
-        yesterday_volume: builtins.float = ...,
-        volume_ratio: builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["amount", b"amount", "amount_sum", b"amount_sum", "chg_type", b"chg_type", "close", b"close", "high", b"high", "low", b"low", "open", b"open", "pct_chg", b"pct_chg", "price_chg", b"price_chg", "snap_time", b"snap_time", "stock_name", b"stock_name", "stock_num", b"stock_num", "tick_type", b"tick_type", "volume", b"volume", "volume_ratio", b"volume_ratio", "volume_sum", b"volume_sum", "yesterday_volume", b"yesterday_volume"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["break_count", b"break_count", "price_chg", b"price_chg"]) -> None: ...
 
-global___WSStockSnapShot = WSStockSnapShot
-
-@typing_extensions.final
-class WSYahooPrice(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    LAST_FIELD_NUMBER: builtins.int
-    PRICE_FIELD_NUMBER: builtins.int
-    UPDATED_AT_FIELD_NUMBER: builtins.int
-    last: builtins.float
-    price: builtins.float
-    updated_at: builtins.str
-    def __init__(
-        self,
-        *,
-        last: builtins.float = ...,
-        price: builtins.float = ...,
-        updated_at: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["last", b"last", "price", b"price", "updated_at", b"updated_at"]) -> None: ...
-
-global___WSYahooPrice = WSYahooPrice
+global___WSIndexStatus = WSIndexStatus
 
 @typing_extensions.final
 class WSFuturePosition(google.protobuf.message.Message):
