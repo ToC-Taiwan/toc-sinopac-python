@@ -1,7 +1,8 @@
-from http.client import RemoteDisconnected
+from http.client import IncompleteRead, RemoteDisconnected
 from json import JSONDecodeError
 
 import yfinance as yf
+from requests.exceptions import ChunkedEncodingError as RequestsChunkedEncodingError
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from urllib3.exceptions import ProtocolError
 
@@ -40,4 +41,8 @@ class Yahoo:
         except RequestsConnectionError:
             return self.get_price(code)
         except KeyError:
+            return self.get_price(code)
+        except IncompleteRead:
+            return self.get_price(code)
+        except RequestsChunkedEncodingError:
             return self.get_price(code)
