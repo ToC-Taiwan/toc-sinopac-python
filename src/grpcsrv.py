@@ -354,7 +354,7 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
     def GetFuturePosition(self, request, _):
         response = trade_pb2.FuturePositionArr()
         result = WORKERS.get_future_position()
-        if result is not None:
+        if len(result) > 0:
             for x in result:
                 response.position_arr.append(
                     trade_pb2.FuturePosition(

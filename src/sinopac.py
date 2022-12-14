@@ -161,7 +161,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             return self.__api.list_positions(self.__api.futopt_account)
         except TimeoutError:
-            return self.list_positions()
+            return []
 
     def update_order_status_instant(self):
         if self.order_status_callback is None:
