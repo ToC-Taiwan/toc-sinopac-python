@@ -56,12 +56,12 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
         self.beat_time = datetime.now().timestamp()
         while True:
             if datetime.now().timestamp() > self.beat_time + 10:
+                logger.info("grpc client disconnected")
                 if self.debug is True:
                     WORKERS.unsubscribe_all_tick()
                     WORKERS.unsubscribe_all_bidask()
                     self.simulator.reset_simulator()
                     return
-                logger.error("toc machine trading not responding, terminate")
                 os._exit(1)
             if self.beat_queue.empty():
                 time.sleep(1)
