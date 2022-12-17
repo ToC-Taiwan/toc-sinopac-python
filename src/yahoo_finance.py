@@ -26,23 +26,24 @@ class Yahoo:
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
-            return self.get_price(code)
-
+            return [0.0, 0.0]
         except JSONDecodeError:
-            return self.get_price(code)
+            return [0.0, 0.0]
         except TypeError:
-            return self.get_price(code)
+            return [0.0, 0.0]
         except RemoteDisconnected:
-            return self.get_price(code)
+            return [0.0, 0.0]
         except ConnectionResetError:
-            return self.get_price(code)
+            return [0.0, 0.0]
         except ProtocolError:
-            return self.get_price(code)
+            return [0.0, 0.0]
         except RequestsConnectionError:
-            return self.get_price(code)
+            return [0.0, 0.0]
         except KeyError:
-            return self.get_price(code)
+            return [0.0, 0.0]
         except IncompleteRead:
-            return self.get_price(code)
+            return [0.0, 0.0]
         except RequestsChunkedEncodingError:
-            return self.get_price(code)
+            return [0.0, 0.0]
+        except RecursionError:
+            return [0.0, 0.0]
