@@ -1,3 +1,5 @@
+import time
+
 import yfinance as yf
 
 from logger import logger
@@ -22,8 +24,10 @@ class Yahoo:
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
-            return [0.0, 0.0]
+            time.sleep(1)
+            return self.get_price(code)
 
         except Exception as e:  # pylint: disable=broad-except
-            logger.error("get price error: %s", e)
-            return [0.0, 0.0]
+            logger.error("get price error: %s", type(e))
+            time.sleep(1)
+            return self.get_price(code)
