@@ -1,5 +1,3 @@
-import time
-
 import yfinance as yf
 
 from logger import logger
