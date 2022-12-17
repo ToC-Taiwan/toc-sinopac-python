@@ -1,10 +1,6 @@
-from http.client import IncompleteRead, RemoteDisconnected
-from json import JSONDecodeError
-
 import yfinance as yf
-from requests.exceptions import ChunkedEncodingError as RequestsChunkedEncodingError
-from requests.exceptions import ConnectionError as RequestsConnectionError
-from urllib3.exceptions import ProtocolError
+
+from logger import logger
 
 
 class Yahoo:
@@ -27,23 +23,7 @@ class Yahoo:
                     float(t.info["previousClose"]),
                 ]
             return [0.0, 0.0]
-        except JSONDecodeError:
-            return [0.0, 0.0]
-        except TypeError:
-            return [0.0, 0.0]
-        except RemoteDisconnected:
-            return [0.0, 0.0]
-        except ConnectionResetError:
-            return [0.0, 0.0]
-        except ProtocolError:
-            return [0.0, 0.0]
-        except RequestsConnectionError:
-            return [0.0, 0.0]
-        except KeyError:
-            return [0.0, 0.0]
-        except IncompleteRead:
-            return [0.0, 0.0]
-        except RequestsChunkedEncodingError:
-            return [0.0, 0.0]
-        except RecursionError:
+
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("get price error: %s", e)
             return [0.0, 0.0]
