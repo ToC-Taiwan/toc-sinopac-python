@@ -24,10 +24,8 @@ class Yahoo:
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),
                 ]
-            time.sleep(1)
-            return self.get_price(code)
+            return [0.0, 0.0]
 
         except Exception as e:  # pylint: disable=broad-except
             logger.error("get price error: %s", type(e))
-            time.sleep(1)
-            return self.get_price(code)
+            return [0.0, 0.0]
