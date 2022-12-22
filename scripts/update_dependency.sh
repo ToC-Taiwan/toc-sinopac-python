@@ -10,6 +10,7 @@ pip install -U \
   --no-warn-script-location \
   --no-cache-dir \
   shioaji \
+  shioaji[speed] \
   grpcio \
   grpcio-tools \
   python-dotenv \
