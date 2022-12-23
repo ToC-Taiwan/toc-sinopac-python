@@ -12,8 +12,9 @@ from rabbitmq_setting import RabbitMQSetting
 from sinopac import Sinopac, SinopacUser
 
 env = RequiredEnv()
+api_key = env.api_key
+api_key_secret = env.api_key_secret
 person_id = env.person_id
-password = env.password
 ca_password = env.ca_password
 grpc_port = env.grpc_port
 connection_count = env.connection_count
@@ -34,7 +35,7 @@ for i in range(connection_count):
     logger.info("establish connection %d", i + 1)
     is_main = bool(i == 0)
     new_connection = Sinopac().login(
-        SinopacUser(person_id, password, ca_password), is_main
+        SinopacUser(api_key, api_key_secret, person_id, ca_password), is_main
     )
     if is_main is True:
         MAIN_WORKER = new_connection

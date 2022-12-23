@@ -17,9 +17,12 @@ class OrderStatus:
 
 
 class SinopacUser:
-    def __init__(self, person_id: str, password: str, ca_password: str):
+    def __init__(
+        self, api_key: str, api_key_secret: str, person_id: str, ca_password: str
+    ):
+        self.api_key = api_key
+        self.api_key_secret = api_key_secret
         self.person_id = person_id
-        self.password = password
         self.ca_password = ca_password
 
 
@@ -62,9 +65,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         self.set_event_callback(self.event_logger_cb)
 
         try:
-            self.__api.login(
-                person_id=user.person_id,
-                passwd=user.password,
+            self.__api.token_login(
+                key=user.api_key,
+                secret_key=user.api_key_secret,
                 contracts_cb=self.login_cb,
                 subscribe_trade=is_main,
             )

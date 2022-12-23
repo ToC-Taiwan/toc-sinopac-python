@@ -20,9 +20,13 @@ class RequiredEnv:  # pylint: disable=too-many-instance-attributes
         if self.person_id is None:
             raise Exception("Missing environment PERSON_ID")
 
-        self.password = str(os.environ.get("PASSWORD"))
-        if self.password is None:
-            raise Exception("Missing environment PASSWORD")
+        self.api_key = str(os.environ.get("API_KEY"))
+        if self.api_key is None:
+            raise Exception("Missing environment API_KEY")
+
+        self.api_key_secret = str(os.environ.get("API_KEY_SECRET"))
+        if self.api_key_secret is None:
+            raise Exception("Missing environment API_KEY_SECRET")
 
         self.ca_password = str(os.environ.get("CA_PASSWORD"))
         if self.ca_password is None:
