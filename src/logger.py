@@ -13,9 +13,7 @@ else:
 
 
 console_handler = logging.StreamHandler()
-file_handler = logging.FileHandler(
-    f'./logs/{datetime.now().strftime("%Y-%m-%d")}-toc-sinopac-python.log'
-)
+file_handler = logging.FileHandler(f'./logs/{datetime.now().strftime("%Y-%m-%d")}-toc-sinopac-python.log')
 
 console_handler.setFormatter(logging.Formatter(log_format, "%Y-%m-%d %H:%M:%S"))
 file_handler.setFormatter(logging.Formatter(log_format, "%Y-%m-%d %H:%M:%S"))

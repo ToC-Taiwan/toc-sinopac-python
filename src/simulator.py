@@ -66,10 +66,7 @@ class Simulator:
         self.order_status_list.append(order)
         with self.__simulation_lock:
             buy_later = False
-            if (
-                order.order.action == sj.constant.Action.Buy
-                and self.__simulation_count_map[order.contract.code] < 0
-            ):
+            if order.order.action == sj.constant.Action.Buy and self.__simulation_count_map[order.contract.code] < 0:
                 buy_later = True
                 self.__simulation_count_map[order.contract.code] += order.order.quantity
             if order.order.action == sj.constant.Action.Sell:
@@ -80,13 +77,8 @@ class Simulator:
             for sim in self.order_status_list:
                 if sim.status.id == order.status.id:
                     sim.status.status = sj.constant.Status.Filled
-                    if (
-                        sim.order.action == sj.constant.Action.Buy
-                        and buy_later is False
-                    ):
-                        self.__simulation_count_map[
-                            sim.contract.code
-                        ] += sim.order.quantity
+                    if sim.order.action == sj.constant.Action.Buy and buy_later is False:
+                        self.__simulation_count_map[sim.contract.code] += sim.order.quantity
 
     def buy_stock(self, stock_num: str, price: float, quantity: int):
         order = self.__api.Order(
@@ -108,10 +100,7 @@ class Simulator:
             contract=contract,
             order=order,
             status=sj.order.OrderStatus(
-                id="".join(
-                    random.choice(string.ascii_lowercase + string.octdigits)
-                    for _ in range(8)
-                ),
+                id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
                 status=sj.constant.Status.Submitted,
                 status_code="",
                 order_datetime=datetime.now(),
@@ -143,10 +132,7 @@ class Simulator:
                 contract=contract,
                 order=order,
                 status=sj.order.OrderStatus(
-                    id="".join(
-                        random.choice(string.ascii_lowercase + string.octdigits)
-                        for _ in range(8)
-                    ),
+                    id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
                     status=sj.constant.Status.Submitted,
                     status_code="",
                     order_datetime=datetime.now(),
@@ -179,10 +165,7 @@ class Simulator:
                 contract=contract,
                 order=order,
                 status=sj.order.OrderStatus(
-                    id="".join(
-                        random.choice(string.ascii_lowercase + string.octdigits)
-                        for _ in range(8)
-                    ),
+                    id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
                     status=sj.constant.Status.Submitted,
                     status_code="",
                     order_datetime=datetime.now(),
@@ -197,10 +180,7 @@ class Simulator:
 
     def cancel_stock(self, order_id: str):
         for order in self.order_status_list:
-            if (
-                order.status.id == order_id
-                and order.status.status != sj.constant.Status.Cancelled
-            ):
+            if order.status.id == order_id and order.status.status != sj.constant.Status.Cancelled:
                 order.status.status = sj.constant.Status.Cancelled
                 return OrderStatus(order_id, order.status.status, "")
         return OrderStatus("", "", "order not found")
@@ -224,10 +204,7 @@ class Simulator:
             contract=contract,
             order=order,
             status=sj.order.OrderStatus(
-                id="".join(
-                    random.choice(string.ascii_lowercase + string.octdigits)
-                    for _ in range(8)
-                ),
+                id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
                 status=sj.constant.Status.Submitted,
                 status_code="",
                 order_datetime=datetime.now(),
@@ -258,10 +235,7 @@ class Simulator:
                 contract=contract,
                 order=order,
                 status=sj.order.OrderStatus(
-                    id="".join(
-                        random.choice(string.ascii_lowercase + string.octdigits)
-                        for _ in range(8)
-                    ),
+                    id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
                     status=sj.constant.Status.Submitted,
                     status_code="",
                     order_datetime=datetime.now(),
@@ -292,10 +266,7 @@ class Simulator:
                 contract=contract,
                 order=order,
                 status=sj.order.OrderStatus(
-                    id="".join(
-                        random.choice(string.ascii_lowercase + string.octdigits)
-                        for _ in range(8)
-                    ),
+                    id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
                     status=sj.constant.Status.Submitted,
                     status_code="",
                     order_datetime=datetime.now(),
@@ -310,10 +281,7 @@ class Simulator:
 
     def cancel_future(self, order_id: str):
         for order in self.order_status_list:
-            if (
-                order.status.id == order_id
-                and order.status.status != sj.constant.Status.Cancelled
-            ):
+            if order.status.id == order_id and order.status.status != sj.constant.Status.Cancelled:
                 order.status.status = sj.constant.Status.Cancelled
                 return OrderStatus(order_id, order.status.status, "")
         return OrderStatus("", "", "order not found")

@@ -13,11 +13,7 @@ class Yahoo:
     def get_price(self, code: str):
         try:
             t = yf.Ticker(code)
-            if (
-                t is not None
-                and "regularMarketPrice" in t.info
-                and "previousClose" in t.info
-            ):
+            if t is not None and "regularMarketPrice" in t.info and "previousClose" in t.info:
                 return [
                     float(t.info["regularMarketPrice"]),
                     float(t.info["previousClose"]),

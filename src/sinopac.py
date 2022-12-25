@@ -17,9 +17,7 @@ class OrderStatus:
 
 
 class SinopacUser:
-    def __init__(
-        self, api_key: str, api_key_secret: str, person_id: str, ca_password: str
-    ):
+    def __init__(self, api_key: str, api_key_secret: str, person_id: str, ca_password: str):
         self.api_key = api_key
         self.api_key_secret = api_key_secret
         self.person_id = person_id
@@ -56,9 +54,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         with self.__login_status_lock:
             if security_type.value in [item.value for item in SecurityType]:
                 self.__login_status += 1
-                logger.info(
-                    "login progress: %d/4, %s", self.__login_status, security_type
-                )
+                logger.info("login progress: %d/4, %s", self.__login_status, security_type)
 
     def login(self, user: SinopacUser, is_main: bool):
         # before gRPC set cb, using logger to save event
@@ -101,12 +97,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             self.fill_stock_num_list()
             self.fill_future_code_list()
             self.set_order_callback(self.place_order_callback)
-            logger.info(
-                "stock account sign status: %s", self.__api.stock_account.signed
-            )
-            logger.info(
-                "future account sign status: %s", self.__api.futopt_account.signed
-            )
+            logger.info("stock account sign status: %s", self.__api.stock_account.signed)
+            logger.info("future account sign status: %s", self.__api.futopt_account.signed)
             self.update_local_order_status()
 
         return self
@@ -135,10 +127,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
     def fill_stock_num_list(self):
         for contract_arr in self.__api.Contracts.Stocks:
             for contract in contract_arr:
-                if (
-                    contract.day_trade == DayTrade.Yes.value
-                    and contract.category != "00"
-                ):
+                if contract.day_trade == DayTrade.Yes.value and contract.category != "00":
                     self.stock_num_list.append(contract.code)
         if len(self.stock_num_list) != 0:
             logger.info("total stock: %d", len(self.stock_num_list))

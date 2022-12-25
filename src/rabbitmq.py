@@ -49,9 +49,7 @@ class RabbitMQS:
     def create_pika(self):
         conn = pika.BlockingConnection(self.parameters)
         ch = conn.channel()
-        ch.exchange_declare(
-            exchange=self.exchange, exchange_type="direct", durable=True
-        )
+        ch.exchange_declare(exchange=self.exchange, exchange_type="direct", durable=True)
         return PikaCC(conn, ch)
 
     def fill_pika_queue(self):
@@ -99,9 +97,7 @@ class RabbitMQS:
                         quantity=qty,
                         order_id=order.status.id,
                         status=order.status.status,
-                        order_time=datetime.strftime(
-                            order.status.order_datetime, "%Y-%m-%d %H:%M:%S"
-                        ),
+                        order_time=datetime.strftime(order.status.order_datetime, "%Y-%m-%d %H:%M:%S"),
                     ).SerializeToString(),
                 )
                 self.pika_queue.put(p)

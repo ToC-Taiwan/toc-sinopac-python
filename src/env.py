@@ -32,9 +32,7 @@ class RequiredEnv:  # pylint: disable=too-many-instance-attributes
         if self.ca_password is None:
             raise Exception("Missing environment CA_PASSWORD")
 
-        self.request_limit_per_second = int(
-            str(os.environ.get("REQUEST_LIMIT_PER_SECOND"))
-        )
+        self.request_limit_per_second = int(str(os.environ.get("REQUEST_LIMIT_PER_SECOND")))
         if self.request_limit_per_second is None:
             raise Exception("Missing environment REQUEST_LIMIT_PER_SECOND")
 
