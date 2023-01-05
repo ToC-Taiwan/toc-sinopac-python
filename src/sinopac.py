@@ -61,8 +61,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         self.set_event_callback(self.event_logger_cb)
 
         try:
-            self.__api.token_login(
-                key=user.api_key,
+            self.__api.login(
+                api_key=user.api_key,
                 secret_key=user.api_key_secret,
                 contracts_cb=self.login_cb,
                 subscribe_trade=is_main,
