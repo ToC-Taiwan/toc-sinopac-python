@@ -3,8 +3,9 @@ import threading
 import time
 
 import shioaji as sj
-from shioaji.constant import DayTrade, FuturesPriceType, OrderState, OrderType, SecurityType, Status, StockPriceType
+import shioaji.constant as sc
 from shioaji.error import SystemMaintenance, TokenError
+from shioaji.order import Order
 
 from logger import logger
 
@@ -52,7 +53,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
 
     def login_cb(self, security_type):
         with self.__login_status_lock:
-            if security_type.value in [item.value for item in SecurityType]:
+            if security_type.value in [item.value for item in sc.SecurityType]:
                 self.__login_status += 1
                 logger.info("login progress: %d/4, %s", self.__login_status, security_type)
 
@@ -127,7 +128,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
     def fill_stock_num_list(self):
         for contract_arr in self.__api.Contracts.Stocks:
             for contract in contract_arr:
-                if contract.day_trade == DayTrade.Yes.value and contract.category != "00":
+                if contract.day_trade == sc.DayTrade.Yes.value and contract.category != "00":
                     self.stock_num_list.append(contract.code)
         if len(self.stock_num_list) != 0:
             logger.info("total stock: %d", len(self.stock_num_list))
@@ -189,9 +190,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                     return OrderStatus(order_id, order.status.status, "")
             return OrderStatus("", "", "order not found")
 
-    def place_order_callback(self, order_state: OrderState, res: dict):
+    def place_order_callback(self, order_state: sc.OrderState, res: dict):
         self.update_local_order_status()
-        if order_state in (OrderState.FuturesOrder, OrderState.StockOrder):
+        if order_state in (sc.OrderState.FuturesOrder, sc.OrderState.StockOrder):
             if res["contract"]["code"] is None:
                 logger.error("place order code is none")
                 return
@@ -205,7 +206,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 res["order"]["id"],
             )
 
-        elif order_state in (OrderState.FuturesDeal, OrderState.StockDeal):
+        elif order_state in (sc.OrderState.FuturesDeal, sc.OrderState.StockDeal):
             if res["code"] is None:
                 logger.error("deal order code is none")
                 return
@@ -299,7 +300,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             ticks = self.__api.quote.ticks(
                 contract=contract,
                 date=date,
-                query_type=sj.constant.TicksQueryType.LastCount,
+                query_type=sc.TicksQueryType.LastCount,
                 last_cnt=1,
             )
             if len(ticks.close) > 0:
@@ -314,7 +315,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             ticks = self.__api.quote.ticks(
                 contract=contract,
                 date=date,
-                query_type=sj.constant.TicksQueryType.LastCount,
+                query_type=sc.TicksQueryType.LastCount,
                 last_cnt=1,
             )
             if len(ticks.close) > 0:
@@ -325,7 +326,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
 
     def get_stock_volume_rank_by_date(self, count, date):
         return self.__api.scanners(
-            scanner_type=sj.constant.ScannerType.VolumeRank,
+            scanner_type=sc.ScannerType.VolumeRank,
             count=count,
             date=date,
         )
@@ -334,8 +335,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             self.__api.quote.subscribe(
                 self.__api.Contracts.Stocks[stock_num],
-                quote_type=sj.constant.QuoteType.Tick,
-                version=sj.constant.QuoteVersion.v1,
+                quote_type=sc.QuoteType.Tick,
+                version=sc.QuoteVersion.v1,
             )
             return None
         except Exception:  # pylint: disable=broad-except
@@ -345,8 +346,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             self.__api.quote.unsubscribe(
                 self.__api.Contracts.Stocks[stock_num],
-                quote_type=sj.constant.QuoteType.Tick,
-                version=sj.constant.QuoteVersion.v1,
+                quote_type=sc.QuoteType.Tick,
+                version=sc.QuoteVersion.v1,
             )
             return None
         except Exception:  # pylint: disable=broad-except
@@ -356,8 +357,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             self.__api.quote.subscribe(
                 self.get_contract_by_future_code(code),
-                quote_type=sj.constant.QuoteType.Tick,
-                version=sj.constant.QuoteVersion.v1,
+                quote_type=sc.QuoteType.Tick,
+                version=sc.QuoteVersion.v1,
             )
             return None
         except Exception:  # pylint: disable=broad-except
@@ -367,8 +368,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             self.__api.quote.unsubscribe(
                 self.get_contract_by_future_code(code),
-                quote_type=sj.constant.QuoteType.Tick,
-                version=sj.constant.QuoteVersion.v1,
+                quote_type=sc.QuoteType.Tick,
+                version=sc.QuoteVersion.v1,
             )
             return None
         except Exception:  # pylint: disable=broad-except
@@ -378,8 +379,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             self.__api.quote.subscribe(
                 self.__api.Contracts.Stocks[stock_num],
-                quote_type=sj.constant.QuoteType.BidAsk,
-                version=sj.constant.QuoteVersion.v1,
+                quote_type=sc.QuoteType.BidAsk,
+                version=sc.QuoteVersion.v1,
             )
             return None
         except Exception:  # pylint: disable=broad-except
@@ -389,8 +390,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             self.__api.quote.unsubscribe(
                 self.__api.Contracts.Stocks[stock_num],
-                quote_type=sj.constant.QuoteType.BidAsk,
-                version=sj.constant.QuoteVersion.v1,
+                quote_type=sc.QuoteType.BidAsk,
+                version=sc.QuoteVersion.v1,
             )
             return None
         except Exception:  # pylint: disable=broad-except
@@ -400,8 +401,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             self.__api.quote.subscribe(
                 self.get_contract_by_future_code(code),
-                quote_type=sj.constant.QuoteType.BidAsk,
-                version=sj.constant.QuoteVersion.v1,
+                quote_type=sc.QuoteType.BidAsk,
+                version=sc.QuoteVersion.v1,
             )
             return None
         except Exception:  # pylint: disable=broad-except
@@ -411,21 +412,21 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         try:
             self.__api.quote.unsubscribe(
                 self.get_contract_by_future_code(code),
-                quote_type=sj.constant.QuoteType.BidAsk,
-                version=sj.constant.QuoteVersion.v1,
+                quote_type=sc.QuoteType.BidAsk,
+                version=sc.QuoteVersion.v1,
             )
             return None
         except Exception:  # pylint: disable=broad-except
             return code
 
     def buy_stock(self, stock_num: str, price: float, quantity: int):
-        order = self.__api.Order(
+        order: Order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Buy,
-            price_type=StockPriceType.LMT,
-            order_type=OrderType.ROD,
-            order_lot=sj.constant.StockOrderLot.Common,
+            action=sc.Action.Buy,
+            price_type=sc.StockPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            order_lot=sc.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
         contract = self.get_contract_by_stock_num(stock_num)
@@ -435,13 +436,13 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "buy stock fail")
 
     def sell_stock(self, stock_num: str, price: float, quantity: int):
-        order = self.__api.Order(
+        order: Order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Sell,
-            price_type=StockPriceType.LMT,
-            order_type=OrderType.ROD,
-            order_lot=sj.constant.StockOrderLot.Common,
+            action=sc.Action.Sell,
+            price_type=sc.StockPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            order_lot=sc.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
         contract = self.get_contract_by_stock_num(stock_num)
@@ -451,13 +452,13 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "sell stock fail")
 
     def sell_first_stock(self, stock_num: str, price: float, quantity: int):
-        order = self.__api.Order(
+        order: Order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Sell,
-            price_type=StockPriceType.LMT,
-            order_type=OrderType.ROD,
-            order_lot=sj.constant.StockOrderLot.Common,
+            action=sc.Action.Sell,
+            price_type=sc.StockPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            order_lot=sc.StockOrderLot.Common,
             daytrade_short=True,
             account=self.__api.stock_account,
         )
@@ -471,7 +472,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         cancel_order = self.get_order_from_local_by_order_id(order_id)
         if cancel_order is None:
             return OrderStatus(order_id, "", "id not found")
-        if cancel_order.status.status == Status.Cancelled:
+        if cancel_order.status.status == sc.Status.Cancelled:
             return OrderStatus(order_id, "", "id already cancelled")
 
         times = int()
@@ -480,20 +481,20 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             if times >= 10:
                 break
             cancel_order = self.get_order_from_local_by_order_id(order_id)
-            if cancel_order.status.status == Status.Cancelled:
+            if cancel_order.status.status == sc.Status.Cancelled:
                 return OrderStatus(order_id, cancel_order.status.status, "")
             times += 1
             time.sleep(1)
         return OrderStatus("", "", "cancel stock fail")
 
     def buy_future(self, code: str, price: float, quantity: int):
-        order = self.__api.Order(
+        order: Order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Buy,
-            price_type=FuturesPriceType.LMT,
-            order_type=OrderType.ROD,
-            octype=sj.constant.FuturesOCType.Auto,
+            action=sc.Action.Buy,
+            price_type=sc.FuturesPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            octype=sc.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
         contract = self.get_contract_by_future_code(code)
@@ -503,13 +504,13 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "buy future fail")
 
     def sell_future(self, code: str, price: float, quantity: int):
-        order = self.__api.Order(
+        order: Order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Sell,
-            price_type=FuturesPriceType.LMT,
-            order_type=OrderType.ROD,
-            octype=sj.constant.FuturesOCType.Auto,
+            action=sc.Action.Sell,
+            price_type=sc.FuturesPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            octype=sc.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
         contract = self.get_contract_by_future_code(code)
@@ -519,13 +520,13 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         return OrderStatus("", "", "sell future fail")
 
     def sell_first_future(self, code: str, price: float, quantity: int):
-        order = self.__api.Order(
+        order: Order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Sell,
-            price_type=FuturesPriceType.LMT,
-            order_type=OrderType.ROD,
-            octype=sj.constant.FuturesOCType.Auto,
+            action=sc.Action.Sell,
+            price_type=sc.FuturesPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            octype=sc.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
         contract = self.get_contract_by_future_code(code)
@@ -538,7 +539,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         cancel_order = self.get_order_from_local_by_order_id(order_id)
         if cancel_order is None:
             return OrderStatus(order_id, "", "id not found")
-        if cancel_order.status.status == Status.Cancelled:
+        if cancel_order.status.status == sc.Status.Cancelled:
             return OrderStatus(order_id, "", "id already cancelled")
 
         times = int()
@@ -547,7 +548,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             if times >= 10:
                 break
             cancel_order = self.get_order_from_local_by_order_id(order_id)
-            if cancel_order.status.status == Status.Cancelled:
+            if cancel_order.status.status == sc.Status.Cancelled:
                 return OrderStatus(order_id, cancel_order.status.status, "")
             times += 1
             time.sleep(1)

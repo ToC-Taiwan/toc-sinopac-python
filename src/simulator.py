@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 import shioaji as sj
-from shioaji.constant import FuturesPriceType, OrderType, StockPriceType
+import shioaji.constant as sc
 
 from logger import logger
 from sinopac import OrderStatus, Sinopac
@@ -67,28 +67,28 @@ class Simulator:
         self.order_status_list.append(order)
         with self.__simulation_lock:
             buy_later = False
-            if order.order.action == sj.constant.Action.Buy and self.__simulation_count_map[order.contract.code] < 0:
+            if order.order.action == sc.Action.Buy and self.__simulation_count_map[order.contract.code] < 0:
                 buy_later = True
                 self.__simulation_count_map[order.contract.code] += order.order.quantity
-            if order.order.action == sj.constant.Action.Sell:
+            if order.order.action == sc.Action.Sell:
                 self.__simulation_count_map[order.contract.code] -= order.order.quantity
 
         time.sleep(wait)
         with self.__simulation_lock:
             for sim in self.order_status_list:
                 if sim.status.id == order.status.id:
-                    sim.status.status = sj.constant.Status.Filled
-                    if sim.order.action == sj.constant.Action.Buy and buy_later is False:
+                    sim.status.status = sc.Status.Filled
+                    if sim.order.action == sc.Action.Buy and buy_later is False:
                         self.__simulation_count_map[sim.contract.code] += sim.order.quantity
 
     def buy_stock(self, stock_num: str, price: float, quantity: int):
         order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Buy,
-            price_type=StockPriceType.LMT,
-            order_type=OrderType.ROD,
-            order_lot=sj.constant.StockOrderLot.Common,
+            action=sc.Action.Buy,
+            price_type=sc.StockPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            order_lot=sc.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
         contract = self.sinopac.get_contract_by_stock_num(stock_num)
@@ -102,7 +102,7 @@ class Simulator:
             order=order,
             status=sj.order.OrderStatus(
                 id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                status=sj.constant.Status.Submitted,
+                status=sc.Status.Submitted,
                 status_code="",
                 order_datetime=datetime.now(),
                 deals=[],
@@ -118,10 +118,10 @@ class Simulator:
         order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Sell,
-            price_type=StockPriceType.LMT,
-            order_type=OrderType.ROD,
-            order_lot=sj.constant.StockOrderLot.Common,
+            action=sc.Action.Sell,
+            price_type=sc.StockPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            order_lot=sc.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
         contract = self.sinopac.get_contract_by_stock_num(stock_num)
@@ -134,7 +134,7 @@ class Simulator:
                 order=order,
                 status=sj.order.OrderStatus(
                     id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                    status=sj.constant.Status.Submitted,
+                    status=sc.Status.Submitted,
                     status_code="",
                     order_datetime=datetime.now(),
                     deals=[],
@@ -150,11 +150,11 @@ class Simulator:
         order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Sell,
-            price_type=StockPriceType.LMT,
-            order_type=OrderType.ROD,
-            order_lot=sj.constant.StockOrderLot.Common,
-            first_sell=sj.constant.StockFirstSell.Yes,
+            action=sc.Action.Sell,
+            price_type=sc.StockPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            order_lot=sc.StockOrderLot.Common,
+            first_sell=sc.StockFirstSell.Yes,
             account=self.__api.stock_account,
         )
         contract = self.sinopac.get_contract_by_stock_num(stock_num)
@@ -167,7 +167,7 @@ class Simulator:
                 order=order,
                 status=sj.order.OrderStatus(
                     id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                    status=sj.constant.Status.Submitted,
+                    status=sc.Status.Submitted,
                     status_code="",
                     order_datetime=datetime.now(),
                     deals=[],
@@ -181,8 +181,8 @@ class Simulator:
 
     def cancel_stock(self, order_id: str):
         for order in self.order_status_list:
-            if order.status.id == order_id and order.status.status != sj.constant.Status.Cancelled:
-                order.status.status = sj.constant.Status.Cancelled
+            if order.status.id == order_id and order.status.status != sc.Status.Cancelled:
+                order.status.status = sc.Status.Cancelled
                 return OrderStatus(order_id, order.status.status, "")
         return OrderStatus("", "", "order not found")
 
@@ -190,10 +190,10 @@ class Simulator:
         order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Buy,
-            price_type=FuturesPriceType.LMT,
-            order_type=OrderType.ROD,
-            octype=sj.constant.FuturesOCType.Auto,
+            action=sc.Action.Buy,
+            price_type=sc.FuturesPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            octype=sc.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
         contract = self.sinopac.get_contract_by_future_code(code)
@@ -206,7 +206,7 @@ class Simulator:
             order=order,
             status=sj.order.OrderStatus(
                 id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                status=sj.constant.Status.Submitted,
+                status=sc.Status.Submitted,
                 status_code="",
                 order_datetime=datetime.now(),
                 deals=[],
@@ -222,10 +222,10 @@ class Simulator:
         order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Sell,
-            price_type=FuturesPriceType.LMT,
-            order_type=OrderType.ROD,
-            octype=sj.constant.FuturesOCType.Auto,
+            action=sc.Action.Sell,
+            price_type=sc.FuturesPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            octype=sc.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
         contract = self.sinopac.get_contract_by_future_code(code)
@@ -237,7 +237,7 @@ class Simulator:
                 order=order,
                 status=sj.order.OrderStatus(
                     id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                    status=sj.constant.Status.Submitted,
+                    status=sc.Status.Submitted,
                     status_code="",
                     order_datetime=datetime.now(),
                     deals=[],
@@ -253,10 +253,10 @@ class Simulator:
         order = self.__api.Order(
             price=price,
             quantity=quantity,
-            action=sj.constant.Action.Sell,
-            price_type=FuturesPriceType.LMT,
-            order_type=OrderType.ROD,
-            octype=sj.constant.FuturesOCType.Auto,
+            action=sc.Action.Sell,
+            price_type=sc.FuturesPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            octype=sc.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
         contract = self.sinopac.get_contract_by_future_code(code)
@@ -268,7 +268,7 @@ class Simulator:
                 order=order,
                 status=sj.order.OrderStatus(
                     id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                    status=sj.constant.Status.Submitted,
+                    status=sc.Status.Submitted,
                     status_code="",
                     order_datetime=datetime.now(),
                     deals=[],
@@ -282,7 +282,7 @@ class Simulator:
 
     def cancel_future(self, order_id: str):
         for order in self.order_status_list:
-            if order.status.id == order_id and order.status.status != sj.constant.Status.Cancelled:
-                order.status.status = sj.constant.Status.Cancelled
+            if order.status.id == order_id and order.status.status != sc.Status.Cancelled:
+                order.status.status = sc.Status.Cancelled
                 return OrderStatus(order_id, order.status.status, "")
         return OrderStatus("", "", "order not found")
