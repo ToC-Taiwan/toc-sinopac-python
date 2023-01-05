@@ -3,7 +3,7 @@ import threading
 import time
 
 import shioaji as sj
-from shioaji.constant import DayTrade, OrderState, SecurityType, Status
+from shioaji.constant import DayTrade, FuturesPriceType, OrderState, OrderType, SecurityType, Status, StockPriceType
 from shioaji.error import SystemMaintenance, TokenError
 
 from logger import logger
@@ -191,7 +191,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
 
     def place_order_callback(self, order_state: OrderState, res: dict):
         self.update_local_order_status()
-        if order_state in (OrderState.FOrder, OrderState.TFTOrder):
+        if order_state in (OrderState.FuturesOrder, OrderState.StockOrder):
             if res["contract"]["code"] is None:
                 logger.error("place order code is none")
                 return
@@ -205,7 +205,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 res["order"]["id"],
             )
 
-        elif order_state in (OrderState.FDeal, OrderState.TFTDeal):
+        elif order_state in (OrderState.FuturesDeal, OrderState.StockDeal):
             if res["code"] is None:
                 logger.error("deal order code is none")
                 return
@@ -423,9 +423,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Buy,
-            price_type=sj.constant.StockPriceType.LMT,
-            order_type=sj.constant.TFTOrderType.ROD,
-            order_lot=sj.constant.TFTStockOrderLot.Common,
+            price_type=StockPriceType.LMT,
+            order_type=OrderType.ROD,
+            order_lot=sj.constant.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
         contract = self.get_contract_by_stock_num(stock_num)
@@ -439,9 +439,9 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Sell,
-            price_type=sj.constant.StockPriceType.LMT,
-            order_type=sj.constant.TFTOrderType.ROD,
-            order_lot=sj.constant.TFTStockOrderLot.Common,
+            price_type=StockPriceType.LMT,
+            order_type=OrderType.ROD,
+            order_lot=sj.constant.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
         contract = self.get_contract_by_stock_num(stock_num)
@@ -455,10 +455,10 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Sell,
-            price_type=sj.constant.StockPriceType.LMT,
-            order_type=sj.constant.TFTOrderType.ROD,
-            order_lot=sj.constant.TFTStockOrderLot.Common,
-            first_sell=sj.constant.StockFirstSell.Yes,
+            price_type=StockPriceType.LMT,
+            order_type=OrderType.ROD,
+            order_lot=sj.constant.StockOrderLot.Common,
+            daytrade_short=True,
             account=self.__api.stock_account,
         )
         contract = self.get_contract_by_stock_num(stock_num)
@@ -491,8 +491,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Buy,
-            price_type=sj.constant.FuturesPriceType.LMT,
-            order_type=sj.constant.FuturesOrderType.ROD,
+            price_type=FuturesPriceType.LMT,
+            order_type=OrderType.ROD,
             octype=sj.constant.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
@@ -507,8 +507,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Sell,
-            price_type=sj.constant.FuturesPriceType.LMT,
-            order_type=sj.constant.FuturesOrderType.ROD,
+            price_type=FuturesPriceType.LMT,
+            order_type=OrderType.ROD,
             octype=sj.constant.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
@@ -523,8 +523,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Sell,
-            price_type=sj.constant.FuturesPriceType.LMT,
-            order_type=sj.constant.FuturesOrderType.ROD,
+            price_type=FuturesPriceType.LMT,
+            order_type=OrderType.ROD,
             octype=sj.constant.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )

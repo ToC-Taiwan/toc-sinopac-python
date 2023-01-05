@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 
 import shioaji as sj
+from shioaji.constant import FuturesPriceType, OrderType, StockPriceType
 
 from logger import logger
 from sinopac import OrderStatus, Sinopac
@@ -85,9 +86,9 @@ class Simulator:
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Buy,
-            price_type=sj.constant.StockPriceType.LMT,
-            order_type=sj.constant.TFTOrderType.ROD,
-            order_lot=sj.constant.TFTStockOrderLot.Common,
+            price_type=StockPriceType.LMT,
+            order_type=OrderType.ROD,
+            order_lot=sj.constant.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
         contract = self.sinopac.get_contract_by_stock_num(stock_num)
@@ -118,9 +119,9 @@ class Simulator:
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Sell,
-            price_type=sj.constant.StockPriceType.LMT,
-            order_type=sj.constant.TFTOrderType.ROD,
-            order_lot=sj.constant.TFTStockOrderLot.Common,
+            price_type=StockPriceType.LMT,
+            order_type=OrderType.ROD,
+            order_lot=sj.constant.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
         contract = self.sinopac.get_contract_by_stock_num(stock_num)
@@ -150,9 +151,9 @@ class Simulator:
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Sell,
-            price_type=sj.constant.StockPriceType.LMT,
-            order_type=sj.constant.TFTOrderType.ROD,
-            order_lot=sj.constant.TFTStockOrderLot.Common,
+            price_type=StockPriceType.LMT,
+            order_type=OrderType.ROD,
+            order_lot=sj.constant.StockOrderLot.Common,
             first_sell=sj.constant.StockFirstSell.Yes,
             account=self.__api.stock_account,
         )
@@ -190,8 +191,8 @@ class Simulator:
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Buy,
-            price_type=sj.constant.FuturesPriceType.LMT,
-            order_type=sj.constant.FuturesOrderType.ROD,
+            price_type=FuturesPriceType.LMT,
+            order_type=OrderType.ROD,
             octype=sj.constant.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
@@ -222,8 +223,8 @@ class Simulator:
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Sell,
-            price_type=sj.constant.FuturesPriceType.LMT,
-            order_type=sj.constant.FuturesOrderType.ROD,
+            price_type=FuturesPriceType.LMT,
+            order_type=OrderType.ROD,
             octype=sj.constant.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
@@ -253,8 +254,8 @@ class Simulator:
             price=price,
             quantity=quantity,
             action=sj.constant.Action.Sell,
-            price_type=sj.constant.FuturesPriceType.LMT,
-            order_type=sj.constant.FuturesOrderType.ROD,
+            price_type=FuturesPriceType.LMT,
+            order_type=OrderType.ROD,
             octype=sj.constant.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
