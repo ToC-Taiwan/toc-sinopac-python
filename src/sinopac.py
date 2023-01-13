@@ -5,7 +5,7 @@ import time
 import shioaji as sj
 import shioaji.constant as sc
 from shioaji.error import SystemMaintenance, TokenError
-from shioaji.order import Order
+from shioaji.order import Order, Trade
 
 from logger import logger
 
@@ -33,7 +33,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         self.stock_num_list: list[str] = []
         self.future_code_list: list[str] = []
         self.__order_arr_lock = threading.Lock()
-        self.order_arr: list[sj.order.Trade] = []
+        self.order_arr: list[Trade] = []
 
     def get_sj_version(self):
         return str(sj.__version__)
@@ -173,7 +173,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         with self.__order_arr_lock:
             return self.order_arr
 
-    def get_order_from_local_by_order_id(self, order_id: str) -> sj.order.Trade:
+    def get_order_from_local_by_order_id(self, order_id: str) -> Trade:
         with self.__order_arr_lock:
             for order in self.order_arr:
                 if order.status.id == order_id:
