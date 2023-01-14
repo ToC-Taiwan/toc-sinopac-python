@@ -66,48 +66,48 @@ jobs:
                       ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
                       ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:latest
 
-    Deployment:
-        needs: Build
-        runs-on: ubuntu-latest
-        env:
-            REPOSITORY: "${{ github.repository }}"
-            SHA: ${{ github.sha }}
+    # Deployment:
+    #     needs: Build
+    #     runs-on: ubuntu-latest
+    #     env:
+    #         REPOSITORY: "${{ github.repository }}"
+    #         SHA: ${{ github.sha }}
 
-        steps:
-            - name: set local env
-              run: |
-                  echo "REPOSITORY_LC=${REPOSITORY,,}" >> ${GITHUB_ENV}
-                  echo "SHORT_SHA=$(echo ${SHA} | cut -c1-7)" >> ${GITHUB_ENV}
+    #     steps:
+    #         - name: set local env
+    #           run: |
+    #               echo "REPOSITORY_LC=${REPOSITORY,,}" >> ${GITHUB_ENV}
+    #               echo "SHORT_SHA=$(echo ${SHA} | cut -c1-7)" >> ${GITHUB_ENV}
 
-            - name: Checkout
-              uses: actions/checkout@v3
+    #         - name: Checkout
+    #           uses: actions/checkout@v3
 
-            - name: deploying
-              uses: appleboy/ssh-action@master
-              with:
-                  host: ${{ secrets.TRADER_HOST }}
-                  port: ${{ secrets.TRADER_PORT }}
-                  username: ${{ secrets.TRADER_USERNAME }}
-                  key: ${{ secrets.TRADER_KEY }}
-                  script: |
-                      docker kill toc-sinopac-python || true
-                      docker system prune --volumes -f
-                      docker rmi $(docker images '${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}' -a -q) || true
+    #         - name: deploying
+    #           uses: appleboy/ssh-action@master
+    #           with:
+    #               host: ${{ secrets.TRADER_HOST }}
+    #               port: ${{ secrets.TRADER_PORT }}
+    #               username: ${{ secrets.TRADER_USERNAME }}
+    #               key: ${{ secrets.TRADER_KEY }}
+    #               script: |
+    #                   docker kill toc-sinopac-python || true
+    #                   docker system prune --volumes -f
+    #                   docker rmi $(docker images '${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}' -a -q) || true
 
-                      rm -rf ~/toc-sinopac-python-env && mkdir -p ~/toc-sinopac-python-env && touch ~/toc-sinopac-python-env/.env
-                      rm -rf ~/toc-sinopac-python-logs
+    #                   rm -rf ~/toc-sinopac-python-env && mkdir -p ~/toc-sinopac-python-env && touch ~/toc-sinopac-python-env/.env
+    #                   rm -rf ~/toc-sinopac-python-logs
 
-                      echo "${{ secrets.SINOPAC_ENV }}" > ~/toc-sinopac-python-env/.env
+    #                   echo "${{ secrets.SINOPAC_ENV }}" > ~/toc-sinopac-python-env/.env
 
-                      docker login ${{ env.REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-                      docker pull ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
+    #                   docker login ${{ env.REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+    #                   docker pull ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
 
-                      docker run \
-                        --name toc-sinopac-python \
-                        --network tocvlan \
-                        --ip=172.20.10.227 \
-                        --restart always \
-                        -e TZ="Asia/Taipei" \
-                        -v ~/toc-sinopac-python-logs:/toc-sinopac-python/logs \
-                        -v ~/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
-                        -dt ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
+    #                   docker run \
+    #                     --name toc-sinopac-python \
+    #                     --network tocvlan \
+    #                     --ip=172.20.10.227 \
+    #                     --restart always \
+    #                     -e TZ="Asia/Taipei" \
+    #                     -v ~/toc-sinopac-python-logs:/toc-sinopac-python/logs \
+    #                     -v ~/toc-sinopac-python-env/.env:/toc-sinopac-python/.env \
+    #                     -dt ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
