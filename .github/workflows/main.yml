@@ -67,6 +67,7 @@ jobs:
                       ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:latest
 
     Trigger-Deployment:
+        needs: Build
         runs-on: ubuntu-latest
         steps:
             - name: Test
