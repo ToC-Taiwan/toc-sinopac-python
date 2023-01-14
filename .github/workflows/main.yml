@@ -30,9 +30,7 @@ jobs:
             - name: Lint
               run: |
                   export PYTHONPATH=$(pwd)/pb
-                  echo $PYTHONPATH
                   export PYLINTHOME=$(pwd)
-                  echo $PYLINTHOME
                   mypy --check-untyped-defs --config-file=./mypy.ini ./src && pylint ./src
 
     Build:
@@ -70,11 +68,11 @@ jobs:
         needs: Build
         runs-on: ubuntu-latest
         steps:
-            - name: Test
+            - name: Trigger
               run: |
                   curl -X POST \
                       -H "Accept: application/vnd.github+json" \
-                      -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
+                      -H "Authorization: Bearer ${{ secrets.ACTIONS_KEY }}"\
                       https://api.github.com/repos/ToC-Taiwan/ansible-machine/dispatches \
                       -d '{"event_type":"deploy-trader"}'
             - uses: actions/checkout@v3
