@@ -66,6 +66,18 @@ jobs:
                       ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
                       ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:latest
 
+    Trigger-Deployment:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Test
+              run: |
+                  curl -X POST \
+                      -H "Accept: application/vnd.github+json" \
+                      -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
+                      https://api.github.com/repos/ToC-Taiwan/ansible-machine/dispatches \
+                      -d '{"event_type":"deploy-trader"}'
+            - uses: actions/checkout@v3
+
     # Deployment:
     #     needs: Build
     #     runs-on: ubuntu-latest
