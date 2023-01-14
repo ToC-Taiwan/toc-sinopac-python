@@ -1,7 +1,5 @@
 import yfinance as yf
 
-from logger import logger
-
 
 class Yahoo:
     def get_nasdaq(self):
@@ -20,6 +18,6 @@ class Yahoo:
                 ]
             return [0.0, 0.0]
 
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             # logger.error("yfinance error: %s", type(e).__name__)
             return [0.0, 0.0]
