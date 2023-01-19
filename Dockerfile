@@ -15,4 +15,4 @@ COPY scripts /toc-sinopac-python/scripts
 COPY src /toc-sinopac-python/src
 COPY makefile /toc-sinopac-python/makefile
 
-ENTRYPOINT ["cd /toc-sinopac-python && /usr/bin/make"]
+ENTRYPOINT ["/toc-sinopac-python/scripts/docker-entrypoint.sh"]
