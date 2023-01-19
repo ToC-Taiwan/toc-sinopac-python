@@ -23,13 +23,11 @@ jobs:
 
             - name: Install Requirements
               run: |
-                  pip install --no-warn-script-location --no-cache-dir -r requirements.txt
-                  pip install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
-                  mypy --install-types --non-interactive ./src
+                  make install
 
             - name: Lint
               run: |
-                  export PYTHONPATH=$(pwd)/pb
+                  export PYTHONPATH=$(pwd)/src/pb
                   export PYLINTHOME=$(pwd)
                   mypy --check-untyped-defs --config-file=./mypy.ini ./src && pylint ./src
 

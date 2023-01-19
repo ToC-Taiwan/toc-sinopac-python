@@ -1,12 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 
-pip freeze > requirements.txt && \
-pip uninstall -y -r requirements.txt
+pip=$1
+
+$pip freeze > requirements.txt && \
+$pip uninstall -y -r requirements.txt
 rm -rf requirements.txt
 
-pip install --upgrade pip
+$pip install --upgrade pip
 
-pip install -U \
+$pip install -U \
   --no-warn-script-location \
   --no-cache-dir \
   shioaji[speed] \
@@ -20,6 +22,6 @@ pip install -U \
   yfinance \
   prometheus-client
 
-pip freeze > requirements.txt
+$pip freeze > requirements.txt
 
 git add requirements.txt

@@ -1,4 +1,17 @@
 repos:
+  - repo: local
+    hooks:
+      - id: lint
+        name: lint
+        language: system
+        entry: ./scripts/hook_lint.sh
+
+  - repo: https://github.com/psf/black
+    rev: 22.12.0
+    hooks:
+      - id: black
+        exclude: pb
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -7,18 +20,3 @@ repos:
       - id: check-yaml
       - id: check-shebang-scripts-are-executable
       - id: detect-private-key
-  - repo: local
-    hooks:
-      - id: pylint
-        name: pylint
-        language: system
-        entry: ./scripts/hook_pylint.sh
-      - id: mypy
-        name: mypy
-        language: system
-        entry: ./scripts/hook_mypy.sh
-  - repo: https://github.com/psf/black
-    rev: 22.12.0
-    hooks:
-      - id: black
-        exclude: pb

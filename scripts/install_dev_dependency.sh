@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
-pip install -U \
+pip=$1
+
+$pip install -U \
   --no-warn-script-location \
   --no-cache-dir \
   pre-commit \
@@ -11,5 +13,6 @@ pip install -U \
   pylint
 
 mypy --install-types --non-interactive --check-untyped-defs --config-file=./mypy.ini ./src
+
 pre-commit autoupdate
 pre-commit install

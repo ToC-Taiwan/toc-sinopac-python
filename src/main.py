@@ -61,3 +61,6 @@ except RuntimeError:
     logger.error("runtime error, retry after 30 seconds")
     time.sleep(30)
     os._exit(1)
+
+except KeyboardInterrupt:
+    os._exit(1)
