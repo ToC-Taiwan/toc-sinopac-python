@@ -4,10 +4,10 @@ import time
 from datetime import datetime
 from queue import Queue
 
-import common_pb2
 import pika
 import shioaji as sj
-import trade_pb2
+
+from pb import common_pb2, trade_pb2
 
 logging.getLogger("pika").setLevel(logging.WARNING)
 

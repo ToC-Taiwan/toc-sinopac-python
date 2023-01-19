@@ -5,25 +5,27 @@ from concurrent import futures
 from datetime import datetime
 from queue import Queue
 
-import basic_pb2
-import basic_pb2_grpc
-import common_pb2
 import google.protobuf.empty_pb2
 import grpc
-import health_pb2
-import health_pb2_grpc
-import history_pb2
-import history_pb2_grpc
 import numpy as np
-import stream_pb2
-import stream_pb2_grpc
-import trade_pb2
-import trade_pb2_grpc
 from shioaji.data import Snapshot
 from shioaji.error import TokenError
 
 from env import RequiredEnv
 from logger import logger
+from pb import (
+    basic_pb2,
+    basic_pb2_grpc,
+    common_pb2,
+    health_pb2,
+    health_pb2_grpc,
+    history_pb2,
+    history_pb2_grpc,
+    stream_pb2,
+    stream_pb2_grpc,
+    trade_pb2,
+    trade_pb2_grpc,
+)
 from rabbitmq import RabbitMQS
 from simulator import Simulator
 from sinopac import Sinopac
