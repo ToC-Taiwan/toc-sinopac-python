@@ -15,4 +15,4 @@ COPY scripts /toc-sinopac-python/scripts
 COPY src /toc-sinopac-python/src
 COPY makefile /toc-sinopac-python/makefile
 
-ENTRYPOINT ["/usr/bin/make"]
+ENTRYPOINT ["cd /toc-sinopac-python && /usr/bin/make"]
