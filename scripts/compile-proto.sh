@@ -25,6 +25,7 @@ python3 -m grpc_tools.protoc \
 rm $outpath/common_pb2_grpc.py
 rm $outpath/app_pb2_grpc.py
 
+touch $outpath/__init__.py
 git add $outpath
 
 rm -rf toc-trade-protobuf
