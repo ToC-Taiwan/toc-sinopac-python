@@ -27,9 +27,7 @@ jobs:
 
             - name: Lint
               run: |
-                  export PYTHONPATH=$(pwd)/src/pb
-                  export PYLINTHOME=$(pwd)
-                  mypy --check-untyped-defs --config-file=./mypy.ini ./src && pylint ./src
+                  make lint
 
     Build:
         needs: Lint

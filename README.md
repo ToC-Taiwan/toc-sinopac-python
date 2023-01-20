@@ -19,7 +19,7 @@ pip install --no-warn-script-location --no-cache-dir -U -r requirements.txt
 ## .env example
 
 ```sh
-cp .env.template .env
+cp .env.example .env
 ```
 
 ### Make
