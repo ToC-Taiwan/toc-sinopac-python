@@ -16,12 +16,12 @@ class HealthCheckInterfaceStub(object):
             channel: A grpc.Channel.
         """
         self.Heartbeat = channel.stream_stream(
-                '/sinopac_forwarder.HealthCheckInterface/Heartbeat',
+                '/toc_python_forwarder.HealthCheckInterface/Heartbeat',
                 request_serializer=health__pb2.BeatMessage.SerializeToString,
                 response_deserializer=health__pb2.BeatMessage.FromString,
                 )
         self.Terminate = channel.unary_unary(
-                '/sinopac_forwarder.HealthCheckInterface/Terminate',
+                '/toc_python_forwarder.HealthCheckInterface/Terminate',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
@@ -57,7 +57,7 @@ def add_HealthCheckInterfaceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'sinopac_forwarder.HealthCheckInterface', rpc_method_handlers)
+            'toc_python_forwarder.HealthCheckInterface', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -76,7 +76,7 @@ class HealthCheckInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_stream(request_iterator, target, '/sinopac_forwarder.HealthCheckInterface/Heartbeat',
+        return grpc.experimental.stream_stream(request_iterator, target, '/toc_python_forwarder.HealthCheckInterface/Heartbeat',
             health__pb2.BeatMessage.SerializeToString,
             health__pb2.BeatMessage.FromString,
             options, channel_credentials,
@@ -93,7 +93,7 @@ class HealthCheckInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.HealthCheckInterface/Terminate',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.HealthCheckInterface/Terminate',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,

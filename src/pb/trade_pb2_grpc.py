@@ -17,67 +17,67 @@ class TradeInterfaceStub(object):
             channel: A grpc.Channel.
         """
         self.BuyStock = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/BuyStock',
+                '/toc_python_forwarder.TradeInterface/BuyStock',
                 request_serializer=trade__pb2.StockOrderDetail.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
         self.SellStock = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/SellStock',
+                '/toc_python_forwarder.TradeInterface/SellStock',
                 request_serializer=trade__pb2.StockOrderDetail.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
         self.SellFirstStock = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/SellFirstStock',
+                '/toc_python_forwarder.TradeInterface/SellFirstStock',
                 request_serializer=trade__pb2.StockOrderDetail.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
         self.CancelStock = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/CancelStock',
+                '/toc_python_forwarder.TradeInterface/CancelStock',
                 request_serializer=trade__pb2.OrderID.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
         self.GetLocalOrderStatusArr = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/GetLocalOrderStatusArr',
+                '/toc_python_forwarder.TradeInterface/GetLocalOrderStatusArr',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.GetSimulateOrderStatusArr = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/GetSimulateOrderStatusArr',
+                '/toc_python_forwarder.TradeInterface/GetSimulateOrderStatusArr',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.GetOrderStatusByID = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/GetOrderStatusByID',
+                '/toc_python_forwarder.TradeInterface/GetOrderStatusByID',
                 request_serializer=trade__pb2.OrderID.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
         self.GetNonBlockOrderStatusArr = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/GetNonBlockOrderStatusArr',
+                '/toc_python_forwarder.TradeInterface/GetNonBlockOrderStatusArr',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=common__pb2.ErrorMessage.FromString,
                 )
         self.BuyFuture = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/BuyFuture',
+                '/toc_python_forwarder.TradeInterface/BuyFuture',
                 request_serializer=trade__pb2.FutureOrderDetail.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
         self.SellFuture = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/SellFuture',
+                '/toc_python_forwarder.TradeInterface/SellFuture',
                 request_serializer=trade__pb2.FutureOrderDetail.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
         self.SellFirstFuture = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/SellFirstFuture',
+                '/toc_python_forwarder.TradeInterface/SellFirstFuture',
                 request_serializer=trade__pb2.FutureOrderDetail.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
         self.CancelFuture = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/CancelFuture',
+                '/toc_python_forwarder.TradeInterface/CancelFuture',
                 request_serializer=trade__pb2.FutureOrderID.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
         self.GetFuturePosition = channel.unary_unary(
-                '/sinopac_forwarder.TradeInterface/GetFuturePosition',
+                '/toc_python_forwarder.TradeInterface/GetFuturePosition',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=trade__pb2.FuturePositionArr.FromString,
                 )
@@ -234,7 +234,7 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'sinopac_forwarder.TradeInterface', rpc_method_handlers)
+            'toc_python_forwarder.TradeInterface', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -253,7 +253,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/BuyStock',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/BuyStock',
             trade__pb2.StockOrderDetail.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
@@ -270,7 +270,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/SellStock',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/SellStock',
             trade__pb2.StockOrderDetail.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
@@ -287,7 +287,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/SellFirstStock',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/SellFirstStock',
             trade__pb2.StockOrderDetail.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
@@ -304,7 +304,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/CancelStock',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/CancelStock',
             trade__pb2.OrderID.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
@@ -321,7 +321,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetLocalOrderStatusArr',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetLocalOrderStatusArr',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
@@ -338,7 +338,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetSimulateOrderStatusArr',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetSimulateOrderStatusArr',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
@@ -355,7 +355,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetOrderStatusByID',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetOrderStatusByID',
             trade__pb2.OrderID.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
@@ -372,7 +372,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetNonBlockOrderStatusArr',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetNonBlockOrderStatusArr',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             common__pb2.ErrorMessage.FromString,
             options, channel_credentials,
@@ -389,7 +389,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/BuyFuture',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/BuyFuture',
             trade__pb2.FutureOrderDetail.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
@@ -406,7 +406,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/SellFuture',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/SellFuture',
             trade__pb2.FutureOrderDetail.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
@@ -423,7 +423,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/SellFirstFuture',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/SellFirstFuture',
             trade__pb2.FutureOrderDetail.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
@@ -440,7 +440,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/CancelFuture',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/CancelFuture',
             trade__pb2.FutureOrderID.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
@@ -457,7 +457,7 @@ class TradeInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.TradeInterface/GetFuturePosition',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetFuturePosition',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             trade__pb2.FuturePositionArr.FromString,
             options, channel_credentials,

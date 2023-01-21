@@ -16,12 +16,12 @@ class BasicDataInterfaceStub(object):
             channel: A grpc.Channel.
         """
         self.GetAllStockDetail = channel.unary_unary(
-                '/sinopac_forwarder.BasicDataInterface/GetAllStockDetail',
+                '/toc_python_forwarder.BasicDataInterface/GetAllStockDetail',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=basic__pb2.StockDetailResponse.FromString,
                 )
         self.GetAllFutureDetail = channel.unary_unary(
-                '/sinopac_forwarder.BasicDataInterface/GetAllFutureDetail',
+                '/toc_python_forwarder.BasicDataInterface/GetAllFutureDetail',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=basic__pb2.FutureDetailResponse.FromString,
                 )
@@ -57,7 +57,7 @@ def add_BasicDataInterfaceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'sinopac_forwarder.BasicDataInterface', rpc_method_handlers)
+            'toc_python_forwarder.BasicDataInterface', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -76,7 +76,7 @@ class BasicDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.BasicDataInterface/GetAllStockDetail',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/GetAllStockDetail',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             basic__pb2.StockDetailResponse.FromString,
             options, channel_credentials,
@@ -93,7 +93,7 @@ class BasicDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.BasicDataInterface/GetAllFutureDetail',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/GetAllFutureDetail',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             basic__pb2.FutureDetailResponse.FromString,
             options, channel_credentials,

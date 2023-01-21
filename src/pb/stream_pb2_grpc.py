@@ -17,92 +17,92 @@ class StreamDataInterfaceStub(object):
             channel: A grpc.Channel.
         """
         self.GetStockSnapshotByNumArr = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotByNumArr',
+                '/toc_python_forwarder.StreamDataInterface/GetStockSnapshotByNumArr',
                 request_serializer=common__pb2.StockNumArr.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotResponse.FromString,
                 )
         self.GetAllStockSnapshot = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/GetAllStockSnapshot',
+                '/toc_python_forwarder.StreamDataInterface/GetAllStockSnapshot',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotResponse.FromString,
                 )
         self.GetStockSnapshotTSE = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotTSE',
+                '/toc_python_forwarder.StreamDataInterface/GetStockSnapshotTSE',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotMessage.FromString,
                 )
         self.GetStockSnapshotOTC = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotOTC',
+                '/toc_python_forwarder.StreamDataInterface/GetStockSnapshotOTC',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotMessage.FromString,
                 )
         self.GetNasdaq = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/GetNasdaq',
+                '/toc_python_forwarder.StreamDataInterface/GetNasdaq',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.YahooFinancePrice.FromString,
                 )
         self.GetNasdaqFuture = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/GetNasdaqFuture',
+                '/toc_python_forwarder.StreamDataInterface/GetNasdaqFuture',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=stream__pb2.YahooFinancePrice.FromString,
                 )
         self.GetStockVolumeRank = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/GetStockVolumeRank',
+                '/toc_python_forwarder.StreamDataInterface/GetStockVolumeRank',
                 request_serializer=stream__pb2.VolumeRankRequest.SerializeToString,
                 response_deserializer=stream__pb2.StockVolumeRankResponse.FromString,
                 )
         self.SubscribeStockTick = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/SubscribeStockTick',
+                '/toc_python_forwarder.StreamDataInterface/SubscribeStockTick',
                 request_serializer=common__pb2.StockNumArr.SerializeToString,
                 response_deserializer=stream__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeStockTick = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockTick',
+                '/toc_python_forwarder.StreamDataInterface/UnSubscribeStockTick',
                 request_serializer=common__pb2.StockNumArr.SerializeToString,
                 response_deserializer=stream__pb2.SubscribeResponse.FromString,
                 )
         self.SubscribeStockBidAsk = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/SubscribeStockBidAsk',
+                '/toc_python_forwarder.StreamDataInterface/SubscribeStockBidAsk',
                 request_serializer=common__pb2.StockNumArr.SerializeToString,
                 response_deserializer=stream__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeStockBidAsk = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockBidAsk',
+                '/toc_python_forwarder.StreamDataInterface/UnSubscribeStockBidAsk',
                 request_serializer=common__pb2.StockNumArr.SerializeToString,
                 response_deserializer=stream__pb2.SubscribeResponse.FromString,
                 )
         self.SubscribeFutureTick = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/SubscribeFutureTick',
+                '/toc_python_forwarder.StreamDataInterface/SubscribeFutureTick',
                 request_serializer=common__pb2.FutureCodeArr.SerializeToString,
                 response_deserializer=stream__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeFutureTick = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/UnSubscribeFutureTick',
+                '/toc_python_forwarder.StreamDataInterface/UnSubscribeFutureTick',
                 request_serializer=common__pb2.FutureCodeArr.SerializeToString,
                 response_deserializer=stream__pb2.SubscribeResponse.FromString,
                 )
         self.SubscribeFutureBidAsk = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/SubscribeFutureBidAsk',
+                '/toc_python_forwarder.StreamDataInterface/SubscribeFutureBidAsk',
                 request_serializer=common__pb2.FutureCodeArr.SerializeToString,
                 response_deserializer=stream__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeFutureBidAsk = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/UnSubscribeFutureBidAsk',
+                '/toc_python_forwarder.StreamDataInterface/UnSubscribeFutureBidAsk',
                 request_serializer=common__pb2.FutureCodeArr.SerializeToString,
                 response_deserializer=stream__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeStockAllTick = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockAllTick',
+                '/toc_python_forwarder.StreamDataInterface/UnSubscribeStockAllTick',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=common__pb2.ErrorMessage.FromString,
                 )
         self.UnSubscribeStockAllBidAsk = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockAllBidAsk',
+                '/toc_python_forwarder.StreamDataInterface/UnSubscribeStockAllBidAsk',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=common__pb2.ErrorMessage.FromString,
                 )
         self.GetFutureSnapshotByCodeArr = channel.unary_unary(
-                '/sinopac_forwarder.StreamDataInterface/GetFutureSnapshotByCodeArr',
+                '/toc_python_forwarder.StreamDataInterface/GetFutureSnapshotByCodeArr',
                 request_serializer=common__pb2.FutureCodeArr.SerializeToString,
                 response_deserializer=stream__pb2.SnapshotResponse.FromString,
                 )
@@ -314,7 +314,7 @@ def add_StreamDataInterfaceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'sinopac_forwarder.StreamDataInterface', rpc_method_handlers)
+            'toc_python_forwarder.StreamDataInterface', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -333,7 +333,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotByNumArr',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/GetStockSnapshotByNumArr',
             common__pb2.StockNumArr.SerializeToString,
             stream__pb2.SnapshotResponse.FromString,
             options, channel_credentials,
@@ -350,7 +350,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetAllStockSnapshot',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/GetAllStockSnapshot',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.SnapshotResponse.FromString,
             options, channel_credentials,
@@ -367,7 +367,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotTSE',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/GetStockSnapshotTSE',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.SnapshotMessage.FromString,
             options, channel_credentials,
@@ -384,7 +384,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetStockSnapshotOTC',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/GetStockSnapshotOTC',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.SnapshotMessage.FromString,
             options, channel_credentials,
@@ -401,7 +401,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetNasdaq',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/GetNasdaq',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.YahooFinancePrice.FromString,
             options, channel_credentials,
@@ -418,7 +418,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetNasdaqFuture',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/GetNasdaqFuture',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             stream__pb2.YahooFinancePrice.FromString,
             options, channel_credentials,
@@ -435,7 +435,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetStockVolumeRank',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/GetStockVolumeRank',
             stream__pb2.VolumeRankRequest.SerializeToString,
             stream__pb2.StockVolumeRankResponse.FromString,
             options, channel_credentials,
@@ -452,7 +452,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/SubscribeStockTick',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/SubscribeStockTick',
             common__pb2.StockNumArr.SerializeToString,
             stream__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
@@ -469,7 +469,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockTick',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/UnSubscribeStockTick',
             common__pb2.StockNumArr.SerializeToString,
             stream__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
@@ -486,7 +486,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/SubscribeStockBidAsk',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/SubscribeStockBidAsk',
             common__pb2.StockNumArr.SerializeToString,
             stream__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
@@ -503,7 +503,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockBidAsk',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/UnSubscribeStockBidAsk',
             common__pb2.StockNumArr.SerializeToString,
             stream__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
@@ -520,7 +520,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/SubscribeFutureTick',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/SubscribeFutureTick',
             common__pb2.FutureCodeArr.SerializeToString,
             stream__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
@@ -537,7 +537,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeFutureTick',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/UnSubscribeFutureTick',
             common__pb2.FutureCodeArr.SerializeToString,
             stream__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
@@ -554,7 +554,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/SubscribeFutureBidAsk',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/SubscribeFutureBidAsk',
             common__pb2.FutureCodeArr.SerializeToString,
             stream__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
@@ -571,7 +571,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeFutureBidAsk',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/UnSubscribeFutureBidAsk',
             common__pb2.FutureCodeArr.SerializeToString,
             stream__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
@@ -588,7 +588,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockAllTick',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/UnSubscribeStockAllTick',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             common__pb2.ErrorMessage.FromString,
             options, channel_credentials,
@@ -605,7 +605,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/UnSubscribeStockAllBidAsk',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/UnSubscribeStockAllBidAsk',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             common__pb2.ErrorMessage.FromString,
             options, channel_credentials,
@@ -622,7 +622,7 @@ class StreamDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sinopac_forwarder.StreamDataInterface/GetFutureSnapshotByCodeArr',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.StreamDataInterface/GetFutureSnapshotByCodeArr',
             common__pb2.FutureCodeArr.SerializeToString,
             stream__pb2.SnapshotResponse.FromString,
             options, channel_credentials,
