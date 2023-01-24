@@ -45,28 +45,33 @@ class RabbitMQSetting:
             raise Exception("RabbitMQ get exchange fail")
 
         exchange_arr = r.json()
+        exist = False
         for ex in exchange_arr:
             if ex["name"] == env.rabbitmq_exchange:
-                logger.warning("delete exchange %s", ex["name"])
-                r = requests.delete(
-                    url=f"http://{env.rabbitmq_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
-                    headers=headers,
-                    timeout=(5, 10),
-                )
-                if r.status_code != 204:
-                    raise Exception("RabbitMQ exchange delete fail")
+                exist = True
+                logger.warning("exchange %s already exists", env.rabbitmq_exchange)
+                # logger.warning("delete exchange %s", ex["name"])
+                # r = requests.delete(
+                #     url=f"http://{env.rabbitmq_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
+                #     headers=headers,
+                #     timeout=(5, 10),
+                # )
+                # if r.status_code != 204:
+                #     raise Exception("RabbitMQ exchange delete fail")
                 break
 
-        r = requests.put(
-            url=f"http://{env.rabbitmq_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
-            data=json.dumps(
-                {
-                    "type": "direct",
-                    "durable": True,
-                }
-            ),
-            headers=headers,
-            timeout=(5, 10),
-        )
-        if r.status_code != 201:
-            raise Exception("RabbitMQ exchange add fail")
+        if not exist:
+            r = requests.put(
+                url=f"http://{env.rabbitmq_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
+                data=json.dumps(
+                    {
+                        "type": "direct",
+                        "durable": True,
+                    }
+                ),
+                headers=headers,
+                timeout=(5, 10),
+            )
+            logger.warning("add exchange %s", env.rabbitmq_exchange)
+            if r.status_code != 201:
+                raise Exception("RabbitMQ exchange add fail")
