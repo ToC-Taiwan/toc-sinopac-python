@@ -3,7 +3,7 @@ PYTHON=$(shell which python3)
 PBPATH=$(PWD)/src/pb
 
 run: ### run
-	@clear && PYTHONPATH=$(PBPATH) $(PYTHON) -BOO ./src/main.py
+	@PYTHONPATH=$(PBPATH) $(PYTHON) -BOO ./src/main.py
 .PHONY: run
 
 lint: ### lint
