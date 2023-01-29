@@ -7,7 +7,7 @@ from queue import Queue
 import pika
 import shioaji as sj
 
-from pb import common_pb2, trade_pb2
+from pb import mq_pb2
 
 logging.getLogger("pika").setLevel(logging.WARNING)
 
@@ -62,7 +62,7 @@ class RabbitMQS:
         p.ch.basic_publish(
             exchange=self.exchange,
             routing_key="event",
-            body=common_pb2.EventMessage(
+            body=mq_pb2.EventMessage(
                 resp_code=resp_code,
                 event_code=event_code,
                 info=info,
@@ -90,7 +90,7 @@ class RabbitMQS:
                 p.ch.basic_publish(
                     exchange=self.exchange,
                     routing_key="order",
-                    body=trade_pb2.OrderStatus(
+                    body=mq_pb2.OrderStatus(
                         code=order.contract.code,
                         action=order.order.action,
                         price=order_price,
@@ -107,7 +107,7 @@ class RabbitMQS:
         p.ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"tick:{tick.code}",
-            body=common_pb2.StockRealTimeTickMessage(
+            body=mq_pb2.StockRealTimeTickMessage(
                 code=tick.code,
                 date_time=datetime.strftime(tick.datetime, "%Y-%m-%d %H:%M:%S.%f"),
                 open=tick.open,
@@ -138,7 +138,7 @@ class RabbitMQS:
         p.ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"future_tick:{tick.code}",
-            body=common_pb2.FutureRealTimeTickMessage(
+            body=mq_pb2.FutureRealTimeTickMessage(
                 code=tick.code,
                 date_time=datetime.strftime(tick.datetime, "%Y-%m-%d %H:%M:%S.%f"),
                 open=tick.open,
@@ -167,7 +167,7 @@ class RabbitMQS:
         p.ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"bid_ask:{bidask.code}",
-            body=common_pb2.StockRealTimeBidAskMessage(
+            body=mq_pb2.StockRealTimeBidAskMessage(
                 code=bidask.code,
                 date_time=datetime.strftime(bidask.datetime, "%Y-%m-%d %H:%M:%S.%f"),
                 suspend=bidask.suspend,
@@ -187,7 +187,7 @@ class RabbitMQS:
         p.ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"future_bid_ask:{bidask.code}",
-            body=common_pb2.FutureRealTimeBidAskMessage(
+            body=mq_pb2.FutureRealTimeBidAskMessage(
                 code=bidask.code,
                 date_time=datetime.strftime(bidask.datetime, "%Y-%m-%d %H:%M:%S.%f"),
                 bid_total_vol=bidask.bid_total_vol,
@@ -212,7 +212,7 @@ class RabbitMQS:
         if len(arr) == 0:
             return
 
-        result = trade_pb2.OrderStatusArr()
+        result = mq_pb2.OrderStatusArr()
         for order in arr:
             if order.status.order_datetime is None:
                 order.status.order_datetime = datetime.now()
@@ -228,7 +228,7 @@ class RabbitMQS:
                 qty = order.status.deal_quantity
 
             result.data.append(
-                trade_pb2.OrderStatus(
+                mq_pb2.OrderStatus(
                     code=order.contract.code,
                     action=order.order.action,
                     price=order_price,

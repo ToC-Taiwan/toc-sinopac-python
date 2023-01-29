@@ -7,7 +7,8 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
 class BasicDataInterfaceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """BasicDataInterface is the interface for basic data service
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -15,6 +16,16 @@ class BasicDataInterfaceStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.Heartbeat = channel.stream_stream(
+                '/toc_python_forwarder.BasicDataInterface/Heartbeat',
+                request_serializer=basic__pb2.BeatMessage.SerializeToString,
+                response_deserializer=basic__pb2.BeatMessage.FromString,
+                )
+        self.Terminate = channel.unary_unary(
+                '/toc_python_forwarder.BasicDataInterface/Terminate',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
         self.GetAllStockDetail = channel.unary_unary(
                 '/toc_python_forwarder.BasicDataInterface/GetAllStockDetail',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -28,16 +39,33 @@ class BasicDataInterfaceStub(object):
 
 
 class BasicDataInterfaceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """BasicDataInterface is the interface for basic data service
+    """
+
+    def Heartbeat(self, request_iterator, context):
+        """Heartbeat is the heartbeat function
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Terminate(self, request, context):
+        """Terminate is the terminate function
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetAllStockDetail(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetAllStockDetail is the function to get stock detail
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetAllFutureDetail(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetAllFutureDetail is the function to get future detail
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -45,6 +73,16 @@ class BasicDataInterfaceServicer(object):
 
 def add_BasicDataInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'Heartbeat': grpc.stream_stream_rpc_method_handler(
+                    servicer.Heartbeat,
+                    request_deserializer=basic__pb2.BeatMessage.FromString,
+                    response_serializer=basic__pb2.BeatMessage.SerializeToString,
+            ),
+            'Terminate': grpc.unary_unary_rpc_method_handler(
+                    servicer.Terminate,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
             'GetAllStockDetail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllStockDetail,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
@@ -63,7 +101,42 @@ def add_BasicDataInterfaceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class BasicDataInterface(object):
-    """Missing associated documentation comment in .proto file."""
+    """BasicDataInterface is the interface for basic data service
+    """
+
+    @staticmethod
+    def Heartbeat(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_stream(request_iterator, target, '/toc_python_forwarder.BasicDataInterface/Heartbeat',
+            basic__pb2.BeatMessage.SerializeToString,
+            basic__pb2.BeatMessage.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Terminate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/Terminate',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def GetAllStockDetail(request,

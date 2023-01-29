@@ -17,7 +17,27 @@ else:
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
+class SnapshotResponse(google.protobuf.message.Message):
+    """SnapshotResponse is the response of snapshot"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DATA_FIELD_NUMBER: builtins.int
+    @property
+    def data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___SnapshotMessage]: ...
+    def __init__(
+        self,
+        *,
+        data: collections.abc.Iterable[global___SnapshotMessage] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["data", b"data"]) -> None: ...
+
+global___SnapshotResponse = SnapshotResponse
+
+@typing_extensions.final
 class YahooFinancePrice(google.protobuf.message.Message):
+    """YahooFinancePrice is the response of yahoo finance price"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     PRICE_FIELD_NUMBER: builtins.int
@@ -36,6 +56,8 @@ global___YahooFinancePrice = YahooFinancePrice
 
 @typing_extensions.final
 class VolumeRankRequest(google.protobuf.message.Message):
+    """VolumeRankRequest is the request of volume rank"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     COUNT_FIELD_NUMBER: builtins.int
@@ -53,23 +75,9 @@ class VolumeRankRequest(google.protobuf.message.Message):
 global___VolumeRankRequest = VolumeRankRequest
 
 @typing_extensions.final
-class SnapshotResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    DATA_FIELD_NUMBER: builtins.int
-    @property
-    def data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___SnapshotMessage]: ...
-    def __init__(
-        self,
-        *,
-        data: collections.abc.Iterable[global___SnapshotMessage] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["data", b"data"]) -> None: ...
-
-global___SnapshotResponse = SnapshotResponse
-
-@typing_extensions.final
 class SnapshotMessage(google.protobuf.message.Message):
+    """SnapshotMessage is the message of snapshot"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     TS_FIELD_NUMBER: builtins.int
@@ -148,6 +156,8 @@ global___SnapshotMessage = SnapshotMessage
 
 @typing_extensions.final
 class StockVolumeRankResponse(google.protobuf.message.Message):
+    """StockVolumeRankResponse is the response of stock volume rank"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATA_FIELD_NUMBER: builtins.int
@@ -164,6 +174,8 @@ global___StockVolumeRankResponse = StockVolumeRankResponse
 
 @typing_extensions.final
 class StockVolumeRankMessage(google.protobuf.message.Message):
+    """StockVolumeRankMessage is the message of stock volume rank"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATE_FIELD_NUMBER: builtins.int
@@ -254,19 +266,3 @@ class StockVolumeRankMessage(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["amount", b"amount", "ask_orders", b"ask_orders", "ask_volumes", b"ask_volumes", "average_price", b"average_price", "bid_orders", b"bid_orders", "bid_volumes", b"bid_volumes", "buy_price", b"buy_price", "buy_volume", b"buy_volume", "change_price", b"change_price", "change_type", b"change_type", "close", b"close", "code", b"code", "date", b"date", "high", b"high", "low", b"low", "name", b"name", "open", b"open", "price_range", b"price_range", "sell_price", b"sell_price", "sell_volume", b"sell_volume", "tick_type", b"tick_type", "total_amount", b"total_amount", "total_volume", b"total_volume", "ts", b"ts", "volume", b"volume", "volume_ratio", b"volume_ratio", "yesterday_volume", b"yesterday_volume"]) -> None: ...
 
 global___StockVolumeRankMessage = StockVolumeRankMessage
-
-@typing_extensions.final
-class SubscribeResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    FAIL_ARR_FIELD_NUMBER: builtins.int
-    @property
-    def fail_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    def __init__(
-        self,
-        *,
-        fail_arr: collections.abc.Iterable[builtins.str] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["fail_arr", b"fail_arr"]) -> None: ...
-
-global___SubscribeResponse = SubscribeResponse

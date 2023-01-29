@@ -17,7 +17,26 @@ else:
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
+class BeatMessage(google.protobuf.message.Message):
+    """BeatMessage is the message for heartbeat"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MESSAGE_FIELD_NUMBER: builtins.int
+    message: builtins.str
+    def __init__(
+        self,
+        *,
+        message: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["message", b"message"]) -> None: ...
+
+global___BeatMessage = BeatMessage
+
+@typing_extensions.final
 class StockDetailResponse(google.protobuf.message.Message):
+    """StockDetailResponse is the response for stock detail"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STOCK_FIELD_NUMBER: builtins.int
@@ -33,7 +52,27 @@ class StockDetailResponse(google.protobuf.message.Message):
 global___StockDetailResponse = StockDetailResponse
 
 @typing_extensions.final
+class FutureDetailResponse(google.protobuf.message.Message):
+    """FutureDetailResponse is the response for future detail"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    FUTURE_FIELD_NUMBER: builtins.int
+    @property
+    def future(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___FutureDetailMessage]: ...
+    def __init__(
+        self,
+        *,
+        future: collections.abc.Iterable[global___FutureDetailMessage] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["future", b"future"]) -> None: ...
+
+global___FutureDetailResponse = FutureDetailResponse
+
+@typing_extensions.final
 class StockDetailMessage(google.protobuf.message.Message):
+    """StockDetailMessage is the message for stock detail"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     EXCHANGE_FIELD_NUMBER: builtins.int
@@ -66,23 +105,9 @@ class StockDetailMessage(google.protobuf.message.Message):
 global___StockDetailMessage = StockDetailMessage
 
 @typing_extensions.final
-class FutureDetailResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    FUTURE_FIELD_NUMBER: builtins.int
-    @property
-    def future(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___FutureDetailMessage]: ...
-    def __init__(
-        self,
-        *,
-        future: collections.abc.Iterable[global___FutureDetailMessage] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["future", b"future"]) -> None: ...
-
-global___FutureDetailResponse = FutureDetailResponse
-
-@typing_extensions.final
 class FutureDetailMessage(google.protobuf.message.Message):
+    """FutureDetailMessage is the message for future detail"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int

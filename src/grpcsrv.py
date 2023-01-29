@@ -16,13 +16,13 @@ from logger import logger
 from pb import (
     basic_pb2,
     basic_pb2_grpc,
-    common_pb2,
-    health_pb2,
-    health_pb2_grpc,
+    entity_pb2,
     history_pb2,
     history_pb2_grpc,
-    stream_pb2,
-    stream_pb2_grpc,
+    realtime_pb2,
+    realtime_pb2_grpc,
+    subscribe_pb2,
+    subscribe_pb2_grpc,
     trade_pb2,
     trade_pb2_grpc,
 )
@@ -33,16 +33,16 @@ from sinopac_worker import SinopacWorkerPool
 from yahoo_finance import Yahoo
 
 
-class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
+class gRPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
     def __init__(
         self,
         simulator: Simulator,
         workers: SinopacWorkerPool,
     ):
+        self.workers = workers
         self.beat_time = float()
         self.debug = False
         self.simulator = simulator
-        self.workers = workers
 
     def Heartbeat(self, request_iterator, _):
         logger.info("new gRPC client connected")
@@ -55,7 +55,7 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
                 self.debug = True
             else:
                 self.debug = False
-            yield health_pb2.BeatMessage(message=beat.message)
+            yield basic_pb2.BeatMessage(message=beat.message)
 
     def beat_timer(self):
         self.beat_time = datetime.now().timestamp()
@@ -80,11 +80,6 @@ class gRPCHealthCheck(health_pb2_grpc.HealthCheckInterfaceServicer):
     def wait_and_terminate(self):
         time.sleep(3)
         os._exit(1)
-
-
-class gRPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
-    def __init__(self, workers: SinopacWorkerPool):
-        self.workers = workers
 
     def GetAllStockDetail(self, request, _):
         response = basic_pb2.StockDetailResponse()
@@ -480,7 +475,7 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             return google.protobuf.empty_pb2.Empty()  # pylint: disable=no-member
 
     def GetNonBlockOrderStatusArr(self, request, _):
-        return common_pb2.ErrorMessage(err=self.workers.get_non_block_order_status_arr())
+        return entity_pb2.ErrorMessage(err=self.workers.get_non_block_order_status_arr())
 
     def BuyFuture(self, request, _):
         result = None
@@ -559,21 +554,21 @@ class gRPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
 
-class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
+class gRPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
     def __init__(self, source: Yahoo, workers: SinopacWorkerPool):
         self.source = source
         self.workers = workers
 
     def GetNasdaq(self, request, _):
         arr = self.source.get_nasdaq()
-        return stream_pb2.YahooFinancePrice(
+        return realtime_pb2.YahooFinancePrice(
             price=arr[0],
             last=arr[1],
         )
 
     def GetNasdaqFuture(self, request, _):
         arr = self.source.get_nasdaq_future()
-        return stream_pb2.YahooFinancePrice(
+        return realtime_pb2.YahooFinancePrice(
             price=arr[0],
             last=arr[1],
         )
@@ -601,7 +596,7 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
             threads[i].start()
         for t in threads:
             t.join()
-        response = stream_pb2.SnapshotResponse()
+        response = realtime_pb2.SnapshotResponse()
         for result in snapshots:
             response.data.append(sinopac_snapshot_to_pb(result))
         return response
@@ -629,7 +624,7 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
             threads[i].start()
         for t in threads:
             t.join()
-        response = stream_pb2.SnapshotResponse()
+        response = realtime_pb2.SnapshotResponse()
         for result in snapshots:
             response.data.append(sinopac_snapshot_to_pb(result))
         return response
@@ -653,11 +648,11 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
         return sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockVolumeRank(self, request, _):
-        response = stream_pb2.StockVolumeRankResponse()
+        response = realtime_pb2.StockVolumeRankResponse()
         ranks = self.workers.get(True).get_stock_volume_rank_by_date(request.count, request.date)
         for result in ranks:
             response.data.append(
-                stream_pb2.StockVolumeRankMessage(
+                realtime_pb2.StockVolumeRankMessage(
                     date=result.date,
                     code=result.code,
                     name=result.name,
@@ -689,76 +684,6 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
             )
         return response
 
-    def SubscribeStockTick(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for stock_num in request.stock_num_arr:
-            result = self.workers.subscribe_stock_tick(stock_num)
-            if result is not None:
-                response.fail_arr.append(stock_num)
-        return response
-
-    def UnSubscribeStockTick(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for stock_num in request.stock_num_arr:
-            result = self.workers.unsubscribe_stock_tick(stock_num)
-            if result is not None:
-                response.fail_arr.append(stock_num)
-        return response
-
-    def SubscribeStockBidAsk(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for stock_num in request.stock_num_arr:
-            result = self.workers.subscribe_stock_bidask(stock_num)
-            if result is not None:
-                response.fail_arr.append(stock_num)
-        return response
-
-    def UnSubscribeStockBidAsk(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for stock_num in request.stock_num_arr:
-            result = self.workers.unsubscribe_stock_bidask(stock_num)
-            if result is not None:
-                response.fail_arr.append(stock_num)
-        return response
-
-    def SubscribeFutureTick(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for code in request.future_code_arr:
-            result = self.workers.subscribe_future_tick(code)
-            if result is not None:
-                response.fail_arr.append(code)
-        return response
-
-    def UnSubscribeFutureTick(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for code in request.future_code_arr:
-            result = self.workers.unsubscribe_future_tick(code)
-            if result is not None:
-                response.fail_arr.append(code)
-        return response
-
-    def SubscribeFutureBidAsk(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for code in request.future_code_arr:
-            result = self.workers.subscribe_future_bidask(code)
-            if result is not None:
-                response.fail_arr.append(code)
-        return response
-
-    def UnSubscribeFutureBidAsk(self, request, _):
-        response = stream_pb2.SubscribeResponse()
-        for code in request.future_code_arr:
-            result = self.workers.unsubscribe_future_bidask(code)
-            if result is not None:
-                response.fail_arr.append(code)
-        return response
-
-    def UnSubscribeStockAllTick(self, request, _):
-        return common_pb2.ErrorMessage(err=self.workers.unsubscribe_all_tick())
-
-    def UnSubscribeStockAllBidAsk(self, request, _):
-        return common_pb2.ErrorMessage(err=self.workers.unsubscribe_all_bidask())
-
     def GetFutureSnapshotByCodeArr(self, request, _):
         contracts = []
         worker = self.workers.get(False)
@@ -782,16 +707,91 @@ class gRPCStream(stream_pb2_grpc.StreamDataInterfaceServicer):
             threads[i].start()
         for t in threads:
             t.join()
-        response = stream_pb2.SnapshotResponse()
+        response = realtime_pb2.SnapshotResponse()
         for result in snapshots:
             response.data.append(sinopac_snapshot_to_pb(result))
         return response
 
 
+class gRPCSubscribe(subscribe_pb2_grpc.SubscribeDataInterfaceServicer):
+    def __init__(self, workers: SinopacWorkerPool):
+        self.workers = workers
+
+    def SubscribeStockTick(self, request, _):
+        response = subscribe_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = self.workers.subscribe_stock_tick(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
+    def UnSubscribeStockTick(self, request, _):
+        response = subscribe_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = self.workers.unsubscribe_stock_tick(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
+    def SubscribeStockBidAsk(self, request, _):
+        response = subscribe_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = self.workers.subscribe_stock_bidask(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
+    def UnSubscribeStockBidAsk(self, request, _):
+        response = subscribe_pb2.SubscribeResponse()
+        for stock_num in request.stock_num_arr:
+            result = self.workers.unsubscribe_stock_bidask(stock_num)
+            if result is not None:
+                response.fail_arr.append(stock_num)
+        return response
+
+    def SubscribeFutureTick(self, request, _):
+        response = subscribe_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = self.workers.subscribe_future_tick(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
+    def UnSubscribeFutureTick(self, request, _):
+        response = subscribe_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = self.workers.unsubscribe_future_tick(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
+    def SubscribeFutureBidAsk(self, request, _):
+        response = subscribe_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = self.workers.subscribe_future_bidask(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
+    def UnSubscribeFutureBidAsk(self, request, _):
+        response = subscribe_pb2.SubscribeResponse()
+        for code in request.future_code_arr:
+            result = self.workers.unsubscribe_future_bidask(code)
+            if result is not None:
+                response.fail_arr.append(code)
+        return response
+
+    def UnSubscribeStockAllTick(self, request, _):
+        return entity_pb2.ErrorMessage(err=self.workers.unsubscribe_all_tick())
+
+    def UnSubscribeStockAllBidAsk(self, request, _):
+        return entity_pb2.ErrorMessage(err=self.workers.unsubscribe_all_bidask())
+
+
 def sinopac_snapshot_to_pb(
     result,
-) -> stream_pb2.SnapshotMessage:
-    return stream_pb2.SnapshotMessage(
+) -> realtime_pb2.SnapshotMessage:
+    return realtime_pb2.SnapshotMessage(
         ts=result.ts,
         code=result.code,
         exchange=result.exchange,
@@ -997,12 +997,8 @@ def serve(
     simulator = Simulator(worker_pool.main_worker)
 
     # gRPC servicer
-    health_servicer = gRPCHealthCheck(
-        simulator=simulator,
-        workers=worker_pool,
-    )
-
     basic_servicer = gRPCBasic(
+        simulator=simulator,
         workers=worker_pool,
     )
 
@@ -1010,14 +1006,18 @@ def serve(
         workers=worker_pool,
     )
 
-    trade_servicer = gRPCTrade(
-        rq=rq,
-        simulator=simulator,
+    realtime_servicer = gRPCRealTime(
+        source=Yahoo(),
         workers=worker_pool,
     )
 
-    stream_servicer = gRPCStream(
-        source=Yahoo(),
+    subscribe_servicer = gRPCSubscribe(
+        workers=worker_pool,
+    )
+
+    trade_servicer = gRPCTrade(
+        rq=rq,
+        simulator=simulator,
         workers=worker_pool,
     )
 
@@ -1034,11 +1034,11 @@ def serve(
             ),
         ],
     )
-    health_pb2_grpc.add_HealthCheckInterfaceServicer_to_server(health_servicer, server)
     basic_pb2_grpc.add_BasicDataInterfaceServicer_to_server(basic_servicer, server)
     history_pb2_grpc.add_HistoryDataInterfaceServicer_to_server(history_servicer, server)
+    realtime_pb2_grpc.add_RealTimeDataInterfaceServicer_to_server(realtime_servicer, server)
+    subscribe_pb2_grpc.add_SubscribeDataInterfaceServicer_to_server(subscribe_servicer, server)
     trade_pb2_grpc.add_TradeInterfaceServicer_to_server(trade_servicer, server)
-    stream_pb2_grpc.add_StreamDataInterfaceServicer_to_server(stream_servicer, server)
 
     server.add_insecure_port(f"[::]:{port}")
     server.start()

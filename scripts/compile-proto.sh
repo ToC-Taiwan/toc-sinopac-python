@@ -17,8 +17,9 @@ python3 -m grpc_tools.protoc \
     --proto_path=./toc-trade-protobuf/protos/v3/forwarder \
     ./toc-trade-protobuf/protos/v3/*/*.proto
 
-rm $outpath/common_pb2_grpc.py
 rm $outpath/app_pb2_grpc.py
+rm $outpath/entity_pb2_grpc.py
+rm $outpath/mq_pb2_grpc.py
 
 git add $outpath
 

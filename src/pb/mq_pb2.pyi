@@ -18,6 +18,8 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class EventMessage(google.protobuf.message.Message):
+    """EventMessage is the message type for event"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     RESP_CODE_FIELD_NUMBER: builtins.int
@@ -45,6 +47,8 @@ global___EventMessage = EventMessage
 
 @typing_extensions.final
 class StockRealTimeTickMessage(google.protobuf.message.Message):
+    """StockRealTimeTickMessage is the message type for stock tick"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -120,6 +124,8 @@ global___StockRealTimeTickMessage = StockRealTimeTickMessage
 
 @typing_extensions.final
 class StockRealTimeBidAskMessage(google.protobuf.message.Message):
+    """StockRealTimeBidAskMessage is the message type for stock bid ask"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -168,6 +174,8 @@ global___StockRealTimeBidAskMessage = StockRealTimeBidAskMessage
 
 @typing_extensions.final
 class FutureRealTimeTickMessage(google.protobuf.message.Message):
+    """FutureRealTimeTickMessage is the message type for stock trade"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -237,6 +245,8 @@ global___FutureRealTimeTickMessage = FutureRealTimeTickMessage
 
 @typing_extensions.final
 class FutureRealTimeBidAskMessage(google.protobuf.message.Message):
+    """FutureRealTimeBidAskMessage is the message type for future bid ask"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -302,121 +312,54 @@ class FutureRealTimeBidAskMessage(google.protobuf.message.Message):
 global___FutureRealTimeBidAskMessage = FutureRealTimeBidAskMessage
 
 @typing_extensions.final
-class ErrorMessage(google.protobuf.message.Message):
+class OrderStatusArr(google.protobuf.message.Message):
+    """OrderStatusArr is the message type for order status"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    ERR_FIELD_NUMBER: builtins.int
-    err: builtins.str
+    DATA_FIELD_NUMBER: builtins.int
+    @property
+    def data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___OrderStatus]: ...
     def __init__(
         self,
         *,
-        err: builtins.str = ...,
+        data: collections.abc.Iterable[global___OrderStatus] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["err", b"err"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["data", b"data"]) -> None: ...
 
-global___ErrorMessage = ErrorMessage
+global___OrderStatusArr = OrderStatusArr
 
 @typing_extensions.final
-class Date(google.protobuf.message.Message):
+class OrderStatus(google.protobuf.message.Message):
+    """OrderStatus is the message type for order status"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    DATE_FIELD_NUMBER: builtins.int
-    date: builtins.str
+    STATUS_FIELD_NUMBER: builtins.int
+    CODE_FIELD_NUMBER: builtins.int
+    ACTION_FIELD_NUMBER: builtins.int
+    PRICE_FIELD_NUMBER: builtins.int
+    QUANTITY_FIELD_NUMBER: builtins.int
+    ORDER_ID_FIELD_NUMBER: builtins.int
+    ORDER_TIME_FIELD_NUMBER: builtins.int
+    status: builtins.str
+    code: builtins.str
+    action: builtins.str
+    price: builtins.float
+    quantity: builtins.int
+    order_id: builtins.str
+    order_time: builtins.str
     def __init__(
         self,
         *,
-        date: builtins.str = ...,
+        status: builtins.str = ...,
+        code: builtins.str = ...,
+        action: builtins.str = ...,
+        price: builtins.float = ...,
+        quantity: builtins.int = ...,
+        order_id: builtins.str = ...,
+        order_time: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["date", b"date"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["action", b"action", "code", b"code", "order_id", b"order_id", "order_time", b"order_time", "price", b"price", "quantity", b"quantity", "status", b"status"]) -> None: ...
 
-global___Date = Date
-
-@typing_extensions.final
-class StockNumArr(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    STOCK_NUM_ARR_FIELD_NUMBER: builtins.int
-    @property
-    def stock_num_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    def __init__(
-        self,
-        *,
-        stock_num_arr: collections.abc.Iterable[builtins.str] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["stock_num_arr", b"stock_num_arr"]) -> None: ...
-
-global___StockNumArr = StockNumArr
-
-@typing_extensions.final
-class StockNumArrWithDate(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    STOCK_NUM_ARR_FIELD_NUMBER: builtins.int
-    DATE_FIELD_NUMBER: builtins.int
-    @property
-    def stock_num_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    date: builtins.str
-    def __init__(
-        self,
-        *,
-        stock_num_arr: collections.abc.Iterable[builtins.str] | None = ...,
-        date: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["date", b"date", "stock_num_arr", b"stock_num_arr"]) -> None: ...
-
-global___StockNumArrWithDate = StockNumArrWithDate
-
-@typing_extensions.final
-class StockNumArrWithDateArr(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    STOCK_NUM_ARR_FIELD_NUMBER: builtins.int
-    DATE_ARR_FIELD_NUMBER: builtins.int
-    @property
-    def stock_num_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    @property
-    def date_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    def __init__(
-        self,
-        *,
-        stock_num_arr: collections.abc.Iterable[builtins.str] | None = ...,
-        date_arr: collections.abc.Iterable[builtins.str] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["date_arr", b"date_arr", "stock_num_arr", b"stock_num_arr"]) -> None: ...
-
-global___StockNumArrWithDateArr = StockNumArrWithDateArr
-
-@typing_extensions.final
-class FutureCodeArr(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    FUTURE_CODE_ARR_FIELD_NUMBER: builtins.int
-    @property
-    def future_code_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    def __init__(
-        self,
-        *,
-        future_code_arr: collections.abc.Iterable[builtins.str] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["future_code_arr", b"future_code_arr"]) -> None: ...
-
-global___FutureCodeArr = FutureCodeArr
-
-@typing_extensions.final
-class FutureCodeArrWithDate(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    FUTURE_CODE_ARR_FIELD_NUMBER: builtins.int
-    DATE_FIELD_NUMBER: builtins.int
-    @property
-    def future_code_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    date: builtins.str
-    def __init__(
-        self,
-        *,
-        future_code_arr: collections.abc.Iterable[builtins.str] | None = ...,
-        date: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["date", b"date", "future_code_arr", b"future_code_arr"]) -> None: ...
-
-global___FutureCodeArrWithDate = FutureCodeArrWithDate
+global___OrderStatus = OrderStatus

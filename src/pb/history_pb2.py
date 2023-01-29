@@ -11,10 +11,9 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import common_pb2 as common__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rhistory.proto\x12\x14toc_python_forwarder\x1a\x0c\x63ommon.proto\"M\n\x13HistoryTickResponse\x12\x36\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32(.toc_python_forwarder.HistoryTickMessage\"\xae\x01\n\x12HistoryTickMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0e\n\x06volume\x18\x03 \x01(\x03\x12\x11\n\tbid_price\x18\x04 \x01(\x01\x12\x12\n\nbid_volume\x18\x05 \x01(\x03\x12\x11\n\task_price\x18\x06 \x01(\x01\x12\x12\n\nask_volume\x18\x07 \x01(\x03\x12\x11\n\ttick_type\x18\x08 \x01(\x03\x12\x0c\n\x04\x63ode\x18\t \x01(\t\"M\n\x13HistoryKbarResponse\x12\x36\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32(.toc_python_forwarder.HistoryKbarMessage\"v\n\x12HistoryKbarMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0c\n\x04open\x18\x03 \x01(\x01\x12\x0c\n\x04high\x18\x04 \x01(\x01\x12\x0b\n\x03low\x18\x05 \x01(\x01\x12\x0e\n\x06volume\x18\x06 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x07 \x01(\t\"O\n\x14HistoryCloseResponse\x12\x37\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32).toc_python_forwarder.HistoryCloseMessage\"@\n\x13HistoryCloseMessage\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\r\n\x05\x63lose\x18\x03 \x01(\x01\x32\xc3\t\n\x14HistoryDataInterface\x12m\n\x13GetStockHistoryTick\x12).toc_python_forwarder.StockNumArrWithDate\x1a).toc_python_forwarder.HistoryTickResponse\"\x00\x12m\n\x13GetStockHistoryKbar\x12).toc_python_forwarder.StockNumArrWithDate\x1a).toc_python_forwarder.HistoryKbarResponse\"\x00\x12o\n\x14GetStockHistoryClose\x12).toc_python_forwarder.StockNumArrWithDate\x1a*.toc_python_forwarder.HistoryCloseResponse\"\x00\x12{\n\x1dGetStockHistoryCloseByDateArr\x12,.toc_python_forwarder.StockNumArrWithDateArr\x1a*.toc_python_forwarder.HistoryCloseResponse\"\x00\x12\x61\n\x16GetStockTSEHistoryTick\x12\x1a.toc_python_forwarder.Date\x1a).toc_python_forwarder.HistoryTickResponse\"\x00\x12\x61\n\x16GetStockTSEHistoryKbar\x12\x1a.toc_python_forwarder.Date\x1a).toc_python_forwarder.HistoryKbarResponse\"\x00\x12\x63\n\x17GetStockTSEHistoryClose\x12\x1a.toc_python_forwarder.Date\x1a*.toc_python_forwarder.HistoryCloseResponse\"\x00\x12\\\n\x11GetOTCHistoryKbar\x12\x1a.toc_python_forwarder.Date\x1a).toc_python_forwarder.HistoryKbarResponse\"\x00\x12p\n\x14GetFutureHistoryTick\x12+.toc_python_forwarder.FutureCodeArrWithDate\x1a).toc_python_forwarder.HistoryTickResponse\"\x00\x12r\n\x15GetFutureHistoryClose\x12+.toc_python_forwarder.FutureCodeArrWithDate\x1a*.toc_python_forwarder.HistoryCloseResponse\"\x00\x12p\n\x14GetFutureHistoryKbar\x12+.toc_python_forwarder.FutureCodeArrWithDate\x1a).toc_python_forwarder.HistoryKbarResponse\"\x00\x42\x06Z\x04./pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rhistory.proto\x12\x14toc_python_forwarder\":\n\x13StockNumArrWithDate\x12\x15\n\rstock_num_arr\x18\x01 \x03(\t\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\">\n\x15\x46utureCodeArrWithDate\x12\x17\n\x0f\x66uture_code_arr\x18\x01 \x03(\t\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\"A\n\x16StockNumArrWithDateArr\x12\x15\n\rstock_num_arr\x18\x01 \x03(\t\x12\x10\n\x08\x64\x61te_arr\x18\x02 \x03(\t\"M\n\x13HistoryTickResponse\x12\x36\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32(.toc_python_forwarder.HistoryTickMessage\"M\n\x13HistoryKbarResponse\x12\x36\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32(.toc_python_forwarder.HistoryKbarMessage\"O\n\x14HistoryCloseResponse\x12\x37\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32).toc_python_forwarder.HistoryCloseMessage\"\xae\x01\n\x12HistoryTickMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0e\n\x06volume\x18\x03 \x01(\x03\x12\x11\n\tbid_price\x18\x04 \x01(\x01\x12\x12\n\nbid_volume\x18\x05 \x01(\x03\x12\x11\n\task_price\x18\x06 \x01(\x01\x12\x12\n\nask_volume\x18\x07 \x01(\x03\x12\x11\n\ttick_type\x18\x08 \x01(\x03\x12\x0c\n\x04\x63ode\x18\t \x01(\t\"v\n\x12HistoryKbarMessage\x12\n\n\x02ts\x18\x01 \x01(\x03\x12\r\n\x05\x63lose\x18\x02 \x01(\x01\x12\x0c\n\x04open\x18\x03 \x01(\x01\x12\x0c\n\x04high\x18\x04 \x01(\x01\x12\x0b\n\x03low\x18\x05 \x01(\x01\x12\x0e\n\x06volume\x18\x06 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x07 \x01(\t\"@\n\x13HistoryCloseMessage\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\r\n\x05\x63lose\x18\x03 \x01(\x01\"\x14\n\x04\x44\x61te\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\t2\xe5\x08\n\x14HistoryDataInterface\x12m\n\x13GetStockHistoryTick\x12).toc_python_forwarder.StockNumArrWithDate\x1a).toc_python_forwarder.HistoryTickResponse\"\x00\x12m\n\x13GetStockHistoryKbar\x12).toc_python_forwarder.StockNumArrWithDate\x1a).toc_python_forwarder.HistoryKbarResponse\"\x00\x12o\n\x14GetStockHistoryClose\x12).toc_python_forwarder.StockNumArrWithDate\x1a*.toc_python_forwarder.HistoryCloseResponse\"\x00\x12{\n\x1dGetStockHistoryCloseByDateArr\x12,.toc_python_forwarder.StockNumArrWithDateArr\x1a*.toc_python_forwarder.HistoryCloseResponse\"\x00\x12p\n\x14GetFutureHistoryTick\x12+.toc_python_forwarder.FutureCodeArrWithDate\x1a).toc_python_forwarder.HistoryTickResponse\"\x00\x12p\n\x14GetFutureHistoryKbar\x12+.toc_python_forwarder.FutureCodeArrWithDate\x1a).toc_python_forwarder.HistoryKbarResponse\"\x00\x12r\n\x15GetFutureHistoryClose\x12+.toc_python_forwarder.FutureCodeArrWithDate\x1a*.toc_python_forwarder.HistoryCloseResponse\"\x00\x12\x61\n\x16GetStockTSEHistoryTick\x12\x1a.toc_python_forwarder.Date\x1a).toc_python_forwarder.HistoryTickResponse\"\x00\x12\x61\n\x16GetStockTSEHistoryKbar\x12\x1a.toc_python_forwarder.Date\x1a).toc_python_forwarder.HistoryKbarResponse\"\x00\x12\x63\n\x17GetStockTSEHistoryClose\x12\x1a.toc_python_forwarder.Date\x1a*.toc_python_forwarder.HistoryCloseResponse\"\x00\x42\x06Z\x04./pbb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'history_pb2', globals())
@@ -22,18 +21,26 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\004./pb'
-  _HISTORYTICKRESPONSE._serialized_start=53
-  _HISTORYTICKRESPONSE._serialized_end=130
-  _HISTORYTICKMESSAGE._serialized_start=133
-  _HISTORYTICKMESSAGE._serialized_end=307
+  _STOCKNUMARRWITHDATE._serialized_start=39
+  _STOCKNUMARRWITHDATE._serialized_end=97
+  _FUTURECODEARRWITHDATE._serialized_start=99
+  _FUTURECODEARRWITHDATE._serialized_end=161
+  _STOCKNUMARRWITHDATEARR._serialized_start=163
+  _STOCKNUMARRWITHDATEARR._serialized_end=228
+  _HISTORYTICKRESPONSE._serialized_start=230
+  _HISTORYTICKRESPONSE._serialized_end=307
   _HISTORYKBARRESPONSE._serialized_start=309
   _HISTORYKBARRESPONSE._serialized_end=386
-  _HISTORYKBARMESSAGE._serialized_start=388
-  _HISTORYKBARMESSAGE._serialized_end=506
-  _HISTORYCLOSERESPONSE._serialized_start=508
-  _HISTORYCLOSERESPONSE._serialized_end=587
-  _HISTORYCLOSEMESSAGE._serialized_start=589
-  _HISTORYCLOSEMESSAGE._serialized_end=653
-  _HISTORYDATAINTERFACE._serialized_start=656
-  _HISTORYDATAINTERFACE._serialized_end=1875
+  _HISTORYCLOSERESPONSE._serialized_start=388
+  _HISTORYCLOSERESPONSE._serialized_end=467
+  _HISTORYTICKMESSAGE._serialized_start=470
+  _HISTORYTICKMESSAGE._serialized_end=644
+  _HISTORYKBARMESSAGE._serialized_start=646
+  _HISTORYKBARMESSAGE._serialized_end=764
+  _HISTORYCLOSEMESSAGE._serialized_start=766
+  _HISTORYCLOSEMESSAGE._serialized_end=830
+  _DATE._serialized_start=832
+  _DATE._serialized_end=852
+  _HISTORYDATAINTERFACE._serialized_start=855
+  _HISTORYDATAINTERFACE._serialized_end=1980
 # @@protoc_insertion_point(module_scope)

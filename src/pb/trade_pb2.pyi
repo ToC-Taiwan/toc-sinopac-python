@@ -18,13 +18,7 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class FuturePosition(google.protobuf.message.Message):
-    """code (str): contract id.
-    direction (Action): action. {Buy, Sell}
-    quantity (int): quantity.
-    price (float): the average price.
-    last_price (float): last price.
-    pnl (float): unrealized profit.
-    """
+    """FuturePosition is the struct for future position"""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -56,6 +50,8 @@ global___FuturePosition = FuturePosition
 
 @typing_extensions.final
 class FuturePositionArr(google.protobuf.message.Message):
+    """FuturePositionArr is the struct for future position array"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     POSITION_ARR_FIELD_NUMBER: builtins.int
@@ -72,6 +68,8 @@ global___FuturePositionArr = FuturePositionArr
 
 @typing_extensions.final
 class StockOrderDetail(google.protobuf.message.Message):
+    """StockOrderDetail is the struct for stock order detail"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STOCK_NUM_FIELD_NUMBER: builtins.int
@@ -96,6 +94,8 @@ global___StockOrderDetail = StockOrderDetail
 
 @typing_extensions.final
 class FutureOrderDetail(google.protobuf.message.Message):
+    """FutureOrderDetail is the struct for future order detail"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -120,6 +120,8 @@ global___FutureOrderDetail = FutureOrderDetail
 
 @typing_extensions.final
 class TradeResult(google.protobuf.message.Message):
+    """TradeResult is the struct for trade result"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ORDER_ID_FIELD_NUMBER: builtins.int
@@ -141,6 +143,8 @@ global___TradeResult = TradeResult
 
 @typing_extensions.final
 class OrderID(google.protobuf.message.Message):
+    """OrderID is the struct for order id"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ORDER_ID_FIELD_NUMBER: builtins.int
@@ -159,6 +163,8 @@ global___OrderID = OrderID
 
 @typing_extensions.final
 class FutureOrderID(google.protobuf.message.Message):
+    """FutureOrderID is the struct for future order id"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ORDER_ID_FIELD_NUMBER: builtins.int
@@ -174,52 +180,3 @@ class FutureOrderID(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["order_id", b"order_id", "simulate", b"simulate"]) -> None: ...
 
 global___FutureOrderID = FutureOrderID
-
-@typing_extensions.final
-class OrderStatusArr(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    DATA_FIELD_NUMBER: builtins.int
-    @property
-    def data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___OrderStatus]: ...
-    def __init__(
-        self,
-        *,
-        data: collections.abc.Iterable[global___OrderStatus] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["data", b"data"]) -> None: ...
-
-global___OrderStatusArr = OrderStatusArr
-
-@typing_extensions.final
-class OrderStatus(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    STATUS_FIELD_NUMBER: builtins.int
-    CODE_FIELD_NUMBER: builtins.int
-    ACTION_FIELD_NUMBER: builtins.int
-    PRICE_FIELD_NUMBER: builtins.int
-    QUANTITY_FIELD_NUMBER: builtins.int
-    ORDER_ID_FIELD_NUMBER: builtins.int
-    ORDER_TIME_FIELD_NUMBER: builtins.int
-    status: builtins.str
-    code: builtins.str
-    action: builtins.str
-    price: builtins.float
-    quantity: builtins.int
-    order_id: builtins.str
-    order_time: builtins.str
-    def __init__(
-        self,
-        *,
-        status: builtins.str = ...,
-        code: builtins.str = ...,
-        action: builtins.str = ...,
-        price: builtins.float = ...,
-        quantity: builtins.int = ...,
-        order_id: builtins.str = ...,
-        order_time: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["action", b"action", "code", b"code", "order_id", b"order_id", "order_time", b"order_time", "price", b"price", "quantity", b"quantity", "status", b"status"]) -> None: ...
-
-global___OrderStatus = OrderStatus
