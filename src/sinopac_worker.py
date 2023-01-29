@@ -188,40 +188,38 @@ class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-man
         return None
 
     def unsubscribe_all_tick(self):
-        fail_arr = []
+        fail_arr: dict[str, list] = {}
+        fail_arr["stock"] = []
+        fail_arr["future"] = []
+
         if len(self.stock_tick_sub_dict) != 0:
             for stock_num in list(self.stock_tick_sub_dict):
                 if self.unsubscribe_stock_tick(stock_num) is not None:
-                    fail_arr.append(stock_num)
-        if len(fail_arr) != 0:
-            return f"unsubscribe all stock tick fail: {fail_arr}"
+                    fail_arr["stock"].append(stock_num)
 
-        fail_arr = []
         if len(self.future_tick_sub_dict) != 0:
             for code in list(self.future_tick_sub_dict):
                 if self.unsubscribe_future_tick(code) is not None:
-                    fail_arr.append(code)
-        if len(fail_arr) != 0:
-            return f"unsubscribe all future tick fail: {fail_arr}"
-        return ""
+                    fail_arr["future"].append(code)
+
+        return fail_arr
 
     def unsubscribe_all_bidask(self):
-        fail_arr = []
+        fail_arr: dict[str, list] = {}
+        fail_arr["stock"] = []
+        fail_arr["future"] = []
+
         if len(self.stock_bidask_sub_dict) != 0:
             for stock_num in list(self.stock_bidask_sub_dict):
                 if self.unsubscribe_stock_bidask(stock_num) is not None:
-                    fail_arr.append(stock_num)
-        if len(fail_arr) != 0:
-            return f"unsubscribe all bidask fail: {fail_arr}"
+                    fail_arr["stock"].append(stock_num)
 
-        fail_arr = []
         if len(self.future_bidask_sub_dict) != 0:
             for code in list(self.future_bidask_sub_dict):
                 if self.unsubscribe_future_bidask(code) is not None:
-                    fail_arr.append(code)
-        if len(fail_arr) != 0:
-            return f"unsubscribe all future bidask fail: {fail_arr}"
-        return ""
+                    fail_arr["future"].append(code)
+
+        return fail_arr
 
     def set_event_cb(self, func):
         for worker in self.workers:

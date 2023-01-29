@@ -781,11 +781,17 @@ class gRPCSubscribe(subscribe_pb2_grpc.SubscribeDataInterfaceServicer):
                 response.fail_arr.append(code)
         return response
 
-    def UnSubscribeStockAllTick(self, request, _):
-        return entity_pb2.ErrorMessage(err=self.workers.unsubscribe_all_tick())
+    def UnSubscribeAllTick(self, request, _):
+        result = self.workers.unsubscribe_all_tick()
+        if len(result["stock"]) > 0 or len(result["future"]) > 0:
+            return entity_pb2.ErrorMessage(err="UnSubscribeAllTick fail")
+        return entity_pb2.ErrorMessage(err="")
 
-    def UnSubscribeStockAllBidAsk(self, request, _):
-        return entity_pb2.ErrorMessage(err=self.workers.unsubscribe_all_bidask())
+    def UnSubscribeAllBidAsk(self, request, _):
+        result = self.workers.unsubscribe_all_bidask()
+        if len(result["stock"]) > 0 or len(result["future"]) > 0:
+            return entity_pb2.ErrorMessage(err="UnSubscribeAllBidAsk fail")
+        return entity_pb2.ErrorMessage(err="")
 
 
 def sinopac_snapshot_to_pb(

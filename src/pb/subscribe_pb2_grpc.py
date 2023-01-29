@@ -57,13 +57,13 @@ class SubscribeDataInterfaceStub(object):
                 request_serializer=entity__pb2.FutureCodeArr.SerializeToString,
                 response_deserializer=subscribe__pb2.SubscribeResponse.FromString,
                 )
-        self.UnSubscribeStockAllTick = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeStockAllTick',
+        self.UnSubscribeAllTick = channel.unary_unary(
+                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeAllTick',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=entity__pb2.ErrorMessage.FromString,
                 )
-        self.UnSubscribeStockAllBidAsk = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeStockAllBidAsk',
+        self.UnSubscribeAllBidAsk = channel.unary_unary(
+                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeAllBidAsk',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=entity__pb2.ErrorMessage.FromString,
                 )
@@ -129,14 +129,14 @@ class SubscribeDataInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def UnSubscribeStockAllTick(self, request, context):
-        """UnSubscribeStockAllTick is the interface for unsubscribe stock all tick
+    def UnSubscribeAllTick(self, request, context):
+        """UnSubscribeAllTick is the interface for unsubscribe stock all tick
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def UnSubscribeStockAllBidAsk(self, request, context):
+    def UnSubscribeAllBidAsk(self, request, context):
         """UnSubscribeStockAllBidAsk is the interface for unsubscribe stock all bid ask
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -186,13 +186,13 @@ def add_SubscribeDataInterfaceServicer_to_server(servicer, server):
                     request_deserializer=entity__pb2.FutureCodeArr.FromString,
                     response_serializer=subscribe__pb2.SubscribeResponse.SerializeToString,
             ),
-            'UnSubscribeStockAllTick': grpc.unary_unary_rpc_method_handler(
-                    servicer.UnSubscribeStockAllTick,
+            'UnSubscribeAllTick': grpc.unary_unary_rpc_method_handler(
+                    servicer.UnSubscribeAllTick,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=entity__pb2.ErrorMessage.SerializeToString,
             ),
-            'UnSubscribeStockAllBidAsk': grpc.unary_unary_rpc_method_handler(
-                    servicer.UnSubscribeStockAllBidAsk,
+            'UnSubscribeAllBidAsk': grpc.unary_unary_rpc_method_handler(
+                    servicer.UnSubscribeAllBidAsk,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=entity__pb2.ErrorMessage.SerializeToString,
             ),
@@ -344,7 +344,7 @@ class SubscribeDataInterface(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def UnSubscribeStockAllTick(request,
+    def UnSubscribeAllTick(request,
             target,
             options=(),
             channel_credentials=None,
@@ -354,14 +354,14 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeStockAllTick',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeAllTick',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             entity__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def UnSubscribeStockAllBidAsk(request,
+    def UnSubscribeAllBidAsk(request,
             target,
             options=(),
             channel_credentials=None,
@@ -371,7 +371,7 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeStockAllBidAsk',
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeAllBidAsk',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             entity__pb2.ErrorMessage.FromString,
             options, channel_credentials,
