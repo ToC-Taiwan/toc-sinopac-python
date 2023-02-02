@@ -16,4 +16,3 @@ mypy --install-types --non-interactive --check-untyped-defs --config-file=./mypy
 
 pre-commit autoupdate
 pre-commit install
-pre-commit run --all-files
