@@ -10,14 +10,14 @@ class Yahoo:
 
     def get_price(self, code: str):
         try:
-            t = yf.Ticker(code)
-            if t is not None and "regularMarketPrice" in t.info and "previousClose" in t.info:
+            tick = yf.Ticker(code)
+            if tick is not None and "regularMarketPrice" in tick.info and "previousClose" in tick.info:
                 return [
-                    float(t.info["regularMarketPrice"]),
-                    float(t.info["previousClose"]),
+                    float(tick.info["regularMarketPrice"]),
+                    float(tick.info["previousClose"]),
                 ]
             return [0.0, 0.0]
 
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             # logger.error("yfinance error: %s", type(e).__name__)
             return [0.0, 0.0]

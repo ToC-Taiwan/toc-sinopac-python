@@ -25,7 +25,7 @@ class RabbitMQSetting:
 
         while True:
             try:
-                r = requests.get(
+                req = requests.get(
                     url=f"http://{env.rabbitmq_host}:15672/api/health/checks/alarms",
                     headers=headers,
                     timeout=(5, 10),
@@ -33,18 +33,18 @@ class RabbitMQSetting:
             except requests.exceptions.ConnectionError:
                 time.sleep(1)
                 continue
-            if r.status_code == 200:
+            if req.status_code == 200:
                 break
 
-        r = requests.get(
+        req = requests.get(
             url=f"http://{env.rabbitmq_host}:15672/api/exchanges",
             headers=headers,
             timeout=(5, 10),
         )
-        if r.status_code != 200:
-            raise Exception("RabbitMQ get exchange fail")
+        if req.status_code != 200:
+            raise RuntimeError("RabbitMQ get exchange fail")
 
-        exchange_arr = r.json()
+        exchange_arr = req.json()
         exist = False
         for ex in exchange_arr:
             if ex["name"] == env.rabbitmq_exchange:
@@ -61,7 +61,7 @@ class RabbitMQSetting:
                 break
 
         if not exist:
-            r = requests.put(
+            req = requests.put(
                 url=f"http://{env.rabbitmq_host}:15672/api/exchanges/%2F/{env.rabbitmq_exchange}",
                 data=json.dumps(
                     {
@@ -73,5 +73,5 @@ class RabbitMQSetting:
                 timeout=(5, 10),
             )
             logger.warning("add exchange %s", env.rabbitmq_exchange)
-            if r.status_code != 201:
-                raise Exception("RabbitMQ exchange add fail")
+            if req.status_code != 201:
+                raise RuntimeError("RabbitMQ exchange add fail")

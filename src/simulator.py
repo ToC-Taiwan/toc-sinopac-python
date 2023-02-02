@@ -48,13 +48,13 @@ class Simulator:
         clear_count = int()
         with self.__simulation_lock:
             for stock in self.stock_num_list:
-                s = self.__simulation_count_map[stock]
-                if s != 0:
+                stock_count = self.__simulation_count_map[stock]
+                if stock_count != 0:
                     self.__simulation_count_map[stock] = 0
                     clear_count += 1
             for future in self.future_code_list:
-                f = self.__simulation_count_map[future]
-                if f != 0:
+                future_count = self.__simulation_count_map[future]
+                if future_count != 0:
                     self.__simulation_count_map[future] = 0
                     clear_count += 1
             if clear_count > 0:
@@ -111,6 +111,7 @@ class Simulator:
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, random.randrange(5) + 1),
+            daemon=True,
         ).start()
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
@@ -143,6 +144,7 @@ class Simulator:
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, random.randrange(5) + 1),
+            daemon=True,
         ).start()
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
@@ -154,7 +156,7 @@ class Simulator:
             price_type=sc.StockPriceType.LMT,
             order_type=sc.OrderType.ROD,
             order_lot=sc.StockOrderLot.Common,
-            first_sell=sc.StockFirstSell.Yes,
+            daytrade_short=True,
             account=self.__api.stock_account,
         )
         contract = self.sinopac.get_contract_by_stock_num(stock_num)
@@ -176,6 +178,7 @@ class Simulator:
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, random.randrange(5) + 1),
+            daemon=True,
         ).start()
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
@@ -215,6 +218,7 @@ class Simulator:
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, 1),
+            daemon=True,
         ).start()
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
@@ -246,6 +250,7 @@ class Simulator:
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, 1),
+            daemon=True,
         ).start()
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
@@ -277,6 +282,7 @@ class Simulator:
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, 1),
+            daemon=True,
         ).start()
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 

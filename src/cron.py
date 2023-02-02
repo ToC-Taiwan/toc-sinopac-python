@@ -1,17 +1,20 @@
-import os
 import threading
 import time
 
 import schedule
 
 
+def schedule_exit():
+    raise SystemExit
+
+
 def add_schedule_job():
-    schedule.every().day.at("08:20").do(os._exit, 0)
-    schedule.every().day.at("14:40").do(os._exit, 0)
+    schedule.every().day.at("08:20").do(schedule_exit, 0)
+    schedule.every().day.at("14:40").do(schedule_exit, 0)
     while True:
         schedule.run_pending()
         time.sleep(10)
 
 
 def init_schedule_job():
-    threading.Thread(target=add_schedule_job).start()
+    threading.Thread(target=add_schedule_job, daemon=True).start()

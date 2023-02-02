@@ -1,5 +1,4 @@
 """SINOPAC PYTHON API FORWARDER"""
-import os
 import time
 
 from prometheus_client import start_http_server
@@ -12,12 +11,12 @@ from rabbitmq_setting import RabbitMQSetting
 from sinopac import Sinopac, SinopacUser
 
 env = RequiredEnv()
-api_key = env.api_key
-api_key_secret = env.api_key_secret
-person_id = env.person_id
-ca_password = env.ca_password
-grpc_port = env.grpc_port
-connection_count = env.connection_count
+API_KEY = env.api_key
+API_KEY_SECRET = env.api_key_secret
+PERSON_ID = env.person_id
+CA_PASSWORD = env.ca_password
+GRPC_PORT = env.grpc_port
+CONNECTION_COUNT = env.connection_count
 
 start_http_server(8887)
 
@@ -31,15 +30,15 @@ rc.reset_rabbitmq_exchange()
 main_trader: Sinopac
 worker_pool: list[Sinopac] = []
 
-for i in range(connection_count):
+for i in range(CONNECTION_COUNT):
     logger.info("establish connection %d", i + 1)
     is_main = bool(i == 0)
     new_connection = Sinopac().login(
         SinopacUser(
-            api_key,
-            api_key_secret,
-            person_id,
-            ca_password,
+            API_KEY,
+            API_KEY_SECRET,
+            PERSON_ID,
+            CA_PASSWORD,
         ),
         is_main,
     )
@@ -51,16 +50,16 @@ for i in range(connection_count):
 
 try:
     serve(
-        port=str(grpc_port),
+        port=str(GRPC_PORT),
         main_trader=main_trader,
         workers=worker_pool,
         cfg=env,
     )
 
-except RuntimeError:
+except RuntimeError as exc:
     logger.error("runtime error, retry after 30 seconds")
     time.sleep(30)
-    os._exit(1)
+    raise SystemExit from exc
 
-except KeyboardInterrupt:
-    os._exit(1)
+except KeyboardInterrupt as exc:
+    raise SystemExit from exc

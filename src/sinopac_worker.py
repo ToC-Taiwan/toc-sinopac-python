@@ -6,7 +6,7 @@ from logger import logger
 from sinopac import Sinopac
 
 
-class SinopacWorkerPool:  # pylint: disable=too-many-instance-attributes,too-many-public-methods
+class SinopacWorkerPool:
     def __init__(self, main_worker: Sinopac, workers: list[Sinopac], request_limt: int):
         self.main_worker = main_worker
         self.workers = workers

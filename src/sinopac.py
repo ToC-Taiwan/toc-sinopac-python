@@ -1,4 +1,3 @@
-import os
 import threading
 import time
 
@@ -25,7 +24,7 @@ class SinopacUser:
         self.ca_password = ca_password
 
 
-class Sinopac:  # pylint: disable=too-many-public-methods
+class Sinopac:
     def __init__(self):
         self.__api = sj.Shioaji()
         self.__login_status_lock = threading.Lock()
@@ -34,6 +33,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         self.future_code_list: list[str] = []
         self.__order_arr_lock = threading.Lock()
         self.order_arr: list[Trade] = []
+        self.order_status_callback = None
 
     def get_sj_version(self):
         return str(sj.__version__)
@@ -49,7 +49,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             logger.info("event: %s", event)
 
         if event_code == 12:
-            os._exit(1)
+            raise SystemExit
 
     def login_cb(self, security_type):
         with self.__login_status_lock:
@@ -69,20 +69,20 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 subscribe_trade=is_main,
             )
 
-        except SystemMaintenance:
+        except SystemMaintenance as exc:
             logger.error("login 503 system maintenance, terminate after 75 sec")
             time.sleep(75)
-            os._exit(1)
+            raise SystemExit from exc
 
-        except TimeoutError:
+        except TimeoutError as exc:
             logger.error("login timeout error, terminate after 60 sec")
             time.sleep(60)
-            os._exit(1)
+            raise SystemExit from exc
 
-        except ValueError:
+        except ValueError as exc:
             logger.error("login value error, terminate after 15 sec")
             time.sleep(15)
-            os._exit(1)
+            raise SystemExit from exc
 
         while True:
             if self.__login_status == 4:
@@ -133,7 +133,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         if len(self.stock_num_list) != 0:
             logger.info("total stock: %d", len(self.stock_num_list))
         else:
-            raise Exception("stock_num_list is empty")
+            raise RuntimeError("stock_num_list is empty")
 
     def get_stock_num_list(self):
         return self.stock_num_list
@@ -145,7 +145,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
         if len(self.future_code_list) != 0:
             logger.info("total future: %d", len(self.future_code_list))
         else:
-            raise Exception("future_code_list is empty")
+            raise RuntimeError("future_code_list is empty")
 
     def get_future_code_list(self):
         return self.future_code_list
@@ -242,8 +242,8 @@ class Sinopac:  # pylint: disable=too-many-public-methods
             return self.__api.snapshots(contracts)
         except TimeoutError:
             return self.snapshots(contracts)
-        except TokenError as e:
-            raise TokenError from e
+        except TokenError as error:
+            raise TokenError from error
 
     def stock_ticks(self, num, date):
         contract = self.get_contract_by_stock_num(num)
@@ -339,7 +339,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 version=sc.QuoteVersion.v1,
             )
             return None
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             return stock_num
 
     def unsubscribe_stock_tick(self, stock_num):
@@ -350,7 +350,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 version=sc.QuoteVersion.v1,
             )
             return None
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             return stock_num
 
     def subscribe_future_tick(self, code):
@@ -361,7 +361,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 version=sc.QuoteVersion.v1,
             )
             return None
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             return code
 
     def unsubscribe_future_tick(self, code):
@@ -372,7 +372,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 version=sc.QuoteVersion.v1,
             )
             return None
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             return code
 
     def subscribe_stock_bidask(self, stock_num):
@@ -383,7 +383,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 version=sc.QuoteVersion.v1,
             )
             return None
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             return stock_num
 
     def unsubscribe_stock_bidask(self, stock_num):
@@ -394,7 +394,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 version=sc.QuoteVersion.v1,
             )
             return None
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             return stock_num
 
     def subscribe_future_bidask(self, code):
@@ -405,7 +405,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 version=sc.QuoteVersion.v1,
             )
             return None
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             return code
 
     def unsubscribe_future_bidask(self, code):
@@ -416,7 +416,7 @@ class Sinopac:  # pylint: disable=too-many-public-methods
                 version=sc.QuoteVersion.v1,
             )
             return None
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             return code
 
     def buy_stock(self, stock_num: str, price: float, quantity: int):

@@ -13,9 +13,9 @@ logging.getLogger("pika").setLevel(logging.WARNING)
 
 
 class PikaCC:
-    def __init__(self, conn: pika.BlockingConnection, ch):
+    def __init__(self, conn: pika.BlockingConnection, channel):
         self.conn = conn
-        self.ch = ch
+        self.channel = channel
 
     def heartbeat(self):
         self.conn.process_data_events()
@@ -41,25 +41,25 @@ class RabbitMQS:
             while True:
                 if count >= self.pool_size:
                     break
-                p = self.pika_queue.get(block=True)
-                p.heartbeat()
+                rabbit = self.pika_queue.get(block=True)
+                rabbit.heartbeat()
                 count += 1
-                self.pika_queue.put(p)
+                self.pika_queue.put(rabbit)
 
     def create_pika(self):
         conn = pika.BlockingConnection(self.parameters)
-        ch = conn.channel()
-        ch.exchange_declare(exchange=self.exchange, exchange_type="direct", durable=True)
-        return PikaCC(conn, ch)
+        channel = conn.channel()
+        channel.exchange_declare(exchange=self.exchange, exchange_type="direct", durable=True)
+        return PikaCC(conn, channel)
 
     def fill_pika_queue(self):
         for _ in range(self.pool_size):
             self.pika_queue.put(self.create_pika())
-        threading.Thread(target=self.send_heartbeat).start()
+        threading.Thread(target=self.send_heartbeat, daemon=True).start()
 
     def event_callback(self, resp_code: int, event_code: int, info: str, event: str):
-        p = self.pika_queue.get(block=True)
-        p.ch.basic_publish(
+        rabbit = self.pika_queue.get(block=True)
+        rabbit.channel.basic_publish(
             exchange=self.exchange,
             routing_key="event",
             body=mq_pb2.EventMessage(
@@ -70,7 +70,7 @@ class RabbitMQS:
                 event_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
             ).SerializeToString(),
         )
-        self.pika_queue.put(p)
+        self.pika_queue.put(rabbit)
 
     def order_status_callback(self, reply: list[sj.order.Trade]):
         with self.order_cb_lock:
@@ -86,8 +86,8 @@ class RabbitMQS:
                 if order.status.deal_quantity not in (0, qty):
                     qty = order.status.deal_quantity
 
-                p = self.pika_queue.get(block=True)
-                p.ch.basic_publish(
+                rabbit = self.pika_queue.get(block=True)
+                rabbit.channel.basic_publish(
                     exchange=self.exchange,
                     routing_key="order",
                     body=mq_pb2.OrderStatus(
@@ -100,11 +100,11 @@ class RabbitMQS:
                         order_time=datetime.strftime(order.status.order_datetime, "%Y-%m-%d %H:%M:%S"),
                     ).SerializeToString(),
                 )
-                self.pika_queue.put(p)
+                self.pika_queue.put(rabbit)
 
     def stock_quote_callback_v1(self, _, tick: sj.TickSTKv1):
-        p = self.pika_queue.get(block=True)
-        p.ch.basic_publish(
+        rabbit = self.pika_queue.get(block=True)
+        rabbit.channel.basic_publish(
             exchange=self.exchange,
             routing_key=f"tick:{tick.code}",
             body=mq_pb2.StockRealTimeTickMessage(
@@ -131,11 +131,11 @@ class RabbitMQS:
                 simtrade=tick.simtrade,
             ).SerializeToString(),
         )
-        self.pika_queue.put(p)
+        self.pika_queue.put(rabbit)
 
     def future_quote_callback_v1(self, _, tick: sj.TickFOPv1):
-        p = self.pika_queue.get(block=True)
-        p.ch.basic_publish(
+        rabbit = self.pika_queue.get(block=True)
+        rabbit.channel.basic_publish(
             exchange=self.exchange,
             routing_key=f"future_tick:{tick.code}",
             body=mq_pb2.FutureRealTimeTickMessage(
@@ -160,11 +160,11 @@ class RabbitMQS:
                 simtrade=tick.simtrade,
             ).SerializeToString(),
         )
-        self.pika_queue.put(p)
+        self.pika_queue.put(rabbit)
 
     def stock_bid_ask_callback(self, _, bidask: sj.BidAskSTKv1):
-        p = self.pika_queue.get(block=True)
-        p.ch.basic_publish(
+        rabbit = self.pika_queue.get(block=True)
+        rabbit.channel.basic_publish(
             exchange=self.exchange,
             routing_key=f"bid_ask:{bidask.code}",
             body=mq_pb2.StockRealTimeBidAskMessage(
@@ -180,11 +180,11 @@ class RabbitMQS:
                 diff_ask_vol=bidask.diff_ask_vol,
             ).SerializeToString(),
         )
-        self.pika_queue.put(p)
+        self.pika_queue.put(rabbit)
 
     def future_bid_ask_callback(self, _, bidask: sj.BidAskFOPv1):
-        p = self.pika_queue.get(block=True)
-        p.ch.basic_publish(
+        rabbit = self.pika_queue.get(block=True)
+        rabbit.channel.basic_publish(
             exchange=self.exchange,
             routing_key=f"future_bid_ask:{bidask.code}",
             body=mq_pb2.FutureRealTimeBidAskMessage(
@@ -206,7 +206,7 @@ class RabbitMQS:
                 underlying_price=bidask.underlying_price,
             ).SerializeToString(),
         )
-        self.pika_queue.put(p)
+        self.pika_queue.put(rabbit)
 
     def send_order_arr(self, arr: list[sj.order.Trade]):
         if len(arr) == 0:
@@ -242,10 +242,10 @@ class RabbitMQS:
                 )
             )
 
-        p = self.pika_queue.get(block=True)
-        p.ch.basic_publish(
+        rabbit = self.pika_queue.get(block=True)
+        rabbit.channel.basic_publish(
             exchange=self.exchange,
             routing_key="order_arr",
             body=result.SerializeToString(),
         )
-        self.pika_queue.put(p)
+        self.pika_queue.put(rabbit)
