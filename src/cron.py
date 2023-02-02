@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 
@@ -5,7 +6,7 @@ import schedule
 
 
 def schedule_exit():
-    raise SystemExit
+    os._exit(0)
 
 
 def add_schedule_job():

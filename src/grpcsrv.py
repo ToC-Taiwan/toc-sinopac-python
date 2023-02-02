@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 from concurrent import futures
@@ -66,7 +67,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
                     self.workers.unsubscribe_all_bidask()
                     self.simulator.reset_simulator()
                     return
-                raise SystemExit
+                os._exit(0)
             if self.beat_queue.empty():
                 time.sleep(1)
                 continue
@@ -78,7 +79,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def wait_and_terminate(self):
         time.sleep(3)
-        raise SystemExit
+        os._exit(0)
 
     def GetAllStockDetail(self, request, _):
         response = basic_pb2.StockDetailResponse()
@@ -628,18 +629,18 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         worker = self.workers.get(True)
         try:
             snapshots = worker.snapshots([worker.get_contract_tse_001()])
-        except TokenError as exc:
+        except TokenError:
             logger.error("token error")
-            raise SystemExit from exc
+            os._exit(0)
         return sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockSnapshotOTC(self, request, _):
         worker = self.workers.get(True)
         try:
             snapshots = worker.snapshots([worker.get_contract_otc_101()])
-        except TokenError as exc:
+        except TokenError:
             logger.error("token error")
-            raise SystemExit from exc
+            os._exit(0)
         return sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockVolumeRank(self, request, _):
@@ -822,9 +823,9 @@ def sinopac_snapshot_to_pb(
 def fill_snapshot_arr(contracts, snapshots, worker: Sinopac):
     try:
         data = worker.snapshots(contracts)
-    except TokenError as exc:
+    except TokenError:
         logger.error("Token Error")
-        raise SystemExit from exc
+        os._exit(0)
 
     if data is not None:
         snapshots.extend(data)

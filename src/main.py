@@ -1,4 +1,7 @@
 """SINOPAC PYTHON API FORWARDER"""
+
+
+import os
 import time
 
 from prometheus_client import start_http_server
@@ -56,10 +59,10 @@ try:
         cfg=env,
     )
 
-except RuntimeError as exc:
+except RuntimeError:
     logger.error("runtime error, retry after 30 seconds")
     time.sleep(30)
-    raise SystemExit from exc
+    os._exit(0)
 
-except KeyboardInterrupt as exc:
-    raise SystemExit from exc
+except KeyboardInterrupt:
+    os._exit(0)

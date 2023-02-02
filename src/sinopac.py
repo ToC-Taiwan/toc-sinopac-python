@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 
@@ -49,7 +50,7 @@ class Sinopac:
             logger.info("event: %s", event)
 
         if event_code == 12:
-            raise SystemExit
+            os._exit(0)
 
     def login_cb(self, security_type):
         with self.__login_status_lock:
@@ -69,20 +70,20 @@ class Sinopac:
                 subscribe_trade=is_main,
             )
 
-        except SystemMaintenance as exc:
+        except SystemMaintenance:
             logger.error("login 503 system maintenance, terminate after 75 sec")
             time.sleep(75)
-            raise SystemExit from exc
+            os._exit(0)
 
-        except TimeoutError as exc:
+        except TimeoutError:
             logger.error("login timeout error, terminate after 60 sec")
             time.sleep(60)
-            raise SystemExit from exc
+            os._exit(0)
 
-        except ValueError as exc:
+        except ValueError:
             logger.error("login value error, terminate after 15 sec")
             time.sleep(15)
-            raise SystemExit from exc
+            os._exit(0)
 
         while True:
             if self.__login_status == 4:
