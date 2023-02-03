@@ -51,6 +51,27 @@ make update
 - Install X86 Python in the Rosetta terminal
   - python should be installed in /usr/local/bin/python3
 
+### vscode setting
+
+- add x86 terminal to options
+- path: `.vscode/settings.json`
+
+```json
+{
+    "terminal.integrated.profiles.osx": {
+        "x86 zsh": {
+            "path": "/usr/bin/arch",
+            "args": [
+                "-arch",
+                "x86_64",
+                "/bin/zsh"
+            ]
+        }
+    },
+    "terminal.integrated.defaultProfile.osx": "x86 zsh"
+}
+```
+
 ## Local RabbitMQ
 
 ```sh
