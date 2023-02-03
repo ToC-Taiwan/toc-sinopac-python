@@ -42,6 +42,32 @@ make
 make update
 ```
 
+## Development on Apple Silicon
+
+- Install Rosetta
+- Create a Rosetta terminal
+- Install X86 homebrew in the Rosetta terminal
+  - eval "$(/usr/local/bin/brew shellenv)"
+- Install X86 Python in the Rosetta terminal
+  - python should be installed in /usr/local/bin/python3
+
+## Local RabbitMQ
+
+```sh
+docker stop toc-rabbitmq
+docker system prune --volumes -f
+docker rmi -f $(docker images -a -q)
+
+docker run -d \
+  --restart always \
+  --name toc-rabbitmq \
+  -p 5672:5672 \
+  -p 15672:15672 \
+  -e RABBITMQ_DEFAULT_USER=admin \
+  -e RABBITMQ_DEFAULT_PASS=password \
+  rabbitmq:3.11.5-management
+```
+
 ## Authors
 
 - [**Tim Hsu**](https://github.com/Chindada)

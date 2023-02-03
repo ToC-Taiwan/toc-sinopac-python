@@ -148,3 +148,6 @@ protobuf
 contracts.pkl
 contracts.pkl.lock
 last_success_fetch
+bin
+tmp
+pyvenv.cfg

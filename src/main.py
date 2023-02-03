@@ -21,7 +21,7 @@ CA_PASSWORD = env.ca_password
 GRPC_PORT = env.grpc_port
 CONNECTION_COUNT = env.connection_count
 
-start_http_server(8887)
+start_http_server(6666)
 
 # add schedule to exit the program
 init_schedule_job()
