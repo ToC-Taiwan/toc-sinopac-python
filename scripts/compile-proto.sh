@@ -9,7 +9,7 @@ outpath=./src/pb
 rm -rf $outpath
 mkdir $outpath
 
-python3 -m grpc_tools.protoc \
+$python -m grpc_tools.protoc \
     --python_out=$outpath \
     --grpc_python_out=$outpath \
     --mypy_out=$outpath \
