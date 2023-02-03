@@ -47,9 +47,8 @@ make update
 - Install Rosetta
 - Create a Rosetta terminal
 - Install X86 homebrew in the Rosetta terminal
-  - eval "$(/usr/local/bin/brew shellenv)"
 - Install X86 Python in the Rosetta terminal
-  - python should be installed in /usr/local/bin/python3
+  - python should be installed in `/usr/local/bin/python3`
 
 ### vscode setting
 
@@ -70,6 +69,13 @@ make update
     },
     "terminal.integrated.defaultProfile.osx": "x86 zsh"
 }
+```
+
+### setup venv
+
+```sh
+eval "$(/usr/local/bin/brew shellenv)"
+. ./scripts/start_venv.sh
 ```
 
 ## Local RabbitMQ
