@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [ $# -eq 0 ]
+  then
+    echo "No pip supplied"
+    exit 1
+fi
+
 pip=$1
 
 $pip freeze > requirements.txt && \

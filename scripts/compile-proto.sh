@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [ $# -eq 0 ]
+  then
+    echo "No python supplied"
+    exit 1
+fi
+
 python=$1
 
 rm -rf toc-trade-protobuf
