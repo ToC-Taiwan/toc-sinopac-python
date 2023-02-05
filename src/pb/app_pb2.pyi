@@ -191,7 +191,6 @@ class WSOrder(google.protobuf.message.Message):
     PRICE_FIELD_NUMBER: builtins.int
     QUANTITY_FIELD_NUMBER: builtins.int
     TRADE_TIME_FIELD_NUMBER: builtins.int
-    TICK_TIME_FIELD_NUMBER: builtins.int
     order_id: builtins.str
     status: builtins.int
     order_time: builtins.str
@@ -199,7 +198,6 @@ class WSOrder(google.protobuf.message.Message):
     price: builtins.float
     quantity: builtins.int
     trade_time: builtins.str
-    tick_time: builtins.str
     def __init__(
         self,
         *,
@@ -210,9 +208,8 @@ class WSOrder(google.protobuf.message.Message):
         price: builtins.float = ...,
         quantity: builtins.int = ...,
         trade_time: builtins.str = ...,
-        tick_time: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["action", b"action", "order_id", b"order_id", "order_time", b"order_time", "price", b"price", "quantity", b"quantity", "status", b"status", "tick_time", b"tick_time", "trade_time", b"trade_time"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["action", b"action", "order_id", b"order_id", "order_time", b"order_time", "price", b"price", "quantity", b"quantity", "status", b"status", "trade_time", b"trade_time"]) -> None: ...
 
 global___WSOrder = WSOrder
 
