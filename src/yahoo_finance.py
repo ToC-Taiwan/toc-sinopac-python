@@ -10,13 +10,12 @@ class Yahoo:
 
     def get_price(self, code: str):
         try:
-            tick = yf.Ticker(code)
-            if tick is not None and "regularMarketPrice" in tick.info and "previousClose" in tick.info:
-                return [
-                    float(tick.info["regularMarketPrice"]),
-                    float(tick.info["previousClose"]),
-                ]
-            return [0.0, 0.0]
+            data = yf.Ticker(code)
+            data_history = data.history(period="5d", interval="1d").loc[:, "Close"].to_dict().values()
+            total = len(list(data_history))
+            if total < 2:
+                return [0.0, 0.0]
+            return [list(data_history)[total - 1], list(data_history)[total - 2]]
 
         except Exception:
             # logger.error("yfinance error: %s", type(e).__name__)
