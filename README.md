@@ -2,7 +2,7 @@
 
 [![Workflow](https://github.com/ToC-Taiwan/toc-sinopac-python/actions/workflows/main.yml/badge.svg)](https://github.com/ToC-Taiwan/toc-sinopac-python/actions/workflows/main.yml)
 [![Maintained](https://img.shields.io/badge/Maintained-yes-green)](https://github.com/ToC-Taiwan/toc-sinopac-python)
-[![Python](https://img.shields.io/badge/Python-3.10.9-yellow?logo=python&logoColor=yellow)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.10.10-yellow?logo=python&logoColor=yellow)](https://python.org)
 [![OS](https://img.shields.io/badge/OS-Linux-orange?logo=linux&logoColor=orange)](https://www.linux.org/)
 [![Container](https://img.shields.io/badge/Container-Docker-blue?logo=docker&logoColor=blue)](https://www.docker.com/)
 
