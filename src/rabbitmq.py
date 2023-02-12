@@ -1,7 +1,7 @@
 import logging
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from queue import Queue
 
 import pika
@@ -226,6 +226,10 @@ class RabbitMQS:
             qty = order.order.quantity
             if order.status.deal_quantity not in (0, qty):
                 qty = order.status.deal_quantity
+
+            if order.status.order_datetime.hour < 5 and order.status.order_datetime.hour >= 0:
+                if order.status.order_datetime.day != datetime.now().day:
+                    order.status.order_datetime = order.status.order_datetime + timedelta(days=1)
 
             result.data.append(
                 mq_pb2.OrderStatus(
