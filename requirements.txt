@@ -8,7 +8,7 @@ charset-normalizer==3.0.1
 ciso8601==2.3.0
 cryptography==39.0.1
 filelock==3.4.1
-frozendict==2.3.4
+frozendict==2.3.5
 grpcio==1.51.1
 grpcio-tools==1.51.1
 html5lib==1.1
@@ -42,4 +42,4 @@ urllib3==1.26.14
 webencodings==0.5.1
 xxhash==3.2.0
 yfinance==0.2.12
-zipp==3.13.0
+zipp==3.14.0
