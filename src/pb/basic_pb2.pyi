@@ -70,6 +70,24 @@ class FutureDetailResponse(google.protobuf.message.Message):
 global___FutureDetailResponse = FutureDetailResponse
 
 @typing_extensions.final
+class OptionDetailResponse(google.protobuf.message.Message):
+    """OptionDetailResponse is the response for option detail"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    OPTION_FIELD_NUMBER: builtins.int
+    @property
+    def option(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___OptionDetailMessage]: ...
+    def __init__(
+        self,
+        *,
+        option: collections.abc.Iterable[global___OptionDetailMessage] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["option", b"option"]) -> None: ...
+
+global___OptionDetailResponse = OptionDetailResponse
+
+@typing_extensions.final
 class StockDetailMessage(google.protobuf.message.Message):
     """StockDetailMessage is the message for stock detail"""
 
@@ -153,3 +171,59 @@ class FutureDetailMessage(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["category", b"category", "code", b"code", "delivery_date", b"delivery_date", "delivery_month", b"delivery_month", "limit_down", b"limit_down", "limit_up", b"limit_up", "name", b"name", "reference", b"reference", "symbol", b"symbol", "underlying_kind", b"underlying_kind", "unit", b"unit", "update_date", b"update_date"]) -> None: ...
 
 global___FutureDetailMessage = FutureDetailMessage
+
+@typing_extensions.final
+class OptionDetailMessage(google.protobuf.message.Message):
+    """OptionDetailMessage is the message for option detail"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CODE_FIELD_NUMBER: builtins.int
+    SYMBOL_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    CATEGORY_FIELD_NUMBER: builtins.int
+    DELIVERY_MONTH_FIELD_NUMBER: builtins.int
+    DELIVERY_DATE_FIELD_NUMBER: builtins.int
+    STRIKE_PRICE_FIELD_NUMBER: builtins.int
+    OPTION_RIGHT_FIELD_NUMBER: builtins.int
+    UNDERLYING_KIND_FIELD_NUMBER: builtins.int
+    UNIT_FIELD_NUMBER: builtins.int
+    LIMIT_UP_FIELD_NUMBER: builtins.int
+    LIMIT_DOWN_FIELD_NUMBER: builtins.int
+    REFERENCE_FIELD_NUMBER: builtins.int
+    UPDATE_DATE_FIELD_NUMBER: builtins.int
+    code: builtins.str
+    symbol: builtins.str
+    name: builtins.str
+    category: builtins.str
+    delivery_month: builtins.str
+    delivery_date: builtins.str
+    strike_price: builtins.float
+    option_right: builtins.str
+    underlying_kind: builtins.str
+    unit: builtins.int
+    limit_up: builtins.float
+    limit_down: builtins.float
+    reference: builtins.float
+    update_date: builtins.str
+    def __init__(
+        self,
+        *,
+        code: builtins.str = ...,
+        symbol: builtins.str = ...,
+        name: builtins.str = ...,
+        category: builtins.str = ...,
+        delivery_month: builtins.str = ...,
+        delivery_date: builtins.str = ...,
+        strike_price: builtins.float = ...,
+        option_right: builtins.str = ...,
+        underlying_kind: builtins.str = ...,
+        unit: builtins.int = ...,
+        limit_up: builtins.float = ...,
+        limit_down: builtins.float = ...,
+        reference: builtins.float = ...,
+        update_date: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["category", b"category", "code", b"code", "delivery_date", b"delivery_date", "delivery_month", b"delivery_month", "limit_down", b"limit_down", "limit_up", b"limit_up", "name", b"name", "option_right", b"option_right", "reference", b"reference", "strike_price", b"strike_price", "symbol", b"symbol", "underlying_kind", b"underlying_kind", "unit", b"unit", "update_date", b"update_date"]) -> None: ...
+
+global___OptionDetailMessage = OptionDetailMessage

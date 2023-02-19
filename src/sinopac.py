@@ -32,6 +32,7 @@ class Sinopac:
         self.__login_status = int()
         self.stock_num_list: list[str] = []
         self.future_code_list: list[str] = []
+        self.option_code_list: list[str] = []
         self.__order_arr_lock = threading.Lock()
         self.order_arr: list[Trade] = []
         self.order_status_callback = None
@@ -98,6 +99,7 @@ class Sinopac:
         if is_main is True:
             self.fill_stock_num_list()
             self.fill_future_code_list()
+            self.fill_option_code_list()
             self.set_order_callback(self.place_order_callback)
             logger.info("stock account sign status: %s", self.__api.stock_account.signed)
             logger.info("future account sign status: %s", self.__api.futopt_account.signed)
@@ -148,8 +150,21 @@ class Sinopac:
         else:
             raise RuntimeError("future_code_list is empty")
 
+    def fill_option_code_list(self):
+        for option_arr in self.__api.Contracts.Options:
+            for option in option_arr:
+                self.option_code_list.append(option.code)
+                # pprint(self.get_contract_by_option_code(option.code))
+        if len(self.option_code_list) != 0:
+            logger.info("total option: %d", len(self.option_code_list))
+        else:
+            raise RuntimeError("option_code_list is empty")
+
     def get_future_code_list(self):
         return self.future_code_list
+
+    def get_option_code_list(self):
+        return self.option_code_list
 
     def list_positions(self):
         try:
@@ -231,6 +246,9 @@ class Sinopac:
 
     def get_contract_by_future_code(self, code):
         return self.__api.Contracts.Futures[code]
+
+    def get_contract_by_option_code(self, code):
+        return self.__api.Contracts.Options[code]
 
     def get_contract_name_by_stock_num(self, num) -> str:
         return str(self.__api.Contracts.Stocks[num].name)

@@ -142,6 +142,35 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
             )
         return response
 
+    def GetAllOptionDetail(self, request, _):
+        response = basic_pb2.OptionDetailResponse()
+        worker = self.workers.get(False)
+
+        for row in self.workers.get_option_code_list():
+            contract = worker.get_contract_by_option_code(row)
+            if contract is None:
+                logger.error("%s has no option data", row)
+                continue
+            response.option.append(
+                basic_pb2.OptionDetailMessage(
+                    code=contract.code,
+                    symbol=contract.symbol,
+                    name=contract.name,
+                    category=contract.category,
+                    delivery_month=contract.delivery_month,
+                    delivery_date=contract.delivery_date,
+                    strike_price=contract.strike_price,
+                    option_right=contract.option_right,
+                    underlying_kind=contract.underlying_kind,
+                    unit=contract.unit,
+                    limit_up=contract.limit_up,
+                    limit_down=contract.limit_down,
+                    reference=contract.reference,
+                    update_date=contract.update_date,
+                )
+            )
+        return response
+
 
 class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
     def __init__(self, workers: SinopacWorkerPool):

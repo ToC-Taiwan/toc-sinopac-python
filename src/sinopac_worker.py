@@ -285,3 +285,6 @@ class SinopacWorkerPool:
 
     def get_future_code_list(self):
         return self.main_worker.get_future_code_list()
+
+    def get_option_code_list(self):
+        return self.main_worker.get_option_code_list()
