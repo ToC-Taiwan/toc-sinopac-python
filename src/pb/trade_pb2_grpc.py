@@ -57,6 +57,26 @@ class TradeInterfaceStub(object):
                 request_serializer=trade__pb2.FutureOrderID.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
+        self.BuyOption = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/BuyOption',
+                request_serializer=trade__pb2.OptionOrderDetail.SerializeToString,
+                response_deserializer=trade__pb2.TradeResult.FromString,
+                )
+        self.SellOption = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/SellOption',
+                request_serializer=trade__pb2.OptionOrderDetail.SerializeToString,
+                response_deserializer=trade__pb2.TradeResult.FromString,
+                )
+        self.SellFirstOption = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/SellFirstOption',
+                request_serializer=trade__pb2.OptionOrderDetail.SerializeToString,
+                response_deserializer=trade__pb2.TradeResult.FromString,
+                )
+        self.CancelOption = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/CancelOption',
+                request_serializer=trade__pb2.OptionOrderID.SerializeToString,
+                response_deserializer=trade__pb2.TradeResult.FromString,
+                )
         self.GetLocalOrderStatusArr = channel.unary_unary(
                 '/toc_python_forwarder.TradeInterface/GetLocalOrderStatusArr',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -144,6 +164,34 @@ class TradeInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def BuyOption(self, request, context):
+        """BuyFuture is the interface for buying future
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SellOption(self, request, context):
+        """SellFuture is the interface for selling future
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SellFirstOption(self, request, context):
+        """SellFirstFuture is the interface for selling first future
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CancelOption(self, request, context):
+        """CancelFuture is the interface for canceling future
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetLocalOrderStatusArr(self, request, context):
         """GetLocalOrderStatusArr is the interface for getting local order status array
         """
@@ -220,6 +268,26 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
             'CancelFuture': grpc.unary_unary_rpc_method_handler(
                     servicer.CancelFuture,
                     request_deserializer=trade__pb2.FutureOrderID.FromString,
+                    response_serializer=trade__pb2.TradeResult.SerializeToString,
+            ),
+            'BuyOption': grpc.unary_unary_rpc_method_handler(
+                    servicer.BuyOption,
+                    request_deserializer=trade__pb2.OptionOrderDetail.FromString,
+                    response_serializer=trade__pb2.TradeResult.SerializeToString,
+            ),
+            'SellOption': grpc.unary_unary_rpc_method_handler(
+                    servicer.SellOption,
+                    request_deserializer=trade__pb2.OptionOrderDetail.FromString,
+                    response_serializer=trade__pb2.TradeResult.SerializeToString,
+            ),
+            'SellFirstOption': grpc.unary_unary_rpc_method_handler(
+                    servicer.SellFirstOption,
+                    request_deserializer=trade__pb2.OptionOrderDetail.FromString,
+                    response_serializer=trade__pb2.TradeResult.SerializeToString,
+            ),
+            'CancelOption': grpc.unary_unary_rpc_method_handler(
+                    servicer.CancelOption,
+                    request_deserializer=trade__pb2.OptionOrderID.FromString,
                     response_serializer=trade__pb2.TradeResult.SerializeToString,
             ),
             'GetLocalOrderStatusArr': grpc.unary_unary_rpc_method_handler(
@@ -390,6 +458,74 @@ class TradeInterface(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/CancelFuture',
             trade__pb2.FutureOrderID.SerializeToString,
+            trade__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def BuyOption(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/BuyOption',
+            trade__pb2.OptionOrderDetail.SerializeToString,
+            trade__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SellOption(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/SellOption',
+            trade__pb2.OptionOrderDetail.SerializeToString,
+            trade__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SellFirstOption(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/SellFirstOption',
+            trade__pb2.OptionOrderDetail.SerializeToString,
+            trade__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CancelOption(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/CancelOption',
+            trade__pb2.OptionOrderID.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

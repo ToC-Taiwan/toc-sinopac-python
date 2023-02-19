@@ -6,6 +6,7 @@ from datetime import datetime
 
 import shioaji as sj
 import shioaji.constant as sc
+from shioaji.order import Order, Trade
 
 from logger import logger
 from sinopac import OrderStatus, Sinopac
@@ -14,94 +15,40 @@ from sinopac import OrderStatus, Sinopac
 class Simulator:
     def __init__(self, sinopac: Sinopac):
         self.sinopac = sinopac
-        self.__api = sinopac.get_sj_api()
-
-        # key: stock_num or code, value: count
+        self.__simulation_count_map: dict[str, int] = {}  # key: stock_num or code, value: count
         self.__simulation_lock = threading.Lock()
-        self.__simulation_count_map: dict[str, int] = {}
 
-        self.stock_num_list = self.sinopac.get_stock_num_list()
-        for stock in self.stock_num_list:
-            self.__simulation_count_map[stock] = 0
+        self.__order_map: dict[str, Trade] = {}  # order_id: Trade
+        self.__order_map_lock = threading.Lock()
 
-        self.future_code_list = self.sinopac.get_future_code_list()
-        for future in self.future_code_list:
-            self.__simulation_count_map[future] = 0
-
-        self.__order_status_lock = threading.Lock()
-        self.order_status_list: list[sj.order.Trade] = []
-
-    def get_order_status(self):
-        return self.order_status_list
-
-    def get_order_status_by_id(self, order_id: str):
-        if len(self.order_status_list) == 0:
-            return OrderStatus("", "", "order list is empty")
-
-        for order in self.order_status_list:
-            if order.status.id == order_id:
-                return OrderStatus(order_id, order.status.status, "")
-
-        return OrderStatus("", "", "order not found")
-
-    def reset_simulator(self):
-        clear_count = int()
-        with self.__simulation_lock:
-            for stock in self.stock_num_list:
-                stock_count = self.__simulation_count_map[stock]
-                if stock_count != 0:
-                    self.__simulation_count_map[stock] = 0
-                    clear_count += 1
-            for future in self.future_code_list:
-                future_count = self.__simulation_count_map[future]
-                if future_count != 0:
-                    self.__simulation_count_map[future] = 0
-                    clear_count += 1
-            if clear_count > 0:
-                logger.info("clear %d simulation order", clear_count)
-
-        with self.__order_status_lock:
-            self.order_status_list = []
-
-    def finish_simulation_order(self, order: sj.order.Trade, wait: int):
-        self.order_status_list.append(order)
-        with self.__simulation_lock:
-            buy_later = False
-            if order.order.action == sc.Action.Buy and self.__simulation_count_map[order.contract.code] < 0:
-                buy_later = True
-                self.__simulation_count_map[order.contract.code] += order.order.quantity
-            if order.order.action == sc.Action.Sell:
-                self.__simulation_count_map[order.contract.code] -= order.order.quantity
-
+    def finish_simulation_order(self, order: Trade, wait: int):
+        self.insert_or_update_local_order(order)
         time.sleep(wait)
-        with self.__simulation_lock:
-            for sim in self.order_status_list:
-                if sim.status.id == order.status.id:
-                    sim.status.status = sc.Status.Filled
-                    if sim.order.action == sc.Action.Buy and buy_later is False:
-                        self.__simulation_count_map[sim.contract.code] += sim.order.quantity
+        if random.randint(1, 100) > 10:
+            order.status.status = sc.Status.Filled
+            order.status.deal_quantity = order.order.quantity
+            self.insert_or_update_local_order(order)
 
     def buy_stock(self, stock_num: str, price: float, quantity: int):
-        order = self.__api.Order(
-            price=price,
-            quantity=quantity,
-            action=sc.Action.Buy,
-            price_type=sc.StockPriceType.LMT,
-            order_type=sc.OrderType.ROD,
-            order_lot=sc.StockOrderLot.Common,
-            account=self.__api.stock_account,
-        )
-        contract = self.sinopac.get_contract_by_stock_num(stock_num)
-
         with self.__simulation_lock:
-            if self.__simulation_count_map[stock_num] < 0:
-                if quantity + self.__simulation_count_map[stock_num] > 0:
+            current = self.__simulation_count_map.get(stock_num, 0)
+            if current < 0:
+                if quantity + current > 0:
                     return OrderStatus("", "", "buy later quantity is too big")
-        sim_order = sj.order.Trade(
-            contract=contract,
-            order=order,
+            self.__simulation_count_map[stock_num] = current + quantity
+
+        sim_order = Trade(
+            contract=self.sinopac.get_contract_by_stock_num(stock_num),
+            order=Order(
+                price=price,
+                quantity=quantity,
+                action=sc.Action.Buy,
+                price_type=sc.StockPriceType.LMT,
+                order_type=sc.OrderType.ROD,
+                order_lot=sc.StockOrderLot.Common,
+            ),
             status=sj.order.OrderStatus(
-                id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
+                id=self.random_order_id(),
                 status=sc.Status.Submitted,
                 status_code="",
                 order_datetime=datetime.now(),
@@ -116,31 +63,30 @@ class Simulator:
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
     def sell_stock(self, stock_num: str, price: float, quantity: int):
-        order = self.__api.Order(
-            price=price,
-            quantity=quantity,
-            action=sc.Action.Sell,
-            price_type=sc.StockPriceType.LMT,
-            order_type=sc.OrderType.ROD,
-            order_lot=sc.StockOrderLot.Common,
-            account=self.__api.stock_account,
-        )
-        contract = self.sinopac.get_contract_by_stock_num(stock_num)
-
         with self.__simulation_lock:
-            if quantity > self.__simulation_count_map[stock_num]:
+            current = self.__simulation_count_map.get(stock_num, 0)
+            if quantity > current:
                 return OrderStatus("", "", "quantity is too big")
-            sim_order = sj.order.Trade(
-                contract=contract,
-                order=order,
-                status=sj.order.OrderStatus(
-                    id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                    status=sc.Status.Submitted,
-                    status_code="",
-                    order_datetime=datetime.now(),
-                    deals=[],
-                ),
-            )
+            self.__simulation_count_map[stock_num] = current - quantity
+
+        sim_order = Trade(
+            contract=self.sinopac.get_contract_by_stock_num(stock_num),
+            order=Order(
+                price=price,
+                quantity=quantity,
+                action=sc.Action.Sell,
+                price_type=sc.StockPriceType.LMT,
+                order_type=sc.OrderType.ROD,
+                order_lot=sc.StockOrderLot.Common,
+            ),
+            status=sj.order.OrderStatus(
+                id=self.random_order_id(),
+                status=sc.Status.Submitted,
+                status_code="",
+                order_datetime=datetime.now(),
+                deals=[],
+            ),
+        )
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, random.randrange(5) + 1),
@@ -149,32 +95,31 @@ class Simulator:
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
     def sell_first_stock(self, stock_num: str, price: float, quantity: int):
-        order = self.__api.Order(
-            price=price,
-            quantity=quantity,
-            action=sc.Action.Sell,
-            price_type=sc.StockPriceType.LMT,
-            order_type=sc.OrderType.ROD,
-            order_lot=sc.StockOrderLot.Common,
-            daytrade_short=True,
-            account=self.__api.stock_account,
-        )
-        contract = self.sinopac.get_contract_by_stock_num(stock_num)
-
         with self.__simulation_lock:
-            if self.__simulation_count_map[stock_num] > 0:
+            current = self.__simulation_count_map.get(stock_num, 0)
+            if current > 0:
                 return OrderStatus("", "", "can not sell first")
-            sim_order = sj.order.Trade(
-                contract=contract,
-                order=order,
-                status=sj.order.OrderStatus(
-                    id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                    status=sc.Status.Submitted,
-                    status_code="",
-                    order_datetime=datetime.now(),
-                    deals=[],
-                ),
-            )
+            self.__simulation_count_map[stock_num] = current - quantity
+
+        sim_order = Trade(
+            contract=self.sinopac.get_contract_by_stock_num(stock_num),
+            order=Order(
+                price=price,
+                quantity=quantity,
+                action=sc.Action.Sell,
+                price_type=sc.StockPriceType.LMT,
+                order_type=sc.OrderType.ROD,
+                order_lot=sc.StockOrderLot.Common,
+                daytrade_short=True,
+            ),
+            status=sj.order.OrderStatus(
+                id=self.random_order_id(),
+                status=sc.Status.Submitted,
+                status_code="",
+                order_datetime=datetime.now(),
+                deals=[],
+            ),
+        )
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, random.randrange(5) + 1),
@@ -183,32 +128,32 @@ class Simulator:
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
     def cancel_stock(self, order_id: str):
-        for order in self.order_status_list:
-            if order.status.id == order_id and order.status.status != sc.Status.Cancelled:
-                order.status.status = sc.Status.Cancelled
-                return OrderStatus(order_id, order.status.status, "")
+        order = self.__order_map.get(order_id, None)
+        if order is not None and order.status.status != sc.Status.Cancelled:
+            order.status.status = sc.Status.Cancelled
+            return OrderStatus(order_id, order.status.status, "")
         return OrderStatus("", "", "order not found")
 
     def buy_future(self, code: str, price: float, quantity: int):
-        order = self.__api.Order(
-            price=price,
-            quantity=quantity,
-            action=sc.Action.Buy,
-            price_type=sc.FuturesPriceType.LMT,
-            order_type=sc.OrderType.ROD,
-            octype=sc.FuturesOCType.Auto,
-            account=self.__api.futopt_account,
-        )
-        contract = self.sinopac.get_contract_by_future_code(code)
         with self.__simulation_lock:
-            if self.__simulation_count_map[code] < 0:
-                if quantity + self.__simulation_count_map[code] > 0:
+            current = self.__simulation_count_map.get(code, 0)
+            if current < 0:
+                if quantity + current > 0:
                     return OrderStatus("", "", "buy later quantity is too big")
-        sim_order = sj.order.Trade(
-            contract=contract,
-            order=order,
+            self.__simulation_count_map[code] = current + quantity
+
+        sim_order = Trade(
+            contract=self.sinopac.get_contract_by_future_code(code),
+            order=Order(
+                price=price,
+                quantity=quantity,
+                action=sc.Action.Buy,
+                price_type=sc.FuturesPriceType.LMT,
+                order_type=sc.OrderType.ROD,
+                octype=sc.FuturesOCType.Auto,
+            ),
             status=sj.order.OrderStatus(
-                id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
+                id=self.random_order_id(),
                 status=sc.Status.Submitted,
                 status_code="",
                 order_datetime=datetime.now(),
@@ -223,30 +168,30 @@ class Simulator:
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
     def sell_future(self, code: str, price: float, quantity: int):
-        order = self.__api.Order(
-            price=price,
-            quantity=quantity,
-            action=sc.Action.Sell,
-            price_type=sc.FuturesPriceType.LMT,
-            order_type=sc.OrderType.ROD,
-            octype=sc.FuturesOCType.Auto,
-            account=self.__api.futopt_account,
-        )
-        contract = self.sinopac.get_contract_by_future_code(code)
         with self.__simulation_lock:
-            if quantity > self.__simulation_count_map[code]:
+            current = self.__simulation_count_map.get(code, 0)
+            if quantity > current:
                 return OrderStatus("", "", "quantity is too big")
-            sim_order = sj.order.Trade(
-                contract=contract,
-                order=order,
-                status=sj.order.OrderStatus(
-                    id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                    status=sc.Status.Submitted,
-                    status_code="",
-                    order_datetime=datetime.now(),
-                    deals=[],
-                ),
-            )
+            self.__simulation_count_map[code] = current - quantity
+
+        sim_order = Trade(
+            contract=self.sinopac.get_contract_by_future_code(code),
+            order=Order(
+                price=price,
+                quantity=quantity,
+                action=sc.Action.Sell,
+                price_type=sc.FuturesPriceType.LMT,
+                order_type=sc.OrderType.ROD,
+                octype=sc.FuturesOCType.Auto,
+            ),
+            status=sj.order.OrderStatus(
+                id=self.random_order_id(),
+                status=sc.Status.Submitted,
+                status_code="",
+                order_datetime=datetime.now(),
+                deals=[],
+            ),
+        )
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, 1),
@@ -255,30 +200,30 @@ class Simulator:
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
     def sell_first_future(self, code: str, price: float, quantity: int):
-        order = self.__api.Order(
-            price=price,
-            quantity=quantity,
-            action=sc.Action.Sell,
-            price_type=sc.FuturesPriceType.LMT,
-            order_type=sc.OrderType.ROD,
-            octype=sc.FuturesOCType.Auto,
-            account=self.__api.futopt_account,
-        )
-        contract = self.sinopac.get_contract_by_future_code(code)
         with self.__simulation_lock:
-            if self.__simulation_count_map[code] > 0:
+            current = self.__simulation_count_map.get(code, 0)
+            if current > 0:
                 return OrderStatus("", "", "can not sell first")
-            sim_order = sj.order.Trade(
-                contract=contract,
-                order=order,
-                status=sj.order.OrderStatus(
-                    id="".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8)),
-                    status=sc.Status.Submitted,
-                    status_code="",
-                    order_datetime=datetime.now(),
-                    deals=[],
-                ),
-            )
+            self.__simulation_count_map[code] = current - quantity
+
+        sim_order = Trade(
+            contract=self.sinopac.get_contract_by_future_code(code),
+            order=Order(
+                price=price,
+                quantity=quantity,
+                action=sc.Action.Sell,
+                price_type=sc.FuturesPriceType.LMT,
+                order_type=sc.OrderType.ROD,
+                octype=sc.FuturesOCType.Auto,
+            ),
+            status=sj.order.OrderStatus(
+                id=self.random_order_id(),
+                status=sc.Status.Submitted,
+                status_code="",
+                order_datetime=datetime.now(),
+                deals=[],
+            ),
+        )
         threading.Thread(
             target=self.finish_simulation_order,
             args=(sim_order, 1),
@@ -287,8 +232,137 @@ class Simulator:
         return OrderStatus(sim_order.status.id, sim_order.status.status, "")
 
     def cancel_future(self, order_id: str):
-        for order in self.order_status_list:
-            if order.status.id == order_id and order.status.status != sc.Status.Cancelled:
-                order.status.status = sc.Status.Cancelled
-                return OrderStatus(order_id, order.status.status, "")
+        order = self.__order_map.get(order_id, None)
+        if order is not None and order.status.status != sc.Status.Cancelled:
+            order.status.status = sc.Status.Cancelled
+            return OrderStatus(order_id, order.status.status, "")
         return OrderStatus("", "", "order not found")
+
+    def buy_option(self, code: str, price: float, quantity: int):
+        with self.__simulation_lock:
+            current = self.__simulation_count_map.get(code, 0)
+            if current < 0:
+                if quantity + current > 0:
+                    return OrderStatus("", "", "buy later quantity is too big")
+            self.__simulation_count_map[code] = current + quantity
+
+        sim_order = Trade(
+            contract=self.sinopac.get_contract_by_option_code(code),
+            order=Order(
+                price=price,
+                quantity=quantity,
+                action=sc.Action.Buy,
+                price_type=sc.FuturesPriceType.LMT,
+                order_type=sc.OrderType.ROD,
+            ),
+            status=sj.order.OrderStatus(
+                id=self.random_order_id(),
+                status=sc.Status.Submitted,
+                status_code="",
+                order_datetime=datetime.now(),
+                deals=[],
+            ),
+        )
+        threading.Thread(
+            target=self.finish_simulation_order,
+            args=(sim_order, 1),
+            daemon=True,
+        ).start()
+        return OrderStatus(sim_order.status.id, sim_order.status.status, "")
+
+    def sell_option(self, code: str, price: float, quantity: int):
+        with self.__simulation_lock:
+            current = self.__simulation_count_map.get(code, 0)
+            if quantity > current:
+                return OrderStatus("", "", "quantity is too big")
+            self.__simulation_count_map[code] = current - quantity
+
+        sim_order = Trade(
+            contract=self.sinopac.get_contract_by_option_code(code),
+            order=Order(
+                price=price,
+                quantity=quantity,
+                action=sc.Action.Sell,
+                price_type=sc.FuturesPriceType.LMT,
+                order_type=sc.OrderType.ROD,
+            ),
+            status=sj.order.OrderStatus(
+                id=self.random_order_id(),
+                status=sc.Status.Submitted,
+                status_code="",
+                order_datetime=datetime.now(),
+                deals=[],
+            ),
+        )
+        threading.Thread(
+            target=self.finish_simulation_order,
+            args=(sim_order, 1),
+            daemon=True,
+        ).start()
+        return OrderStatus(sim_order.status.id, sim_order.status.status, "")
+
+    def sell_first_option(self, code: str, price: float, quantity: int):
+        with self.__simulation_lock:
+            current = self.__simulation_count_map.get(code, 0)
+            if current > 0:
+                return OrderStatus("", "", "can not sell first")
+            self.__simulation_count_map[code] = current - quantity
+
+        sim_order = Trade(
+            contract=self.sinopac.get_contract_by_option_code(code),
+            order=Order(
+                price=price,
+                quantity=quantity,
+                action=sc.Action.Sell,
+                price_type=sc.FuturesPriceType.LMT,
+                order_type=sc.OrderType.ROD,
+            ),
+            status=sj.order.OrderStatus(
+                id=self.random_order_id(),
+                status=sc.Status.Submitted,
+                status_code="",
+                order_datetime=datetime.now(),
+                deals=[],
+            ),
+        )
+        threading.Thread(
+            target=self.finish_simulation_order,
+            args=(sim_order, 1),
+            daemon=True,
+        ).start()
+        return OrderStatus(sim_order.status.id, sim_order.status.status, "")
+
+    def cancel_option(self, order_id: str):
+        order = self.__order_map.get(order_id, None)
+        if order is not None and order.status.status != sc.Status.Cancelled:
+            order.status.status = sc.Status.Cancelled
+            return OrderStatus(order_id, order.status.status, "")
+        return OrderStatus("", "", "order not found")
+
+    def random_order_id(self) -> str:
+        return "".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8))
+
+    def get_local_order(self):
+        return list(self.__order_map.values())
+
+    def get_local_order_by_id(self, order_id: str):
+        with self.__order_map_lock:
+            order = self.__order_map.get(order_id, None)
+            if order is not None:
+                return OrderStatus(order.status.id, order.status.status, "")
+
+        return OrderStatus("", "", "order not found")
+
+    def insert_or_update_local_order(self, order: Trade):
+        with self.__order_map_lock:
+            self.__order_map[order.status.id] = order
+
+    def reset_simulator(self):
+        with self.__simulation_lock:
+            for code, count in self.__simulation_count_map.items():
+                if count != 0:
+                    logger.info("clear simulation for %s", code)
+            self.__simulation_count_map = {}
+
+        with self.__order_map_lock:
+            self.__order_map = {}

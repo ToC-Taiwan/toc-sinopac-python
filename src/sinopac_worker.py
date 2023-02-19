@@ -22,6 +22,7 @@ class SinopacWorkerPool:
         self.stock_bidask_sub_dict: dict[str, int] = {}
         self.future_tick_sub_dict: dict[str, int] = {}
         self.future_bidask_sub_dict: dict[str, int] = {}
+        self.option_tick_sub_dict: dict[str, int] = {}
 
         # request workder limit
         self.request_limit = request_limt
@@ -191,6 +192,7 @@ class SinopacWorkerPool:
         fail_arr: dict[str, list] = {}
         fail_arr["stock"] = []
         fail_arr["future"] = []
+        fail_arr["option"] = []
 
         if len(self.stock_tick_sub_dict) != 0:
             for stock_num in list(self.stock_tick_sub_dict):
@@ -202,7 +204,45 @@ class SinopacWorkerPool:
                 if self.unsubscribe_future_tick(code) is not None:
                     fail_arr["future"].append(code)
 
+        if len(self.option_tick_sub_dict) != 0:
+            for code in list(self.option_tick_sub_dict):
+                if self.unsubscribe_option_tick(code) is not None:
+                    fail_arr["option"].append(code)
+
         return fail_arr
+
+    def subscribe_option_tick(self, code):
+        with self.sub_lock:
+            if code in self.option_tick_sub_dict:
+                return None
+            idx = self.subscribe_count.index(min(self.subscribe_count))
+            result = self.workers[idx].subscribe_option_tick(code)
+            if result is not None:
+                return result
+            logger.info(
+                "subscribe option tick %s %s",
+                code,
+                self.workers[idx].get_contract_name_by_option_code(code),
+            )
+            self.subscribe_count[idx] += 1
+            self.option_tick_sub_dict[code] = idx
+        return None
+
+    def unsubscribe_option_tick(self, code):
+        with self.sub_lock:
+            if code in self.option_tick_sub_dict:
+                idx = self.option_tick_sub_dict[code]
+                self.subscribe_count[idx] -= 1
+                del self.option_tick_sub_dict[code]
+                result = self.workers[idx].unsubscribe_option_tick(code)
+                if result is not None:
+                    return result
+                logger.info(
+                    "unsubscribe option tick %s %s",
+                    code,
+                    self.workers[idx].get_contract_name_by_option_code(code),
+                )
+        return None
 
     def unsubscribe_all_bidask(self):
         fail_arr: dict[str, list] = {}
@@ -288,3 +328,15 @@ class SinopacWorkerPool:
 
     def get_option_code_list(self):
         return self.main_worker.get_option_code_list()
+
+    def buy_option(self, code, price, quantity):
+        return self.main_worker.buy_option(code, price, quantity)
+
+    def sell_option(self, code, price, quantity):
+        return self.main_worker.sell_option(code, price, quantity)
+
+    def sell_first_option(self, code, price, quantity):
+        return self.main_worker.sell_first_option(code, price, quantity)
+
+    def cancel_option(self, order_id):
+        return self.main_worker.cancel_option(order_id)

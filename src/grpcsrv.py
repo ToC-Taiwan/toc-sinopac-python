@@ -480,7 +480,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         if request.simulate is not True:
             result = self.workers.get_order_status_by_id(request.order_id)
         else:
-            result = self.simulator.get_order_status_by_id(request.order_id)
+            result = self.simulator.get_local_order_by_id(request.order_id)
         return trade_pb2.TradeResult(
             order_id=result.order_id,
             status=result.status,
@@ -494,7 +494,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
 
     def GetSimulateOrderStatusArr(self, request, _):
         with self.send_order_lock:
-            self.rabbit.send_order_arr(self.simulator.get_order_status())
+            self.rabbit.send_order_arr(self.simulator.get_local_order())
             return google.protobuf.empty_pb2.Empty()
 
     def GetNonBlockOrderStatusArr(self, request, _):
@@ -568,6 +568,82 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             )
         else:
             result = self.simulator.cancel_future(
+                request.order_id,
+            )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def BuyOption(self, request, _):
+        result = None
+        if request.simulate is not True:
+            result = self.workers.buy_option(
+                request.code,
+                request.price,
+                request.quantity,
+            )
+        else:
+            result = self.simulator.buy_option(
+                request.code,
+                request.price,
+                request.quantity,
+            )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def SellOption(self, request, _):
+        result = None
+        if request.simulate is not True:
+            result = self.workers.sell_option(
+                request.code,
+                request.price,
+                request.quantity,
+            )
+        else:
+            result = self.simulator.sell_option(
+                request.code,
+                request.price,
+                request.quantity,
+            )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def SellFirstOption(self, request, _):
+        result = None
+        if request.simulate is not True:
+            result = self.workers.sell_first_option(
+                request.code,
+                request.price,
+                request.quantity,
+            )
+        else:
+            result = self.simulator.sell_first_option(
+                request.code,
+                request.price,
+                request.quantity,
+            )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def CancelOption(self, request, _):
+        result = None
+        if request.simulate is not True:
+            result = self.workers.cancel_option(
+                request.order_id,
+            )
+        else:
+            result = self.simulator.cancel_option(
                 request.order_id,
             )
         return trade_pb2.TradeResult(

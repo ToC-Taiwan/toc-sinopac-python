@@ -256,6 +256,9 @@ class Sinopac:
     def get_contract_name_by_future_code(self, code) -> str:
         return str(self.__api.Contracts.Futures[code].name)
 
+    def get_contract_name_by_option_code(self, code) -> str:
+        return str(self.__api.Contracts.Options[code].name)
+
     def snapshots(self, contracts):
         try:
             return self.__api.snapshots(contracts)
@@ -387,6 +390,28 @@ class Sinopac:
         try:
             self.__api.quote.unsubscribe(
                 self.get_contract_by_future_code(code),
+                quote_type=sc.QuoteType.Tick,
+                version=sc.QuoteVersion.v1,
+            )
+            return None
+        except Exception:
+            return code
+
+    def subscribe_option_tick(self, code):
+        try:
+            self.__api.quote.subscribe(
+                self.get_contract_by_option_code(code),
+                quote_type=sc.QuoteType.Tick,
+                version=sc.QuoteVersion.v1,
+            )
+            return None
+        except Exception:
+            return code
+
+    def unsubscribe_option_tick(self, code):
+        try:
+            self.__api.quote.unsubscribe(
+                self.get_contract_by_option_code(code),
                 quote_type=sc.QuoteType.Tick,
                 version=sc.QuoteVersion.v1,
             )
@@ -572,3 +597,67 @@ class Sinopac:
             times += 1
             time.sleep(1)
         return OrderStatus("", "", "cancel future fail")
+
+    def buy_option(self, code: str, price: float, quantity: int):
+        order: Order = self.__api.Order(
+            price=price,
+            quantity=quantity,
+            action=sc.Action.Buy,
+            price_type=sc.FuturesPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            account=self.__api.futopt_account,
+        )
+        contract = self.get_contract_by_option_code(code)
+        trade = self.__api.place_order(contract=contract, order=order)
+        if trade is not None and trade.order.id != "":
+            return OrderStatus(trade.order.id, trade.status.status, "")
+        return OrderStatus("", "", "buy option fail")
+
+    def sell_option(self, code: str, price: float, quantity: int):
+        order: Order = self.__api.Order(
+            price=price,
+            quantity=quantity,
+            action=sc.Action.Sell,
+            price_type=sc.FuturesPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            account=self.__api.futopt_account,
+        )
+        contract = self.get_contract_by_option_code(code)
+        trade = self.__api.place_order(contract=contract, order=order)
+        if trade is not None and trade.order.id != "":
+            return OrderStatus(trade.order.id, trade.status.status, "")
+        return OrderStatus("", "", "sell option fail")
+
+    def sell_first_option(self, code: str, price: float, quantity: int):
+        order: Order = self.__api.Order(
+            price=price,
+            quantity=quantity,
+            action=sc.Action.Sell,
+            price_type=sc.FuturesPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            account=self.__api.futopt_account,
+        )
+        contract = self.get_contract_by_option_code(code)
+        trade = self.__api.place_order(contract=contract, order=order)
+        if trade is not None and trade.order.id != "":
+            return OrderStatus(trade.order.id, trade.status.status, "")
+        return OrderStatus("", "", "sell first option fail")
+
+    def cancel_option(self, order_id: str):
+        cancel_order = self.get_order_from_local_by_order_id(order_id)
+        if cancel_order is None:
+            return OrderStatus(order_id, "", "id not found")
+        if cancel_order.status.status == sc.Status.Cancelled:
+            return OrderStatus(order_id, "", "id already cancelled")
+
+        times = int()
+        self.__api.cancel_order(cancel_order)
+        while True:
+            if times >= 10:
+                break
+            cancel_order = self.get_order_from_local_by_order_id(order_id)
+            if cancel_order.status.status == sc.Status.Cancelled:
+                return OrderStatus(order_id, cancel_order.status.status, "")
+            times += 1
+            time.sleep(1)
+        return OrderStatus("", "", "cancel option fail")
