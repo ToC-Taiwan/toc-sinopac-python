@@ -46,7 +46,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
         self.simulator = simulator
 
     def Heartbeat(self, request_iterator, _):
-        logger.info("new gRPC client connected")
+        logger.info("new sinopac gRPC client connected")
         threading.Thread(target=self.beat_timer, daemon=True).start()
         for beat in request_iterator:
             self.beat_time = datetime.now().timestamp()

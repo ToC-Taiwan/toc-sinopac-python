@@ -15,4 +15,7 @@ COPY scripts /toc-sinopac-python/scripts
 COPY src /toc-sinopac-python/src
 COPY Makefile /toc-sinopac-python/Makefile
 
+ENV SJ_LOG_PATH=/toc-sinopac-python/logs/shioaji.log
+ENV SJ_CONTRACTS_PATH=/toc-sinopac-python/data
+
 ENTRYPOINT ["/toc-sinopac-python/scripts/docker-entrypoint.sh"]

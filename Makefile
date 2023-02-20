@@ -1,9 +1,10 @@
 PIP=$(shell which pip3)
 PYTHON=$(shell which python3)
 PBPATH=$(PWD)/src/pb
+PWD=$(shell pwd)
 
 run: ### run
-	@PYTHONPATH=$(PBPATH) $(PYTHON) -BOO ./src/main.py
+	@SJ_LOG_PATH=$(PWD)/logs/shioaji.log SJ_CONTRACTS_PATH=$(PWD)/data PYTHONPATH=$(PBPATH) $(PYTHON) -BOO ./src/main.py
 .PHONY: run
 
 lint: ### lint
