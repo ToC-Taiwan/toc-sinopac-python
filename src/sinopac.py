@@ -30,12 +30,17 @@ class Sinopac:
         self.__api = sj.Shioaji()
         self.__login_status_lock = threading.Lock()
         self.__login_status = int()
+
+        # callback initialization avoid NoneType error
+        self.order_status_callback = None
+
         self.stock_num_list: list[str] = []
         self.future_code_list: list[str] = []
         self.option_code_list: list[str] = []
+
         self.__order_arr_lock = threading.Lock()
-        self.order_arr: list[Trade] = []
-        self.order_status_callback = None
+        self.__order_arr: list[Trade] = []
+        self.__order_arr_updated = False
 
     def get_sj_version(self):
         return str(sj.__version__)
@@ -100,7 +105,7 @@ class Sinopac:
             self.fill_stock_num_list()
             self.fill_future_code_list()
             self.fill_option_code_list()
-            self.set_order_callback(self.place_order_callback)
+            self.set_order_callback(self.order_callback)
             logger.info("stock account sign status: %s", self.__api.stock_account.signed)
             logger.info("future account sign status: %s", self.__api.futopt_account.signed)
             self.update_local_order_status()
@@ -183,30 +188,35 @@ class Sinopac:
     def update_local_order_status(self):
         with self.__order_arr_lock:
             self.__api.update_status()
-            self.order_arr = self.__api.list_trades()
+            self.__order_arr = self.__api.list_trades()
+            self.__order_arr_updated = True
 
     def get_order_status(self):
+        if self.__order_arr_updated is False:
+            return []
+
         with self.__order_arr_lock:
-            return self.order_arr
+            self.__order_arr_updated = False
+            return self.__order_arr
 
     def get_order_from_local_by_order_id(self, order_id: str) -> Trade:
         with self.__order_arr_lock:
-            for order in self.order_arr:
+            for order in self.__order_arr:
                 if order.status.id == order_id:
                     return order
             return None
 
     def get_order_status_from_local_by_order_id(self, order_id: str):
         with self.__order_arr_lock:
-            if len(self.order_arr) == 0:
+            if len(self.__order_arr) == 0:
                 return OrderStatus("", "", "order list is empty")
 
-            for order in self.order_arr:
+            for order in self.__order_arr:
                 if order.status.id == order_id:
                     return OrderStatus(order_id, order.status.status, "")
             return OrderStatus("", "", "order not found")
 
-    def place_order_callback(self, order_state: sc.OrderState, res: dict):
+    def order_callback(self, order_state: sc.OrderState, res: dict):
         self.update_local_order_status()
         if order_state in (sc.OrderState.FuturesOrder, sc.OrderState.StockOrder):
             if res["contract"]["code"] is None:
