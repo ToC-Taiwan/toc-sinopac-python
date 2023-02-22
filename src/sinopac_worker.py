@@ -299,8 +299,8 @@ class SinopacWorkerPool:
     def get_order_status_by_id(self, order_id):
         return self.main_worker.get_order_status_from_local_by_order_id(order_id)
 
-    def get_order_status_arr(self):
-        return self.main_worker.get_order_status()
+    def get_local_order(self):
+        return self.main_worker.get_local_order()
 
     def get_non_block_order_status_arr(self):
         return self.main_worker.update_order_status_instant()

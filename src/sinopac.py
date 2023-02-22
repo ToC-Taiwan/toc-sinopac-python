@@ -38,9 +38,8 @@ class Sinopac:
         self.future_code_list: list[str] = []
         self.option_code_list: list[str] = []
 
-        self.__order_arr_lock = threading.Lock()
-        self.__order_arr: list[Trade] = []
-        self.__order_arr_updated = False
+        self.__order_map: dict[str, Trade] = {}  # order_id: Trade
+        self.__order_map_lock = threading.Lock()
 
     def get_sj_version(self):
         return str(sj.__version__)
@@ -108,7 +107,7 @@ class Sinopac:
             self.set_order_callback(self.order_callback)
             logger.info("stock account sign status: %s", self.__api.stock_account.signed)
             logger.info("future account sign status: %s", self.__api.futopt_account.signed)
-            self.update_local_order_status()
+            self.update_local_order()
 
         return self
 
@@ -181,43 +180,37 @@ class Sinopac:
         if self.order_status_callback is None:
             return "order_status_callback is None"
 
-        with self.__order_arr_lock:
+        with self.__order_map_lock:
             self.__api.update_status(timeout=0, cb=self.order_status_callback)
             return None
 
-    def update_local_order_status(self):
-        with self.__order_arr_lock:
-            self.__api.update_status()
-            self.__order_arr = self.__api.list_trades()
-            self.__order_arr_updated = True
+    def get_local_order(self) -> list[Trade]:
+        with self.__order_map_lock:
+            return list(self.__order_map.values())
 
-    def get_order_status(self):
-        if self.__order_arr_updated is False:
-            return []
+    def get_local_order_by_order_id(self, order_id: str):
+        with self.__order_map_lock:
+            return self.__order_map.get(order_id, None)
 
-        with self.__order_arr_lock:
-            self.__order_arr_updated = False
-            return self.__order_arr
-
-    def get_order_from_local_by_order_id(self, order_id: str) -> Trade:
-        with self.__order_arr_lock:
-            for order in self.__order_arr:
-                if order.status.id == order_id:
-                    return order
-            return None
+    def update_local_order(self):
+        with self.__order_map_lock:
+            cache = self.__order_map.copy()
+            self.__order_map = {}
+            try:
+                self.__api.update_status()
+                for order in self.__api.list_trades():
+                    self.__order_map[order.order.id] = order
+            except Exception:
+                self.__order_map = cache
 
     def get_order_status_from_local_by_order_id(self, order_id: str):
-        with self.__order_arr_lock:
-            if len(self.__order_arr) == 0:
-                return OrderStatus("", "", "order list is empty")
-
-            for order in self.__order_arr:
-                if order.status.id == order_id:
-                    return OrderStatus(order_id, order.status.status, "")
+        order = self.get_local_order_by_order_id(order_id)
+        if order is None:
             return OrderStatus("", "", "order not found")
+        return OrderStatus(order_id, order.status.status, "")
 
     def order_callback(self, order_state: sc.OrderState, res: dict):
-        self.update_local_order_status()
+        self.update_local_order()
         if order_state in (sc.OrderState.FuturesOrder, sc.OrderState.StockOrder):
             if res["contract"]["code"] is None:
                 logger.error("place order code is none")
@@ -523,23 +516,14 @@ class Sinopac:
         return OrderStatus("", "", "sell first stock fail")
 
     def cancel_stock(self, order_id: str):
-        cancel_order = self.get_order_from_local_by_order_id(order_id)
+        cancel_order = self.get_local_order_by_order_id(order_id)
         if cancel_order is None:
             return OrderStatus(order_id, "", "id not found")
         if cancel_order.status.status == sc.Status.Cancelled:
-            return OrderStatus(order_id, "", "id already cancelled")
+            return OrderStatus(order_id, sc.Status.Cancelled.value, "")
 
-        times = int()
-        self.__api.cancel_order(cancel_order)
-        while True:
-            if times >= 10:
-                break
-            cancel_order = self.get_order_from_local_by_order_id(order_id)
-            if cancel_order.status.status == sc.Status.Cancelled:
-                return OrderStatus(order_id, cancel_order.status.status, "")
-            times += 1
-            time.sleep(1)
-        return OrderStatus("", "", "cancel stock fail")
+        result = self.__api.cancel_order(cancel_order)
+        return OrderStatus(order_id, result.status.status, "")
 
     def buy_future(self, code: str, price: float, quantity: int):
         order: Order = self.__api.Order(
@@ -590,23 +574,14 @@ class Sinopac:
         return OrderStatus("", "", "sell first future fail")
 
     def cancel_future(self, order_id: str):
-        cancel_order = self.get_order_from_local_by_order_id(order_id)
+        cancel_order = self.get_local_order_by_order_id(order_id)
         if cancel_order is None:
             return OrderStatus(order_id, "", "id not found")
         if cancel_order.status.status == sc.Status.Cancelled:
-            return OrderStatus(order_id, "", "id already cancelled")
+            return OrderStatus(order_id, sc.Status.Cancelled.value, "")
 
-        times = int()
-        self.__api.cancel_order(cancel_order)
-        while True:
-            if times >= 10:
-                break
-            cancel_order = self.get_order_from_local_by_order_id(order_id)
-            if cancel_order.status.status == sc.Status.Cancelled:
-                return OrderStatus(order_id, cancel_order.status.status, "")
-            times += 1
-            time.sleep(1)
-        return OrderStatus("", "", "cancel future fail")
+        result = self.__api.cancel_order(cancel_order)
+        return OrderStatus(order_id, result.status.status, "")
 
     def buy_option(self, code: str, price: float, quantity: int):
         order: Order = self.__api.Order(
@@ -654,20 +629,11 @@ class Sinopac:
         return OrderStatus("", "", "sell first option fail")
 
     def cancel_option(self, order_id: str):
-        cancel_order = self.get_order_from_local_by_order_id(order_id)
+        cancel_order = self.get_local_order_by_order_id(order_id)
         if cancel_order is None:
             return OrderStatus(order_id, "", "id not found")
         if cancel_order.status.status == sc.Status.Cancelled:
-            return OrderStatus(order_id, "", "id already cancelled")
+            return OrderStatus(order_id, sc.Status.Cancelled.value, "")
 
-        times = int()
-        self.__api.cancel_order(cancel_order)
-        while True:
-            if times >= 10:
-                break
-            cancel_order = self.get_order_from_local_by_order_id(order_id)
-            if cancel_order.status.status == sc.Status.Cancelled:
-                return OrderStatus(order_id, cancel_order.status.status, "")
-            times += 1
-            time.sleep(1)
-        return OrderStatus("", "", "cancel option fail")
+        result = self.__api.cancel_order(cancel_order)
+        return OrderStatus(order_id, result.status.status, "")

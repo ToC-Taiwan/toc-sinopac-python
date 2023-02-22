@@ -489,7 +489,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
 
     def GetLocalOrderStatusArr(self, request, _):
         with self.send_order_lock:
-            self.rabbit.send_order_arr(self.workers.get_order_status_arr())
+            self.rabbit.send_order_arr(self.workers.get_local_order())
             return google.protobuf.empty_pb2.Empty()
 
     def GetSimulateOrderStatusArr(self, request, _):
