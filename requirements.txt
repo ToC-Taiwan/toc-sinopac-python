@@ -9,8 +9,8 @@ ciso8601==2.3.0
 cryptography==39.0.1
 filelock==3.4.1
 frozendict==2.3.5
-grpcio==1.51.1
-grpcio-tools==1.51.1
+grpcio==1.51.3
+grpcio-tools==1.51.3
 html5lib==1.1
 idna==3.4
 importlib-metadata==6.0.0
