@@ -522,8 +522,10 @@ class Sinopac:
         if cancel_order.status.status == sc.Status.Cancelled:
             return OrderStatus(order_id, sc.Status.Cancelled.value, "")
 
-        result = self.__api.cancel_order(cancel_order)
-        return OrderStatus(order_id, result.status.status, "")
+        self.__api.cancel_order(cancel_order)
+        self.update_local_order()
+        cancel_order = self.get_local_order_by_order_id(order_id)
+        return OrderStatus(order_id, cancel_order.status.status, "")
 
     def buy_future(self, code: str, price: float, quantity: int):
         order: Order = self.__api.Order(
@@ -580,8 +582,10 @@ class Sinopac:
         if cancel_order.status.status == sc.Status.Cancelled:
             return OrderStatus(order_id, sc.Status.Cancelled.value, "")
 
-        result = self.__api.cancel_order(cancel_order)
-        return OrderStatus(order_id, result.status.status, "")
+        self.__api.cancel_order(cancel_order)
+        self.update_local_order()
+        cancel_order = self.get_local_order_by_order_id(order_id)
+        return OrderStatus(order_id, cancel_order.status.status, "")
 
     def buy_option(self, code: str, price: float, quantity: int):
         order: Order = self.__api.Order(
@@ -635,5 +639,7 @@ class Sinopac:
         if cancel_order.status.status == sc.Status.Cancelled:
             return OrderStatus(order_id, sc.Status.Cancelled.value, "")
 
-        result = self.__api.cancel_order(cancel_order)
-        return OrderStatus(order_id, result.status.status, "")
+        self.__api.cancel_order(cancel_order)
+        self.update_local_order()
+        cancel_order = self.get_local_order_by_order_id(order_id)
+        return OrderStatus(order_id, cancel_order.status.status, "")
