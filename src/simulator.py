@@ -343,7 +343,8 @@ class Simulator:
         return "".join(random.choice(string.ascii_lowercase + string.octdigits) for _ in range(8))
 
     def get_local_order(self):
-        return list(self.__order_map.values())
+        with self.__order_map_lock:
+            return list(self.__order_map.values())
 
     def get_local_order_by_id(self, order_id: str):
         with self.__order_map_lock:
