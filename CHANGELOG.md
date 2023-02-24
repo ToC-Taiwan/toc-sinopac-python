@@ -1,5 +1,62 @@
 # CHANGELOG
 
+## [v2.0.0](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.2.0...v2.0.0)
+
+> 2023-02-24
+
+### Bug Fixes (27)
+
+* **cancel:** add update local order before return cancel result
+* **ci:** add missing need in before deploy
+* **container:** fix wrong exec path
+* **cron:** fix redundant argument in shcedule terminate
+* **dependency:** fix duplicate install shioaji
+* **docker:** fix missing makefile
+* **entry:** add docker entrypoint back
+* **import:** fix missing adjust import after new proto
+* **lint:** catch all exception in yahoo get price
+* **lint:** fix unused time
+* **lint:** fix lint error in yahoo finance
+* **make:** fix add clear cause fail
+* **make:** remove clear in run
+* **module:** add init for pb to fix no module
+* **position:** return empty if catch timeout, instead of recursive run
+* **proto:** fix compile proto script
+* **script:** fix proto script, modify venv script
+* **shioaji:** fix missing token login
+* **simulator:** fix get_local_order missing use lock
+* **thread:** fix system exit only exit child thread
+* **token:** fix snapshot token expired lint error
+* **token:** add catch token expired in snapshots
+* **trigger:** use other action key instead of github secret
+* **yahoo:** cancel recursive in yahoo finance to fix RecursionError
+* **yahoo:** fix RecursionError, return 0,0 if catch error, instead ofr recursive get
+* **yahoo:** update yahoo dependency to fix no data
+* **yahoo:** add catch IncompleteRead, ChunkedEncodingError from yahoo finance
+
+### Features (20)
+
+* **env:** add SJ_LOG_PATH SJ_CONTRACTS_PATH to docker env
+* **log:** remove yahoo finance catch error, remove deployment in action
+* **log:** change yfinance catced error log
+* **option:** finish trade of option
+* **option:** add option basic data
+* **order:** add updated to decide return empty or updated order arr
+* **order:** modify night market time in 0-5am order's date day
+* **order:** use dict instead of arr in local order
+* **performance:** add shioaji[speed] to requirements
+* **proto:** change to re-design rpc layout
+* **python:** update to 3.10.9, add check argument in scripts
+* **rabbitmq:** if exchange exist skip create
+* **runtime:** change to new proto layout, use full feature of make
+* **shioaji:** modify trade method due to shioaji v1.0.0
+* **sinopac:** change import way, update dependency
+* **sinopac:** change sinopac login way to api key and secret
+* **unsubscribe:** change name of unscribe and grpc error message
+* **workers:** remove global workers, add worker pool to gRPC servicer, add black config
+* **yahoo:** use history to get current and previous close
+* **yahoo:** catch all exception and log, if catched retry
+
 ## [v1.2.0](https://github.com/ToC-Taiwan/toc-sinopac-python/compare/v1.1.0...v1.2.0)
 
 > 2022-12-10
