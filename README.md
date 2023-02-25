@@ -1,10 +1,11 @@
 # TOC SINOPAC PYTHON
 
-[![Workflow](https://github.com/ToC-Taiwan/toc-sinopac-python/actions/workflows/main.yml/badge.svg)](https://github.com/ToC-Taiwan/toc-sinopac-python/actions/workflows/main.yml)
-[![Maintained](https://img.shields.io/badge/Maintained-yes-green)](https://github.com/ToC-Taiwan/toc-sinopac-python)
-[![Python](https://img.shields.io/badge/Python-3.10.10-yellow?logo=python&logoColor=yellow)](https://python.org)
-[![OS](https://img.shields.io/badge/OS-Linux-orange?logo=linux&logoColor=orange)](https://www.linux.org/)
-[![Container](https://img.shields.io/badge/Container-Docker-blue?logo=docker&logoColor=blue)](https://www.docker.com/)
+[![BUILD](https://img.shields.io/github/actions/workflow/status/ToC-Taiwan/toc-sinopac-python/main.yml?style=for-the-badge&logo=github)](https://github.com/ToC-Taiwan/toc-sinopac-python/actions/workflows/main.yml)
+[![Python](https://img.shields.io/badge/Python-3.10.10-yellow?logo=python&logoColor=yellow&style=for-the-badge)](https://python.org)
+[![CONTAINER](https://img.shields.io/badge/Container-Docker-blue?style=for-the-badge&logo=docker&logoColor=blue)](https://www.docker.com/)
+
+[![RELEASE](https://img.shields.io/github/release/ToC-Taiwan/toc-sinopac-python?style=for-the-badge)](https://github.com/ToC-Taiwan/toc-sinopac-python/releases/latest)
+[![LICENSE](https://img.shields.io/github/license/ToC-Taiwan/toc-sinopac-python?style=for-the-badge)](COPYING)
 
 ## .env
 

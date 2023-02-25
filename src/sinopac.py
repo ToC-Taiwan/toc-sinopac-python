@@ -90,6 +90,11 @@ class Sinopac:
             time.sleep(15)
             os._exit(0)
 
+        except Exception:
+            logger.error("login unknown error, terminate after 75 sec")
+            time.sleep(75)
+            os._exit(0)
+
         while True:
             if self.__login_status == 4:
                 break
