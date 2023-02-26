@@ -6,7 +6,7 @@ import time
 
 from prometheus_client import start_http_server
 
-from cron import init_schedule_job
+# from cron import init_schedule_job
 from env import RequiredEnv
 from grpcsrv import serve
 from logger import logger
@@ -24,7 +24,7 @@ CONNECTION_COUNT = env.connection_count
 start_http_server(6666)
 
 # add schedule to exit the program
-init_schedule_job()
+# init_schedule_job()
 
 # start rabbitmq container first
 rc = RabbitMQSetting()

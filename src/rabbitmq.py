@@ -1,4 +1,5 @@
 import logging
+import os
 import threading
 import time
 from datetime import datetime, timedelta
@@ -6,6 +7,7 @@ from queue import Queue
 
 import pika
 import shioaji as sj
+from pika.channel import Channel
 
 from pb import mq_pb2
 
@@ -13,7 +15,7 @@ logging.getLogger("pika").setLevel(logging.WARNING)
 
 
 class PikaCC:
-    def __init__(self, conn: pika.BlockingConnection, channel):
+    def __init__(self, conn: pika.BlockingConnection, channel: Channel):
         self.conn = conn
         self.channel = channel
 
@@ -23,16 +25,47 @@ class PikaCC:
 
 class RabbitMQS:
     def __init__(self, url: str, exchange: str, pool_size: int):
-        # pika
-        self.exchange = exchange
         self.parameters = pika.URLParameters(url)
+        self.exchange = exchange
         self.pool_size = pool_size
-        # queue
+
+        # rabbit mq connection queue
         self.pika_queue: Queue = Queue()
-        # lock
-        self.order_cb_lock = threading.Lock()
+
         # initial connections
         self.fill_pika_queue()
+
+        # lock
+        self.order_cb_lock = threading.Lock()
+
+        # subscribe terminate
+        threading.Thread(target=self.subscribe_terminate, daemon=True).start()
+
+    def subscribe_terminate(self):
+        connection = pika.BlockingConnection(self.parameters)
+        channel = connection.channel()
+
+        result = channel.queue_declare(queue="", exclusive=True)
+        # from https://www.rabbitmq.com/tutorials/tutorial-four-python.html
+        # The queue_declare method returns a tuple of 3 values:
+        # 1. queue name
+        # 2. message count
+        # 3. consumer count
+        queue_name = result.method.queue
+        channel.queue_bind(
+            exchange=self.exchange,
+            queue=queue_name,
+            routing_key="terminate",
+        )
+        channel.basic_consume(
+            queue=queue_name,
+            on_message_callback=self.terminate,
+            auto_ack=True,
+        )
+        channel.start_consuming()
+
+    def terminate(self, channel, method, properties, body):  # pylint: disable=unused-argument
+        os._exit(0)
 
     def send_heartbeat(self):
         while True:
