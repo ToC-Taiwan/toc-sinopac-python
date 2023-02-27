@@ -43,6 +43,7 @@ jobs:
               run: |
                   echo "REPOSITORY_LC=${REPOSITORY,,}" >> ${GITHUB_ENV}
                   echo "SHORT_SHA=$(echo ${SHA} | cut -c1-7)" >> ${GITHUB_ENV}
+                  echo "REPOSITORY_NAME_ONLY="${A/"toc-taiwan/"/""}"" >> ${GITHUB_ENV}
 
             - name: Checkout
               uses: actions/checkout@v3
@@ -73,8 +74,8 @@ jobs:
               with:
                   push: true
                   tags: |
-                      ${{ secrets.DOCKER_USERNAME }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
-                      ${{ secrets.DOCKER_USERNAME }}/${{ env.REPOSITORY_LC }}:latest
+                      ${{ secrets.DOCKER_USERNAME }}/${{ env.REPOSITORY_NAME_ONLY }}:${{ env.SHORT_SHA }}
+                      ${{ secrets.DOCKER_USERNAME }}/${{ env.REPOSITORY_NAME_ONLY }}:latest
 
     Trigger-Deployment:
         needs: Build
