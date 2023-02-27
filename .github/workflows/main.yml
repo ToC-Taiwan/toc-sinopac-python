@@ -43,7 +43,7 @@ jobs:
               run: |
                   echo "REPOSITORY_LC=${REPOSITORY,,}" >> ${GITHUB_ENV}
                   echo "SHORT_SHA=$(echo ${SHA} | cut -c1-7)" >> ${GITHUB_ENV}
-                  echo "REPOSITORY_NAME_ONLY="${A/"toc-taiwan/"/""}"" >> ${GITHUB_ENV}
+                  echo "REPOSITORY_NAME_ONLY="${{{ env.REPOSITORY_LC }}/"${{ github.repository_owner }}/"/""}"" >> ${GITHUB_ENV}
 
             - name: Checkout
               uses: actions/checkout@v3
