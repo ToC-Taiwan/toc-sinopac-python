@@ -55,7 +55,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def check_context(self, context: grpc.ServicerContext):
         while context.is_active():
-            pass
+            time.sleep(1)
 
         logger.info("sinopac gRPC client disconnected")
         with self.heart_beat_client_arr_lock:
