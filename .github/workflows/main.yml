@@ -62,6 +62,20 @@ jobs:
                       ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
                       ${{ env.REGISTRY }}/${{ env.REPOSITORY_LC }}:latest
 
+            - name: log in to the docker hub
+              uses: docker/login-action@v2
+              with:
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_TOKEN }}
+
+            - name: build and push docker hub
+              uses: docker/build-push-action@v3
+              with:
+                  push: true
+                  tags: |
+                      ${{ secrets.DOCKER_USERNAME }}/${{ env.REPOSITORY_LC }}:${{ env.SHORT_SHA }}
+                      ${{ secrets.DOCKER_USERNAME }}/${{ env.REPOSITORY_LC }}:latest
+
     Trigger-Deployment:
         needs: Build
         runs-on: ubuntu-latest
