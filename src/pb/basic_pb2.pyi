@@ -23,13 +23,16 @@ class BeatMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     MESSAGE_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
     message: builtins.str
+    error: builtins.str
     def __init__(
         self,
         *,
         message: builtins.str = ...,
+        error: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["message", b"message"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["error", b"error", "message", b"message"]) -> None: ...
 
 global___BeatMessage = BeatMessage
 

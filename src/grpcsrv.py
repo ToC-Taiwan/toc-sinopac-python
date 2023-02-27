@@ -2,8 +2,6 @@ import os
 import threading
 import time
 from concurrent import futures
-from datetime import datetime
-from queue import Queue
 
 import google.protobuf.empty_pb2
 import grpc
@@ -39,39 +37,35 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
         simulator: Simulator,
         workers: SinopacWorkerPool,
     ):
-        self.beat_queue: Queue = Queue()
         self.workers = workers
-        self.beat_time = float()
-        self.debug = False
         self.simulator = simulator
+        self.heart_beat_client_arr: list[str] = []
+        self.heart_beat_client_arr_lock = threading.Lock()
 
-    def Heartbeat(self, request_iterator, _):
-        logger.info("new sinopac gRPC client connected")
-        threading.Thread(target=self.beat_timer, daemon=True).start()
+    def Heartbeat(self, request_iterator, context: grpc.ServicerContext):
         for beat in request_iterator:
-            self.beat_time = datetime.now().timestamp()
-            self.beat_queue.put(beat.message)
-            if beat.message == "debug":
-                self.debug = True
-            else:
-                self.debug = False
+            with self.heart_beat_client_arr_lock:
+                if len(self.heart_beat_client_arr) > 0:
+                    yield basic_pb2.BeatMessage(error="sinopac only one client allowed")
+                else:
+                    self.heart_beat_client_arr.append(beat.message)
+                    threading.Thread(target=self.check_context, args=(context,), daemon=True).start()
+                    logger.info("new sinopac gRPC client connected: %s", beat.message)
             yield basic_pb2.BeatMessage(message=beat.message)
 
-    def beat_timer(self):
-        self.beat_time = datetime.now().timestamp()
-        while True:
-            if datetime.now().timestamp() > self.beat_time + 10:
-                logger.info("grpc client disconnected")
-                if self.debug is True:
-                    self.workers.unsubscribe_all_tick()
-                    self.workers.unsubscribe_all_bidask()
-                    self.simulator.reset_simulator()
-                    return
+    def check_context(self, context: grpc.ServicerContext):
+        while context.is_active():
+            pass
+
+        logger.info("sinopac gRPC client disconnected")
+        with self.heart_beat_client_arr_lock:
+            if len(self.heart_beat_client_arr) > 0 and self.heart_beat_client_arr[0] == "debug":
+                self.workers.unsubscribe_all_tick()
+                self.workers.unsubscribe_all_bidask()
+                self.simulator.reset_simulator()
+                self.heart_beat_client_arr.clear()
+            else:
                 os._exit(0)
-            if self.beat_queue.empty():
-                time.sleep(1)
-                continue
-            self.beat_queue.get()
 
     def Terminate(self, request, _):
         threading.Thread(target=self.wait_and_terminate, daemon=True).start()
