@@ -6,7 +6,6 @@ import time
 
 from prometheus_client import start_http_server
 
-# from cron import init_schedule_job
 from env import RequiredEnv
 from grpcsrv import serve
 from logger import logger
@@ -21,10 +20,9 @@ CA_PASSWORD = env.ca_password
 GRPC_PORT = env.grpc_port
 CONNECTION_COUNT = env.connection_count
 
-start_http_server(6666)
-
-# add schedule to exit the program
-# init_schedule_job()
+PROMETHEUS_PORT = 6666
+start_http_server(PROMETHEUS_PORT)
+logger.info("sinopac prometheus server started at port %d", PROMETHEUS_PORT)
 
 # start rabbitmq container first
 rc = RabbitMQSetting()
