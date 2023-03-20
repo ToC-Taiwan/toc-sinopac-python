@@ -11,7 +11,6 @@ pip=$1
 $pip install -U \
   --no-warn-script-location \
   --no-cache-dir \
-  pre-commit \
   mypy-protobuf \
   pylint-protobuf \
   black \
