@@ -1,5 +1,5 @@
-PIP=$(shell which pip3)
-PYTHON=$(shell which python3)
+PIP=$(shell which pip)
+PYTHON=$(shell which python)
 PBPATH=$(PWD)/src/pb
 PWD=$(shell pwd)
 

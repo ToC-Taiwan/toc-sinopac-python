@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 if [ -d "lib" ]; then
     rm -rf lib
 fi

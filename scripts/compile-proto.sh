@@ -1,9 +1,8 @@
 #!/bin/sh
 
-if [ $# -eq 0 ]
-  then
-    echo "No python supplied"
-    exit 1
+if [ $# -eq 0 ]; then
+  echo "No python supplied"
+  exit 1
 fi
 
 python=$1
@@ -16,12 +15,12 @@ rm -rf $outpath
 mkdir $outpath
 
 $python -m grpc_tools.protoc \
-    --python_out=$outpath \
-    --grpc_python_out=$outpath \
-    --mypy_out=$outpath \
-    --proto_path=./toc-trade-protobuf/protos/v3/app \
-    --proto_path=./toc-trade-protobuf/protos/v3/forwarder \
-    ./toc-trade-protobuf/protos/v3/*/*.proto
+  --python_out=$outpath \
+  --grpc_python_out=$outpath \
+  --mypy_out=$outpath \
+  --proto_path=./toc-trade-protobuf/protos/v3/app \
+  --proto_path=./toc-trade-protobuf/protos/v3/forwarder \
+  ./toc-trade-protobuf/protos/v3/*/*.proto
 
 rm $outpath/app_pb2_grpc.py
 rm $outpath/entity_pb2_grpc.py

@@ -1,15 +1,14 @@
 #!/bin/sh
 
-if [ $# -eq 0 ]
-  then
-    echo "No pip supplied"
-    exit 1
+if [ $# -eq 0 ]; then
+  echo "No pip supplied"
+  exit 1
 fi
 
 pip=$1
 
-$pip freeze > requirements.txt && \
-$pip uninstall -y -r requirements.txt
+$pip freeze >requirements.txt &&
+  $pip uninstall -y -r requirements.txt
 rm -rf requirements.txt
 
 $pip install --upgrade pip
@@ -28,6 +27,6 @@ $pip install -U \
   yfinance \
   prometheus-client
 
-$pip freeze > requirements.txt
+$pip freeze >requirements.txt
 
 git add requirements.txt
