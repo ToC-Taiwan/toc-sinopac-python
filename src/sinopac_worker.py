@@ -318,7 +318,7 @@ class SinopacWorkerPool:
         return self.main_worker.cancel_future(order_id)
 
     def get_future_position(self):
-        return self.main_worker.list_positions()
+        return self.main_worker.list_future_positions()
 
     def get_stock_num_list(self):
         return self.main_worker.get_stock_num_list()
@@ -340,3 +340,12 @@ class SinopacWorkerPool:
 
     def cancel_option(self, order_id):
         return self.main_worker.cancel_option(order_id)
+
+    def account_balance(self):
+        return self.main_worker.account_balance()
+
+    def margin(self):
+        return self.main_worker.margin()
+
+    def settlements(self):
+        return self.main_worker.settlements()

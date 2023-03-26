@@ -2,6 +2,7 @@ import os
 import threading
 import time
 from concurrent import futures
+from datetime import datetime
 
 import google.protobuf.empty_pb2
 import grpc
@@ -9,7 +10,6 @@ import numpy as np
 from shioaji.data import Snapshot
 from shioaji.error import TokenError
 
-from env import RequiredEnv
 from logger import logger
 from pb import (
     basic_pb2,
@@ -170,12 +170,44 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
     def __init__(self, workers: SinopacWorkerPool):
         self.workers = workers
 
+    def fill_stock_history_tick_response(self, num, date, response, worker: Sinopac):
+        ticks = worker.stock_ticks(num, date)
+        total_count = len(ticks.ts)
+        tmp_length = [
+            len(ticks.close),
+            len(ticks.tick_type),
+            len(ticks.volume),
+            len(ticks.bid_price),
+            len(ticks.bid_volume),
+            len(ticks.ask_price),
+            len(ticks.ask_volume),
+        ]
+
+        for length in tmp_length:
+            if length - total_count != 0:
+                return
+
+        for pos in range(total_count):
+            response.data.append(
+                history_pb2.HistoryTickMessage(
+                    code=num,
+                    ts=ticks.ts[pos],
+                    close=ticks.close[pos],
+                    volume=ticks.volume[pos],
+                    bid_price=ticks.bid_price[pos],
+                    bid_volume=ticks.bid_volume[pos],
+                    ask_price=ticks.ask_price[pos],
+                    ask_volume=ticks.ask_volume[pos],
+                    tick_type=ticks.tick_type[pos],
+                )
+            )
+
     def GetStockHistoryTick(self, request, _):
         response = history_pb2.HistoryTickResponse()
         threads = []
         for num in request.stock_num_arr:
             thread = threading.Thread(
-                target=fill_stock_history_tick_response,
+                target=self.fill_stock_history_tick_response,
                 args=(
                     num,
                     request.date,
@@ -189,6 +221,34 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         for thread in threads:
             thread.join()
         return response
+
+    def fill_stock_history_kbar_response(self, num, date, response, worker: Sinopac):
+        kbar = worker.stock_kbars(num, date)
+        total_count = len(kbar.ts)
+        tmp_length = [
+            len(kbar.Close),
+            len(kbar.Open),
+            len(kbar.High),
+            len(kbar.Low),
+            len(kbar.Volume),
+        ]
+
+        for length in tmp_length:
+            if length - total_count != 0:
+                return
+
+        for pos in range(total_count):
+            response.data.append(
+                history_pb2.HistoryKbarMessage(
+                    code=num,
+                    ts=kbar.ts[pos],
+                    close=kbar.Close[pos],
+                    open=kbar.Open[pos],
+                    high=kbar.High[pos],
+                    low=kbar.Low[pos],
+                    volume=kbar.Volume[pos],
+                )
+            )
 
     def GetStockHistoryKbar(self, request, _):
         response = history_pb2.HistoryKbarResponse()
@@ -196,7 +256,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
 
         for num in request.stock_num_arr:
             thread = threading.Thread(
-                target=fill_stock_history_kbar_response,
+                target=self.fill_stock_history_kbar_response,
                 args=(
                     num,
                     request.date,
@@ -211,13 +271,22 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
             thread.join()
         return response
 
+    def fill_stock_history_close_response(self, num, date, response, sinopac: Sinopac):
+        response.data.append(
+            history_pb2.HistoryCloseMessage(
+                code=num,
+                close=sinopac.get_stock_last_close_by_date(num, date),
+                date=date,
+            )
+        )
+
     def GetStockHistoryClose(self, request, _):
         response = history_pb2.HistoryCloseResponse()
         threads = []
 
         for num in request.stock_num_arr:
             thread = threading.Thread(
-                target=fill_stock_history_close_response,
+                target=self.fill_stock_history_close_response,
                 args=(
                     num,
                     request.date,
@@ -239,7 +308,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         for date in request.date_arr:
             for num in request.stock_num_arr:
                 thread = threading.Thread(
-                    target=fill_stock_history_close_response,
+                    target=self.fill_stock_history_close_response,
                     args=(
                         num,
                         date,
@@ -258,7 +327,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         response = history_pb2.HistoryTickResponse()
 
         thread = threading.Thread(
-            target=fill_stock_history_tick_response,
+            target=self.fill_stock_history_tick_response,
             args=(
                 "tse_001",
                 request.date,
@@ -275,7 +344,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         response = history_pb2.HistoryKbarResponse()
 
         thread = threading.Thread(
-            target=fill_stock_history_kbar_response,
+            target=self.fill_stock_history_kbar_response,
             args=(
                 "tse_001",
                 request.date,
@@ -292,7 +361,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         response = history_pb2.HistoryCloseResponse()
 
         thread = threading.Thread(
-            target=fill_stock_history_close_response,
+            target=self.fill_stock_history_close_response,
             args=(
                 "tse_001",
                 request.date,
@@ -305,12 +374,44 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         thread.join()
         return response
 
+    def fill_future_history_tick_response(self, code, date, response, worker: Sinopac):
+        ticks = worker.future_ticks(code, date)
+        total_count = len(ticks.ts)
+        tmp_length = [
+            len(ticks.close),
+            len(ticks.tick_type),
+            len(ticks.volume),
+            len(ticks.bid_price),
+            len(ticks.bid_volume),
+            len(ticks.ask_price),
+            len(ticks.ask_volume),
+        ]
+
+        for length in tmp_length:
+            if length - total_count != 0:
+                return
+
+        for pos in range(total_count):
+            response.data.append(
+                history_pb2.HistoryTickMessage(
+                    code=code,
+                    ts=ticks.ts[pos],
+                    close=ticks.close[pos],
+                    volume=ticks.volume[pos],
+                    bid_price=ticks.bid_price[pos],
+                    bid_volume=ticks.bid_volume[pos],
+                    ask_price=ticks.ask_price[pos],
+                    ask_volume=ticks.ask_volume[pos],
+                    tick_type=ticks.tick_type[pos],
+                )
+            )
+
     def GetFutureHistoryTick(self, request, _):
         response = history_pb2.HistoryTickResponse()
         threads = []
         for code in request.future_code_arr:
             thread = threading.Thread(
-                target=fill_future_history_tick_response,
+                target=self.fill_future_history_tick_response,
                 args=(
                     code,
                     request.date,
@@ -324,6 +425,34 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         for thread in threads:
             thread.join()
         return response
+
+    def fill_future_history_kbar_response(self, code, date, response, sinopac: Sinopac):
+        kbar = sinopac.future_kbars(code, date)
+        total_count = len(kbar.ts)
+        tmp_length = [
+            len(kbar.Close),
+            len(kbar.Open),
+            len(kbar.High),
+            len(kbar.Low),
+            len(kbar.Volume),
+        ]
+
+        for length in tmp_length:
+            if length - total_count != 0:
+                return
+
+        for pos in range(total_count):
+            response.data.append(
+                history_pb2.HistoryKbarMessage(
+                    code=code,
+                    ts=kbar.ts[pos],
+                    close=kbar.Close[pos],
+                    open=kbar.Open[pos],
+                    high=kbar.High[pos],
+                    low=kbar.Low[pos],
+                    volume=kbar.Volume[pos],
+                )
+            )
 
     def GetFutureHistoryKbar(self, request, _):
         response = history_pb2.HistoryKbarResponse()
@@ -331,7 +460,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
 
         for code in request.future_code_arr:
             thread = threading.Thread(
-                target=fill_future_history_kbar_response,
+                target=self.fill_future_history_kbar_response,
                 args=(
                     code,
                     request.date,
@@ -346,13 +475,22 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
             thread.join()
         return response
 
+    def fill_future_history_close_response(self, code, date, response, sinopac: Sinopac):
+        response.data.append(
+            history_pb2.HistoryCloseMessage(
+                code=code,
+                close=sinopac.get_future_last_close_by_date(code, date),
+                date=date,
+            )
+        )
+
     def GetFutureHistoryClose(self, request, _):
         response = history_pb2.HistoryCloseResponse()
         threads = []
 
         for code in request.future_code_arr:
             thread = threading.Thread(
-                target=fill_future_history_close_response,
+                target=self.fill_future_history_close_response,
                 args=(
                     code,
                     request.date,
@@ -646,11 +784,103 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
+    def GetAccountBalance(self, request, _):
+        balance = self.workers.account_balance()
+        return trade_pb2.AccountBalance(
+            status=balance.status,
+            acc_balance=balance.acc_balance,
+            date=balance.date,
+            errmsg=balance.errmsg,
+        )
+
+    def GetSettlement(self, request, _):
+        result = trade_pb2.SettlementV1Message()
+        settlements = self.workers.settlements()
+        for settle in settlements:
+            result.settlement_v1.append(
+                trade_pb2.SettlementV1(
+                    date=datetime.strftime(settle.date, "%Y-%m-%d %H:%M:%S"),
+                    amount=settle.amount,
+                    T=settle.T,
+                )
+            )
+        return result
+
+    def GetMargin(self, request, _):
+        margin = self.workers.margin()
+        return trade_pb2.Margin(
+            status=margin.status,
+            yesterday_balance=margin.yesterday_balance,
+            today_balance=margin.today_balance,
+            deposit_withdrawal=margin.deposit_withdrawal,
+            fee=margin.fee,
+            tax=margin.tax,
+            initial_margin=margin.initial_margin,
+            maintenance_margin=margin.maintenance_margin,
+            margin_call=margin.margin_call,
+            risk_indicator=margin.risk_indicator,
+            royalty_revenue_expenditure=margin.royalty_revenue_expenditure,
+            equity=margin.equity,
+            equity_amount=margin.equity_amount,
+            option_openbuy_market_value=margin.option_openbuy_market_value,
+            option_opensell_market_value=margin.option_opensell_market_value,
+            option_open_position=margin.option_open_position,
+            option_settle_profitloss=margin.option_settle_profitloss,
+            future_open_position=margin.future_open_position,
+            today_future_open_position=margin.today_future_open_position,
+            future_settle_profitloss=margin.future_settle_profitloss,
+            available_margin=margin.available_margin,
+            plus_margin=margin.plus_margin,
+            plus_margin_indicator=margin.plus_margin_indicator,
+            security_collateral_amount=margin.security_collateral_amount,
+            order_margin_premium=margin.order_margin_premium,
+            collateral_amount=margin.collateral_amount,
+        )
+
 
 class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
     def __init__(self, source: Yahoo, workers: SinopacWorkerPool):
         self.source = source
         self.workers = workers
+
+    def fill_snapshot_arr(self, contracts, snapshots, worker: Sinopac):
+        try:
+            data = worker.snapshots(contracts)
+        except TokenError:
+            logger.error("Token Error")
+            os._exit(0)
+
+        if data is not None:
+            snapshots.extend(data)
+
+    def sinopac_snapshot_to_pb(
+        self,
+        result,
+    ) -> realtime_pb2.SnapshotMessage:
+        return realtime_pb2.SnapshotMessage(
+            ts=result.ts,
+            code=result.code,
+            exchange=result.exchange,
+            open=result.open,
+            high=result.high,
+            low=result.low,
+            close=result.close,
+            tick_type=result.tick_type,
+            change_price=result.change_price,
+            change_rate=result.change_rate,
+            change_type=result.change_type,
+            average_price=result.average_price,
+            volume=result.volume,
+            total_volume=result.total_volume,
+            amount=result.amount,
+            total_amount=result.total_amount,
+            yesterday_volume=result.yesterday_volume,
+            buy_price=result.buy_price,
+            buy_volume=result.buy_volume,
+            sell_price=result.sell_price,
+            sell_volume=result.sell_volume,
+            volume_ratio=result.volume_ratio,
+        )
 
     def GetNasdaq(self, request, _):
         arr = self.source.get_nasdaq()
@@ -678,7 +908,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         for i, split in enumerate(splits):
             threads.append(
                 threading.Thread(
-                    target=fill_snapshot_arr,
+                    target=self.fill_snapshot_arr,
                     args=(
                         split,
                         snapshots,
@@ -692,7 +922,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
             thread.join()
         response = realtime_pb2.SnapshotResponse()
         for result in snapshots:
-            response.data.append(sinopac_snapshot_to_pb(result))
+            response.data.append(self.sinopac_snapshot_to_pb(result))
         return response
 
     def GetAllStockSnapshot(self, request, _):
@@ -707,7 +937,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         for i, split in enumerate(splits):
             threads.append(
                 threading.Thread(
-                    target=fill_snapshot_arr,
+                    target=self.fill_snapshot_arr,
                     args=(
                         split,
                         snapshots,
@@ -721,7 +951,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
             thread.join()
         response = realtime_pb2.SnapshotResponse()
         for result in snapshots:
-            response.data.append(sinopac_snapshot_to_pb(result))
+            response.data.append(self.sinopac_snapshot_to_pb(result))
         return response
 
     def GetStockSnapshotTSE(self, request, _):
@@ -731,7 +961,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         except TokenError:
             logger.error("token error")
             os._exit(0)
-        return sinopac_snapshot_to_pb(snapshots[0])
+        return self.sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockSnapshotOTC(self, request, _):
         worker = self.workers.get(True)
@@ -740,7 +970,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         except TokenError:
             logger.error("token error")
             os._exit(0)
-        return sinopac_snapshot_to_pb(snapshots[0])
+        return self.sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockVolumeRank(self, request, _):
         response = realtime_pb2.StockVolumeRankResponse()
@@ -791,7 +1021,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         for i, split in enumerate(splits):
             threads.append(
                 threading.Thread(
-                    target=fill_snapshot_arr,
+                    target=self.fill_snapshot_arr,
                     args=(
                         split,
                         snapshots,
@@ -805,7 +1035,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
             thread.join()
         response = realtime_pb2.SnapshotResponse()
         for result in snapshots:
-            response.data.append(sinopac_snapshot_to_pb(result))
+            response.data.append(self.sinopac_snapshot_to_pb(result))
         return response
 
 
@@ -890,260 +1120,61 @@ class RPCSubscribe(subscribe_pb2_grpc.SubscribeDataInterfaceServicer):
         return entity_pb2.ErrorMessage(err="")
 
 
-def sinopac_snapshot_to_pb(
-    result,
-) -> realtime_pb2.SnapshotMessage:
-    return realtime_pb2.SnapshotMessage(
-        ts=result.ts,
-        code=result.code,
-        exchange=result.exchange,
-        open=result.open,
-        high=result.high,
-        low=result.low,
-        close=result.close,
-        tick_type=result.tick_type,
-        change_price=result.change_price,
-        change_rate=result.change_rate,
-        change_type=result.change_type,
-        average_price=result.average_price,
-        volume=result.volume,
-        total_volume=result.total_volume,
-        amount=result.amount,
-        total_amount=result.total_amount,
-        yesterday_volume=result.yesterday_volume,
-        buy_price=result.buy_price,
-        buy_volume=result.buy_volume,
-        sell_price=result.sell_price,
-        sell_volume=result.sell_volume,
-        volume_ratio=result.volume_ratio,
-    )
+class GRPCServer:
+    def __init__(self, worker_pool: SinopacWorkerPool, rabbit: RabbitMQS):
+        # simulator
+        simulator = Simulator(worker_pool.main_worker)
 
-
-def fill_snapshot_arr(contracts, snapshots, worker: Sinopac):
-    try:
-        data = worker.snapshots(contracts)
-    except TokenError:
-        logger.error("Token Error")
-        os._exit(0)
-
-    if data is not None:
-        snapshots.extend(data)
-
-
-def fill_stock_history_tick_response(num, date, response, worker: Sinopac):
-    ticks = worker.stock_ticks(num, date)
-    total_count = len(ticks.ts)
-    tmp_length = [
-        len(ticks.close),
-        len(ticks.tick_type),
-        len(ticks.volume),
-        len(ticks.bid_price),
-        len(ticks.bid_volume),
-        len(ticks.ask_price),
-        len(ticks.ask_volume),
-    ]
-
-    for length in tmp_length:
-        if length - total_count != 0:
-            return
-
-    for pos in range(total_count):
-        response.data.append(
-            history_pb2.HistoryTickMessage(
-                code=num,
-                ts=ticks.ts[pos],
-                close=ticks.close[pos],
-                volume=ticks.volume[pos],
-                bid_price=ticks.bid_price[pos],
-                bid_volume=ticks.bid_volume[pos],
-                ask_price=ticks.ask_price[pos],
-                ask_volume=ticks.ask_volume[pos],
-                tick_type=ticks.tick_type[pos],
-            )
+        # gRPC servicer
+        basic_servicer = RPCBasic(
+            simulator=simulator,
+            workers=worker_pool,
         )
 
-
-def fill_future_history_tick_response(code, date, response, worker: Sinopac):
-    ticks = worker.future_ticks(code, date)
-    total_count = len(ticks.ts)
-    tmp_length = [
-        len(ticks.close),
-        len(ticks.tick_type),
-        len(ticks.volume),
-        len(ticks.bid_price),
-        len(ticks.bid_volume),
-        len(ticks.ask_price),
-        len(ticks.ask_volume),
-    ]
-
-    for length in tmp_length:
-        if length - total_count != 0:
-            return
-
-    for pos in range(total_count):
-        response.data.append(
-            history_pb2.HistoryTickMessage(
-                code=code,
-                ts=ticks.ts[pos],
-                close=ticks.close[pos],
-                volume=ticks.volume[pos],
-                bid_price=ticks.bid_price[pos],
-                bid_volume=ticks.bid_volume[pos],
-                ask_price=ticks.ask_price[pos],
-                ask_volume=ticks.ask_volume[pos],
-                tick_type=ticks.tick_type[pos],
-            )
+        history_servicer = RPCHistory(
+            workers=worker_pool,
         )
 
-
-def fill_stock_history_kbar_response(num, date, response, worker: Sinopac):
-    kbar = worker.stock_kbars(num, date)
-    total_count = len(kbar.ts)
-    tmp_length = [
-        len(kbar.Close),
-        len(kbar.Open),
-        len(kbar.High),
-        len(kbar.Low),
-        len(kbar.Volume),
-    ]
-
-    for length in tmp_length:
-        if length - total_count != 0:
-            return
-
-    for pos in range(total_count):
-        response.data.append(
-            history_pb2.HistoryKbarMessage(
-                code=num,
-                ts=kbar.ts[pos],
-                close=kbar.Close[pos],
-                open=kbar.Open[pos],
-                high=kbar.High[pos],
-                low=kbar.Low[pos],
-                volume=kbar.Volume[pos],
-            )
+        realtime_servicer = RPCRealTime(
+            source=Yahoo(),
+            workers=worker_pool,
         )
 
-
-def fill_future_history_kbar_response(code, date, response, sinopac: Sinopac):
-    kbar = sinopac.future_kbars(code, date)
-    total_count = len(kbar.ts)
-    tmp_length = [
-        len(kbar.Close),
-        len(kbar.Open),
-        len(kbar.High),
-        len(kbar.Low),
-        len(kbar.Volume),
-    ]
-
-    for length in tmp_length:
-        if length - total_count != 0:
-            return
-
-    for pos in range(total_count):
-        response.data.append(
-            history_pb2.HistoryKbarMessage(
-                code=code,
-                ts=kbar.ts[pos],
-                close=kbar.Close[pos],
-                open=kbar.Open[pos],
-                high=kbar.High[pos],
-                low=kbar.Low[pos],
-                volume=kbar.Volume[pos],
-            )
+        subscribe_servicer = RPCSubscribe(
+            workers=worker_pool,
         )
 
-
-def fill_stock_history_close_response(num, date, response, sinopac: Sinopac):
-    response.data.append(
-        history_pb2.HistoryCloseMessage(
-            code=num,
-            close=sinopac.get_stock_last_close_by_date(num, date),
-            date=date,
+        trade_servicer = RPCTrade(
+            rabbit=rabbit,
+            simulator=simulator,
+            workers=worker_pool,
         )
-    )
+        self.worker_pool = worker_pool
 
-
-def fill_future_history_close_response(code, date, response, sinopac: Sinopac):
-    response.data.append(
-        history_pb2.HistoryCloseMessage(
-            code=code,
-            close=sinopac.get_future_last_close_by_date(code, date),
-            date=date,
+        server = grpc.server(
+            futures.ThreadPoolExecutor(),
+            options=[
+                (
+                    "grpc.max_send_message_length",
+                    1024 * 1024 * 1024,
+                ),
+                (
+                    "grpc.max_receive_message_length",
+                    1024 * 1024 * 1024,
+                ),
+            ],
         )
-    )
+        basic_pb2_grpc.add_BasicDataInterfaceServicer_to_server(basic_servicer, server)
+        history_pb2_grpc.add_HistoryDataInterfaceServicer_to_server(history_servicer, server)
+        realtime_pb2_grpc.add_RealTimeDataInterfaceServicer_to_server(realtime_servicer, server)
+        subscribe_pb2_grpc.add_SubscribeDataInterfaceServicer_to_server(subscribe_servicer, server)
+        trade_pb2_grpc.add_TradeInterfaceServicer_to_server(trade_servicer, server)
 
+        self.server = server
 
-def serve(
-    port: str,
-    main_trader: Sinopac,
-    workers: list[Sinopac],
-    cfg: RequiredEnv,
-):
-    # set call back
-    rabbit = RabbitMQS(
-        str(cfg.rabbitmq_url),
-        str(cfg.rabbitmq_exchange),
-        128,
-    )
-
-    worker_pool = SinopacWorkerPool(main_trader, workers, cfg.request_limit_per_second)
-    worker_pool.set_event_cb(rabbit.event_callback)
-    worker_pool.set_stock_quote_cb(rabbit.stock_quote_callback_v1)
-    worker_pool.set_future_quote_cb(rabbit.future_quote_callback_v1)
-    worker_pool.set_stock_bid_ask_cb(rabbit.stock_bid_ask_callback)
-    worker_pool.set_future_bid_ask_cb(rabbit.future_bid_ask_callback)
-    worker_pool.set_order_status_cb(rabbit.order_status_callback)
-
-    # simulator
-    simulator = Simulator(worker_pool.main_worker)
-
-    # gRPC servicer
-    basic_servicer = RPCBasic(
-        simulator=simulator,
-        workers=worker_pool,
-    )
-
-    history_servicer = RPCHistory(
-        workers=worker_pool,
-    )
-
-    realtime_servicer = RPCRealTime(
-        source=Yahoo(),
-        workers=worker_pool,
-    )
-
-    subscribe_servicer = RPCSubscribe(
-        workers=worker_pool,
-    )
-
-    trade_servicer = RPCTrade(
-        rabbit=rabbit,
-        simulator=simulator,
-        workers=worker_pool,
-    )
-
-    server = grpc.server(
-        futures.ThreadPoolExecutor(),
-        options=[
-            (
-                "grpc.max_send_message_length",
-                1024 * 1024 * 1024,
-            ),
-            (
-                "grpc.max_receive_message_length",
-                1024 * 1024 * 1024,
-            ),
-        ],
-    )
-    basic_pb2_grpc.add_BasicDataInterfaceServicer_to_server(basic_servicer, server)
-    history_pb2_grpc.add_HistoryDataInterfaceServicer_to_server(history_servicer, server)
-    realtime_pb2_grpc.add_RealTimeDataInterfaceServicer_to_server(realtime_servicer, server)
-    subscribe_pb2_grpc.add_SubscribeDataInterfaceServicer_to_server(subscribe_servicer, server)
-    trade_pb2_grpc.add_TradeInterfaceServicer_to_server(trade_servicer, server)
-
-    server.add_insecure_port(f"[::]:{port}")
-    server.start()
-    logger.info("shioaji version: %s", worker_pool.get_sj_version())
-    logger.info("gRPC Server started at port %s", port)
-    server.wait_for_termination()
+    def serve(self, port: str):
+        self.server.add_insecure_port(f"[::]:{port}")
+        self.server.start()
+        logger.info("shioaji version: %s", self.worker_pool.get_sj_version())
+        logger.info("gRPC Server started at port %s", port)
+        self.server.wait_for_termination()

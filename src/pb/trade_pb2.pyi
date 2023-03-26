@@ -226,3 +226,193 @@ class OptionOrderID(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["order_id", b"order_id", "simulate", b"simulate"]) -> None: ...
 
 global___OptionOrderID = OptionOrderID
+
+@typing_extensions.final
+class Margin(google.protobuf.message.Message):
+    """status(FetchStatus): 資料回傳狀態
+    yesterday_balance(float): 前日餘額
+    today_balance(float): 今日餘額
+    deposit_withdrawal(float): 存提
+    fee(float): 手續費
+    tax(float): 期交稅
+    initial_margin(float): 原始保證金
+    maintenance_margin(float): 維持保證金
+    margin_call(float): 追繳保證金
+    risk_indicator(float): 風險指標
+    royalty_revenue_expenditure(float): 權利金收入與支出
+    equity(float): 權益數
+    equity_amount(float): 權益總值
+    option_openbuy_market_value(float): 未沖銷買方選擇權市值
+    option_opensell_market_value(float): 未沖銷賣方選擇權市值
+    option_open_position(float): 參考未平倉選擇權損益
+    option_settle_profitloss(float): 參考選擇權平倉損益
+    future_open_position(float): 未沖銷期貨浮動損益
+    today_future_open_position(float): 參考當日未沖銷期貨浮動損益
+    future_settle_profitloss(float): 期貨平倉損益
+    available_margin(float): 可動用(出金) 保證金
+    plus_margin(float): 依「加收保證金指標」所加收之保證金
+    plus_margin_indicator(float): 加收保證金指標
+    security_collateral_amount(float): 有價證券抵繳總額
+    order_margin_premium(float): 委託保證金及委託權利金
+    collateral_amount(float): 有價品額
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STATUS_FIELD_NUMBER: builtins.int
+    YESTERDAY_BALANCE_FIELD_NUMBER: builtins.int
+    TODAY_BALANCE_FIELD_NUMBER: builtins.int
+    DEPOSIT_WITHDRAWAL_FIELD_NUMBER: builtins.int
+    FEE_FIELD_NUMBER: builtins.int
+    TAX_FIELD_NUMBER: builtins.int
+    INITIAL_MARGIN_FIELD_NUMBER: builtins.int
+    MAINTENANCE_MARGIN_FIELD_NUMBER: builtins.int
+    MARGIN_CALL_FIELD_NUMBER: builtins.int
+    RISK_INDICATOR_FIELD_NUMBER: builtins.int
+    ROYALTY_REVENUE_EXPENDITURE_FIELD_NUMBER: builtins.int
+    EQUITY_FIELD_NUMBER: builtins.int
+    EQUITY_AMOUNT_FIELD_NUMBER: builtins.int
+    OPTION_OPENBUY_MARKET_VALUE_FIELD_NUMBER: builtins.int
+    OPTION_OPENSELL_MARKET_VALUE_FIELD_NUMBER: builtins.int
+    OPTION_OPEN_POSITION_FIELD_NUMBER: builtins.int
+    OPTION_SETTLE_PROFITLOSS_FIELD_NUMBER: builtins.int
+    FUTURE_OPEN_POSITION_FIELD_NUMBER: builtins.int
+    TODAY_FUTURE_OPEN_POSITION_FIELD_NUMBER: builtins.int
+    FUTURE_SETTLE_PROFITLOSS_FIELD_NUMBER: builtins.int
+    AVAILABLE_MARGIN_FIELD_NUMBER: builtins.int
+    PLUS_MARGIN_FIELD_NUMBER: builtins.int
+    PLUS_MARGIN_INDICATOR_FIELD_NUMBER: builtins.int
+    SECURITY_COLLATERAL_AMOUNT_FIELD_NUMBER: builtins.int
+    ORDER_MARGIN_PREMIUM_FIELD_NUMBER: builtins.int
+    COLLATERAL_AMOUNT_FIELD_NUMBER: builtins.int
+    status: builtins.str
+    yesterday_balance: builtins.float
+    today_balance: builtins.float
+    deposit_withdrawal: builtins.float
+    fee: builtins.float
+    tax: builtins.float
+    initial_margin: builtins.float
+    maintenance_margin: builtins.float
+    margin_call: builtins.float
+    risk_indicator: builtins.float
+    royalty_revenue_expenditure: builtins.float
+    equity: builtins.float
+    equity_amount: builtins.float
+    option_openbuy_market_value: builtins.float
+    option_opensell_market_value: builtins.float
+    option_open_position: builtins.float
+    option_settle_profitloss: builtins.float
+    future_open_position: builtins.float
+    today_future_open_position: builtins.float
+    future_settle_profitloss: builtins.float
+    available_margin: builtins.float
+    plus_margin: builtins.float
+    plus_margin_indicator: builtins.float
+    security_collateral_amount: builtins.float
+    order_margin_premium: builtins.float
+    collateral_amount: builtins.float
+    def __init__(
+        self,
+        *,
+        status: builtins.str = ...,
+        yesterday_balance: builtins.float = ...,
+        today_balance: builtins.float = ...,
+        deposit_withdrawal: builtins.float = ...,
+        fee: builtins.float = ...,
+        tax: builtins.float = ...,
+        initial_margin: builtins.float = ...,
+        maintenance_margin: builtins.float = ...,
+        margin_call: builtins.float = ...,
+        risk_indicator: builtins.float = ...,
+        royalty_revenue_expenditure: builtins.float = ...,
+        equity: builtins.float = ...,
+        equity_amount: builtins.float = ...,
+        option_openbuy_market_value: builtins.float = ...,
+        option_opensell_market_value: builtins.float = ...,
+        option_open_position: builtins.float = ...,
+        option_settle_profitloss: builtins.float = ...,
+        future_open_position: builtins.float = ...,
+        today_future_open_position: builtins.float = ...,
+        future_settle_profitloss: builtins.float = ...,
+        available_margin: builtins.float = ...,
+        plus_margin: builtins.float = ...,
+        plus_margin_indicator: builtins.float = ...,
+        security_collateral_amount: builtins.float = ...,
+        order_margin_premium: builtins.float = ...,
+        collateral_amount: builtins.float = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["available_margin", b"available_margin", "collateral_amount", b"collateral_amount", "deposit_withdrawal", b"deposit_withdrawal", "equity", b"equity", "equity_amount", b"equity_amount", "fee", b"fee", "future_open_position", b"future_open_position", "future_settle_profitloss", b"future_settle_profitloss", "initial_margin", b"initial_margin", "maintenance_margin", b"maintenance_margin", "margin_call", b"margin_call", "option_open_position", b"option_open_position", "option_openbuy_market_value", b"option_openbuy_market_value", "option_opensell_market_value", b"option_opensell_market_value", "option_settle_profitloss", b"option_settle_profitloss", "order_margin_premium", b"order_margin_premium", "plus_margin", b"plus_margin", "plus_margin_indicator", b"plus_margin_indicator", "risk_indicator", b"risk_indicator", "royalty_revenue_expenditure", b"royalty_revenue_expenditure", "security_collateral_amount", b"security_collateral_amount", "status", b"status", "tax", b"tax", "today_balance", b"today_balance", "today_future_open_position", b"today_future_open_position", "yesterday_balance", b"yesterday_balance"]) -> None: ...
+
+global___Margin = Margin
+
+@typing_extensions.final
+class AccountBalance(google.protobuf.message.Message):
+    """status(FetchStatus): 資料回傳狀態
+    acc_balance(float): 餘額
+    date(str): 查詢日期
+    errmsg(str): 錯誤訊息
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STATUS_FIELD_NUMBER: builtins.int
+    ACC_BALANCE_FIELD_NUMBER: builtins.int
+    DATE_FIELD_NUMBER: builtins.int
+    ERRMSG_FIELD_NUMBER: builtins.int
+    status: builtins.str
+    acc_balance: builtins.float
+    date: builtins.str
+    errmsg: builtins.str
+    def __init__(
+        self,
+        *,
+        status: builtins.str = ...,
+        acc_balance: builtins.float = ...,
+        date: builtins.str = ...,
+        errmsg: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["acc_balance", b"acc_balance", "date", b"date", "errmsg", b"errmsg", "status", b"status"]) -> None: ...
+
+global___AccountBalance = AccountBalance
+
+@typing_extensions.final
+class SettlementV1(google.protobuf.message.Message):
+    """date(datetime.date): 交割日期
+    amount(float): 交割金額
+    T(int): Tday
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DATE_FIELD_NUMBER: builtins.int
+    AMOUNT_FIELD_NUMBER: builtins.int
+    T_FIELD_NUMBER: builtins.int
+    date: builtins.str
+    amount: builtins.float
+    T: builtins.int
+    def __init__(
+        self,
+        *,
+        date: builtins.str = ...,
+        amount: builtins.float = ...,
+        T: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["T", b"T", "amount", b"amount", "date", b"date"]) -> None: ...
+
+global___SettlementV1 = SettlementV1
+
+@typing_extensions.final
+class SettlementV1Message(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SETTLEMENT_V1_FIELD_NUMBER: builtins.int
+    @property
+    def settlement_v1(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___SettlementV1]: ...
+    def __init__(
+        self,
+        *,
+        settlement_v1: collections.abc.Iterable[global___SettlementV1] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["settlement_v1", b"settlement_v1"]) -> None: ...
+
+global___SettlementV1Message = SettlementV1Message

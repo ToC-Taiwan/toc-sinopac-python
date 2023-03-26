@@ -7,60 +7,80 @@ import time
 from prometheus_client import start_http_server
 
 from env import RequiredEnv
-from grpcsrv import serve
+from grpcsrv import GRPCServer
 from logger import logger
+from rabbitmq import RabbitMQS
 from rabbitmq_setting import RabbitMQSetting
 from sinopac import Sinopac, SinopacUser
+from sinopac_worker import SinopacWorkerPool
 
-env = RequiredEnv()
-API_KEY = env.api_key
-API_KEY_SECRET = env.api_key_secret
-PERSON_ID = env.person_id
-CA_PASSWORD = env.ca_password
-GRPC_PORT = env.grpc_port
-CONNECTION_COUNT = env.connection_count
+if __name__ == "__main__":
+    env = RequiredEnv()
 
-PROMETHEUS_PORT = 6666
-start_http_server(PROMETHEUS_PORT)
-logger.info("sinopac prometheus server started at port %d", PROMETHEUS_PORT)
+    PROMETHEUS_PORT = 6666
+    start_http_server(PROMETHEUS_PORT)
+    logger.info("sinopac prometheus server started at port %d", PROMETHEUS_PORT)
 
-# start rabbitmq container first
-rc = RabbitMQSetting()
-rc.reset_rabbitmq_exchange()
+    try:
+        rc = RabbitMQSetting(
+            env.rabbitmq_user,
+            env.rabbitmq_password,
+            env.rabbitmq_host,
+            env.rabbitmq_exchange,
+        )
+        rc.reset_rabbitmq_exchange()
 
-main_trader: Sinopac
-worker_pool: list[Sinopac] = []
+    except RuntimeError:
+        logger.error("reset rabbitmq exchange fail, retry after 30 seconds")
+        time.sleep(30)
+        os._exit(0)
 
-for i in range(CONNECTION_COUNT):
-    logger.info("establish connection %d", i + 1)
-    is_main = bool(i == 0)
-    new_connection = Sinopac().login(
-        SinopacUser(
-            API_KEY,
-            API_KEY_SECRET,
-            PERSON_ID,
-            CA_PASSWORD,
-        ),
-        is_main,
+    main_trader: Sinopac
+    workers: list[Sinopac] = []
+
+    for i in range(env.connection_count):
+        logger.info("establish connection %d", i + 1)
+        is_main = bool(i == 0)
+        new_connection = Sinopac().login(
+            SinopacUser(
+                env.api_key,
+                env.api_key_secret,
+                env.person_id,
+                env.ca_password,
+            ),
+            is_main,
+        )
+
+        if is_main is True:
+            main_trader = new_connection
+        else:
+            workers.append(new_connection)
+
+    rabbit = RabbitMQS(
+        env.rabbitmq_url,
+        env.rabbitmq_exchange,
+        128,
     )
-    if is_main is True:
-        main_trader = new_connection
-        # if do not let main worker be the first worker in the pool, then continue
-        continue
-    worker_pool.append(new_connection)
 
-try:
-    serve(
-        port=str(GRPC_PORT),
-        main_trader=main_trader,
-        workers=worker_pool,
-        cfg=env,
-    )
+    worker_pool = SinopacWorkerPool(main_trader, workers, env.request_limit_per_second)
+    worker_pool.set_event_cb(rabbit.event_callback)
+    worker_pool.set_stock_quote_cb(rabbit.stock_quote_callback_v1)
+    worker_pool.set_future_quote_cb(rabbit.future_quote_callback_v1)
+    worker_pool.set_stock_bid_ask_cb(rabbit.stock_bid_ask_callback)
+    worker_pool.set_future_bid_ask_cb(rabbit.future_bid_ask_callback)
+    worker_pool.set_order_status_cb(rabbit.order_status_callback)
 
-except RuntimeError:
-    logger.error("runtime error, retry after 30 seconds")
-    time.sleep(30)
-    os._exit(0)
+    try:
+        server = GRPCServer(
+            worker_pool=worker_pool,
+            rabbit=rabbit,
+        )
+        server.serve(port=env.grpc_port)
 
-except KeyboardInterrupt:
-    os._exit(0)
+    except RuntimeError:
+        logger.error("runtime error, retry after 30 seconds")
+        time.sleep(30)
+        os._exit(0)
+
+    except KeyboardInterrupt:
+        os._exit(0)

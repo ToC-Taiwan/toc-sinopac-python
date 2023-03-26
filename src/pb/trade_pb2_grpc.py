@@ -102,6 +102,21 @@ class TradeInterfaceStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=trade__pb2.FuturePositionArr.FromString,
                 )
+        self.GetSettlement = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/GetSettlement',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=trade__pb2.SettlementV1Message.FromString,
+                )
+        self.GetAccountBalance = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/GetAccountBalance',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=trade__pb2.AccountBalance.FromString,
+                )
+        self.GetMargin = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/GetMargin',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=trade__pb2.Margin.FromString,
+                )
 
 
 class TradeInterfaceServicer(object):
@@ -227,6 +242,27 @@ class TradeInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetSettlement(self, request, context):
+        """GetSettlement is the interface for getting settlement
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAccountBalance(self, request, context):
+        """GetAccountBalance is the interface for getting account balance
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetMargin(self, request, context):
+        """GetMargin is the interface for getting margin
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TradeInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -314,6 +350,21 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
                     servicer.GetFuturePosition,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=trade__pb2.FuturePositionArr.SerializeToString,
+            ),
+            'GetSettlement': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSettlement,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=trade__pb2.SettlementV1Message.SerializeToString,
+            ),
+            'GetAccountBalance': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAccountBalance,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=trade__pb2.AccountBalance.SerializeToString,
+            ),
+            'GetMargin': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetMargin,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=trade__pb2.Margin.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -612,5 +663,56 @@ class TradeInterface(object):
         return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetFuturePosition',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             trade__pb2.FuturePositionArr.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetSettlement(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetSettlement',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            trade__pb2.SettlementV1Message.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetAccountBalance(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetAccountBalance',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            trade__pb2.AccountBalance.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetMargin(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetMargin',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            trade__pb2.Margin.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

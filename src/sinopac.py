@@ -6,6 +6,7 @@ import shioaji as sj
 import shioaji.constant as sc
 from shioaji.error import SystemMaintenance, TokenError
 from shioaji.order import Order, Trade
+from shioaji.position import AccountBalance, Margin
 
 from logger import logger
 
@@ -174,12 +175,6 @@ class Sinopac:
 
     def get_option_code_list(self):
         return self.option_code_list
-
-    def list_positions(self):
-        try:
-            return self.__api.list_positions(self.__api.futopt_account)
-        except TimeoutError:
-            return []
 
     def update_order_status_instant(self):
         if self.order_status_callback is None:
@@ -648,3 +643,18 @@ class Sinopac:
         self.update_local_order()
         cancel_order = self.get_local_order_by_order_id(order_id)
         return OrderStatus(order_id, cancel_order.status.status, "")
+
+    def account_balance(self) -> AccountBalance:
+        return self.__api.account_balance()
+
+    def margin(self) -> Margin:
+        return self.__api.margin(self.__api.futopt_account)
+
+    def list_future_positions(self):
+        try:
+            return self.__api.list_positions(self.__api.futopt_account)
+        except TimeoutError:
+            return []
+
+    def settlements(self):
+        return self.__api.settlements(self.__api.stock_account)
