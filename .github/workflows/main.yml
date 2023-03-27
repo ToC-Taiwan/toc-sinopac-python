@@ -29,6 +29,7 @@ jobs:
               run: |
                   make venv
                   source venv/bin/activate
+                  make install
                   make lint
 
     Build:
