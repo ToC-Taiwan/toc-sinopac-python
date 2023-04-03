@@ -355,28 +355,22 @@ class AccountBalance(google.protobuf.message.Message):
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    STATUS_FIELD_NUMBER: builtins.int
-    ACC_BALANCE_FIELD_NUMBER: builtins.int
     DATE_FIELD_NUMBER: builtins.int
-    ERRMSG_FIELD_NUMBER: builtins.int
-    status: builtins.str
-    acc_balance: builtins.float
+    BALANCE_FIELD_NUMBER: builtins.int
     date: builtins.str
-    errmsg: builtins.str
+    balance: builtins.float
     def __init__(
         self,
         *,
-        status: builtins.str = ...,
-        acc_balance: builtins.float = ...,
         date: builtins.str = ...,
-        errmsg: builtins.str = ...,
+        balance: builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["acc_balance", b"acc_balance", "date", b"date", "errmsg", b"errmsg", "status", b"status"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["balance", b"balance", "date", b"date"]) -> None: ...
 
 global___AccountBalance = AccountBalance
 
 @typing_extensions.final
-class SettlementV1(google.protobuf.message.Message):
+class Settlement(google.protobuf.message.Message):
     """date(datetime.date): 交割日期
     amount(float): 交割金額
     T(int): Tday
@@ -386,33 +380,30 @@ class SettlementV1(google.protobuf.message.Message):
 
     DATE_FIELD_NUMBER: builtins.int
     AMOUNT_FIELD_NUMBER: builtins.int
-    T_FIELD_NUMBER: builtins.int
     date: builtins.str
     amount: builtins.float
-    T: builtins.int
     def __init__(
         self,
         *,
         date: builtins.str = ...,
         amount: builtins.float = ...,
-        T: builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["T", b"T", "amount", b"amount", "date", b"date"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["amount", b"amount", "date", b"date"]) -> None: ...
 
-global___SettlementV1 = SettlementV1
+global___Settlement = Settlement
 
 @typing_extensions.final
-class SettlementV1Message(google.protobuf.message.Message):
+class SettlementList(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    SETTLEMENT_V1_FIELD_NUMBER: builtins.int
+    SETTLEMENT_FIELD_NUMBER: builtins.int
     @property
-    def settlement_v1(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___SettlementV1]: ...
+    def settlement(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Settlement]: ...
     def __init__(
         self,
         *,
-        settlement_v1: collections.abc.Iterable[global___SettlementV1] | None = ...,
+        settlement: collections.abc.Iterable[global___Settlement] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["settlement_v1", b"settlement_v1"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["settlement", b"settlement"]) -> None: ...
 
-global___SettlementV1Message = SettlementV1Message
+global___SettlementList = SettlementList

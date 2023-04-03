@@ -787,21 +787,18 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
     def GetAccountBalance(self, request, _):
         balance = self.workers.account_balance()
         return trade_pb2.AccountBalance(
-            status=balance.status,
-            acc_balance=balance.acc_balance,
             date=balance.date,
-            errmsg=balance.errmsg,
+            balance=balance.acc_balance,
         )
 
     def GetSettlement(self, request, _):
-        result = trade_pb2.SettlementV1Message()
+        result = trade_pb2.SettlementList()
         settlements = self.workers.settlements()
         for settle in settlements:
-            result.settlement_v1.append(
-                trade_pb2.SettlementV1(
+            result.settlement.append(
+                trade_pb2.Settlement(
                     date=datetime.strftime(settle.date, "%Y-%m-%d %H:%M:%S"),
                     amount=settle.amount,
-                    T=settle.T,
                 )
             )
         return result

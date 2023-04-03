@@ -105,7 +105,7 @@ class TradeInterfaceStub(object):
         self.GetSettlement = channel.unary_unary(
                 '/toc_python_forwarder.TradeInterface/GetSettlement',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=trade__pb2.SettlementV1Message.FromString,
+                response_deserializer=trade__pb2.SettlementList.FromString,
                 )
         self.GetAccountBalance = channel.unary_unary(
                 '/toc_python_forwarder.TradeInterface/GetAccountBalance',
@@ -354,7 +354,7 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
             'GetSettlement': grpc.unary_unary_rpc_method_handler(
                     servicer.GetSettlement,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=trade__pb2.SettlementV1Message.SerializeToString,
+                    response_serializer=trade__pb2.SettlementList.SerializeToString,
             ),
             'GetAccountBalance': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAccountBalance,
@@ -679,7 +679,7 @@ class TradeInterface(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetSettlement',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            trade__pb2.SettlementV1Message.FromString,
+            trade__pb2.SettlementList.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
