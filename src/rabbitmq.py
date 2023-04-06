@@ -66,7 +66,6 @@ class RabbitMQS:
         def heartbeat():
             while True:
                 time.sleep(20)
-                print("heartbeat")
                 connection.process_data_events()
 
         threading.Thread(target=heartbeat, daemon=True).start()
