@@ -644,11 +644,17 @@ class Sinopac:
         cancel_order = self.get_local_order_by_order_id(order_id)
         return OrderStatus(order_id, cancel_order.status.status, "")
 
-    def account_balance(self) -> AccountBalance:
-        return self.__api.account_balance()
+    def account_balance(self) -> AccountBalance | None:
+        try:
+            return self.__api.account_balance()
+        except Exception:
+            return None
 
-    def margin(self) -> Margin:
-        return self.__api.margin(self.__api.futopt_account)
+    def margin(self) -> Margin | None:
+        try:
+            return self.__api.margin(self.__api.futopt_account)
+        except Exception:
+            return None
 
     def list_future_positions(self):
         try:
@@ -657,4 +663,7 @@ class Sinopac:
             return []
 
     def settlements(self):
-        return self.__api.settlements(self.__api.stock_account)
+        try:
+            return self.__api.settlements(self.__api.stock_account)
+        except Exception:
+            return []

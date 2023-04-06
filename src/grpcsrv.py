@@ -786,6 +786,11 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
 
     def GetAccountBalance(self, request, _):
         balance = self.workers.account_balance()
+        if balance is None:
+            return trade_pb2.AccountBalance(
+                date="",
+                balance=0,
+            )
         return trade_pb2.AccountBalance(
             date=balance.date,
             balance=balance.acc_balance,
@@ -805,6 +810,8 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
 
     def GetMargin(self, request, _):
         margin = self.workers.margin()
+        if margin is None:
+            return trade_pb2.Margin()
         return trade_pb2.Margin(
             status=margin.status,
             yesterday_balance=margin.yesterday_balance,
