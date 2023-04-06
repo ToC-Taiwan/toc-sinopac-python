@@ -62,6 +62,13 @@ class RabbitMQS:
             on_message_callback=self.terminate,
             auto_ack=True,
         )
+
+        def heartbeat():
+            while True:
+                time.sleep(20)
+                connection.process_data_events()
+
+        threading.Thread(target=heartbeat, daemon=True).start()
         channel.start_consuming()
 
     def terminate(self, channel, method, properties, body):  # pylint: disable=unused-argument

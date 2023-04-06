@@ -659,7 +659,7 @@ class Sinopac:
     def list_future_positions(self):
         try:
             return self.__api.list_positions(self.__api.futopt_account)
-        except TimeoutError:
+        except Exception:
             return []
 
     def settlements(self):
