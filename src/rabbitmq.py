@@ -63,7 +63,13 @@ class RabbitMQS:
             auto_ack=True,
         )
 
-        self.pika_queue.put(PikaCC(connection, channel))
+        def heartbeat():
+            while True:
+                time.sleep(20)
+                print("heartbeat")
+                connection.process_data_events()
+
+        threading.Thread(target=heartbeat, daemon=True).start()
         channel.start_consuming()
 
     def terminate(self, channel, method, properties, body):  # pylint: disable=unused-argument
