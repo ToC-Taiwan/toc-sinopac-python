@@ -44,6 +44,7 @@ class RabbitMQS:
     def subscribe_terminate(self):
         connection = pika.BlockingConnection(self.parameters)
         channel = connection.channel()
+        self.pika_queue.put(PikaCC(connection, channel))
 
         result = channel.queue_declare(queue="", exclusive=True)
         # from https://www.rabbitmq.com/tutorials/tutorial-four-python.html
