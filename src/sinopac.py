@@ -1,3 +1,4 @@
+import logging
 import os
 import threading
 import time
@@ -9,6 +10,8 @@ from shioaji.order import Order, Trade
 from shioaji.position import AccountBalance, Margin
 
 from logger import logger
+
+logging.getLogger("shioaji").propagate = False
 
 
 class OrderStatus:
