@@ -102,6 +102,11 @@ class TradeInterfaceStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=trade__pb2.FuturePositionArr.FromString,
                 )
+        self.GetStockPosition = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/GetStockPosition',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=trade__pb2.StockPositionArr.FromString,
+                )
         self.GetSettlement = channel.unary_unary(
                 '/toc_python_forwarder.TradeInterface/GetSettlement',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -242,6 +247,13 @@ class TradeInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetStockPosition(self, request, context):
+        """GetStockPosition is the interface for getting stock position
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetSettlement(self, request, context):
         """GetSettlement is the interface for getting settlement
         """
@@ -350,6 +362,11 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
                     servicer.GetFuturePosition,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=trade__pb2.FuturePositionArr.SerializeToString,
+            ),
+            'GetStockPosition': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStockPosition,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=trade__pb2.StockPositionArr.SerializeToString,
             ),
             'GetSettlement': grpc.unary_unary_rpc_method_handler(
                     servicer.GetSettlement,
@@ -663,6 +680,23 @@ class TradeInterface(object):
         return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetFuturePosition',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             trade__pb2.FuturePositionArr.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetStockPosition(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/GetStockPosition',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            trade__pb2.StockPositionArr.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

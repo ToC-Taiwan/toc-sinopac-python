@@ -2,12 +2,13 @@ import logging
 import os
 import threading
 import time
+from typing import List
 
 import shioaji as sj
 import shioaji.constant as sc
 from shioaji.error import SystemMaintenance, TokenError
 from shioaji.order import Order, Trade
-from shioaji.position import AccountBalance, Margin
+from shioaji.position import AccountBalance, FuturePosition, Margin, StockPosition
 
 from logger import logger
 
@@ -658,9 +659,19 @@ class Sinopac:
         except Exception:
             return None
 
-    def list_future_positions(self):
+    def list_future_positions(self) -> List[FuturePosition]:
         try:
-            return self.__api.list_positions(self.__api.futopt_account)
+            result: List[FuturePosition] = []
+            result = self.__api.list_positions(self.__api.futopt_account)
+            return result
+        except Exception:
+            return []
+
+    def list_stock_positions(self) -> List[StockPosition]:
+        try:
+            result: List[StockPosition] = []
+            result = self.__api.list_positions(self.__api.stock_account)
+            return result
         except Exception:
             return []
 

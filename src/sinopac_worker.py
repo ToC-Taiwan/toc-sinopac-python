@@ -321,6 +321,9 @@ class SinopacWorkerPool:
     def get_future_position(self):
         return self.main_worker.list_future_positions()
 
+    def get_stock_position(self):
+        return self.main_worker.list_stock_positions()
+
     def get_stock_num_list(self):
         return self.main_worker.get_stock_num_list()
 

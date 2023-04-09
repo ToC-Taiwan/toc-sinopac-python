@@ -67,6 +67,90 @@ class FuturePositionArr(google.protobuf.message.Message):
 global___FuturePositionArr = FuturePositionArr
 
 @typing_extensions.final
+class StockPosition(google.protobuf.message.Message):
+    """id (int): position id
+    code (str): contract id
+    direction (Action): action {Buy, Sell}
+    quantity (int): quantity
+    price (float): the average price
+    last_price (float): last price
+    pnl (float): unrealized profit
+    yd_quantity (int): yesterday
+    cond (StockOrderCond): Default Cash {Cash(現股), Netting(餘額交割), MarginTrading(融資),ShortSelling(融券), Emerging(興櫃)}
+    margin_purchase_amount (int): margin_purchase_amount
+    collateral (int): collateral
+    short_sale_margin (int): short_sale_margin
+    interest (int): interest
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ID_FIELD_NUMBER: builtins.int
+    CODE_FIELD_NUMBER: builtins.int
+    DIRECTION_FIELD_NUMBER: builtins.int
+    QUANTITY_FIELD_NUMBER: builtins.int
+    PRICE_FIELD_NUMBER: builtins.int
+    LAST_PRICE_FIELD_NUMBER: builtins.int
+    PNL_FIELD_NUMBER: builtins.int
+    YD_QUANTITY_FIELD_NUMBER: builtins.int
+    COND_FIELD_NUMBER: builtins.int
+    MARGIN_PURCHASE_AMOUNT_FIELD_NUMBER: builtins.int
+    COLLATERAL_FIELD_NUMBER: builtins.int
+    SHORT_SALE_MARGIN_FIELD_NUMBER: builtins.int
+    INTEREST_FIELD_NUMBER: builtins.int
+    id: builtins.int
+    code: builtins.str
+    direction: builtins.str
+    quantity: builtins.int
+    price: builtins.float
+    last_price: builtins.float
+    pnl: builtins.float
+    yd_quantity: builtins.int
+    cond: builtins.str
+    margin_purchase_amount: builtins.int
+    collateral: builtins.int
+    short_sale_margin: builtins.int
+    interest: builtins.int
+    def __init__(
+        self,
+        *,
+        id: builtins.int = ...,
+        code: builtins.str = ...,
+        direction: builtins.str = ...,
+        quantity: builtins.int = ...,
+        price: builtins.float = ...,
+        last_price: builtins.float = ...,
+        pnl: builtins.float = ...,
+        yd_quantity: builtins.int = ...,
+        cond: builtins.str = ...,
+        margin_purchase_amount: builtins.int = ...,
+        collateral: builtins.int = ...,
+        short_sale_margin: builtins.int = ...,
+        interest: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["code", b"code", "collateral", b"collateral", "cond", b"cond", "direction", b"direction", "id", b"id", "interest", b"interest", "last_price", b"last_price", "margin_purchase_amount", b"margin_purchase_amount", "pnl", b"pnl", "price", b"price", "quantity", b"quantity", "short_sale_margin", b"short_sale_margin", "yd_quantity", b"yd_quantity"]) -> None: ...
+
+global___StockPosition = StockPosition
+
+@typing_extensions.final
+class StockPositionArr(google.protobuf.message.Message):
+    """StockPositionArr is the struct for stock position array"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    POSITION_ARR_FIELD_NUMBER: builtins.int
+    @property
+    def position_arr(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___StockPosition]: ...
+    def __init__(
+        self,
+        *,
+        position_arr: collections.abc.Iterable[global___StockPosition] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["position_arr", b"position_arr"]) -> None: ...
+
+global___StockPositionArr = StockPositionArr
+
+@typing_extensions.final
 class StockOrderDetail(google.protobuf.message.Message):
     """StockOrderDetail is the struct for stock order detail"""
 

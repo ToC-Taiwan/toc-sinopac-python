@@ -521,18 +521,40 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
     def GetFuturePosition(self, request, _):
         response = trade_pb2.FuturePositionArr()
         result = self.workers.get_future_position()
-        if len(result) > 0:
-            for pos in result:
-                response.position_arr.append(
-                    trade_pb2.FuturePosition(
-                        code=pos.code,
-                        direction=pos.direction,
-                        quantity=pos.quantity,
-                        price=pos.price,
-                        last_price=pos.last_price,
-                        pnl=pos.pnl,
-                    )
+        for pos in result:
+            response.position_arr.append(
+                trade_pb2.FuturePosition(
+                    code=pos.code,
+                    direction=pos.direction,
+                    quantity=pos.quantity,
+                    price=pos.price,
+                    last_price=pos.last_price,
+                    pnl=pos.pnl,
                 )
+            )
+        return response
+
+    def GetStockPosition(self, request, _):
+        response = trade_pb2.StockPositionArr()
+        result = self.workers.get_stock_position()
+        for pos in result:
+            response.position_arr.append(
+                trade_pb2.StockPosition(
+                    id=pos.id,
+                    code=pos.code,
+                    direction=pos.direction,
+                    quantity=pos.quantity,
+                    price=pos.price,
+                    last_price=pos.last_price,
+                    pnl=pos.pnl,
+                    yd_quantity=pos.yd_quantity,
+                    cond=pos.cond,
+                    margin_purchase_amount=pos.margin_purchase_amount,
+                    collateral=pos.collateral,
+                    short_sale_margin=pos.short_sale_margin,
+                    interest=pos.interest,
+                )
+            )
         return response
 
     def BuyStock(self, request, _):
