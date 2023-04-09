@@ -48,17 +48,16 @@ class Sinopac:
     def get_sj_version(self):
         return str(sj.__version__)
 
-    def get_sj_api(self) -> sj.Shioaji:
-        return self.__api
-
     def event_logger_cb(self, resp_code: int, event_code: int, info: str, event: str):
         if event_code != 0:
-            logger.info("resp_code: %d", resp_code)
-            logger.info("event_code: %d", event_code)
-            logger.info("info: %s", info)
-            logger.info("event: %s", event)
+            logger.warning("resp_code: %d", resp_code)
+            logger.warning("event_code: %d", event_code)
+            logger.warning("info: %s", info)
+            logger.warning("event: %s", event)
 
         if event_code == 12:
+            logger.error("reconnecting in login, terminate and retry after 30 sec")
+            time.sleep(30)
             os._exit(0)
 
     def login_cb(self, security_type):

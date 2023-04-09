@@ -262,6 +262,7 @@ class SinopacWorkerPool:
         return fail_arr
 
     def set_event_cb(self, func):
+        self.main_worker.set_event_callback(func)
         for worker in self.workers:
             worker.set_event_callback(func)
 

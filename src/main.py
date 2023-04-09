@@ -59,7 +59,7 @@ if __name__ == "__main__":
     rabbit = RabbitMQS(
         env.rabbitmq_url,
         env.rabbitmq_exchange,
-        128,
+        64,
     )
 
     worker_pool = SinopacWorkerPool(main_trader, workers, env.request_limit_per_second)
