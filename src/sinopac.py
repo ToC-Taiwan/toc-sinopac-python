@@ -61,7 +61,7 @@ class Sinopac:
             time.sleep(30)
             os._exit(0)
 
-    def login_cb(self, security_type):
+    def login_cb(self, security_type: sc.SecurityType):
         with self.__login_status_lock:
             if security_type.value in [item.value for item in sc.SecurityType]:
                 self.__login_status += 1
@@ -479,8 +479,7 @@ class Sinopac:
             order_lot=sc.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
-        contract = self.get_contract_by_stock_num(stock_num)
-        trade = self.__api.place_order(contract, order)
+        trade = self.__api.place_order(self.get_contract_by_stock_num(stock_num), order)
         if trade is not None and trade.order.id != "":
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "buy stock fail")
@@ -495,8 +494,7 @@ class Sinopac:
             order_lot=sc.StockOrderLot.Common,
             account=self.__api.stock_account,
         )
-        contract = self.get_contract_by_stock_num(stock_num)
-        trade = self.__api.place_order(contract, order)
+        trade = self.__api.place_order(self.get_contract_by_stock_num(stock_num), order)
         if trade is not None and trade.order.id != "":
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "sell stock fail")
@@ -512,8 +510,7 @@ class Sinopac:
             daytrade_short=True,
             account=self.__api.stock_account,
         )
-        contract = self.get_contract_by_stock_num(stock_num)
-        trade = self.__api.place_order(contract, order)
+        trade = self.__api.place_order(self.get_contract_by_stock_num(stock_num), order)
         if trade is not None and trade.order.id != "":
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "sell first stock fail")
@@ -527,8 +524,7 @@ class Sinopac:
 
         self.__api.cancel_order(cancel_order)
         self.update_local_order()
-        cancel_order = self.get_local_order_by_order_id(order_id)
-        return OrderStatus(order_id, cancel_order.status.status, "")
+        return OrderStatus(order_id, self.get_local_order_by_order_id(order_id).status.status, "")
 
     def buy_future(self, code: str, price: float, quantity: int):
         order: Order = self.__api.Order(
@@ -540,8 +536,7 @@ class Sinopac:
             octype=sc.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
-        contract = self.get_contract_by_future_code(code)
-        trade = self.__api.place_order(contract=contract, order=order)
+        trade = self.__api.place_order(contract=self.get_contract_by_future_code(code), order=order)
         if trade is not None and trade.order.id != "":
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "buy future fail")
@@ -556,8 +551,7 @@ class Sinopac:
             octype=sc.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
-        contract = self.get_contract_by_future_code(code)
-        trade = self.__api.place_order(contract=contract, order=order)
+        trade = self.__api.place_order(contract=self.get_contract_by_future_code(code), order=order)
         if trade is not None and trade.order.id != "":
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "sell future fail")
@@ -572,8 +566,7 @@ class Sinopac:
             octype=sc.FuturesOCType.Auto,
             account=self.__api.futopt_account,
         )
-        contract = self.get_contract_by_future_code(code)
-        trade = self.__api.place_order(contract=contract, order=order)
+        trade = self.__api.place_order(contract=self.get_contract_by_future_code(code), order=order)
         if trade is not None and trade.order.id != "":
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "sell first future fail")
@@ -587,8 +580,7 @@ class Sinopac:
 
         self.__api.cancel_order(cancel_order)
         self.update_local_order()
-        cancel_order = self.get_local_order_by_order_id(order_id)
-        return OrderStatus(order_id, cancel_order.status.status, "")
+        return OrderStatus(order_id, self.get_local_order_by_order_id(order_id).status.status, "")
 
     def buy_option(self, code: str, price: float, quantity: int):
         order: Order = self.__api.Order(
@@ -599,8 +591,7 @@ class Sinopac:
             order_type=sc.OrderType.ROD,
             account=self.__api.futopt_account,
         )
-        contract = self.get_contract_by_option_code(code)
-        trade = self.__api.place_order(contract=contract, order=order)
+        trade = self.__api.place_order(contract=self.get_contract_by_option_code(code), order=order)
         if trade is not None and trade.order.id != "":
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "buy option fail")
@@ -614,8 +605,7 @@ class Sinopac:
             order_type=sc.OrderType.ROD,
             account=self.__api.futopt_account,
         )
-        contract = self.get_contract_by_option_code(code)
-        trade = self.__api.place_order(contract=contract, order=order)
+        trade = self.__api.place_order(contract=self.get_contract_by_option_code(code), order=order)
         if trade is not None and trade.order.id != "":
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "sell option fail")
@@ -629,8 +619,7 @@ class Sinopac:
             order_type=sc.OrderType.ROD,
             account=self.__api.futopt_account,
         )
-        contract = self.get_contract_by_option_code(code)
-        trade = self.__api.place_order(contract=contract, order=order)
+        trade = self.__api.place_order(contract=self.get_contract_by_option_code(code), order=order)
         if trade is not None and trade.order.id != "":
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "sell first option fail")
@@ -644,8 +633,7 @@ class Sinopac:
 
         self.__api.cancel_order(cancel_order)
         self.update_local_order()
-        cancel_order = self.get_local_order_by_order_id(order_id)
-        return OrderStatus(order_id, cancel_order.status.status, "")
+        return OrderStatus(order_id, self.get_local_order_by_order_id(order_id).status.status, "")
 
     def account_balance(self) -> AccountBalance | None:
         try:
