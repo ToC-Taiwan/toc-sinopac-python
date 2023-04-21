@@ -33,7 +33,7 @@ check: ## check environment
 ifneq ($(PYTHON),$(PWD)/venv/bin/python3)
 	$(error "Please run 'make venv' first")
 endif
-	@echo "Venv pyython version: $(shell $(PYTHON) --version | awk '{print $$2}')"
+	@echo "Venv python version: $(shell $(PYTHON) --version | awk '{print $$2}')"
 	@echo "Python path: $(PYTHON)"
 .PHONY: check
 
