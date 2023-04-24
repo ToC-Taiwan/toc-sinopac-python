@@ -256,6 +256,9 @@ class RabbitMQS:
             else:
                 order_price = order.order.price
 
+            if len(order.status.deals) > 0:
+                order_price = order.status.deals[0].price
+
             qty = order.order.quantity
             if order.status.deal_quantity not in (0, qty):
                 qty = order.status.deal_quantity
