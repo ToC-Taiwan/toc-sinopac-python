@@ -5,7 +5,7 @@ PWD=$(shell pwd)
 PBPATH=$(PWD)/src/pb
 
 run: check ### run
-	@SJ_LOG_PATH=$(PWD)/logs/shioaji.log SJ_CONTRACTS_PATH=$(PWD)/data PYTHONPATH=$(PBPATH) $(PYTHON) -BOO ./src/main.py
+	@SJ_LOG_PATH=$(PWD)/logs/shioaji.log SJ_CONTRACTS_PATH=$(PWD)/data PYTHONPATH=$(PBPATH) $(PYTHON) -BO ./src/main.py
 .PHONY: run
 
 lint: check ### lint

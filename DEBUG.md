@@ -22,7 +22,7 @@ echo '{
             "envFile": "${workspaceFolder}/.env",
             "python": "${command:python.interpreterPath}",
             "pythonArgs": [
-                "-BOO"
+                "-BO"
             ],
             "preLaunchTask": "Check venv",
             "internalConsoleOptions": "neverOpen"
