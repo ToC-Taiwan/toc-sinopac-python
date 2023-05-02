@@ -37,7 +37,7 @@ class Sinopac:
         self.__login_status = int()
 
         # callback initialization avoid NoneType error
-        self.order_status_callback = None
+        self.non_block_order_callback = None
 
         self.stock_num_list: list[str] = []
         self.future_code_list: list[str] = []
@@ -138,8 +138,8 @@ class Sinopac:
     def set_order_callback(self, func):
         self.__api.set_order_callback(func)
 
-    def set_order_status_callback(self, func):
-        self.order_status_callback = func
+    def set_non_block_order_callback(self, func):
+        self.non_block_order_callback = func
 
     def fill_stock_num_list(self):
         for contract_arr in self.__api.Contracts.Stocks:
@@ -179,13 +179,16 @@ class Sinopac:
     def get_option_code_list(self):
         return self.option_code_list
 
-    def update_order_status_instant(self):
-        if self.order_status_callback is None:
-            return "order_status_callback is None"
+    def update_order_non_block(self):
+        if self.non_block_order_callback is None:
+            return "non_block_order_callback is None"
 
         with self.__order_map_lock:
-            self.__api.update_status(timeout=0, cb=self.order_status_callback)
-            return None
+            try:
+                self.__api.update_status(timeout=0, cb=self.non_block_order_callback)
+                return ""
+            except Exception:
+                return "update_order_non_block fail"
 
     def get_local_order(self) -> list[Trade]:
         with self.__order_map_lock:

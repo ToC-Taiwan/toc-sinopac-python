@@ -68,7 +68,7 @@ if __name__ == "__main__":
     worker_pool.set_future_quote_cb(rabbit.future_quote_callback_v1)
     worker_pool.set_stock_bid_ask_cb(rabbit.stock_bid_ask_callback)
     worker_pool.set_future_bid_ask_cb(rabbit.future_bid_ask_callback)
-    worker_pool.set_order_status_cb(rabbit.order_status_callback)
+    worker_pool.set_non_block_order_callback(rabbit.order_status_callback)
 
     try:
         server = GRPCServer(

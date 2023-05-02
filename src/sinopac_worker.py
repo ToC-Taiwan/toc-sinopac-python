@@ -282,8 +282,8 @@ class SinopacWorkerPool:
         for worker in self.workers:
             worker.set_on_bidask_fop_v1_callback(func)
 
-    def set_order_status_cb(self, func):
-        self.main_worker.set_order_status_callback(func)
+    def set_non_block_order_callback(self, func):
+        self.main_worker.set_non_block_order_callback(func)
 
     def buy_stock(self, stock_num, price, quantity):
         return self.main_worker.buy_stock(stock_num, price, quantity)
@@ -304,7 +304,7 @@ class SinopacWorkerPool:
         return self.main_worker.get_local_order()
 
     def get_non_block_order_status_arr(self):
-        return self.main_worker.update_order_status_instant()
+        return self.main_worker.update_order_non_block()
 
     def buy_future(self, code, price, quantity):
         return self.main_worker.buy_future(code, price, quantity)
