@@ -27,6 +27,16 @@ class TradeInterfaceStub(object):
                 request_serializer=trade__pb2.StockOrderDetail.SerializeToString,
                 response_deserializer=trade__pb2.TradeResult.FromString,
                 )
+        self.BuyOddStock = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/BuyOddStock',
+                request_serializer=trade__pb2.OddStockOrderDetail.SerializeToString,
+                response_deserializer=trade__pb2.TradeResult.FromString,
+                )
+        self.SellOddStock = channel.unary_unary(
+                '/toc_python_forwarder.TradeInterface/SellOddStock',
+                request_serializer=trade__pb2.OddStockOrderDetail.SerializeToString,
+                response_deserializer=trade__pb2.TradeResult.FromString,
+                )
         self.SellFirstStock = channel.unary_unary(
                 '/toc_python_forwarder.TradeInterface/SellFirstStock',
                 request_serializer=trade__pb2.StockOrderDetail.SerializeToString,
@@ -136,6 +146,20 @@ class TradeInterfaceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def SellStock(self, request, context):
+        """SellStock is the interface for selling stock
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def BuyOddStock(self, request, context):
+        """BuyStock is the interface for buying stock
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SellOddStock(self, request, context):
         """SellStock is the interface for selling stock
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -288,6 +312,16 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
                     request_deserializer=trade__pb2.StockOrderDetail.FromString,
                     response_serializer=trade__pb2.TradeResult.SerializeToString,
             ),
+            'BuyOddStock': grpc.unary_unary_rpc_method_handler(
+                    servicer.BuyOddStock,
+                    request_deserializer=trade__pb2.OddStockOrderDetail.FromString,
+                    response_serializer=trade__pb2.TradeResult.SerializeToString,
+            ),
+            'SellOddStock': grpc.unary_unary_rpc_method_handler(
+                    servicer.SellOddStock,
+                    request_deserializer=trade__pb2.OddStockOrderDetail.FromString,
+                    response_serializer=trade__pb2.TradeResult.SerializeToString,
+            ),
             'SellFirstStock': grpc.unary_unary_rpc_method_handler(
                     servicer.SellFirstStock,
                     request_deserializer=trade__pb2.StockOrderDetail.FromString,
@@ -424,6 +458,40 @@ class TradeInterface(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/SellStock',
             trade__pb2.StockOrderDetail.SerializeToString,
+            trade__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def BuyOddStock(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/BuyOddStock',
+            trade__pb2.OddStockOrderDetail.SerializeToString,
+            trade__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SellOddStock(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.TradeInterface/SellOddStock',
+            trade__pb2.OddStockOrderDetail.SerializeToString,
             trade__pb2.TradeResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

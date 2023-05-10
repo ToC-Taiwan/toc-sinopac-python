@@ -672,3 +672,39 @@ class Sinopac:
             return self.__api.settlements(self.__api.stock_account)
         except Exception:
             return []
+
+    def buy_odd_stock(self, stock_num: str, price: float, quantity: int):
+        if quantity >= 1000:
+            return OrderStatus("", "", "quantity must be less than 1000")
+
+        order: Order = self.__api.Order(
+            price=price,
+            quantity=quantity,
+            action=sc.Action.Buy,
+            price_type=sc.StockPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            order_lot=sc.StockOrderLot.IntradayOdd,
+            account=self.__api.stock_account,
+        )
+        trade = self.__api.place_order(self.get_contract_by_stock_num(stock_num), order)
+        if trade is not None and trade.order.id != "":
+            return OrderStatus(trade.order.id, trade.status.status, "")
+        return OrderStatus("", "", "buy odd stock fail")
+
+    def sell_odd_stock(self, stock_num: str, price: float, quantity: int):
+        if quantity >= 1000:
+            return OrderStatus("", "", "quantity must be less than 1000")
+
+        order: Order = self.__api.Order(
+            price=price,
+            quantity=quantity,
+            action=sc.Action.Sell,
+            price_type=sc.StockPriceType.LMT,
+            order_type=sc.OrderType.ROD,
+            order_lot=sc.StockOrderLot.IntradayOdd,
+            account=self.__api.stock_account,
+        )
+        trade = self.__api.place_order(self.get_contract_by_stock_num(stock_num), order)
+        if trade is not None and trade.order.id != "":
+            return OrderStatus(trade.order.id, trade.status.status, "")
+        return OrderStatus("", "", "sell odd stock fail")

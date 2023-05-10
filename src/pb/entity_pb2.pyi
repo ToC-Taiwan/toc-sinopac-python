@@ -23,14 +23,17 @@ class StockNumArr(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STOCK_NUM_ARR_FIELD_NUMBER: builtins.int
+    ODD_FIELD_NUMBER: builtins.int
     @property
     def stock_num_arr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+    odd: builtins.bool
     def __init__(
         self,
         *,
         stock_num_arr: collections.abc.Iterable[builtins.str] | None = ...,
+        odd: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["stock_num_arr", b"stock_num_arr"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["odd", b"odd", "stock_num_arr", b"stock_num_arr"]) -> None: ...
 
 global___StockNumArr = StockNumArr
 

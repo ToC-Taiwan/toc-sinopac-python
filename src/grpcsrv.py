@@ -597,6 +597,32 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
+    def BuyOddStock(self, request, _):
+        result = None
+        result = self.workers.buy_odd_stock(
+            request.stock_num,
+            request.price,
+            request.quantity,
+        )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
+    def SellOddStock(self, request, _):
+        result = None
+        result = self.workers.sell_odd_stock(
+            request.stock_num,
+            request.price,
+            request.quantity,
+        )
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
     def SellFirstStock(self, request, _):
         result = None
         if request.simulate is not True:

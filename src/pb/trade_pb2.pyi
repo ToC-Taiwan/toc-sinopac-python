@@ -177,6 +177,29 @@ class StockOrderDetail(google.protobuf.message.Message):
 global___StockOrderDetail = StockOrderDetail
 
 @typing_extensions.final
+class OddStockOrderDetail(google.protobuf.message.Message):
+    """OddStockOrderDetail is the struct for stock order detail"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STOCK_NUM_FIELD_NUMBER: builtins.int
+    PRICE_FIELD_NUMBER: builtins.int
+    QUANTITY_FIELD_NUMBER: builtins.int
+    stock_num: builtins.str
+    price: builtins.float
+    quantity: builtins.int
+    def __init__(
+        self,
+        *,
+        stock_num: builtins.str = ...,
+        price: builtins.float = ...,
+        quantity: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["price", b"price", "quantity", b"quantity", "stock_num", b"stock_num"]) -> None: ...
+
+global___OddStockOrderDetail = OddStockOrderDetail
+
+@typing_extensions.final
 class FutureOrderDetail(google.protobuf.message.Message):
     """FutureOrderDetail is the struct for future order detail"""
 
