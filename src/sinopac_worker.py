@@ -56,12 +56,12 @@ class SinopacWorkerPool:
     def count(self):
         return len(self.workers)
 
-    def subscribe_stock_tick(self, stock_num):
+    def subscribe_stock_tick(self, stock_num: str, odd: bool):
         with self.sub_lock:
             if stock_num in self.stock_tick_sub_dict:
                 return None
             idx = self.subscribe_count.index(min(self.subscribe_count))
-            result = self.workers[idx].subscribe_stock_tick(stock_num)
+            result = self.workers[idx].subscribe_stock_tick(stock_num, odd)
             if result is not None:
                 return result
             logger.info(

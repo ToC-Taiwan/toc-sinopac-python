@@ -362,12 +362,13 @@ class Sinopac:
             date=date,
         )
 
-    def subscribe_stock_tick(self, stock_num):
+    def subscribe_stock_tick(self, stock_num: str, odd: bool):
         try:
             self.__api.quote.subscribe(
                 self.__api.Contracts.Stocks[stock_num],
                 quote_type=sc.QuoteType.Tick,
                 version=sc.QuoteVersion.v1,
+                intraday_odd=odd,
             )
             return None
         except Exception:

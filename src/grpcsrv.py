@@ -1072,7 +1072,7 @@ class RPCSubscribe(subscribe_pb2_grpc.SubscribeDataInterfaceServicer):
     def SubscribeStockTick(self, request, _):
         response = subscribe_pb2.SubscribeResponse()
         for stock_num in request.stock_num_arr:
-            result = self.workers.subscribe_stock_tick(stock_num)
+            result = self.workers.subscribe_stock_tick(stock_num, request.odd)
             if result is not None:
                 response.fail_arr.append(stock_num)
         return response
