@@ -90,7 +90,7 @@ docker run -d \
   -p 15672:15672 \
   -e RABBITMQ_DEFAULT_USER=admin \
   -e RABBITMQ_DEFAULT_PASS=password \
-  rabbitmq:3.11.13-management
+  rabbitmq:3.11.15-management
 ```
 
 ## Authors
