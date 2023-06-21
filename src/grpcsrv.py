@@ -77,7 +77,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def GetAllStockDetail(self, request, _):
         response = basic_pb2.StockDetailResponse()
-        worker = self.workers.get(False)
+        worker = self.workers.get()
 
         tse_001 = worker.get_contract_tse_001()
         response.stock.append(
@@ -111,7 +111,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def GetAllFutureDetail(self, request, _):
         response = basic_pb2.FutureDetailResponse()
-        worker = self.workers.get(False)
+        worker = self.workers.get()
 
         for row in self.workers.get_future_code_list():
             contract = worker.get_contract_by_future_code(row)
@@ -138,7 +138,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def GetAllOptionDetail(self, request, _):
         response = basic_pb2.OptionDetailResponse()
-        worker = self.workers.get(False)
+        worker = self.workers.get()
 
         for row in self.workers.get_option_code_list():
             contract = worker.get_contract_by_option_code(row)
@@ -212,7 +212,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                     num,
                     request.date,
                     response,
-                    self.workers.get(True),
+                    self.workers.get_data(),
                 ),
                 daemon=True,
             )
@@ -261,7 +261,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                     num,
                     request.date,
                     response,
-                    self.workers.get(True),
+                    self.workers.get_data(),
                 ),
                 daemon=True,
             )
@@ -291,7 +291,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                     num,
                     request.date,
                     response,
-                    self.workers.get(True),
+                    self.workers.get_data(),
                 ),
                 daemon=True,
             )
@@ -313,7 +313,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                         num,
                         date,
                         response,
-                        self.workers.get(True),
+                        self.workers.get_data(),
                     ),
                     daemon=True,
                 )
@@ -332,7 +332,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                 "tse_001",
                 request.date,
                 response,
-                self.workers.get(True),
+                self.workers.get_data(),
             ),
             daemon=True,
         )
@@ -349,7 +349,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                 "tse_001",
                 request.date,
                 response,
-                self.workers.get(True),
+                self.workers.get_data(),
             ),
             daemon=True,
         )
@@ -366,7 +366,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                 "tse_001",
                 request.date,
                 response,
-                self.workers.get(True),
+                self.workers.get_data(),
             ),
             daemon=True,
         )
@@ -416,7 +416,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                     code,
                     request.date,
                     response,
-                    self.workers.get(True),
+                    self.workers.get_data(),
                 ),
                 daemon=True,
             )
@@ -465,7 +465,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                     code,
                     request.date,
                     response,
-                    self.workers.get(True),
+                    self.workers.get_data(),
                 ),
                 daemon=True,
             )
@@ -495,7 +495,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
                     code,
                     request.date,
                     response,
-                    self.workers.get(True),
+                    self.workers.get_data(),
                 ),
                 daemon=True,
             )
@@ -950,7 +950,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
 
     def GetStockSnapshotByNumArr(self, request, _):
         contracts = []
-        worker = self.workers.get(False)
+        worker = self.workers.get()
 
         for stock in request.stock_num_arr:
             contracts.append(worker.get_contract_by_stock_num(stock))
@@ -964,7 +964,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
                     args=(
                         split,
                         snapshots,
-                        self.workers.get(True),
+                        self.workers.get_data(),
                     ),
                     daemon=True,
                 )
@@ -979,7 +979,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
 
     def GetAllStockSnapshot(self, request, _):
         contracts = []
-        worker = self.workers.get(False)
+        worker = self.workers.get()
 
         for stock in self.workers.get_stock_num_list():
             contracts.append(worker.get_contract_by_stock_num(stock))
@@ -993,7 +993,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
                     args=(
                         split,
                         snapshots,
-                        self.workers.get(True),
+                        self.workers.get_data(),
                     ),
                     daemon=True,
                 )
@@ -1007,7 +1007,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         return response
 
     def GetStockSnapshotTSE(self, request, _):
-        worker = self.workers.get(True)
+        worker = self.workers.get_data()
         try:
             snapshots = worker.snapshots([worker.get_contract_tse_001()])
         except TokenError:
@@ -1016,7 +1016,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         return self.sinopac_snapshot_to_pb(snapshots[0])
 
     def GetStockSnapshotOTC(self, request, _):
-        worker = self.workers.get(True)
+        worker = self.workers.get_data()
         try:
             snapshots = worker.snapshots([worker.get_contract_otc_101()])
         except TokenError:
@@ -1026,7 +1026,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
 
     def GetStockVolumeRank(self, request, _):
         response = realtime_pb2.StockVolumeRankResponse()
-        ranks = self.workers.get(True).get_stock_volume_rank_by_date(request.count, request.date)
+        ranks = self.workers.get().get_stock_volume_rank_by_date(request.count, request.date)
         for result in ranks:
             response.data.append(
                 realtime_pb2.StockVolumeRankMessage(
@@ -1063,7 +1063,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
 
     def GetFutureSnapshotByCodeArr(self, request, _):
         contracts = []
-        worker = self.workers.get(False)
+        worker = self.workers.get()
 
         for code in request.future_code_arr:
             contracts.append(worker.get_contract_by_future_code(code))
@@ -1077,7 +1077,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
                     args=(
                         split,
                         snapshots,
-                        self.workers.get(True),
+                        self.workers.get_data(),
                     ),
                     daemon=True,
                 )

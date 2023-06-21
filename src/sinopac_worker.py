@@ -6,8 +6,15 @@ from logger import logger
 from sinopac import Sinopac
 
 
+class QueryDataLimit:
+    def __init__(self, data: int, portfolio: int, order: int):
+        self.data = data
+        self.portfolio = portfolio
+        self.order = order
+
+
 class SinopacWorkerPool:
-    def __init__(self, main_worker: Sinopac, workers: list[Sinopac], request_limt: int):
+    def __init__(self, main_worker: Sinopac, workers: list[Sinopac], request_limt: QueryDataLimit):
         self.main_worker = main_worker
         self.workers = workers
 
@@ -26,32 +33,65 @@ class SinopacWorkerPool:
 
         # request workder limit
         self.request_limit = request_limt
-        self.request_worker_timestamp = int()
         self.request_worker_times = int()
+        self.request_data_timestamp = int()
+        self.request_data_times = int()
+        self.request_portfolio_timestamp = int()
+        self.request_portfolio_times = int()
+        self.request_order_timestamp = int()
+        self.request_order_times = int()
 
     def get_sj_version(self):
         return self.main_worker.get_sj_version()
 
-    def get(self, fetch: bool) -> Sinopac:
+    def get(self) -> Sinopac:
         with self.lock:
-            now = round(datetime.now().timestamp() * 1000)
-            gap = now - self.request_worker_timestamp
-
-            if gap >= 1000:
-                self.request_worker_timestamp = now
-                self.request_worker_times = 0
-
-            elif fetch is True and self.request_worker_times >= self.request_limit:
-                rest_time = 1 - (gap / 1000)
-                time.sleep(rest_time)
-                return self.get(fetch)
-
             idx = self.request_count.index(min(self.request_count))
             self.request_count[idx] += 1
-            if fetch is True:
-                self.request_worker_times += 1
-
+            self.request_worker_times += 1
             return self.workers[idx]
+
+    def get_data(self) -> Sinopac:
+        with self.lock:
+            now = round(datetime.now().timestamp() * 1000)
+            gap = now - self.request_data_timestamp
+            if gap >= 1000:
+                self.request_data_timestamp = now
+                self.request_data_times = 0
+            elif self.request_data_times >= self.request_limit.data:
+                rest_time = 1 - (gap / 1000)
+                time.sleep(rest_time)
+                return self.get_data()
+            idx = self.request_count.index(min(self.request_count))
+            self.request_count[idx] += 1
+            self.request_data_times += 1
+            return self.workers[idx]
+
+    def get_portfolio(self) -> Sinopac:
+        with self.lock:
+            now = round(datetime.now().timestamp() * 1000)
+            gap = now - self.request_portfolio_timestamp
+            if gap >= 1000:
+                self.request_portfolio_timestamp = now
+                self.request_portfolio_times = 0
+            elif self.request_portfolio_times >= self.request_limit.portfolio:
+                rest_time = 1 - (gap / 1000)
+                time.sleep(rest_time)
+                return self.get_portfolio()
+            return self.main_worker
+
+    def get_order(self) -> Sinopac:
+        with self.lock:
+            now = round(datetime.now().timestamp() * 1000)
+            gap = now - self.request_order_timestamp
+            if gap >= 1000:
+                self.request_order_timestamp = now
+                self.request_order_times = 0
+            elif self.request_order_times >= self.request_limit.order:
+                rest_time = 1 - (gap / 1000)
+                time.sleep(rest_time)
+                return self.get_order()
+            return self.main_worker
 
     def count(self):
         return len(self.workers)
@@ -286,49 +326,49 @@ class SinopacWorkerPool:
         self.main_worker.set_non_block_order_callback(func)
 
     def buy_stock(self, stock_num, price, quantity):
-        return self.main_worker.buy_stock(stock_num, price, quantity)
+        return self.get_order().buy_stock(stock_num, price, quantity)
 
     def sell_stock(self, stock_num, price, quantity):
-        return self.main_worker.sell_stock(stock_num, price, quantity)
+        return self.get_order().sell_stock(stock_num, price, quantity)
 
     def buy_odd_stock(self, stock_num, price, quantity):
-        return self.main_worker.buy_odd_stock(stock_num, price, quantity)
+        return self.get_order().buy_odd_stock(stock_num, price, quantity)
 
     def sell_odd_stock(self, stock_num, price, quantity):
-        return self.main_worker.sell_odd_stock(stock_num, price, quantity)
+        return self.get_order().sell_odd_stock(stock_num, price, quantity)
 
     def sell_first_stock(self, stock_num, price, quantity):
-        return self.main_worker.sell_first_stock(stock_num, price, quantity)
+        return self.get_order().sell_first_stock(stock_num, price, quantity)
 
     def cancel_stock(self, order_id):
-        return self.main_worker.cancel_stock(order_id)
+        return self.get_order().cancel_stock(order_id)
 
     def get_order_status_by_id(self, order_id):
-        return self.main_worker.get_order_status_from_local_by_order_id(order_id)
+        return self.get_order().get_order_status_from_local_by_order_id(order_id)
 
     def get_local_order(self):
-        return self.main_worker.get_local_order()
+        return self.get_order().get_local_order()
 
     def get_non_block_order_status_arr(self):
-        return self.main_worker.update_order_non_block()
+        return self.get_order().update_order_non_block()
 
     def buy_future(self, code, price, quantity):
-        return self.main_worker.buy_future(code, price, quantity)
+        return self.get_order().buy_future(code, price, quantity)
 
     def sell_future(self, code, price, quantity):
-        return self.main_worker.sell_future(code, price, quantity)
+        return self.get_order().sell_future(code, price, quantity)
 
     def sell_first_future(self, code, price, quantity):
-        return self.main_worker.sell_first_future(code, price, quantity)
+        return self.get_order().sell_first_future(code, price, quantity)
 
     def cancel_future(self, order_id):
-        return self.main_worker.cancel_future(order_id)
+        return self.get_order().cancel_future(order_id)
 
     def get_future_position(self):
-        return self.main_worker.list_future_positions()
+        return self.get_portfolio().list_future_positions()
 
     def get_stock_position(self):
-        return self.main_worker.list_stock_positions()
+        return self.get_portfolio().list_stock_positions()
 
     def get_stock_num_list(self):
         return self.main_worker.get_stock_num_list()
@@ -340,22 +380,22 @@ class SinopacWorkerPool:
         return self.main_worker.get_option_code_list()
 
     def buy_option(self, code, price, quantity):
-        return self.main_worker.buy_option(code, price, quantity)
+        return self.get_order().buy_option(code, price, quantity)
 
     def sell_option(self, code, price, quantity):
-        return self.main_worker.sell_option(code, price, quantity)
+        return self.get_order().sell_option(code, price, quantity)
 
     def sell_first_option(self, code, price, quantity):
-        return self.main_worker.sell_first_option(code, price, quantity)
+        return self.get_order().sell_first_option(code, price, quantity)
 
     def cancel_option(self, order_id):
-        return self.main_worker.cancel_option(order_id)
+        return self.get_order().cancel_option(order_id)
 
     def account_balance(self):
         return self.main_worker.account_balance()
 
     def margin(self):
-        return self.main_worker.margin()
+        return self.get_portfolio().margin()
 
     def settlements(self):
-        return self.main_worker.settlements()
+        return self.get_portfolio().settlements()

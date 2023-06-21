@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 
-class RequiredEnv:
+class RequiredEnv:  # pylint: disable=too-many-statements
     def __init__(self):
         # load .env file
         load_dotenv()
@@ -32,9 +32,17 @@ class RequiredEnv:
         if self.ca_password is None:
             raise RuntimeError("Missing environment CA_PASSWORD")
 
-        self.request_limit_per_second = int(str(os.environ.get("REQUEST_LIMIT_PER_SECOND")))
-        if self.request_limit_per_second is None:
-            raise RuntimeError("Missing environment REQUEST_LIMIT_PER_SECOND")
+        self.request_data_limit_per_second = int(str(os.environ.get("REQUEST_DATA_LIMIT_PER_SECOND")))
+        if self.request_data_limit_per_second is None:
+            raise RuntimeError("Missing environment REQUEST_DATA_LIMIT_PER_SECOND")
+
+        self.request_portfolio_limit_per_second = int(str(os.environ.get("REQUEST_PORTFOLIO_LIMIT_PER_SECOND")))
+        if self.request_portfolio_limit_per_second is None:
+            raise RuntimeError("Missing environment REQUEST_PORTFOLIO_LIMIT_PER_SECOND")
+
+        self.request_order_limit_per_second = int(str(os.environ.get("REQUEST_ORDER_LIMIT_PER_SECOND")))
+        if self.request_order_limit_per_second is None:
+            raise RuntimeError("Missing environment REQUEST_ORDER_LIMIT_PER_SECOND")
 
         self.rabbitmq_host = str(os.environ.get("RABBITMQ_HOST"))
         if self.rabbitmq_host is None:
