@@ -26,7 +26,7 @@ $pip install -U \
   requests \
   yfinance \
   prometheus-client \
-  pydantic=="1.10.10"
+  pydantic=="1.10.11"
 
 $pip freeze >requirements.txt
 
