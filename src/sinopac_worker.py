@@ -41,6 +41,11 @@ class SinopacWorkerPool:
         self.request_order_timestamp = int()
         self.request_order_times = int()
 
+    def log_out_all(self):
+        for worker in self.workers:
+            worker.log_out()
+        self.main_worker.log_out()
+
     def check_usage(self):
         return self.main_worker.get_usage()
 

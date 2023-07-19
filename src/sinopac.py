@@ -70,6 +70,9 @@ class Sinopac:
                 self.__login_status += 1
                 logger.info("login progress: %d/4, %s", self.__login_status, security_type)
 
+    def log_out(self):
+        self.__api.logout()
+
     def login(self, user: SinopacUser, is_main: bool):
         # before gRPC set cb, using logger to save event
         self.set_event_callback(self.event_logger_cb)

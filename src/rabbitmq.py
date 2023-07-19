@@ -2,6 +2,7 @@ import logging
 import os
 import threading
 import time
+import typing
 from datetime import datetime, timedelta
 from queue import Queue
 
@@ -9,6 +10,7 @@ import pika
 import shioaji as sj
 from pika.channel import Channel
 
+from logger import logger
 from pb import mq_pb2
 
 logging.getLogger("pika").setLevel(logging.WARNING)
@@ -38,8 +40,13 @@ class RabbitMQS:
         # lock
         self.order_cb_lock = threading.Lock()
 
+        self.terminate_fn: typing.Callable[..., None] = lambda x, *y: logger.info("rabbit terminate function")
+
         # subscribe terminate
         threading.Thread(target=self.subscribe_terminate, daemon=True).start()
+
+    def set_terminate_func(self, func: typing.Callable[..., None]):
+        self.terminate_fn = func
 
     def subscribe_terminate(self):
         connection = pika.BlockingConnection(self.parameters)
@@ -59,12 +66,13 @@ class RabbitMQS:
         )
         channel.basic_consume(
             queue=queue_name,
-            on_message_callback=self.terminate,
+            on_message_callback=self.terminate_cb,
             auto_ack=True,
         )
         channel.start_consuming()
 
-    def terminate(self, channel, method, properties, body):  # pylint: disable=unused-argument
+    def terminate_cb(self, channel, method, properties, body):  # pylint: disable=unused-argument
+        self.terminate_fn()
         os._exit(0)
 
     def send_heartbeat(self):

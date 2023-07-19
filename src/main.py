@@ -77,6 +77,7 @@ if __name__ == "__main__":
     worker_pool.set_stock_bid_ask_cb(rabbit.stock_bid_ask_callback)
     worker_pool.set_future_bid_ask_cb(rabbit.future_bid_ask_callback)
     worker_pool.set_non_block_order_callback(rabbit.order_status_callback)
+    rabbit.set_terminate_func(worker_pool.log_out_all)
 
     try:
         server = GRPCServer(
@@ -88,7 +89,11 @@ if __name__ == "__main__":
     except RuntimeError:
         logger.error("runtime error, retry after 30 seconds")
         time.sleep(30)
-        os._exit(0)
 
     except KeyboardInterrupt:
+        logger.info("keyboard interrupt")
+
+    finally:
+        logger.info("shutdown")
+        worker_pool.log_out_all()
         os._exit(0)
