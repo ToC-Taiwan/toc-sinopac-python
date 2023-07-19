@@ -41,6 +41,9 @@ class SinopacWorkerPool:
         self.request_order_timestamp = int()
         self.request_order_times = int()
 
+    def check_usage(self):
+        return self.main_worker.get_usage()
+
     def get_sj_version(self):
         return self.main_worker.get_sj_version()
 

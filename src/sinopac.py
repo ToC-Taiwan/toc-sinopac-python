@@ -46,6 +46,9 @@ class Sinopac:
         self.__order_map: dict[str, Trade] = {}  # order_id: Trade
         self.__order_map_lock = threading.Lock()
 
+    def get_usage(self):
+        return self.__api.usage()
+
     def get_sj_version(self):
         return str(sj.__version__)
 

@@ -41,6 +41,11 @@ class BasicDataInterfaceStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=basic__pb2.OptionDetailResponse.FromString,
                 )
+        self.CheckUsage = channel.unary_unary(
+                '/toc_python_forwarder.BasicDataInterface/CheckUsage',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=basic__pb2.ShioajiUsage.FromString,
+                )
 
 
 class BasicDataInterfaceServicer(object):
@@ -82,6 +87,13 @@ class BasicDataInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def CheckUsage(self, request, context):
+        """CheckUsage get shioaji usage
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_BasicDataInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -109,6 +121,11 @@ def add_BasicDataInterfaceServicer_to_server(servicer, server):
                     servicer.GetAllOptionDetail,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=basic__pb2.OptionDetailResponse.SerializeToString,
+            ),
+            'CheckUsage': grpc.unary_unary_rpc_method_handler(
+                    servicer.CheckUsage,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=basic__pb2.ShioajiUsage.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -203,5 +220,22 @@ class BasicDataInterface(object):
         return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/GetAllOptionDetail',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             basic__pb2.OptionDetailResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CheckUsage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/CheckUsage',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            basic__pb2.ShioajiUsage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

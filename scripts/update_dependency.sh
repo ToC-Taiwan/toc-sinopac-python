@@ -25,8 +25,7 @@ $pip install -U \
   pika \
   requests \
   yfinance \
-  prometheus-client \
-  pydantic=="1.10.11"
+  prometheus-client
 
 $pip freeze >requirements.txt
 

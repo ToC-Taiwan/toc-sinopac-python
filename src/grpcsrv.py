@@ -71,6 +71,13 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
         threading.Thread(target=self.wait_and_terminate, daemon=True).start()
         return google.protobuf.empty_pb2.Empty()
 
+    def CheckUsage(self, request, _):
+        usage = self.workers.check_usage()
+        return basic_pb2.ShioajiUsage(
+            connections=usage.connections,
+            bytes=usage.bytes,
+        )
+
     def wait_and_terminate(self):
         time.sleep(3)
         os._exit(0)

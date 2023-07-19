@@ -37,6 +37,24 @@ class BeatMessage(google.protobuf.message.Message):
 global___BeatMessage = BeatMessage
 
 @typing_extensions.final
+class ShioajiUsage(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONNECTIONS_FIELD_NUMBER: builtins.int
+    BYTES_FIELD_NUMBER: builtins.int
+    connections: builtins.int
+    bytes: builtins.int
+    def __init__(
+        self,
+        *,
+        connections: builtins.int = ...,
+        bytes: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["bytes", b"bytes", "connections", b"connections"]) -> None: ...
+
+global___ShioajiUsage = ShioajiUsage
+
+@typing_extensions.final
 class StockDetailResponse(google.protobuf.message.Message):
     """StockDetailResponse is the response for stock detail"""
 
