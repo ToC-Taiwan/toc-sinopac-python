@@ -280,7 +280,7 @@ class Sinopac:
         except TimeoutError:
             return self.snapshots(contracts)
         except TokenError as error:
-            raise TokenError from error
+            raise error
 
     def stock_ticks(self, num, date):
         contract = self.get_contract_by_stock_num(num)
