@@ -10,8 +10,8 @@ ciso8601==2.3.0
 cryptography==41.0.2
 filelock==3.4.1
 frozendict==2.3.8
-grpcio==1.56.0
-grpcio-tools==1.56.0
+grpcio==1.56.2
+grpcio-tools==1.56.2
 html5lib==1.1
 idna==3.4
 importlib-metadata==6.8.0
@@ -36,12 +36,12 @@ pytz==2023.3
 requests==2.31.0
 schedule==1.2.0
 sentry-sdk==1.5.12
-shioaji==1.1.8
+shioaji==1.1.9
 six==1.16.0
 soupsieve==2.4.1
 typing_extensions==4.7.1
 tzdata==2023.3
-urllib3==2.0.3
+urllib3==2.0.4
 webencodings==0.5.1
 xxhash==3.2.0
 yfinance==0.2.25
