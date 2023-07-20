@@ -89,8 +89,8 @@ class RabbitMQS:
                 try:
                     rabbit.heartbeat()
                     count += 1
-                except Exception as err:
-                    logger.error("send_heartbeat error %s", err)
+                except Exception:
+                    pass
                 self.pika_queue.put(rabbit)
 
     def create_pika(self):
