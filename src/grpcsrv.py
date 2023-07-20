@@ -78,6 +78,10 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
             bytes=usage.bytes,
         )
 
+    def LogOut(self, request, _):
+        self.workers.log_out_all()
+        return google.protobuf.empty_pb2.Empty()
+
     def wait_and_terminate(self):
         time.sleep(3)
         os._exit(0)

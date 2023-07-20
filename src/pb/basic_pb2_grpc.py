@@ -46,6 +46,11 @@ class BasicDataInterfaceStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=basic__pb2.ShioajiUsage.FromString,
                 )
+        self.LogOut = channel.unary_unary(
+                '/toc_python_forwarder.BasicDataInterface/LogOut',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
 
 
 class BasicDataInterfaceServicer(object):
@@ -94,6 +99,13 @@ class BasicDataInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def LogOut(self, request, context):
+        """LogOut log out
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_BasicDataInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -126,6 +138,11 @@ def add_BasicDataInterfaceServicer_to_server(servicer, server):
                     servicer.CheckUsage,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=basic__pb2.ShioajiUsage.SerializeToString,
+            ),
+            'LogOut': grpc.unary_unary_rpc_method_handler(
+                    servicer.LogOut,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -237,5 +254,22 @@ class BasicDataInterface(object):
         return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/CheckUsage',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             basic__pb2.ShioajiUsage.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def LogOut(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/LogOut',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
