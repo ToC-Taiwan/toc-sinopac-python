@@ -90,15 +90,15 @@ class RabbitMQS:
     #                 pass
     #             self.pika_queue.put(rabbit)
 
+    def create_pika(self):
+        conn = pika.BlockingConnection(self.parameters)
+        channel = conn.channel()
+        channel.exchange_declare(exchange=self.exchange, exchange_type="direct", durable=True)
+        return PikaCC(conn, channel)
+
     def fill_pika_queue(self):
         for _ in range(self.pool_size):
-            conn = pika.BlockingConnection(self.parameters)
-            self.pika_queue.put(
-                PikaCC(
-                    conn,
-                    conn.channel().exchange_declare(exchange=self.exchange, exchange_type="direct", durable=True),
-                )
-            )
+            self.pika_queue.put(self.create_pika())
         # threading.Thread(target=self.send_heartbeat, daemon=True).start()
 
     def event_callback(self, resp_code: int, event_code: int, info: str, event: str):
