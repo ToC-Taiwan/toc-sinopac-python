@@ -49,18 +49,13 @@ if __name__ == "__main__":
             env.person_id,
             env.ca_password,
         ),
+        rabbit,
         QueryDataLimit(
             data=env.request_data_limit_per_second,
             portfolio=env.request_portfolio_limit_per_second,
             order=env.request_order_limit_per_second,
         ),
     )
-    worker_pool.set_event_cb(rabbit.event_callback)
-    worker_pool.set_stock_quote_cb(rabbit.stock_quote_callback_v1)
-    worker_pool.set_future_quote_cb(rabbit.future_quote_callback_v1)
-    worker_pool.set_stock_bid_ask_cb(rabbit.stock_bid_ask_callback)
-    worker_pool.set_future_bid_ask_cb(rabbit.future_bid_ask_callback)
-    worker_pool.set_non_block_order_callback(rabbit.order_status_callback)
 
     try:
         server = GRPCServer(

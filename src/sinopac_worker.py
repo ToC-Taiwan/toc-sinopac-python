@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 
 from logger import logger
+from rabbitmq import RabbitMQS
 from sinopac import Sinopac, SinopacUser
 
 
@@ -14,11 +15,12 @@ class QueryDataLimit:
 
 
 class SinopacWorkerPool:
-    def __init__(self, count: int, account: SinopacUser, request_limt: QueryDataLimit):
+    def __init__(self, count: int, account: SinopacUser, rabbit: RabbitMQS, request_limt: QueryDataLimit):
         self.main_worker = Sinopac()
         self.workers: list[Sinopac] = []
         self.worker_count = count
         self.account = account
+        self.rabbit = rabbit
 
         # request count
         self.request_count = [int() for _ in range(count - 1)]
@@ -56,6 +58,13 @@ class SinopacWorkerPool:
             else:
                 self.workers.append(new_connection)
             logger.info("login success")
+
+        self.set_event_cb(self.rabbit.event_callback)
+        self.set_stock_quote_cb(self.rabbit.stock_quote_callback_v1)
+        self.set_future_quote_cb(self.rabbit.future_quote_callback_v1)
+        self.set_stock_bid_ask_cb(self.rabbit.stock_bid_ask_callback)
+        self.set_future_bid_ask_cb(self.rabbit.future_bid_ask_callback)
+        self.set_non_block_order_callback(self.rabbit.order_status_callback)
 
     def logout(self):
         for worker in self.workers:
