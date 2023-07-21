@@ -34,38 +34,15 @@ from yahoo_finance import Yahoo
 class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
     def __init__(
         self,
-        simulator: Simulator,
         workers: SinopacWorkerPool,
     ):
         self.workers = workers
-        self.simulator = simulator
-        self.heart_beat_client_arr: list[str] = []
-        self.heart_beat_client_arr_lock = threading.Lock()
 
-    def Heartbeat(self, request_iterator, context: grpc.ServicerContext):
-        for beat in request_iterator:
-            with self.heart_beat_client_arr_lock:
-                if len(self.heart_beat_client_arr) > 0:
-                    yield basic_pb2.BeatMessage(error="sinopac only one client allowed")
-                else:
-                    self.heart_beat_client_arr.append(beat.message)
-                    threading.Thread(target=self.check_context, args=(context,), daemon=True).start()
-                    logger.info("new sinopac gRPC client connected: %s", beat.message)
-            yield basic_pb2.BeatMessage(message=beat.message)
-
-    def check_context(self, context: grpc.ServicerContext):
+    def CreateLongConnection(self, request_iterator, context: grpc.ServicerContext):
+        logger.info("new sinopac gRPC client connected")
         while context.is_active():
             time.sleep(1)
-
-        logger.info("sinopac gRPC client disconnected")
-        with self.heart_beat_client_arr_lock:
-            if len(self.heart_beat_client_arr) > 0 and self.heart_beat_client_arr[0] == "debug":
-                self.workers.unsubscribe_all_tick()
-                self.workers.unsubscribe_all_bidask()
-                self.simulator.reset_simulator()
-                self.heart_beat_client_arr.clear()
-            else:
-                os._exit(0)
+        os._exit(0)
 
     def Terminate(self, request, _):
         threading.Thread(target=self.wait_and_terminate, daemon=True).start()
@@ -78,8 +55,12 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
             bytes=usage.bytes,
         )
 
-    def LogOut(self, request, _):
-        self.workers.log_out_all()
+    def Login(self, request, _):
+        self.workers.login()
+        return google.protobuf.empty_pb2.Empty()
+
+    def Logout(self, request, _):
+        self.workers.logout()
         return google.protobuf.empty_pb2.Empty()
 
     def wait_and_terminate(self):
@@ -1190,7 +1171,6 @@ class GRPCServer:
 
         # gRPC servicer
         basic_servicer = RPCBasic(
-            simulator=simulator,
             workers=worker_pool,
         )
 

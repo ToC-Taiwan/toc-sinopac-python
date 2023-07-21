@@ -11,7 +11,7 @@ from grpcsrv import GRPCServer
 from logger import logger
 from rabbitmq import RabbitMQS
 from rabbitmq_setting import RabbitMQSetting
-from sinopac import Sinopac, SinopacUser
+from sinopac import SinopacUser
 from sinopac_worker import QueryDataLimit, SinopacWorkerPool
 
 if __name__ == "__main__":
@@ -35,27 +35,6 @@ if __name__ == "__main__":
         time.sleep(30)
         os._exit(0)
 
-    main_trader: Sinopac
-    workers: list[Sinopac] = []
-
-    for i in range(env.connection_count):
-        logger.info("establish connection %d", i + 1)
-        is_main = bool(i == 0)
-        new_connection = Sinopac().login(
-            SinopacUser(
-                env.api_key,
-                env.api_key_secret,
-                env.person_id,
-                env.ca_password,
-            ),
-            is_main,
-        )
-
-        if is_main is True:
-            main_trader = new_connection
-        else:
-            workers.append(new_connection)
-
     rabbit = RabbitMQS(
         env.rabbitmq_url,
         env.rabbitmq_exchange,
@@ -63,8 +42,13 @@ if __name__ == "__main__":
     )
 
     worker_pool = SinopacWorkerPool(
-        main_trader,
-        workers,
+        env.connection_count,
+        SinopacUser(
+            env.api_key,
+            env.api_key_secret,
+            env.person_id,
+            env.ca_password,
+        ),
         QueryDataLimit(
             data=env.request_data_limit_per_second,
             portfolio=env.request_portfolio_limit_per_second,
@@ -77,7 +61,6 @@ if __name__ == "__main__":
     worker_pool.set_stock_bid_ask_cb(rabbit.stock_bid_ask_callback)
     worker_pool.set_future_bid_ask_cb(rabbit.future_bid_ask_callback)
     worker_pool.set_non_block_order_callback(rabbit.order_status_callback)
-    rabbit.set_terminate_func(worker_pool.log_out_all)
 
     try:
         server = GRPCServer(
@@ -95,5 +78,5 @@ if __name__ == "__main__":
 
     finally:
         logger.info("shutdown")
-        worker_pool.log_out_all()
+        worker_pool.logout()
         os._exit(0)

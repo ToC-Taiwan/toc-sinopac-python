@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 
 from logger import logger
-from sinopac import Sinopac
+from sinopac import Sinopac, SinopacUser
 
 
 class QueryDataLimit:
@@ -14,16 +14,18 @@ class QueryDataLimit:
 
 
 class SinopacWorkerPool:
-    def __init__(self, main_worker: Sinopac, workers: list[Sinopac], request_limt: QueryDataLimit):
-        self.main_worker = main_worker
-        self.workers = workers
+    def __init__(self, count: int, account: SinopacUser, request_limt: QueryDataLimit):
+        self.main_worker = Sinopac()
+        self.workers: list[Sinopac] = []
+        self.worker_count = count
+        self.account = account
 
         # request count
-        self.request_count = [int() for _ in range(len(workers))]
+        self.request_count = [int() for _ in range(count - 1)]
         self.lock = threading.RLock()
 
         # subscribe list
-        self.subscribe_count = [int() for _ in range(len(workers))]
+        self.subscribe_count = [int() for _ in range(count - 1)]
         self.sub_lock = threading.Lock()
         self.stock_tick_sub_dict: dict[str, int] = {}
         self.stock_bidask_sub_dict: dict[str, int] = {}
@@ -41,10 +43,25 @@ class SinopacWorkerPool:
         self.request_order_timestamp = int()
         self.request_order_times = int()
 
-    def log_out_all(self):
+    def login(self):
+        for i in range(self.worker_count):
+            logger.info("establish connection %d", i + 1)
+            is_main = bool(i == 0)
+            new_connection = Sinopac().login(
+                self.account,
+                is_main,
+            )
+            if is_main is True:
+                self.main_worker = new_connection
+            else:
+                self.workers.append(new_connection)
+            logger.info("login success")
+
+    def logout(self):
         for worker in self.workers:
             worker.log_out()
         self.main_worker.log_out()
+        logger.info("logout success")
 
     def check_usage(self):
         return self.main_worker.get_usage()
