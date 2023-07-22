@@ -277,6 +277,8 @@ class Sinopac:
     def snapshots(self, contracts):
         try:
             return self.__api.snapshots(contracts)
+        except AttributeError:
+            return logger.error("snapshots AttributeError")
         except TimeoutError:
             return self.snapshots(contracts)
         except TokenError as error:
