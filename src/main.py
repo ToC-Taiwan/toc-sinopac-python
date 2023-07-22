@@ -64,14 +64,10 @@ if __name__ == "__main__":
         )
         server.serve(port=env.grpc_port)
 
-    except RuntimeError:
-        logger.error("runtime error, retry after 30 seconds")
-        time.sleep(30)
-
-    except KeyboardInterrupt:
-        logger.info("keyboard interrupt")
+    except Exception as e:
+        logger.error(e)
 
     finally:
-        logger.info("shutdown")
+        logger.info("shutdown shioaji")
         worker_pool.logout()
         os._exit(0)

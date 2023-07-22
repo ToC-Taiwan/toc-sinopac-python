@@ -42,6 +42,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
         logger.info("new sinopac gRPC client connected")
         while context.is_active():
             time.sleep(1)
+        self.workers.logout()
         os._exit(0)
 
     def Terminate(self, request, _):
@@ -57,10 +58,6 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def Login(self, request, _):
         self.workers.login()
-        return google.protobuf.empty_pb2.Empty()
-
-    def Logout(self, request, _):
-        self.workers.logout()
         return google.protobuf.empty_pb2.Empty()
 
     def wait_and_terminate(self):
