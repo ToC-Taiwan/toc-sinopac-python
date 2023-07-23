@@ -37,59 +37,6 @@ class RabbitMQS:
         # lock
         self.order_cb_lock = threading.Lock()
 
-        # self.terminate_fn: typing.Callable[..., None] = lambda x, *y: logger.info("rabbit terminate function")
-
-        # subscribe terminate
-        # threading.Thread(target=self.subscribe_terminate, daemon=True).start()
-
-    # def set_terminate_func(self, func: typing.Callable[..., None]):
-    #     self.terminate_fn = func
-
-    # def subscribe_terminate(self):
-    #     connection = pika.BlockingConnection(self.parameters)
-    #     channel = connection.channel()
-
-    #     result = channel.queue_declare(queue="", exclusive=True)
-    #     # from https://www.rabbitmq.com/tutorials/tutorial-four-python.html
-    #     # The queue_declare method returns a tuple of 3 values:
-    #     # 1. queue name
-    #     # 2. message count
-    #     # 3. consumer count
-    #     queue_name = result.method.queue
-    #     channel.queue_bind(
-    #         exchange=self.exchange,
-    #         queue=queue_name,
-    #         routing_key="terminate",
-    #     )
-    #     channel.basic_consume(
-    #         queue=queue_name,
-    #         on_message_callback=self.terminate_cb,
-    #         auto_ack=True,
-    #     )
-    #     try:
-    #         channel.start_consuming()
-    #     except Exception as err:
-    #         logger.error("subscribe_terminate error %s", err)
-
-    # def terminate_cb(self, channel, method, properties, body):  # pylint: disable=unused-argument
-    #     self.terminate_fn()
-    #     os._exit(0)
-
-    # def send_heartbeat(self):
-    #     while True:
-    #         time.sleep(20)
-    #         count = 0
-    #         while True:
-    #             if count >= self.pool_size:
-    #                 break
-    #             rabbit = self.pika_queue.get(block=True)
-    #             try:
-    #                 rabbit.heartbeat()
-    #                 count += 1
-    #             except Exception:
-    #                 pass
-    #             self.pika_queue.put(rabbit)
-
     def create_pika(self):
         conn = pika.BlockingConnection(self.parameters)
         channel = conn.channel()

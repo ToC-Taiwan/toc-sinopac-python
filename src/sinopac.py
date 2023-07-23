@@ -1,5 +1,4 @@
 import logging
-import os
 import threading
 import time
 from typing import List
@@ -60,9 +59,8 @@ class Sinopac:
             logger.warning("event: %s", event)
 
         if event_code == 12:
-            logger.error("reconnecting in login, terminate and retry after 30 sec")
             time.sleep(30)
-            os._exit(0)
+            raise RuntimeError("reconnecting in initial login")
 
     def login_cb(self, security_type: sc.SecurityType):
         with self.__login_status_lock:
@@ -85,25 +83,13 @@ class Sinopac:
                 subscribe_trade=is_main,
             )
 
-        except SystemMaintenance:
-            logger.error("login 503 system maintenance, terminate after 75 sec")
+        except SystemMaintenance as exc:
             time.sleep(75)
-            os._exit(0)
+            raise RuntimeError("login 503 system maintenance") from exc
 
-        except TimeoutError:
-            logger.error("login timeout error, terminate after 60 sec")
-            time.sleep(60)
-            os._exit(0)
-
-        except ValueError:
-            logger.error("login value error, terminate after 15 sec")
-            time.sleep(15)
-            os._exit(0)
-
-        except Exception:
-            logger.error("login unknown error, terminate after 75 sec")
-            time.sleep(75)
-            os._exit(0)
+        except Exception as error:
+            time.sleep(30)
+            raise RuntimeError("login error") from error
 
         while True:
             if self.__login_status == 4:

@@ -65,9 +65,7 @@ if __name__ == "__main__":
         server.serve(port=env.grpc_port)
 
     except Exception as e:
-        logger.error(e)
+        logger.error(str(e))
 
     finally:
-        logger.info("shutdown shioaji")
-        worker_pool.logout()
-        os._exit(0)
+        worker_pool.logout_and_exit()

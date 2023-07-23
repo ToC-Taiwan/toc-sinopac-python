@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 from datetime import datetime
@@ -49,10 +50,18 @@ class SinopacWorkerPool:
         for i in range(self.worker_count):
             logger.info("establish connection %d", i + 1)
             is_main = bool(i == 0)
-            new_connection = Sinopac().login(
-                self.account,
-                is_main,
-            )
+            try:
+                new_connection = Sinopac().login(
+                    self.account,
+                    is_main,
+                )
+            except Exception as error:
+                if str(error) != "":
+                    logger.error("establish connection %d fail: %s", i + 1, str(error))
+                else:
+                    logger.error("establish connection %d fail", i + 1)
+                self.logout_and_exit()
+
             if is_main is True:
                 self.main_worker = new_connection
             else:
@@ -66,11 +75,12 @@ class SinopacWorkerPool:
         self.set_future_bid_ask_cb(self.rabbit.future_bid_ask_callback)
         self.set_non_block_order_callback(self.rabbit.order_status_callback)
 
-    def logout(self):
+    def logout_and_exit(self):
         for worker in self.workers:
             worker.log_out()
         self.main_worker.log_out()
         logger.info("logout success")
+        os._exit(0)
 
     def check_usage(self):
         return self.main_worker.get_usage()
