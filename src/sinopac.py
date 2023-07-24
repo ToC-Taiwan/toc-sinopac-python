@@ -263,12 +263,11 @@ class Sinopac:
     def snapshots(self, contracts):
         try:
             return self.__api.snapshots(contracts)
-        except AttributeError:
-            return logger.error("snapshots AttributeError")
-        except TimeoutError:
-            return self.snapshots(contracts)
         except TokenError as error:
             raise error
+        except Exception as error:
+            logger.error(str(error))
+            return None
 
     def stock_ticks(self, num, date):
         contract = self.get_contract_by_stock_num(num)

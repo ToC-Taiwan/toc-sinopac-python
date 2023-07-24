@@ -1000,7 +1000,9 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         except TokenError:
             logger.error("token error")
             self.workers.logout_and_exit()
-        return self.sinopac_snapshot_to_pb(snapshots[0])
+        if snapshots is not None:
+            return self.sinopac_snapshot_to_pb(snapshots[0])
+        return realtime_pb2.SnapshotMessage()
 
     def GetStockSnapshotOTC(self, request, _):
         worker = self.workers.get_data()
@@ -1009,7 +1011,9 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         except TokenError:
             logger.error("token error")
             self.workers.logout_and_exit()
-        return self.sinopac_snapshot_to_pb(snapshots[0])
+        if snapshots is not None:
+            return self.sinopac_snapshot_to_pb(snapshots[0])
+        return realtime_pb2.SnapshotMessage()
 
     def GetStockVolumeRank(self, request, _):
         response = realtime_pb2.StockVolumeRankResponse()
