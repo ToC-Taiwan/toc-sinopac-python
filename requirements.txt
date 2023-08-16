@@ -44,5 +44,5 @@ tzdata==2023.3
 urllib3==2.0.4
 webencodings==0.5.1
 xxhash==3.3.0
-yfinance==0.2.27
+yfinance==0.2.28
 zipp==3.16.2
