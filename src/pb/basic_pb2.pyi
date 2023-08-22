@@ -42,15 +42,21 @@ class ShioajiUsage(google.protobuf.message.Message):
 
     CONNECTIONS_FIELD_NUMBER: builtins.int
     BYTES_FIELD_NUMBER: builtins.int
+    LIMIT_BYTES_FIELD_NUMBER: builtins.int
+    REMAINING_BYTES_FIELD_NUMBER: builtins.int
     connections: builtins.int
     bytes: builtins.int
+    limit_bytes: builtins.int
+    remaining_bytes: builtins.int
     def __init__(
         self,
         *,
         connections: builtins.int = ...,
         bytes: builtins.int = ...,
+        limit_bytes: builtins.int = ...,
+        remaining_bytes: builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["bytes", b"bytes", "connections", b"connections"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["bytes", b"bytes", "connections", b"connections", "limit_bytes", b"limit_bytes", "remaining_bytes", b"remaining_bytes"]) -> None: ...
 
 global___ShioajiUsage = ShioajiUsage
 

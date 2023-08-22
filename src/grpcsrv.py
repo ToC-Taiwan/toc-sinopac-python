@@ -52,6 +52,8 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
         return basic_pb2.ShioajiUsage(
             connections=usage.connections,
             bytes=usage.bytes,
+            limit_bytes=usage.limit_bytes,
+            remaining_bytes=usage.remaining_bytes,
         )
 
     def Login(self, request, _):
