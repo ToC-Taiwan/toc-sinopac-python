@@ -76,9 +76,12 @@ class SinopacWorkerPool:
         self.set_non_block_order_callback(self.rabbit.order_status_callback)
 
     def logout_and_exit(self):
-        for worker in self.workers:
-            worker.log_out()
-        self.main_worker.log_out()
+        try:
+            for worker in self.workers:
+                worker.log_out()
+            self.main_worker.log_out()
+        except Exception as error:
+            logger.error("logout fail: %s", str(error))
         logger.info("logout success")
         os._exit(0)
 
