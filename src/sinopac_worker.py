@@ -82,7 +82,6 @@ class SinopacWorkerPool:
             self.main_worker.log_out()
         except Exception as error:
             logger.error("logout fail: %s", str(error))
-        logger.info("logout success")
         os._exit(0)
 
     def check_usage(self):

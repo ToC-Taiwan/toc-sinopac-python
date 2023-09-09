@@ -70,6 +70,7 @@ class Sinopac:
 
     def log_out(self):
         self.__api.logout()
+        logger.info("logout shioaji")
 
     def login(self, user: SinopacUser, is_main: bool):
         # before gRPC set cb, using logger to save event
