@@ -9,11 +9,11 @@ import shioaji.constant as sc
 from shioaji.order import Order, Trade
 
 from logger import logger
-from sinopac import OrderStatus, Sinopac
+from sinopac import OrderStatus, Shioaji
 
 
 class Simulator:
-    def __init__(self, sinopac: Sinopac):
+    def __init__(self, sinopac: Shioaji):
         self.sinopac = sinopac
         self.__simulation_count_map: dict[str, int] = {}  # key: stock_num or code, value: count
         self.__simulation_lock = threading.Lock()

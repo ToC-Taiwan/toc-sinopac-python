@@ -11,7 +11,7 @@ from grpcsrv import GRPCServer
 from logger import logger
 from rabbitmq import RabbitMQS
 from rabbitmq_setting import RabbitMQSetting
-from sinopac import SinopacUser
+from sinopac import ShioajiAuth
 from sinopac_worker import QueryDataLimit, SinopacWorkerPool
 
 if __name__ == "__main__":
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     worker_pool = SinopacWorkerPool(
         env.connection_count,
-        SinopacUser(
+        ShioajiAuth(
             env.api_key,
             env.api_key_secret,
             env.person_id,

@@ -21,7 +21,7 @@ class OrderStatus:
         self.error = error
 
 
-class SinopacUser:
+class ShioajiAuth:
     def __init__(self, api_key: str, api_key_secret: str, person_id: str, ca_password: str):
         self.api_key = api_key
         self.api_key_secret = api_key_secret
@@ -29,11 +29,11 @@ class SinopacUser:
         self.ca_password = ca_password
 
 
-class Sinopac:
+class Shioaji:
     def __init__(self):
         self.__api = sj.Shioaji()
-        self.__login_status_lock = threading.Lock()
-        self.__login_status = int()
+        self.__login_lock = threading.Lock()
+        self.__login_progess = int()
 
         # callback initialization avoid NoneType error
         self.non_block_order_callback = None
@@ -63,16 +63,16 @@ class Sinopac:
             raise RuntimeError("reconnecting in initial login")
 
     def login_cb(self, security_type: sc.SecurityType):
-        with self.__login_status_lock:
+        with self.__login_lock:
             if security_type.value in [item.value for item in sc.SecurityType]:
-                self.__login_status += 1
-                logger.info("login progress: %d/4, %s", self.__login_status, security_type)
+                self.__login_progess += 1
+                logger.info("login progress: %d/4, %s", self.__login_progess, security_type)
 
     def log_out(self):
         self.__api.logout()
         logger.info("logout shioaji")
 
-    def login(self, user: SinopacUser, is_main: bool):
+    def login(self, user: ShioajiAuth, is_main: bool):
         # before gRPC set cb, using logger to save event
         self.set_event_callback(self.event_logger_cb)
 
@@ -93,7 +93,7 @@ class Sinopac:
             raise RuntimeError("login error") from error
 
         while True:
-            if self.__login_status == 4:
+            if self.__login_progess == 4:
                 break
 
         self.__api.activate_ca(

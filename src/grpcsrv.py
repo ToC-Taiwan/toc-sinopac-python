@@ -25,7 +25,7 @@ from pb import (
 )
 from rabbitmq import RabbitMQS
 from simulator import Simulator
-from sinopac import Sinopac
+from sinopac import Shioaji
 from sinopac_worker import SinopacWorkerPool
 from yahoo_finance import Yahoo
 
@@ -159,7 +159,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
     def __init__(self, workers: SinopacWorkerPool):
         self.workers = workers
 
-    def fill_stock_history_tick_response(self, num, date, response, worker: Sinopac):
+    def fill_stock_history_tick_response(self, num, date, response, worker: Shioaji):
         ticks = worker.stock_ticks(num, date)
         total_count = len(ticks.ts)
         tmp_length = [
@@ -211,7 +211,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
             thread.join()
         return response
 
-    def fill_stock_history_kbar_response(self, num, date, response, worker: Sinopac):
+    def fill_stock_history_kbar_response(self, num, date, response, worker: Shioaji):
         kbar = worker.stock_kbars(num, date)
         total_count = len(kbar.ts)
         tmp_length = [
@@ -260,7 +260,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
             thread.join()
         return response
 
-    def fill_stock_history_close_response(self, num, date, response, sinopac: Sinopac):
+    def fill_stock_history_close_response(self, num, date, response, sinopac: Shioaji):
         response.data.append(
             history_pb2.HistoryCloseMessage(
                 code=num,
@@ -363,7 +363,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
         thread.join()
         return response
 
-    def fill_future_history_tick_response(self, code, date, response, worker: Sinopac):
+    def fill_future_history_tick_response(self, code, date, response, worker: Shioaji):
         ticks = worker.future_ticks(code, date)
         total_count = len(ticks.ts)
         tmp_length = [
@@ -415,7 +415,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
             thread.join()
         return response
 
-    def fill_future_history_kbar_response(self, code, date, response, sinopac: Sinopac):
+    def fill_future_history_kbar_response(self, code, date, response, sinopac: Shioaji):
         kbar = sinopac.future_kbars(code, date)
         total_count = len(kbar.ts)
         tmp_length = [
@@ -464,7 +464,7 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
             thread.join()
         return response
 
-    def fill_future_history_close_response(self, code, date, response, sinopac: Sinopac):
+    def fill_future_history_close_response(self, code, date, response, sinopac: Shioaji):
         response.data.append(
             history_pb2.HistoryCloseMessage(
                 code=code,
@@ -884,7 +884,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         self.source = source
         self.workers = workers
 
-    def fill_snapshot_arr(self, contracts, snapshots, worker: Sinopac):
+    def fill_snapshot_arr(self, contracts, snapshots, worker: Shioaji):
         try:
             data = worker.snapshots(contracts)
         except TokenError:

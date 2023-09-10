@@ -5,7 +5,7 @@ from datetime import datetime
 
 from logger import logger
 from rabbitmq import RabbitMQS
-from sinopac import Sinopac, SinopacUser
+from sinopac import Shioaji, ShioajiAuth
 
 
 class QueryDataLimit:
@@ -16,9 +16,9 @@ class QueryDataLimit:
 
 
 class SinopacWorkerPool:
-    def __init__(self, count: int, account: SinopacUser, rabbit: RabbitMQS, request_limt: QueryDataLimit):
-        self.main_worker = Sinopac()
-        self.workers: list[Sinopac] = []
+    def __init__(self, count: int, account: ShioajiAuth, rabbit: RabbitMQS, request_limt: QueryDataLimit):
+        self.main_worker = Shioaji()
+        self.workers: list[Shioaji] = []
         self.worker_count = count
         self.account = account
         self.rabbit = rabbit
@@ -51,7 +51,7 @@ class SinopacWorkerPool:
             logger.info("establish connection %d", i + 1)
             is_main = bool(i == 0)
             try:
-                new_connection = Sinopac().login(
+                new_connection = Shioaji().login(
                     self.account,
                     is_main,
                 )
@@ -90,14 +90,14 @@ class SinopacWorkerPool:
     def get_sj_version(self):
         return self.main_worker.get_sj_version()
 
-    def get(self) -> Sinopac:
+    def get(self) -> Shioaji:
         with self.lock:
             idx = self.request_count.index(min(self.request_count))
             self.request_count[idx] += 1
             self.request_worker_times += 1
             return self.workers[idx]
 
-    def get_data(self) -> Sinopac:
+    def get_data(self) -> Shioaji:
         with self.lock:
             now = round(datetime.now().timestamp() * 1000)
             gap = now - self.request_data_timestamp
@@ -113,7 +113,7 @@ class SinopacWorkerPool:
             self.request_data_times += 1
             return self.workers[idx]
 
-    def get_portfolio(self) -> Sinopac:
+    def get_portfolio(self) -> Shioaji:
         with self.lock:
             now = round(datetime.now().timestamp() * 1000)
             gap = now - self.request_portfolio_timestamp
@@ -126,7 +126,7 @@ class SinopacWorkerPool:
                 return self.get_portfolio()
             return self.main_worker
 
-    def get_order(self) -> Sinopac:
+    def get_order(self) -> Shioaji:
         with self.lock:
             now = round(datetime.now().timestamp() * 1000)
             gap = now - self.request_order_timestamp
