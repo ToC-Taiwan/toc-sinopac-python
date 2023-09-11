@@ -153,7 +153,7 @@ class SinopacWorkerPool:
             logger.info(
                 "subscribe stock tick %s %s",
                 stock_num,
-                self.workers[idx].get_contract_name_by_stock_num(stock_num),
+                self.workers[idx].get_contract_by_stock_num(stock_num).name,
             )
             self.subscribe_count[idx] += 1
             self.stock_tick_sub_dict[stock_num] = idx
@@ -171,7 +171,7 @@ class SinopacWorkerPool:
                 logger.info(
                     "unsubscribe stock tick %s %s",
                     stock_num,
-                    self.workers[idx].get_contract_name_by_stock_num(stock_num),
+                    self.workers[idx].get_contract_by_stock_num(stock_num).name,
                 )
         return None
 
@@ -186,7 +186,7 @@ class SinopacWorkerPool:
             logger.info(
                 "subscribe future tick %s %s",
                 code,
-                self.workers[idx].get_contract_name_by_future_code(code),
+                self.workers[idx].get_contract_by_future_code(code).name,
             )
             self.subscribe_count[idx] += 1
             self.future_tick_sub_dict[code] = idx
@@ -204,7 +204,7 @@ class SinopacWorkerPool:
                 logger.info(
                     "unsubscribe future tick %s %s",
                     code,
-                    self.workers[idx].get_contract_name_by_future_code(code),
+                    self.workers[idx].get_contract_by_future_code(code).name,
                 )
         return None
 
@@ -219,7 +219,7 @@ class SinopacWorkerPool:
             logger.info(
                 "subscribe stock bidask %s %s",
                 stock_num,
-                self.workers[idx].get_contract_name_by_stock_num(stock_num),
+                self.workers[idx].get_contract_by_stock_num(stock_num).name,
             )
             self.subscribe_count[idx] += 1
             self.stock_bidask_sub_dict[stock_num] = idx
@@ -237,7 +237,7 @@ class SinopacWorkerPool:
                 logger.info(
                     "unsubscribe stock bidask %s %s",
                     stock_num,
-                    self.workers[idx].get_contract_name_by_stock_num(stock_num),
+                    self.workers[idx].get_contract_by_stock_num(stock_num).name,
                 )
         return None
 
@@ -252,7 +252,7 @@ class SinopacWorkerPool:
             logger.info(
                 "subscribe future bidask %s %s",
                 code,
-                self.workers[idx].get_contract_name_by_future_code(code),
+                self.workers[idx].get_contract_by_future_code(code).name,
             )
             self.subscribe_count[idx] += 1
             self.future_bidask_sub_dict[code] = idx
@@ -270,7 +270,7 @@ class SinopacWorkerPool:
                 logger.info(
                     "unsubscribe future bidask %s %s",
                     code,
-                    self.workers[idx].get_contract_name_by_future_code(code),
+                    self.workers[idx].get_contract_by_future_code(code).name,
                 )
         return None
 
@@ -308,7 +308,7 @@ class SinopacWorkerPool:
             logger.info(
                 "subscribe option tick %s %s",
                 code,
-                self.workers[idx].get_contract_name_by_option_code(code),
+                self.workers[idx].get_contract_by_option_code(code).name,
             )
             self.subscribe_count[idx] += 1
             self.option_tick_sub_dict[code] = idx
@@ -326,7 +326,7 @@ class SinopacWorkerPool:
                 logger.info(
                     "unsubscribe option tick %s %s",
                     code,
-                    self.workers[idx].get_contract_name_by_option_code(code),
+                    self.workers[idx].get_contract_by_option_code(code).name,
                 )
         return None
 
@@ -416,14 +416,14 @@ class SinopacWorkerPool:
     def get_stock_position(self):
         return self.get_portfolio().list_stock_positions()
 
-    def get_stock_num_list(self):
-        return self.main_worker.get_stock_num_list()
+    def get_stock_contract_list(self):
+        return self.main_worker.get_stock_contract_list()
 
-    def get_future_code_list(self):
-        return self.main_worker.get_future_code_list()
+    def get_future_contract_list(self):
+        return self.main_worker.get_future_contract_list()
 
-    def get_option_code_list(self):
-        return self.main_worker.get_option_code_list()
+    def get_option_contract_list(self):
+        return self.main_worker.get_option_contract_list()
 
     def buy_option(self, code, price, quantity):
         return self.get_order().buy_option(code, price, quantity)

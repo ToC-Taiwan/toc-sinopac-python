@@ -5,6 +5,7 @@ from typing import List
 
 import shioaji as sj
 import shioaji.constant as sc
+from shioaji.contracts import Contract
 from shioaji.error import SystemMaintenance, TokenError
 from shioaji.order import Order, Trade
 from shioaji.position import AccountBalance, FuturePosition, Margin, StockPosition
@@ -38,12 +39,19 @@ class Shioaji:
         # callback initialization avoid NoneType error
         self.non_block_order_callback = None
 
-        self.stock_num_list: list[str] = []
-        self.future_code_list: list[str] = []
-        self.option_code_list: list[str] = []
-
+        # order map with lock
         self.__order_map: dict[str, Trade] = {}  # order_id: Trade
         self.__order_map_lock = threading.Lock()
+
+        # stock, future, option code map
+        self.stock_map: dict[str, Contract] = {}
+        self.stock_map_lock = threading.Lock()
+
+        self.future_map: dict[str, Contract] = {}
+        self.future_map_lock = threading.Lock()
+
+        self.option_map: dict[str, Contract] = {}
+        self.option_map_lock = threading.Lock()
 
     def get_usage(self):
         return self.__api.usage()
@@ -69,8 +77,11 @@ class Shioaji:
                 logger.info("login progress: %d/4, %s", self.__login_progess, security_type)
 
     def log_out(self):
-        self.__api.logout()
-        logger.info("logout shioaji")
+        try:
+            self.__api.logout()
+            logger.info("logout shioaji")
+        except Exception:
+            logger.error("logout shioaji fail")
 
     def login(self, user: ShioajiAuth, is_main: bool):
         # before gRPC set cb, using logger to save event
@@ -102,10 +113,11 @@ class Shioaji:
             person_id=user.person_id,
         )
 
+        self.fill_stock_map()
+        self.fill_future_map()
+        self.fill_option_map()
+
         if is_main is True:
-            self.fill_stock_num_list()
-            self.fill_future_code_list()
-            self.fill_option_code_list()
             self.set_order_callback(self.order_callback)
             logger.info("stock account sign status: %s", self.__api.stock_account.signed)
             logger.info("future account sign status: %s", self.__api.futopt_account.signed)
@@ -134,43 +146,69 @@ class Shioaji:
     def set_non_block_order_callback(self, func):
         self.non_block_order_callback = func
 
-    def fill_stock_num_list(self):
+    def fill_stock_map(self):
         for contract_arr in self.__api.Contracts.Stocks:
             for contract in contract_arr:
                 if contract.day_trade == sc.DayTrade.Yes.value and contract.category != "00":
-                    self.stock_num_list.append(contract.code)
-        if len(self.stock_num_list) != 0:
-            logger.info("total stock: %d", len(self.stock_num_list))
-        else:
-            raise RuntimeError("stock_num_list is empty")
+                    with self.stock_map_lock:
+                        self.stock_map[contract.code] = contract
+        with self.stock_map_lock:
+            if len(self.stock_map) != 0:
+                logger.info("total stock: %d", len(self.stock_map))
+            else:
+                raise RuntimeError("stock_map is empty")
 
-    def get_stock_num_list(self):
-        return self.stock_num_list
+    def get_stock_contract_list(self):
+        with self.stock_map_lock:
+            return list(self.stock_map.values())
 
-    def fill_future_code_list(self):
+    def get_contract_tse_001(self):
+        return self.__api.Contracts.Indexs.TSE.TSE001
+
+    def get_contract_otc_101(self):
+        return self.__api.Contracts.Indexs.OTC.OTC101
+
+    def get_contract_by_stock_num(self, num):
+        with self.stock_map_lock:
+            return self.stock_map[num]
+
+    def fill_future_map(self):
         for future_arr in self.__api.Contracts.Futures:
             for future in future_arr:
-                self.future_code_list.append(future.code)
-        if len(self.future_code_list) != 0:
-            logger.info("total future: %d", len(self.future_code_list))
-        else:
-            raise RuntimeError("future_code_list is empty")
+                with self.future_map_lock:
+                    self.future_map[future.code] = future
+        with self.future_map_lock:
+            if len(self.future_map) != 0:
+                logger.info("total future: %d", len(self.future_map))
+            else:
+                raise RuntimeError("future_map is empty")
 
-    def fill_option_code_list(self):
+    def get_future_contract_list(self):
+        with self.future_map_lock:
+            return list(self.future_map.values())
+
+    def get_contract_by_future_code(self, code):
+        with self.future_map_lock:
+            return self.future_map[code]
+
+    def fill_option_map(self):
         for option_arr in self.__api.Contracts.Options:
             for option in option_arr:
-                self.option_code_list.append(option.code)
-                # pprint(self.get_contract_by_option_code(option.code))
-        if len(self.option_code_list) != 0:
-            logger.info("total option: %d", len(self.option_code_list))
-        else:
-            raise RuntimeError("option_code_list is empty")
+                with self.option_map_lock:
+                    self.option_map[option.code] = option
+        with self.option_map_lock:
+            if len(self.option_map) != 0:
+                logger.info("total option: %d", len(self.option_map))
+            else:
+                raise RuntimeError("option_map is empty")
 
-    def get_future_code_list(self):
-        return self.future_code_list
+    def get_option_contract_list(self):
+        with self.option_map_lock:
+            return list(self.option_map.values())
 
-    def get_option_code_list(self):
-        return self.option_code_list
+    def get_contract_by_option_code(self, code):
+        with self.option_map_lock:
+            return self.option_map[code]
 
     def update_order_non_block(self):
         if self.non_block_order_callback is None:
@@ -209,6 +247,7 @@ class Shioaji:
         return OrderStatus(order_id, order.status.status, "")
 
     def order_callback(self, order_state: sc.OrderState, res: dict):
+        # every time order callback, update local order
         self.update_local_order()
         if order_state in (sc.OrderState.FuturesOrder, sc.OrderState.StockOrder):
             if res["contract"]["code"] is None:
@@ -236,30 +275,6 @@ class Shioaji:
                 res["quantity"],
                 res["trade_id"],
             )
-
-    def get_contract_tse_001(self):
-        return self.__api.Contracts.Indexs.TSE.TSE001
-
-    def get_contract_otc_101(self):
-        return self.__api.Contracts.Indexs.OTC.OTC101
-
-    def get_contract_by_stock_num(self, num):
-        return self.__api.Contracts.Stocks[num]
-
-    def get_contract_by_future_code(self, code):
-        return self.__api.Contracts.Futures[code]
-
-    def get_contract_by_option_code(self, code):
-        return self.__api.Contracts.Options[code]
-
-    def get_contract_name_by_stock_num(self, num) -> str:
-        return str(self.__api.Contracts.Stocks[num].name)
-
-    def get_contract_name_by_future_code(self, code) -> str:
-        return str(self.__api.Contracts.Futures[code].name)
-
-    def get_contract_name_by_option_code(self, code) -> str:
-        return str(self.__api.Contracts.Options[code].name)
 
     def snapshots(self, contracts):
         try:
@@ -359,7 +374,7 @@ class Shioaji:
     def subscribe_stock_tick(self, stock_num: str, odd: bool):
         try:
             self.__api.quote.subscribe(
-                self.__api.Contracts.Stocks[stock_num],
+                self.get_contract_by_stock_num(stock_num),
                 quote_type=sc.QuoteType.Tick,
                 version=sc.QuoteVersion.v1,
                 intraday_odd=odd,
@@ -371,7 +386,7 @@ class Shioaji:
     def unsubscribe_stock_tick(self, stock_num):
         try:
             self.__api.quote.unsubscribe(
-                self.__api.Contracts.Stocks[stock_num],
+                self.get_contract_by_stock_num(stock_num),
                 quote_type=sc.QuoteType.Tick,
                 version=sc.QuoteVersion.v1,
             )
@@ -426,7 +441,7 @@ class Shioaji:
     def subscribe_stock_bidask(self, stock_num):
         try:
             self.__api.quote.subscribe(
-                self.__api.Contracts.Stocks[stock_num],
+                self.get_contract_by_stock_num(stock_num),
                 quote_type=sc.QuoteType.BidAsk,
                 version=sc.QuoteVersion.v1,
             )
@@ -437,7 +452,7 @@ class Shioaji:
     def unsubscribe_stock_bidask(self, stock_num):
         try:
             self.__api.quote.unsubscribe(
-                self.__api.Contracts.Stocks[stock_num],
+                self.get_contract_by_stock_num(stock_num),
                 quote_type=sc.QuoteType.BidAsk,
                 version=sc.QuoteVersion.v1,
             )

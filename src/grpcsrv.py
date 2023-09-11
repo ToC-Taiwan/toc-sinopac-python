@@ -80,11 +80,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
                 day_trade=tse_001.day_trade,
             )
         )
-        for row in self.workers.get_stock_num_list():
-            contract = worker.get_contract_by_stock_num(row)
-            if contract is None:
-                logger.error("%s has no stock data", row)
-                continue
+        for contract in self.workers.get_stock_contract_list():
             response.stock.append(
                 basic_pb2.StockDetailMessage(
                     exchange=contract.exchange,
@@ -100,13 +96,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def GetAllFutureDetail(self, request, _):
         response = basic_pb2.FutureDetailResponse()
-        worker = self.workers.get()
-
-        for row in self.workers.get_future_code_list():
-            contract = worker.get_contract_by_future_code(row)
-            if contract is None:
-                logger.error("%s has no future data", row)
-                continue
+        for contract in self.workers.get_future_contract_list():
             response.future.append(
                 basic_pb2.FutureDetailMessage(
                     code=contract.code,
@@ -127,13 +117,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def GetAllOptionDetail(self, request, _):
         response = basic_pb2.OptionDetailResponse()
-        worker = self.workers.get()
-
-        for row in self.workers.get_option_code_list():
-            contract = worker.get_contract_by_option_code(row)
-            if contract is None:
-                logger.error("%s has no option data", row)
-                continue
+        for contract in self.workers.get_option_contract_list():
             response.option.append(
                 basic_pb2.OptionDetailMessage(
                     code=contract.code,
@@ -967,12 +951,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         return response
 
     def GetAllStockSnapshot(self, request, _):
-        contracts = []
-        worker = self.workers.get()
-
-        for stock in self.workers.get_stock_num_list():
-            contracts.append(worker.get_contract_by_stock_num(stock))
-        splits = np.array_split(contracts, self.workers.count())
+        splits = np.array_split(self.workers.get_stock_contract_list(), self.workers.count())
         snapshots: list[Snapshot] = []
         threads = []
         for i, split in enumerate(splits):
