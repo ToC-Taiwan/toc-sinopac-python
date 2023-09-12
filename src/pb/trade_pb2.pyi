@@ -184,18 +184,18 @@ class OddStockOrderDetail(google.protobuf.message.Message):
 
     STOCK_NUM_FIELD_NUMBER: builtins.int
     PRICE_FIELD_NUMBER: builtins.int
-    QUANTITY_FIELD_NUMBER: builtins.int
+    SHARE_FIELD_NUMBER: builtins.int
     stock_num: builtins.str
     price: builtins.float
-    quantity: builtins.int
+    share: builtins.int
     def __init__(
         self,
         *,
         stock_num: builtins.str = ...,
         price: builtins.float = ...,
-        quantity: builtins.int = ...,
+        share: builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["price", b"price", "quantity", b"quantity", "stock_num", b"stock_num"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["price", b"price", "share", b"share", "stock_num", b"stock_num"]) -> None: ...
 
 global___OddStockOrderDetail = OddStockOrderDetail
 

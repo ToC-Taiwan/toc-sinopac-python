@@ -33,7 +33,7 @@ class ShioajiAuth:
 class Shioaji:
     def __init__(self):
         self.__api = sj.Shioaji()
-        self.__login_lock = threading.Lock()
+        self.__login_status_lock = threading.Lock()
         self.__login_progess = int()
 
         # callback initialization avoid NoneType error
@@ -53,45 +53,31 @@ class Shioaji:
         self.option_map: dict[str, Contract] = {}
         self.option_map_lock = threading.Lock()
 
-    def get_usage(self):
-        return self.__api.usage()
-
-    def get_sj_version(self):
-        return str(sj.__version__)
-
-    def event_logger_cb(self, resp_code: int, event_code: int, info: str, event: str):
-        if event_code != 0:
-            logger.warning("resp_code: %d", resp_code)
-            logger.warning("event_code: %d", event_code)
-            logger.warning("info: %s", info)
-            logger.warning("event: %s", event)
-
-        if event_code == 12:
-            time.sleep(30)
-            raise RuntimeError("reconnecting in initial login")
-
-    def login_cb(self, security_type: sc.SecurityType):
-        with self.__login_lock:
-            if security_type.value in [item.value for item in sc.SecurityType]:
-                self.__login_progess += 1
-                logger.info("login progress: %d/4, %s", self.__login_progess, security_type)
-
-    def log_out(self):
-        try:
-            self.__api.logout()
-            logger.info("logout shioaji")
-        except Exception:
-            logger.error("logout shioaji fail")
-
     def login(self, user: ShioajiAuth, is_main: bool):
         # before gRPC set cb, using logger to save event
-        self.set_event_callback(self.event_logger_cb)
+        def event_logger_cb(resp_code: int, event_code: int, info: str, event: str):
+            if event_code != 0:
+                logger.warning("resp_code: %d", resp_code)
+                logger.warning("event_code: %d", event_code)
+                logger.warning("info: %s", info)
+                logger.warning("event: %s", event)
+
+            if event_code == 12:
+                time.sleep(30)
+                raise RuntimeError("reconnecting in initial login")
+
+        def login_cb(security_type: sc.SecurityType):
+            with self.__login_status_lock:
+                if security_type.value in [item.value for item in sc.SecurityType]:
+                    self.__login_progess += 1
+                    logger.info("login progress: %d/4, %s", self.__login_progess, security_type)
 
         try:
+            self.set_event_callback(event_logger_cb)
             self.__api.login(
                 api_key=user.api_key,
                 secret_key=user.api_key_secret,
-                contracts_cb=self.login_cb,
+                contracts_cb=login_cb,
                 subscribe_trade=is_main,
             )
 
@@ -104,8 +90,9 @@ class Shioaji:
             raise RuntimeError("login error") from error
 
         while True:
-            if self.__login_progess == 4:
-                break
+            with self.__login_status_lock:
+                if self.__login_progess == 4:
+                    break
 
         self.__api.activate_ca(
             ca_path=f"./data/{user.person_id}.pfx",
@@ -118,12 +105,26 @@ class Shioaji:
         self.fill_option_map()
 
         if is_main is True:
+            if self.__api.stock_account.signed is False or self.__api.futopt_account.signed is False:
+                raise RuntimeError("account not sign")
+
             self.set_order_callback(self.order_callback)
-            logger.info("stock account sign status: %s", self.__api.stock_account.signed)
-            logger.info("future account sign status: %s", self.__api.futopt_account.signed)
             self.update_local_order()
 
         return self
+
+    def log_out(self):
+        try:
+            self.__api.logout()
+            logger.info("logout shioaji")
+        except Exception:
+            logger.error("logout shioaji fail")
+
+    def get_usage(self):
+        return self.__api.usage()
+
+    def get_sj_version(self):
+        return str(sj.__version__)
 
     def set_event_callback(self, func):
         self.__api.quote.set_event_callback(func)
@@ -162,13 +163,13 @@ class Shioaji:
         with self.stock_map_lock:
             return list(self.stock_map.values())
 
-    def get_contract_tse_001(self):
-        return self.__api.Contracts.Indexs.TSE.TSE001
-
-    def get_contract_otc_101(self):
-        return self.__api.Contracts.Indexs.OTC.OTC101
-
     def get_contract_by_stock_num(self, num):
+        if num == "tse_001":
+            return self.__api.Contracts.Indexs.TSE.TSE001
+
+        if num == "otc_101":
+            return self.__api.Contracts.Indexs.OTC.OTC101
+
         with self.stock_map_lock:
             return self.stock_map[num]
 
@@ -210,17 +211,6 @@ class Shioaji:
         with self.option_map_lock:
             return self.option_map[code]
 
-    def update_order_non_block(self):
-        if self.non_block_order_callback is None:
-            return "non_block_order_callback is None"
-
-        with self.__order_map_lock:
-            try:
-                self.__api.update_status(timeout=0, cb=self.non_block_order_callback)
-                return ""
-            except Exception:
-                return "update_order_non_block fail"
-
     def get_local_order(self) -> list[Trade]:
         with self.__order_map_lock:
             return list(self.__order_map.values())
@@ -228,6 +218,12 @@ class Shioaji:
     def get_local_order_by_order_id(self, order_id: str):
         with self.__order_map_lock:
             return self.__order_map.get(order_id, None)
+
+    def get_order_status_from_local_by_order_id(self, order_id: str):
+        order = self.get_local_order_by_order_id(order_id)
+        if order is None:
+            return OrderStatus("", "", "order not found")
+        return OrderStatus(order_id, order.status.status, "")
 
     def update_local_order(self):
         with self.__order_map_lock:
@@ -239,12 +235,6 @@ class Shioaji:
                     self.__order_map[order.order.id] = order
             except Exception:
                 self.__order_map = cache
-
-    def get_order_status_from_local_by_order_id(self, order_id: str):
-        order = self.get_local_order_by_order_id(order_id)
-        if order is None:
-            return OrderStatus("", "", "order not found")
-        return OrderStatus(order_id, order.status.status, "")
 
     def order_callback(self, order_state: sc.OrderState, res: dict):
         # every time order callback, update local order
@@ -276,6 +266,17 @@ class Shioaji:
                 res["trade_id"],
             )
 
+    def update_order_non_block(self):
+        if self.non_block_order_callback is None:
+            return "non_block_order_callback is None"
+
+        with self.__order_map_lock:
+            try:
+                self.__api.update_status(timeout=0, cb=self.non_block_order_callback)
+                return ""
+            except Exception:
+                return "update_order_non_block fail"
+
     def snapshots(self, contracts):
         try:
             return self.__api.snapshots(contracts)
@@ -286,14 +287,8 @@ class Shioaji:
             return None
 
     def stock_ticks(self, num, date):
-        contract = self.get_contract_by_stock_num(num)
-        if num == "tse_001":
-            contract = self.get_contract_tse_001()
-        elif num == "otc_101":
-            contract = self.get_contract_otc_101()
-
         try:
-            return self.__api.ticks(contract, date)
+            return self.__api.ticks(self.get_contract_by_stock_num(num), date)
         except TimeoutError:
             return self.stock_ticks(num, date)
 
@@ -304,15 +299,9 @@ class Shioaji:
             return self.future_ticks(code, date)
 
     def stock_kbars(self, num, date):
-        contract = self.get_contract_by_stock_num(num)
-        if num == "tse_001":
-            contract = self.get_contract_tse_001()
-        elif num == "otc_101":
-            contract = self.get_contract_otc_101()
-
         try:
             return self.__api.kbars(
-                contract=contract,
+                contract=self.get_contract_by_stock_num(num),
                 start=date,
                 end=date,
             )
@@ -330,15 +319,9 @@ class Shioaji:
             return self.future_kbars(code, date)
 
     def get_stock_last_close_by_date(self, num, date):
-        contract = self.get_contract_by_stock_num(num)
-        if num == "tse_001":
-            contract = self.get_contract_tse_001()
-        elif num == "otc_101":
-            contract = self.get_contract_otc_101()
-
         try:
             ticks = self.__api.quote.ticks(
-                contract=contract,
+                contract=self.get_contract_by_stock_num(num),
                 date=date,
                 query_type=sc.TicksQueryType.LastCount,
                 last_cnt=1,
@@ -350,10 +333,9 @@ class Shioaji:
             return self.get_stock_last_close_by_date(num, date)
 
     def get_future_last_close_by_date(self, code, date):
-        contract = self.get_contract_by_future_code(code)
         try:
             ticks = self.__api.quote.ticks(
-                contract=contract,
+                contract=self.get_contract_by_future_code(code),
                 date=date,
                 query_type=sc.TicksQueryType.LastCount,
                 last_cnt=1,
@@ -682,13 +664,13 @@ class Shioaji:
         except Exception:
             return []
 
-    def buy_odd_stock(self, stock_num: str, price: float, quantity: int):
-        if quantity >= 1000:
-            return OrderStatus("", "", "quantity must be less than 1000")
+    def buy_odd_stock(self, stock_num: str, price: float, share: int):
+        if share >= 1000:
+            return OrderStatus("", "", "share must be less than 1000")
 
         order: Order = self.__api.Order(
             price=price,
-            quantity=quantity,
+            quantity=share,
             action=sc.Action.Buy,
             price_type=sc.StockPriceType.LMT,
             order_type=sc.OrderType.ROD,
@@ -700,13 +682,13 @@ class Shioaji:
             return OrderStatus(trade.order.id, trade.status.status, "")
         return OrderStatus("", "", "buy odd stock fail")
 
-    def sell_odd_stock(self, stock_num: str, price: float, quantity: int):
-        if quantity >= 1000:
-            return OrderStatus("", "", "quantity must be less than 1000")
+    def sell_odd_stock(self, stock_num: str, price: float, share: int):
+        if share >= 1000:
+            return OrderStatus("", "", "share must be less than 1000")
 
         order: Order = self.__api.Order(
             price=price,
-            quantity=quantity,
+            quantity=share,
             action=sc.Action.Sell,
             price_type=sc.StockPriceType.LMT,
             order_type=sc.OrderType.ROD,

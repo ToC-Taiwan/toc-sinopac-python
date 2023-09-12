@@ -66,20 +66,6 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def GetAllStockDetail(self, request, _):
         response = basic_pb2.StockDetailResponse()
-        worker = self.workers.get()
-
-        tse_001 = worker.get_contract_tse_001()
-        response.stock.append(
-            basic_pb2.StockDetailMessage(
-                exchange=tse_001.exchange,
-                category=tse_001.category,
-                code=tse_001.code,
-                name=tse_001.name,
-                reference=tse_001.reference,
-                update_date=tse_001.update_date,
-                day_trade=tse_001.day_trade,
-            )
-        )
         for contract in self.workers.get_stock_contract_list():
             response.stock.append(
                 basic_pb2.StockDetailMessage(
@@ -977,7 +963,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
     def GetStockSnapshotTSE(self, request, _):
         worker = self.workers.get_data()
         try:
-            snapshots = worker.snapshots([worker.get_contract_tse_001()])
+            snapshots = worker.snapshots([worker.get_contract_by_stock_num("tse_001")])
         except TokenError:
             logger.error("token error")
             self.workers.logout_and_exit()
@@ -988,7 +974,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
     def GetStockSnapshotOTC(self, request, _):
         worker = self.workers.get_data()
         try:
-            snapshots = worker.snapshots([worker.get_contract_otc_101()])
+            snapshots = worker.snapshots([worker.get_contract_by_stock_num("otc_101")])
         except TokenError:
             logger.error("token error")
             self.workers.logout_and_exit()

@@ -377,11 +377,11 @@ class SinopacWorkerPool:
     def sell_stock(self, stock_num, price, quantity):
         return self.get_order().sell_stock(stock_num, price, quantity)
 
-    def buy_odd_stock(self, stock_num, price, quantity):
-        return self.get_order().buy_odd_stock(stock_num, price, quantity)
+    def buy_odd_stock(self, stock_num, price, share):
+        return self.get_order().buy_odd_stock(stock_num, price, share)
 
-    def sell_odd_stock(self, stock_num, price, quantity):
-        return self.get_order().sell_odd_stock(stock_num, price, quantity)
+    def sell_odd_stock(self, stock_num, price, share):
+        return self.get_order().sell_odd_stock(stock_num, price, share)
 
     def sell_first_stock(self, stock_num, price, quantity):
         return self.get_order().sell_first_stock(stock_num, price, quantity)
