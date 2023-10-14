@@ -1,4 +1,8 @@
+import os
+
 import yfinance as yf
+
+yf.set_tz_cache_location(os.getcwd())
 
 
 class Yahoo:

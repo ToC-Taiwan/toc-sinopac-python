@@ -151,3 +151,4 @@ last_success_fetch
 bin
 tmp
 pyvenv.cfg
+tkr-tz*
