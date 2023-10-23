@@ -5,7 +5,7 @@ based58==0.1.1
 beautifulsoup4==4.12.2
 certifi==2023.7.22
 cffi==1.16.0
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
 ciso8601==2.3.0
 cryptography==41.0.4
 filelock==3.4.1
@@ -19,7 +19,7 @@ loguru==0.6.0
 lxml==4.9.3
 msgpack==1.0.7
 multitasking==0.0.11
-numpy==1.26.0
+numpy==1.26.1
 orjson==3.9.9
 pandas==2.1.1
 peewee==3.17.0
@@ -42,7 +42,7 @@ six==1.16.0
 soupsieve==2.5
 typing_extensions==4.8.0
 tzdata==2023.3
-urllib3==2.0.6
+urllib3==2.0.7
 webencodings==0.5.1
 xxhash==3.4.1
 yfinance==0.2.31

@@ -1,7 +1,7 @@
 # TOC SINOPAC PYTHON
 
 [![BUILD](https://img.shields.io/github/actions/workflow/status/ToC-Taiwan/toc-sinopac-python/main.yml?style=for-the-badge&logo=github)](https://github.com/ToC-Taiwan/toc-sinopac-python/actions/workflows/main.yml)
-[![Python](https://img.shields.io/badge/Python-3.11.5-yellow?logo=python&logoColor=yellow&style=for-the-badge)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.11.6-yellow?logo=python&logoColor=yellow&style=for-the-badge)](https://python.org)
 [![CONTAINER](https://img.shields.io/badge/Container-Docker-blue?style=for-the-badge&logo=docker&logoColor=blue)](https://www.docker.com/)
 
 [![RELEASE](https://img.shields.io/github/release/ToC-Taiwan/toc-sinopac-python?style=for-the-badge)](https://github.com/ToC-Taiwan/toc-sinopac-python/releases/latest)
@@ -90,7 +90,7 @@ docker run -d \
   -p 15672:15672 \
   -e RABBITMQ_DEFAULT_USER=admin \
   -e RABBITMQ_DEFAULT_PASS=password \
-  rabbitmq:3.12.4-management
+  rabbitmq:3.12.7-management
 ```
 
 ## Authors
