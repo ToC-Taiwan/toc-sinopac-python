@@ -12,11 +12,19 @@ else:
     LOG_FORMAT = "%(levelname)s[%(asctime)s] %(message)s"
 
 
+class RFC3339Formatter(logging.Formatter):
+    def formatTime(self, record, datefmt=None):
+        local_time = datetime.utcfromtimestamp(record.created).astimezone()
+        return local_time.isoformat(timespec="seconds")
+
+
+formatter = RFC3339Formatter()
 console_handler = logging.StreamHandler()
 file_handler = logging.FileHandler(f'logs/{datetime.now().strftime("%Y-%m-%d")}-toc-sinopac-python.log')
 
-console_handler.setFormatter(logging.Formatter(LOG_FORMAT, "%Y-%m-%d %H:%M:%S"))
-file_handler.setFormatter(logging.Formatter(LOG_FORMAT, "%Y-%m-%d %H:%M:%S"))
+TIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
+console_handler.setFormatter(RFC3339Formatter(LOG_FORMAT, TIME_FORMAT))
+file_handler.setFormatter(RFC3339Formatter(LOG_FORMAT, TIME_FORMAT))
 
 logging.addLevelName(50, "CRIT")
 logging.addLevelName(40, "ERRO")
