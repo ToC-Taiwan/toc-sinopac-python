@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from logging import LogRecord
 
 from env import RequiredEnv
 
@@ -9,10 +10,24 @@ env = RequiredEnv()
 if env.log_format == "json":
     LOG_FORMAT = '{"time":"%(asctime)s","user":"%(name)s","level":"%(levelname)s","message":"%(message)s"}'
 else:
-    LOG_FORMAT = "%(levelname)s[%(asctime)s] %(message)s"
+    LOG_FORMAT = "%(levelname)s\x1b[0m[%(asctime)s] %(message)s"
 
 
 class RFC3339Formatter(logging.Formatter):
+    def format(self, record: LogRecord) -> str:
+        color_code = "\x1b[36m"
+        if record.levelno == logging.DEBUG:
+            color_code = "\x1b[37m"
+        elif record.levelno == logging.INFO:
+            color_code = "\x1b[36m"
+        elif record.levelno == logging.WARNING:
+            color_code = "\x1b[33m"
+        elif record.levelno == logging.ERROR:
+            color_code = "\x1b[31m"
+        elif record.levelno == logging.CRITICAL:
+            color_code = "\x1b[31m"
+        return f"{color_code}{super().format(record)}"
+
     def formatTime(self, record, datefmt=None):
         local_time = datetime.fromtimestamp(record.created).astimezone()
         return local_time.isoformat(timespec="seconds")
