@@ -3,8 +3,6 @@ import os
 
 import yfinance as yf
 
-from logger import logger
-
 yf.set_tz_cache_location(os.getcwd())
 
 
@@ -27,10 +25,5 @@ class Yahoo:
                 return [0.0, 0.0]
             return [list(data_history)[total - 1], list(data_history)[total - 2]]
 
-        except AttributeError:
-            logger.error("AttributeError: %s", code)
-            return [0.0, 0.0]
-
         except Exception:
-            # logger.error("yfinance error: %s", type(e).__name__)
             return [0.0, 0.0]
