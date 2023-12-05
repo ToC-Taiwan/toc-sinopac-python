@@ -14,7 +14,7 @@ else:
 
 class RFC3339Formatter(logging.Formatter):
     def formatTime(self, record, datefmt=None):
-        local_time = datetime.utcfromtimestamp(record.created).astimezone()
+        local_time = datetime.fromtimestamp(record.created).astimezone()
         return local_time.isoformat(timespec="seconds")
 
 
@@ -22,9 +22,8 @@ formatter = RFC3339Formatter()
 console_handler = logging.StreamHandler()
 file_handler = logging.FileHandler(f'logs/{datetime.now().strftime("%Y-%m-%d")}-toc-sinopac-python.log')
 
-TIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
-console_handler.setFormatter(RFC3339Formatter(LOG_FORMAT, TIME_FORMAT))
-file_handler.setFormatter(RFC3339Formatter(LOG_FORMAT, TIME_FORMAT))
+console_handler.setFormatter(RFC3339Formatter(fmt=LOG_FORMAT))
+file_handler.setFormatter(RFC3339Formatter(fmt=LOG_FORMAT))
 
 logging.addLevelName(50, "CRIT")
 logging.addLevelName(40, "ERRO")
