@@ -18,33 +18,17 @@ from .trade import RPCTrade
 
 class GRPCServer:
     def __init__(self, worker_pool: SinopacWorkerPool, rabbit: RabbitMQS):
+        logger.info("Shioaji version: %s", worker_pool.get_sj_version())
+
         # simulator
         simulator = Simulator(worker_pool.main_worker)
 
         # gRPC servicer
-        basic_servicer = RPCBasic(
-            workers=worker_pool,
-        )
-
-        history_servicer = RPCHistory(
-            workers=worker_pool,
-        )
-
-        realtime_servicer = RPCRealTime(
-            source=Yahoo(),
-            workers=worker_pool,
-        )
-
-        subscribe_servicer = RPCSubscribe(
-            workers=worker_pool,
-        )
-
-        trade_servicer = RPCTrade(
-            rabbit=rabbit,
-            simulator=simulator,
-            workers=worker_pool,
-        )
-        self.worker_pool = worker_pool
+        basic_servicer = RPCBasic(worker_pool)
+        history_servicer = RPCHistory(worker_pool)
+        realtime_servicer = RPCRealTime(Yahoo(), worker_pool)
+        subscribe_servicer = RPCSubscribe(worker_pool)
+        trade_servicer = RPCTrade(rabbit, simulator, worker_pool)
 
         new_server = grpc.server(
             futures.ThreadPoolExecutor(),
@@ -70,6 +54,5 @@ class GRPCServer:
     def serve(self, port: str):
         self.grpc_srv.add_insecure_port(f"[::]:{port}")
         self.grpc_srv.start()
-        logger.info("shioaji version: %s", self.worker_pool.get_sj_version())
         logger.info("gRPC Server started at port %s", port)
         self.grpc_srv.wait_for_termination()
