@@ -18,8 +18,6 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class SnapshotResponse(google.protobuf.message.Message):
-    """SnapshotResponse is the response of snapshot"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATA_FIELD_NUMBER: builtins.int
@@ -36,8 +34,6 @@ global___SnapshotResponse = SnapshotResponse
 
 @typing_extensions.final
 class YahooFinancePrice(google.protobuf.message.Message):
-    """YahooFinancePrice is the response of yahoo finance price"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     PRICE_FIELD_NUMBER: builtins.int
@@ -56,8 +52,6 @@ global___YahooFinancePrice = YahooFinancePrice
 
 @typing_extensions.final
 class VolumeRankRequest(google.protobuf.message.Message):
-    """VolumeRankRequest is the request of volume rank"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     COUNT_FIELD_NUMBER: builtins.int
@@ -76,8 +70,6 @@ global___VolumeRankRequest = VolumeRankRequest
 
 @typing_extensions.final
 class SnapshotMessage(google.protobuf.message.Message):
-    """SnapshotMessage is the message of snapshot"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     TS_FIELD_NUMBER: builtins.int
@@ -156,8 +148,6 @@ global___SnapshotMessage = SnapshotMessage
 
 @typing_extensions.final
 class StockVolumeRankResponse(google.protobuf.message.Message):
-    """StockVolumeRankResponse is the response of stock volume rank"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATA_FIELD_NUMBER: builtins.int
@@ -174,8 +164,6 @@ global___StockVolumeRankResponse = StockVolumeRankResponse
 
 @typing_extensions.final
 class StockVolumeRankMessage(google.protobuf.message.Message):
-    """StockVolumeRankMessage is the message of stock volume rank"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATE_FIELD_NUMBER: builtins.int

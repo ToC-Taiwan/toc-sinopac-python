@@ -8,8 +8,7 @@ import subscribe_pb2 as subscribe__pb2
 
 
 class SubscribeDataInterfaceStub(object):
-    """SubscribeDataInterface is the interface for subscribe data
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -70,75 +69,64 @@ class SubscribeDataInterfaceStub(object):
 
 
 class SubscribeDataInterfaceServicer(object):
-    """SubscribeDataInterface is the interface for subscribe data
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def SubscribeStockTick(self, request, context):
-        """SubscribeStockTick is the interface for subscribe stock tick
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnSubscribeStockTick(self, request, context):
-        """UnSubscribeStockTick is the interface for unsubscribe stock tick
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SubscribeStockBidAsk(self, request, context):
-        """SubscribeStockBidAsk is the interface for subscribe stock bid ask
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnSubscribeStockBidAsk(self, request, context):
-        """UnSubscribeStockBidAsk is the interface for unsubscribe stock bid ask
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SubscribeFutureTick(self, request, context):
-        """SubscribeFutureTick is the interface for subscribe stock all tick
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnSubscribeFutureTick(self, request, context):
-        """UnSubscribeFutureTick is the interface for unsubscribe stock all tick
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SubscribeFutureBidAsk(self, request, context):
-        """SubscribeFutureBidAsk is the interface for subscribe stock all bid ask
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnSubscribeFutureBidAsk(self, request, context):
-        """UnSubscribeFutureBidAsk is the interface for unsubscribe stock all bid ask
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnSubscribeAllTick(self, request, context):
-        """UnSubscribeAllTick is the interface for unsubscribe stock all tick
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnSubscribeAllBidAsk(self, request, context):
-        """UnSubscribeStockAllBidAsk is the interface for unsubscribe stock all bid ask
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -204,8 +192,7 @@ def add_SubscribeDataInterfaceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class SubscribeDataInterface(object):
-    """SubscribeDataInterface is the interface for subscribe data
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def SubscribeStockTick(request,

@@ -18,8 +18,6 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class SubscribeResponse(google.protobuf.message.Message):
-    """SubscribeResponse is the response for subscribe"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     FAIL_ARR_FIELD_NUMBER: builtins.int

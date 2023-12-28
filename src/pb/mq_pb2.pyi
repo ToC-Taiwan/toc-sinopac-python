@@ -18,8 +18,6 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class EventMessage(google.protobuf.message.Message):
-    """EventMessage is the message type for event"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     RESP_CODE_FIELD_NUMBER: builtins.int
@@ -47,8 +45,6 @@ global___EventMessage = EventMessage
 
 @typing_extensions.final
 class StockRealTimeTickMessage(google.protobuf.message.Message):
-    """StockRealTimeTickMessage is the message type for stock tick"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -124,8 +120,6 @@ global___StockRealTimeTickMessage = StockRealTimeTickMessage
 
 @typing_extensions.final
 class StockRealTimeBidAskMessage(google.protobuf.message.Message):
-    """StockRealTimeBidAskMessage is the message type for stock bid ask"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -174,8 +168,6 @@ global___StockRealTimeBidAskMessage = StockRealTimeBidAskMessage
 
 @typing_extensions.final
 class FutureRealTimeTickMessage(google.protobuf.message.Message):
-    """FutureRealTimeTickMessage is the message type for stock trade"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -245,8 +237,6 @@ global___FutureRealTimeTickMessage = FutureRealTimeTickMessage
 
 @typing_extensions.final
 class FutureRealTimeBidAskMessage(google.protobuf.message.Message):
-    """FutureRealTimeBidAskMessage is the message type for future bid ask"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -313,8 +303,6 @@ global___FutureRealTimeBidAskMessage = FutureRealTimeBidAskMessage
 
 @typing_extensions.final
 class OrderStatusArr(google.protobuf.message.Message):
-    """OrderStatusArr is the message type for order status"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATA_FIELD_NUMBER: builtins.int
@@ -331,8 +319,6 @@ global___OrderStatusArr = OrderStatusArr
 
 @typing_extensions.final
 class OrderStatus(google.protobuf.message.Message):
-    """OrderStatus is the message type for order status"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STATUS_FIELD_NUMBER: builtins.int

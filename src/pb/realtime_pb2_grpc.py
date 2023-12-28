@@ -8,8 +8,7 @@ import realtime_pb2 as realtime__pb2
 
 
 class RealTimeDataInterfaceStub(object):
-    """RealTimeDataInterface is the interface for real time data
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -60,61 +59,52 @@ class RealTimeDataInterfaceStub(object):
 
 
 class RealTimeDataInterfaceServicer(object):
-    """RealTimeDataInterface is the interface for real time data
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def GetAllStockSnapshot(self, request, context):
-        """GetAllStockSnapshot get all stock snapshot
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockSnapshotByNumArr(self, request, context):
-        """GetStockSnapshotByNumArr get stock snapshot by num array
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockSnapshotTSE(self, request, context):
-        """GetStockSnapshotTSE get stock snapshot by num array
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockSnapshotOTC(self, request, context):
-        """GetStockSnapshotOTC get stock snapshot by num array
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetNasdaq(self, request, context):
-        """GetNasdaq get stock snapshot by num array
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetNasdaqFuture(self, request, context):
-        """GetNasdaqFuture get stock snapshot by num array
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockVolumeRank(self, request, context):
-        """GetStockVolumeRank get stock volume rank
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetFutureSnapshotByCodeArr(self, request, context):
-        """GetFutureSnapshotByCodeArr get future snapshot by code array
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -170,8 +160,7 @@ def add_RealTimeDataInterfaceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class RealTimeDataInterface(object):
-    """RealTimeDataInterface is the interface for real time data
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def GetAllStockSnapshot(request,

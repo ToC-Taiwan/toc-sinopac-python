@@ -7,7 +7,7 @@ import time
 from prometheus_client import start_http_server
 
 from env import RequiredEnv
-from grpcsrv import GRPCServer
+from grpcsrv.server import GRPCServer
 from logger import logger
 from rabbitmq import RabbitMQS
 from rabbitmq_setting import RabbitMQSetting

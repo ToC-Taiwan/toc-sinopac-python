@@ -18,8 +18,6 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class StockNumArr(google.protobuf.message.Message):
-    """StockNumArr"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STOCK_NUM_ARR_FIELD_NUMBER: builtins.int
@@ -39,8 +37,6 @@ global___StockNumArr = StockNumArr
 
 @typing_extensions.final
 class FutureCodeArr(google.protobuf.message.Message):
-    """FutureNumArr"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     FUTURE_CODE_ARR_FIELD_NUMBER: builtins.int
@@ -57,8 +53,6 @@ global___FutureCodeArr = FutureCodeArr
 
 @typing_extensions.final
 class ErrorMessage(google.protobuf.message.Message):
-    """ErrorMssage"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ERR_FIELD_NUMBER: builtins.int

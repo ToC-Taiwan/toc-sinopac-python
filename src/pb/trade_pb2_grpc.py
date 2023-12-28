@@ -8,8 +8,7 @@ import trade_pb2 as trade__pb2
 
 
 class TradeInterfaceStub(object):
-    """TradeInterface is the interface for trade service
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -135,166 +134,142 @@ class TradeInterfaceStub(object):
 
 
 class TradeInterfaceServicer(object):
-    """TradeInterface is the interface for trade service
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def BuyStock(self, request, context):
-        """BuyStock is the interface for buying stock
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SellStock(self, request, context):
-        """SellStock is the interface for selling stock
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def BuyOddStock(self, request, context):
-        """BuyStock is the interface for buying stock
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SellOddStock(self, request, context):
-        """SellStock is the interface for selling stock
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SellFirstStock(self, request, context):
-        """SellFirstStock is the interface for selling first stock
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CancelStock(self, request, context):
-        """CancelStock is the interface for canceling stock
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def BuyFuture(self, request, context):
-        """BuyFuture is the interface for buying future
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SellFuture(self, request, context):
-        """SellFuture is the interface for selling future
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SellFirstFuture(self, request, context):
-        """SellFirstFuture is the interface for selling first future
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CancelFuture(self, request, context):
-        """CancelFuture is the interface for canceling future
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def BuyOption(self, request, context):
-        """BuyFuture is the interface for buying future
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SellOption(self, request, context):
-        """SellFuture is the interface for selling future
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SellFirstOption(self, request, context):
-        """SellFirstFuture is the interface for selling first future
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CancelOption(self, request, context):
-        """CancelFuture is the interface for canceling future
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetLocalOrderStatusArr(self, request, context):
-        """GetLocalOrderStatusArr is the interface for getting local order status array
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetSimulateOrderStatusArr(self, request, context):
-        """GetSimulateOrderStatusArr is the interface for getting simulate order status array
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetOrderStatusByID(self, request, context):
-        """GetOrderStatusByID is the interface for getting order status by id
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetNonBlockOrderStatusArr(self, request, context):
-        """GetNonBlockOrderStatusArr is the interface for getting non block order status array
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetFuturePosition(self, request, context):
-        """GetFuturePosition is the interface for getting future position
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockPosition(self, request, context):
-        """GetStockPosition is the interface for getting stock position
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetSettlement(self, request, context):
-        """GetSettlement is the interface for getting settlement
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetAccountBalance(self, request, context):
-        """GetAccountBalance is the interface for getting account balance
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetMargin(self, request, context):
-        """GetMargin is the interface for getting margin
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -425,8 +400,7 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class TradeInterface(object):
-    """TradeInterface is the interface for trade service
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def BuyStock(request,

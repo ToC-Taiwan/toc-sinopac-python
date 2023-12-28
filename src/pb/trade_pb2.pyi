@@ -18,8 +18,6 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class FuturePosition(google.protobuf.message.Message):
-    """FuturePosition is the struct for future position"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -50,8 +48,6 @@ global___FuturePosition = FuturePosition
 
 @typing_extensions.final
 class FuturePositionArr(google.protobuf.message.Message):
-    """FuturePositionArr is the struct for future position array"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     POSITION_ARR_FIELD_NUMBER: builtins.int
@@ -134,8 +130,6 @@ global___StockPosition = StockPosition
 
 @typing_extensions.final
 class StockPositionArr(google.protobuf.message.Message):
-    """StockPositionArr is the struct for stock position array"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     POSITION_ARR_FIELD_NUMBER: builtins.int
@@ -152,8 +146,6 @@ global___StockPositionArr = StockPositionArr
 
 @typing_extensions.final
 class StockOrderDetail(google.protobuf.message.Message):
-    """StockOrderDetail is the struct for stock order detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STOCK_NUM_FIELD_NUMBER: builtins.int
@@ -178,8 +170,6 @@ global___StockOrderDetail = StockOrderDetail
 
 @typing_extensions.final
 class OddStockOrderDetail(google.protobuf.message.Message):
-    """OddStockOrderDetail is the struct for stock order detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STOCK_NUM_FIELD_NUMBER: builtins.int
@@ -201,8 +191,6 @@ global___OddStockOrderDetail = OddStockOrderDetail
 
 @typing_extensions.final
 class FutureOrderDetail(google.protobuf.message.Message):
-    """FutureOrderDetail is the struct for future order detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -227,8 +215,6 @@ global___FutureOrderDetail = FutureOrderDetail
 
 @typing_extensions.final
 class OptionOrderDetail(google.protobuf.message.Message):
-    """OptionOrderDetail is the struct for option order detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -253,8 +239,6 @@ global___OptionOrderDetail = OptionOrderDetail
 
 @typing_extensions.final
 class TradeResult(google.protobuf.message.Message):
-    """TradeResult is the struct for trade result"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ORDER_ID_FIELD_NUMBER: builtins.int
@@ -276,8 +260,6 @@ global___TradeResult = TradeResult
 
 @typing_extensions.final
 class OrderID(google.protobuf.message.Message):
-    """OrderID is the struct for order id"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ORDER_ID_FIELD_NUMBER: builtins.int
@@ -296,8 +278,6 @@ global___OrderID = OrderID
 
 @typing_extensions.final
 class FutureOrderID(google.protobuf.message.Message):
-    """FutureOrderID is the struct for future order id"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ORDER_ID_FIELD_NUMBER: builtins.int
@@ -316,8 +296,6 @@ global___FutureOrderID = FutureOrderID
 
 @typing_extensions.final
 class OptionOrderID(google.protobuf.message.Message):
-    """OptionOrderID is the struct for option order id"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ORDER_ID_FIELD_NUMBER: builtins.int

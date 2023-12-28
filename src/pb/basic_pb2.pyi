@@ -18,8 +18,6 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class BeatMessage(google.protobuf.message.Message):
-    """BeatMessage is the message for heartbeat"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     MESSAGE_FIELD_NUMBER: builtins.int
@@ -62,8 +60,6 @@ global___ShioajiUsage = ShioajiUsage
 
 @typing_extensions.final
 class StockDetailResponse(google.protobuf.message.Message):
-    """StockDetailResponse is the response for stock detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STOCK_FIELD_NUMBER: builtins.int
@@ -80,8 +76,6 @@ global___StockDetailResponse = StockDetailResponse
 
 @typing_extensions.final
 class FutureDetailResponse(google.protobuf.message.Message):
-    """FutureDetailResponse is the response for future detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     FUTURE_FIELD_NUMBER: builtins.int
@@ -98,8 +92,6 @@ global___FutureDetailResponse = FutureDetailResponse
 
 @typing_extensions.final
 class OptionDetailResponse(google.protobuf.message.Message):
-    """OptionDetailResponse is the response for option detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     OPTION_FIELD_NUMBER: builtins.int
@@ -116,8 +108,6 @@ global___OptionDetailResponse = OptionDetailResponse
 
 @typing_extensions.final
 class StockDetailMessage(google.protobuf.message.Message):
-    """StockDetailMessage is the message for stock detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     EXCHANGE_FIELD_NUMBER: builtins.int
@@ -151,8 +141,6 @@ global___StockDetailMessage = StockDetailMessage
 
 @typing_extensions.final
 class FutureDetailMessage(google.protobuf.message.Message):
-    """FutureDetailMessage is the message for future detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int
@@ -201,8 +189,6 @@ global___FutureDetailMessage = FutureDetailMessage
 
 @typing_extensions.final
 class OptionDetailMessage(google.protobuf.message.Message):
-    """OptionDetailMessage is the message for option detail"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CODE_FIELD_NUMBER: builtins.int

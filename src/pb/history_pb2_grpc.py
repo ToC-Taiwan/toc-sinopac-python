@@ -6,8 +6,7 @@ import history_pb2 as history__pb2
 
 
 class HistoryDataInterfaceStub(object):
-    """HistoryDataInterface is the interface for history data
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -68,75 +67,64 @@ class HistoryDataInterfaceStub(object):
 
 
 class HistoryDataInterfaceServicer(object):
-    """HistoryDataInterface is the interface for history data
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def GetStockHistoryTick(self, request, context):
-        """GetStockHistoryTick
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockHistoryKbar(self, request, context):
-        """GetStockHistoryKbar
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockHistoryClose(self, request, context):
-        """GetStockHistoryClose
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockHistoryCloseByDateArr(self, request, context):
-        """GetStockHistoryCloseByDateArr
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetFutureHistoryTick(self, request, context):
-        """GetFutureHistoryTick
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetFutureHistoryKbar(self, request, context):
-        """GetFutureHistoryKbar
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetFutureHistoryClose(self, request, context):
-        """GetFutureHistoryClose
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockTSEHistoryTick(self, request, context):
-        """GetStockTSEHistoryTick
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockTSEHistoryKbar(self, request, context):
-        """GetStockTSEHistoryKbar
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetStockTSEHistoryClose(self, request, context):
-        """GetStockTSEHistoryClose
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -202,8 +190,7 @@ def add_HistoryDataInterfaceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class HistoryDataInterface(object):
-    """HistoryDataInterface is the interface for history data
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def GetStockHistoryTick(request,

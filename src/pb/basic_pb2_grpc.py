@@ -7,8 +7,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
 class BasicDataInterfaceStub(object):
-    """BasicDataInterface is the interface for basic data service
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -54,54 +53,46 @@ class BasicDataInterfaceStub(object):
 
 
 class BasicDataInterfaceServicer(object):
-    """BasicDataInterface is the interface for basic data service
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def CreateLongConnection(self, request_iterator, context):
-        """CreateLongConnection is the function to create long connection
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def Terminate(self, request, context):
-        """Terminate is the terminate function
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CheckUsage(self, request, context):
-        """CheckUsage get shioaji usage
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def Login(self, request, context):
-        """Login log in
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetAllStockDetail(self, request, context):
-        """GetAllStockDetail is the function to get stock detail
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetAllFutureDetail(self, request, context):
-        """GetAllFutureDetail is the function to get future detail
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetAllOptionDetail(self, request, context):
-        """GetAllOptionDetail is the function to get option detail
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -152,8 +143,7 @@ def add_BasicDataInterfaceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class BasicDataInterface(object):
-    """BasicDataInterface is the interface for basic data service
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def CreateLongConnection(request_iterator,

@@ -18,8 +18,6 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class StockNumArrWithDate(google.protobuf.message.Message):
-    """StockNumArrWithDate"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STOCK_NUM_ARR_FIELD_NUMBER: builtins.int
@@ -39,8 +37,6 @@ global___StockNumArrWithDate = StockNumArrWithDate
 
 @typing_extensions.final
 class FutureCodeArrWithDate(google.protobuf.message.Message):
-    """FutureCodeArrWithDate"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     FUTURE_CODE_ARR_FIELD_NUMBER: builtins.int
@@ -60,8 +56,6 @@ global___FutureCodeArrWithDate = FutureCodeArrWithDate
 
 @typing_extensions.final
 class StockNumArrWithDateArr(google.protobuf.message.Message):
-    """StockNumArrWithDateArr"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STOCK_NUM_ARR_FIELD_NUMBER: builtins.int
@@ -82,8 +76,6 @@ global___StockNumArrWithDateArr = StockNumArrWithDateArr
 
 @typing_extensions.final
 class HistoryTickResponse(google.protobuf.message.Message):
-    """HistoryTickResponse"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATA_FIELD_NUMBER: builtins.int
@@ -100,8 +92,6 @@ global___HistoryTickResponse = HistoryTickResponse
 
 @typing_extensions.final
 class HistoryKbarResponse(google.protobuf.message.Message):
-    """HistoryKbarResponse"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATA_FIELD_NUMBER: builtins.int
@@ -118,8 +108,6 @@ global___HistoryKbarResponse = HistoryKbarResponse
 
 @typing_extensions.final
 class HistoryCloseResponse(google.protobuf.message.Message):
-    """HistoryCloseResponse"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATA_FIELD_NUMBER: builtins.int
@@ -136,8 +124,6 @@ global___HistoryCloseResponse = HistoryCloseResponse
 
 @typing_extensions.final
 class HistoryTickMessage(google.protobuf.message.Message):
-    """HistoryTickMessage"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     TS_FIELD_NUMBER: builtins.int
@@ -177,8 +163,6 @@ global___HistoryTickMessage = HistoryTickMessage
 
 @typing_extensions.final
 class HistoryKbarMessage(google.protobuf.message.Message):
-    """HistoryKbarMessage"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     TS_FIELD_NUMBER: builtins.int
@@ -212,8 +196,6 @@ global___HistoryKbarMessage = HistoryKbarMessage
 
 @typing_extensions.final
 class HistoryCloseMessage(google.protobuf.message.Message):
-    """HistoryCloseMessage"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATE_FIELD_NUMBER: builtins.int
@@ -235,8 +217,6 @@ global___HistoryCloseMessage = HistoryCloseMessage
 
 @typing_extensions.final
 class Date(google.protobuf.message.Message):
-    """Date"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DATE_FIELD_NUMBER: builtins.int
