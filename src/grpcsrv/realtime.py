@@ -23,7 +23,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
             logger.error("Token Error")
             self.workers.logout_and_exit()
 
-        if data is not None:
+        if data is not None and len(data) > 0:
             snapshots.extend(data)
 
     def sinopac_snapshot_to_pb(
@@ -129,7 +129,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         except TokenError:
             logger.error("token error")
             self.workers.logout_and_exit()
-        if snapshots is not None:
+        if snapshots is not None and len(snapshots) > 0:
             return self.sinopac_snapshot_to_pb(snapshots[0])
         return realtime_pb2.SnapshotMessage()
 
@@ -140,7 +140,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         except TokenError:
             logger.error("token error")
             self.workers.logout_and_exit()
-        if snapshots is not None:
+        if snapshots is not None and len(snapshots) > 0:
             return self.sinopac_snapshot_to_pb(snapshots[0])
         return realtime_pb2.SnapshotMessage()
 
