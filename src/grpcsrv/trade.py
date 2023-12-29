@@ -105,7 +105,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         result = self.workers.buy_odd_stock(
             request.stock_num,
             request.price,
-            request.quantity,
+            request.share,
         )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
