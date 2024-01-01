@@ -150,7 +150,7 @@ class Shioaji:
     def fill_stock_map(self):
         for contract_arr in self.__api.Contracts.Stocks:
             for contract in contract_arr:
-                if contract.day_trade == sc.DayTrade.Yes.value and contract.category != "00":
+                if contract.category != "00":
                     with self.stock_map_lock:
                         self.stock_map[contract.code] = contract
         with self.stock_map_lock:
