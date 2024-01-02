@@ -653,7 +653,10 @@ class Shioaji:
     def list_stock_positions(self) -> List[StockPosition]:
         try:
             result: List[StockPosition] = []
-            result = self.__api.list_positions(self.__api.stock_account)
+            result = self.__api.list_positions(
+                self.__api.stock_account,
+                unit=sc.Unit.Share,
+            )
             return result
         except Exception:
             return []
