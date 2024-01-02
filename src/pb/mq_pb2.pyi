@@ -6,15 +6,36 @@ import builtins
 import collections.abc
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
+import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
 import sys
+import typing
 
-if sys.version_info >= (3, 8):
+if sys.version_info >= (3, 10):
     import typing as typing_extensions
 else:
     import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+
+class _OrderType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _OrderTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_OrderType.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    TYPE_UNKNOWN: _OrderType.ValueType  # 0
+    TYPE_STOCK_LOT: _OrderType.ValueType  # 1
+    TYPE_STOCK_SHARE: _OrderType.ValueType  # 2
+    TYPE_FUTURE: _OrderType.ValueType  # 3
+
+class OrderType(_OrderType, metaclass=_OrderTypeEnumTypeWrapper): ...
+
+TYPE_UNKNOWN: OrderType.ValueType  # 0
+TYPE_STOCK_LOT: OrderType.ValueType  # 1
+TYPE_STOCK_SHARE: OrderType.ValueType  # 2
+TYPE_FUTURE: OrderType.ValueType  # 3
+global___OrderType = OrderType
 
 @typing_extensions.final
 class EventMessage(google.protobuf.message.Message):
@@ -321,6 +342,7 @@ global___OrderStatusArr = OrderStatusArr
 class OrderStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    TYPE_FIELD_NUMBER: builtins.int
     STATUS_FIELD_NUMBER: builtins.int
     CODE_FIELD_NUMBER: builtins.int
     ACTION_FIELD_NUMBER: builtins.int
@@ -328,6 +350,7 @@ class OrderStatus(google.protobuf.message.Message):
     QUANTITY_FIELD_NUMBER: builtins.int
     ORDER_ID_FIELD_NUMBER: builtins.int
     ORDER_TIME_FIELD_NUMBER: builtins.int
+    type: global___OrderType.ValueType
     status: builtins.str
     code: builtins.str
     action: builtins.str
@@ -338,6 +361,7 @@ class OrderStatus(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        type: global___OrderType.ValueType = ...,
         status: builtins.str = ...,
         code: builtins.str = ...,
         action: builtins.str = ...,
@@ -346,6 +370,6 @@ class OrderStatus(google.protobuf.message.Message):
         order_id: builtins.str = ...,
         order_time: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["action", b"action", "code", b"code", "order_id", b"order_id", "order_time", b"order_time", "price", b"price", "quantity", b"quantity", "status", b"status"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["action", b"action", "code", b"code", "order_id", b"order_id", "order_time", b"order_time", "price", b"price", "quantity", b"quantity", "status", b"status", "type", b"type"]) -> None: ...
 
 global___OrderStatus = OrderStatus

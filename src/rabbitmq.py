@@ -6,6 +6,7 @@ from queue import Queue
 import pika
 import shioaji as sj
 from pika.channel import Channel
+from shioaji.order import FuturesOrder, StockOrder
 
 from logger import logger
 from pb import mq_pb2
@@ -82,10 +83,17 @@ class RabbitMQS:
 
                 rabbit = self.pika_queue.get(block=True)
                 try:
+                    order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
+                    if isinstance(order.order, StockOrder) and order.order.order_lot == sj.order.StockOrderLot.Odd:
+                        order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
+                    elif isinstance(order.order, FuturesOrder):
+                        order_type = mq_pb2.OrderType.TYPE_FUTURE
+
                     rabbit.channel.basic_publish(
                         exchange=self.exchange,
                         routing_key="order",
                         body=mq_pb2.OrderStatus(
+                            type=order_type,
                             code=order.contract.code,
                             action=order.order.action,
                             price=order_price,
@@ -244,8 +252,15 @@ class RabbitMQS:
                 if order.status.order_datetime.day != datetime.now().day:
                     order.status.order_datetime = order.status.order_datetime + timedelta(days=1)
 
+            order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
+            if isinstance(order.order, StockOrder) and order.order.order_lot == sj.order.StockOrderLot.Odd:
+                order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
+            elif isinstance(order.order, FuturesOrder):
+                order_type = mq_pb2.OrderType.TYPE_FUTURE
+
             result.data.append(
                 mq_pb2.OrderStatus(
+                    type=order_type,
                     code=order.contract.code,
                     action=order.order.action,
                     price=order_price,

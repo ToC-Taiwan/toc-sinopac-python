@@ -8,14 +8,14 @@ cffi==1.16.0
 charset-normalizer==3.3.2
 ciso8601==2.3.1
 filelock==3.4.1
-frozendict==2.3.10
+frozendict==2.4.0
 grpcio==1.60.0
 grpcio-tools==1.60.0
 html5lib==1.1
 idna==3.6
 importlib-metadata==7.0.1
 loguru==0.6.0
-lxml==4.9.4
+lxml==5.0.0
 msgpack==1.0.7
 multitasking==0.0.11
 numpy==1.26.2
@@ -41,7 +41,7 @@ shioaji==1.2.1
 six==1.16.0
 soupsieve==2.5
 typing_extensions==4.9.0
-tzdata==2023.3
+tzdata==2023.4
 urllib3==2.1.0
 webencodings==0.5.1
 xxhash==3.4.1
