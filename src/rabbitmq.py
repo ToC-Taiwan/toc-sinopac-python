@@ -217,7 +217,7 @@ class RabbitMQS:
 
             order_type = mq_pb2.OrderType.TYPE_UNKNOWN
             if order.contract.security_type == sc.SecurityType.Stock:
-                if order.order.order_lot == sj.order.StockOrderLot.Odd:
+                if order.order.order_lot in (sj.order.StockOrderLot.Odd, sj.order.StockOrderLot.IntradayOdd):
                     order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
                 else:
                     order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
