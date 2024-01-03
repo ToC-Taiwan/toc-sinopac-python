@@ -186,67 +186,66 @@ class RabbitMQS:
         self.pika_queue.put(rabbit)
 
     def order_status_callback(self, reply: list[sj.order.Trade]):
-        with self.order_cb_lock:
-            self.send_order_arr(reply)
+        self.send_order_arr(reply)
 
     def send_order_arr(self, arr: list[sj.order.Trade]):
         if len(arr) == 0:
             return
+        with self.order_cb_lock:
+            result = mq_pb2.OrderStatusArr()
+            for order in arr:
+                if order.status.order_datetime is None:
+                    order.status.order_datetime = datetime.now()
 
-        result = mq_pb2.OrderStatusArr()
-        for order in arr:
-            if order.status.order_datetime is None:
-                order.status.order_datetime = datetime.now()
-
-            order_price = int()
-            if order.status.modified_price != 0:
-                order_price = order.status.modified_price
-            else:
-                order_price = order.order.price
-
-            if len(order.status.deals) > 0:
-                order_price = order.status.deals[0].price
-
-            qty = order.order.quantity
-            if order.status.deal_quantity not in (0, qty):
-                qty = order.status.deal_quantity
-
-            if order.status.order_datetime.hour < 5 and order.status.order_datetime.hour >= 0:
-                if order.status.order_datetime.day != datetime.now().day:
-                    order.status.order_datetime = order.status.order_datetime + timedelta(days=1)
-
-            order_type = mq_pb2.OrderType.TYPE_UNKNOWN
-            if order.contract.security_type == sc.SecurityType.Stock:
-                if order.order.order_lot in (sj.order.StockOrderLot.Odd, sj.order.StockOrderLot.IntradayOdd):
-                    order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
+                order_price = int()
+                if order.status.modified_price != 0:
+                    order_price = order.status.modified_price
                 else:
-                    order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
-            if order.contract.security_type == sc.SecurityType.Future:
-                order_type = mq_pb2.OrderType.TYPE_FUTURE
+                    order_price = order.order.price
 
-            result.data.append(
-                mq_pb2.OrderStatus(
-                    type=order_type,
-                    code=order.contract.code,
-                    action=order.order.action,
-                    price=order_price,
-                    quantity=qty,
-                    order_id=order.status.id,
-                    status=order.status.status,
-                    order_time=datetime.strftime(
-                        order.status.order_datetime,
-                        "%Y-%m-%d %H:%M:%S",
-                    ),
+                if len(order.status.deals) > 0:
+                    order_price = order.status.deals[0].price
+
+                qty = order.order.quantity
+                if order.status.deal_quantity not in (0, qty):
+                    qty = order.status.deal_quantity
+
+                if order.status.order_datetime.hour < 5 and order.status.order_datetime.hour >= 0:
+                    if order.status.order_datetime.day != datetime.now().day:
+                        order.status.order_datetime = order.status.order_datetime + timedelta(days=1)
+
+                order_type = mq_pb2.OrderType.TYPE_UNKNOWN
+                if order.contract.security_type == sc.SecurityType.Stock:
+                    if order.order.order_lot in (sj.order.StockOrderLot.Odd, sj.order.StockOrderLot.IntradayOdd):
+                        order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
+                    else:
+                        order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
+                if order.contract.security_type == sc.SecurityType.Future:
+                    order_type = mq_pb2.OrderType.TYPE_FUTURE
+
+                result.data.append(
+                    mq_pb2.OrderStatus(
+                        type=order_type,
+                        code=order.contract.code,
+                        action=order.order.action,
+                        price=order_price,
+                        quantity=qty,
+                        order_id=order.status.id,
+                        status=order.status.status,
+                        order_time=datetime.strftime(
+                            order.status.order_datetime,
+                            "%Y-%m-%d %H:%M:%S",
+                        ),
+                    )
                 )
-            )
 
-        rabbit = self.pika_queue.get(block=True)
-        try:
-            rabbit.channel.basic_publish(
-                exchange=self.exchange,
-                routing_key="order_arr",
-                body=result.SerializeToString(),
-            )
-        except Exception as err:
-            logger.error("send_order_arr error %s", err)
-        self.pika_queue.put(rabbit)
+            rabbit = self.pika_queue.get(block=True)
+            try:
+                rabbit.channel.basic_publish(
+                    exchange=self.exchange,
+                    routing_key="order_arr",
+                    body=result.SerializeToString(),
+                )
+            except Exception as err:
+                logger.error("send_order_arr error %s", err)
+            self.pika_queue.put(rabbit)
