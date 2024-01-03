@@ -5,8 +5,8 @@ from queue import Queue
 
 import pika
 import shioaji as sj
+import shioaji.constant as sc
 from pika.channel import Channel
-from shioaji.order import FuturesOrder, StockOrder
 
 from logger import logger
 from pb import mq_pb2
@@ -66,47 +66,6 @@ class RabbitMQS:
         except Exception as err:
             logger.error("event_callback error %s", err)
         self.pika_queue.put(rabbit)
-
-    def order_status_callback(self, reply: list[sj.order.Trade]):
-        with self.order_cb_lock:
-            for order in reply:
-                if order.status.order_datetime is None:
-                    order.status.order_datetime = datetime.now()
-                order_price = int()
-                if order.status.modified_price != 0:
-                    order_price = order.status.modified_price
-                else:
-                    order_price = order.order.price
-                qty = order.order.quantity
-                if order.status.deal_quantity not in (0, qty):
-                    qty = order.status.deal_quantity
-
-                rabbit = self.pika_queue.get(block=True)
-                try:
-                    order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
-                    if isinstance(order.order, StockOrder) and order.order.order_lot == sj.order.StockOrderLot.Odd:
-                        order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
-                    if isinstance(order.order, FuturesOrder):
-                        order_type = mq_pb2.OrderType.TYPE_FUTURE
-
-                    rabbit.channel.basic_publish(
-                        exchange=self.exchange,
-                        routing_key="order",
-                        body=mq_pb2.OrderStatus(
-                            type=order_type,
-                            code=order.contract.code,
-                            action=order.order.action,
-                            price=order_price,
-                            quantity=qty,
-                            order_id=order.status.id,
-                            status=order.status.status,
-                            order_time=datetime.strftime(order.status.order_datetime, "%Y-%m-%d %H:%M:%S"),
-                        ).SerializeToString(),
-                    )
-                except Exception as err:
-                    logger.error("order_status_callback error %s", err)
-
-                self.pika_queue.put(rabbit)
 
     def stock_quote_callback_v1(self, _, tick: sj.TickSTKv1):
         rabbit = self.pika_queue.get(block=True)
@@ -226,6 +185,10 @@ class RabbitMQS:
             logger.error("future_bid_ask_callback error %s", err)
         self.pika_queue.put(rabbit)
 
+    def order_status_callback(self, reply: list[sj.order.Trade]):
+        with self.order_cb_lock:
+            self.send_order_arr(reply)
+
     def send_order_arr(self, arr: list[sj.order.Trade]):
         if len(arr) == 0:
             return
@@ -252,10 +215,13 @@ class RabbitMQS:
                 if order.status.order_datetime.day != datetime.now().day:
                     order.status.order_datetime = order.status.order_datetime + timedelta(days=1)
 
-            order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
-            if isinstance(order.order, StockOrder) and order.order.order_lot == sj.order.StockOrderLot.Odd:
-                order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
-            if isinstance(order.order, FuturesOrder):
+            order_type = mq_pb2.OrderType.TYPE_UNKNOWN
+            if order.contract.security_type == sc.SecurityType.Stock:
+                if order.order.order_lot == sj.order.StockOrderLot.Odd:
+                    order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
+                else:
+                    order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
+            if order.contract.security_type == sc.SecurityType.Future:
                 order_type = mq_pb2.OrderType.TYPE_FUTURE
 
             result.data.append(
