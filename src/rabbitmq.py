@@ -86,7 +86,7 @@ class RabbitMQS:
                     order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
                     if isinstance(order.order, StockOrder) and order.order.order_lot == sj.order.StockOrderLot.Odd:
                         order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
-                    elif isinstance(order.order, FuturesOrder):
+                    if isinstance(order.order, FuturesOrder):
                         order_type = mq_pb2.OrderType.TYPE_FUTURE
 
                     rabbit.channel.basic_publish(
@@ -255,7 +255,6 @@ class RabbitMQS:
             order_type = mq_pb2.OrderType.TYPE_STOCK_LOT
             if isinstance(order.order, StockOrder) and order.order.order_lot == sj.order.StockOrderLot.Odd:
                 order_type = mq_pb2.OrderType.TYPE_STOCK_SHARE
-
             if isinstance(order.order, FuturesOrder):
                 order_type = mq_pb2.OrderType.TYPE_FUTURE
 
