@@ -15,7 +15,7 @@ html5lib==1.1
 idna==3.6
 importlib-metadata==7.0.1
 loguru==0.6.0
-lxml==5.0.0
+lxml==5.0.1
 msgpack==1.0.7
 multitasking==0.0.11
 numpy==1.26.3
@@ -45,5 +45,5 @@ tzdata==2023.4
 urllib3==2.1.0
 webencodings==0.5.1
 xxhash==3.4.1
-yfinance==0.2.33
+yfinance==0.2.35
 zipp==3.17.0
