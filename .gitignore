@@ -152,3 +152,6 @@ bin
 tmp
 pyvenv.cfg
 tkr-tz*
+cookies.db
+cookies.db-shm
+cookies.db-wal
