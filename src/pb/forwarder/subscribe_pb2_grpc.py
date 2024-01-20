@@ -2,9 +2,9 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import entity_pb2 as entity__pb2
+from forwarder import entity_pb2 as forwarder_dot_entity__pb2
+from forwarder import subscribe_pb2 as forwarder_dot_subscribe__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-import subscribe_pb2 as subscribe__pb2
 
 
 class SubscribeDataInterfaceStub(object):
@@ -17,54 +17,54 @@ class SubscribeDataInterfaceStub(object):
             channel: A grpc.Channel.
         """
         self.SubscribeStockTick = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/SubscribeStockTick',
-                request_serializer=entity__pb2.StockNumArr.SerializeToString,
-                response_deserializer=subscribe__pb2.SubscribeResponse.FromString,
+                '/forwarder.SubscribeDataInterface/SubscribeStockTick',
+                request_serializer=forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+                response_deserializer=forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeStockTick = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeStockTick',
-                request_serializer=entity__pb2.StockNumArr.SerializeToString,
-                response_deserializer=subscribe__pb2.SubscribeResponse.FromString,
+                '/forwarder.SubscribeDataInterface/UnSubscribeStockTick',
+                request_serializer=forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+                response_deserializer=forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
                 )
         self.SubscribeStockBidAsk = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/SubscribeStockBidAsk',
-                request_serializer=entity__pb2.StockNumArr.SerializeToString,
-                response_deserializer=subscribe__pb2.SubscribeResponse.FromString,
+                '/forwarder.SubscribeDataInterface/SubscribeStockBidAsk',
+                request_serializer=forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+                response_deserializer=forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeStockBidAsk = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeStockBidAsk',
-                request_serializer=entity__pb2.StockNumArr.SerializeToString,
-                response_deserializer=subscribe__pb2.SubscribeResponse.FromString,
+                '/forwarder.SubscribeDataInterface/UnSubscribeStockBidAsk',
+                request_serializer=forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+                response_deserializer=forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
                 )
         self.SubscribeFutureTick = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/SubscribeFutureTick',
-                request_serializer=entity__pb2.FutureCodeArr.SerializeToString,
-                response_deserializer=subscribe__pb2.SubscribeResponse.FromString,
+                '/forwarder.SubscribeDataInterface/SubscribeFutureTick',
+                request_serializer=forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+                response_deserializer=forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeFutureTick = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeFutureTick',
-                request_serializer=entity__pb2.FutureCodeArr.SerializeToString,
-                response_deserializer=subscribe__pb2.SubscribeResponse.FromString,
+                '/forwarder.SubscribeDataInterface/UnSubscribeFutureTick',
+                request_serializer=forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+                response_deserializer=forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
                 )
         self.SubscribeFutureBidAsk = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/SubscribeFutureBidAsk',
-                request_serializer=entity__pb2.FutureCodeArr.SerializeToString,
-                response_deserializer=subscribe__pb2.SubscribeResponse.FromString,
+                '/forwarder.SubscribeDataInterface/SubscribeFutureBidAsk',
+                request_serializer=forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+                response_deserializer=forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeFutureBidAsk = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeFutureBidAsk',
-                request_serializer=entity__pb2.FutureCodeArr.SerializeToString,
-                response_deserializer=subscribe__pb2.SubscribeResponse.FromString,
+                '/forwarder.SubscribeDataInterface/UnSubscribeFutureBidAsk',
+                request_serializer=forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+                response_deserializer=forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
                 )
         self.UnSubscribeAllTick = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeAllTick',
+                '/forwarder.SubscribeDataInterface/UnSubscribeAllTick',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=entity__pb2.ErrorMessage.FromString,
+                response_deserializer=forwarder_dot_entity__pb2.ErrorMessage.FromString,
                 )
         self.UnSubscribeAllBidAsk = channel.unary_unary(
-                '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeAllBidAsk',
+                '/forwarder.SubscribeDataInterface/UnSubscribeAllBidAsk',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=entity__pb2.ErrorMessage.FromString,
+                response_deserializer=forwarder_dot_entity__pb2.ErrorMessage.FromString,
                 )
 
 
@@ -136,57 +136,57 @@ def add_SubscribeDataInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'SubscribeStockTick': grpc.unary_unary_rpc_method_handler(
                     servicer.SubscribeStockTick,
-                    request_deserializer=entity__pb2.StockNumArr.FromString,
-                    response_serializer=subscribe__pb2.SubscribeResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.StockNumArr.FromString,
+                    response_serializer=forwarder_dot_subscribe__pb2.SubscribeResponse.SerializeToString,
             ),
             'UnSubscribeStockTick': grpc.unary_unary_rpc_method_handler(
                     servicer.UnSubscribeStockTick,
-                    request_deserializer=entity__pb2.StockNumArr.FromString,
-                    response_serializer=subscribe__pb2.SubscribeResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.StockNumArr.FromString,
+                    response_serializer=forwarder_dot_subscribe__pb2.SubscribeResponse.SerializeToString,
             ),
             'SubscribeStockBidAsk': grpc.unary_unary_rpc_method_handler(
                     servicer.SubscribeStockBidAsk,
-                    request_deserializer=entity__pb2.StockNumArr.FromString,
-                    response_serializer=subscribe__pb2.SubscribeResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.StockNumArr.FromString,
+                    response_serializer=forwarder_dot_subscribe__pb2.SubscribeResponse.SerializeToString,
             ),
             'UnSubscribeStockBidAsk': grpc.unary_unary_rpc_method_handler(
                     servicer.UnSubscribeStockBidAsk,
-                    request_deserializer=entity__pb2.StockNumArr.FromString,
-                    response_serializer=subscribe__pb2.SubscribeResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.StockNumArr.FromString,
+                    response_serializer=forwarder_dot_subscribe__pb2.SubscribeResponse.SerializeToString,
             ),
             'SubscribeFutureTick': grpc.unary_unary_rpc_method_handler(
                     servicer.SubscribeFutureTick,
-                    request_deserializer=entity__pb2.FutureCodeArr.FromString,
-                    response_serializer=subscribe__pb2.SubscribeResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.FutureCodeArr.FromString,
+                    response_serializer=forwarder_dot_subscribe__pb2.SubscribeResponse.SerializeToString,
             ),
             'UnSubscribeFutureTick': grpc.unary_unary_rpc_method_handler(
                     servicer.UnSubscribeFutureTick,
-                    request_deserializer=entity__pb2.FutureCodeArr.FromString,
-                    response_serializer=subscribe__pb2.SubscribeResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.FutureCodeArr.FromString,
+                    response_serializer=forwarder_dot_subscribe__pb2.SubscribeResponse.SerializeToString,
             ),
             'SubscribeFutureBidAsk': grpc.unary_unary_rpc_method_handler(
                     servicer.SubscribeFutureBidAsk,
-                    request_deserializer=entity__pb2.FutureCodeArr.FromString,
-                    response_serializer=subscribe__pb2.SubscribeResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.FutureCodeArr.FromString,
+                    response_serializer=forwarder_dot_subscribe__pb2.SubscribeResponse.SerializeToString,
             ),
             'UnSubscribeFutureBidAsk': grpc.unary_unary_rpc_method_handler(
                     servicer.UnSubscribeFutureBidAsk,
-                    request_deserializer=entity__pb2.FutureCodeArr.FromString,
-                    response_serializer=subscribe__pb2.SubscribeResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.FutureCodeArr.FromString,
+                    response_serializer=forwarder_dot_subscribe__pb2.SubscribeResponse.SerializeToString,
             ),
             'UnSubscribeAllTick': grpc.unary_unary_rpc_method_handler(
                     servicer.UnSubscribeAllTick,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=entity__pb2.ErrorMessage.SerializeToString,
+                    response_serializer=forwarder_dot_entity__pb2.ErrorMessage.SerializeToString,
             ),
             'UnSubscribeAllBidAsk': grpc.unary_unary_rpc_method_handler(
                     servicer.UnSubscribeAllBidAsk,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=entity__pb2.ErrorMessage.SerializeToString,
+                    response_serializer=forwarder_dot_entity__pb2.ErrorMessage.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'toc_python_forwarder.SubscribeDataInterface', rpc_method_handlers)
+            'forwarder.SubscribeDataInterface', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -205,9 +205,9 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/SubscribeStockTick',
-            entity__pb2.StockNumArr.SerializeToString,
-            subscribe__pb2.SubscribeResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/SubscribeStockTick',
+            forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+            forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -222,9 +222,9 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeStockTick',
-            entity__pb2.StockNumArr.SerializeToString,
-            subscribe__pb2.SubscribeResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/UnSubscribeStockTick',
+            forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+            forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -239,9 +239,9 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/SubscribeStockBidAsk',
-            entity__pb2.StockNumArr.SerializeToString,
-            subscribe__pb2.SubscribeResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/SubscribeStockBidAsk',
+            forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+            forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -256,9 +256,9 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeStockBidAsk',
-            entity__pb2.StockNumArr.SerializeToString,
-            subscribe__pb2.SubscribeResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/UnSubscribeStockBidAsk',
+            forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+            forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -273,9 +273,9 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/SubscribeFutureTick',
-            entity__pb2.FutureCodeArr.SerializeToString,
-            subscribe__pb2.SubscribeResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/SubscribeFutureTick',
+            forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+            forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -290,9 +290,9 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeFutureTick',
-            entity__pb2.FutureCodeArr.SerializeToString,
-            subscribe__pb2.SubscribeResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/UnSubscribeFutureTick',
+            forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+            forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -307,9 +307,9 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/SubscribeFutureBidAsk',
-            entity__pb2.FutureCodeArr.SerializeToString,
-            subscribe__pb2.SubscribeResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/SubscribeFutureBidAsk',
+            forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+            forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -324,9 +324,9 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeFutureBidAsk',
-            entity__pb2.FutureCodeArr.SerializeToString,
-            subscribe__pb2.SubscribeResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/UnSubscribeFutureBidAsk',
+            forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+            forwarder_dot_subscribe__pb2.SubscribeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -341,9 +341,9 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeAllTick',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/UnSubscribeAllTick',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            entity__pb2.ErrorMessage.FromString,
+            forwarder_dot_entity__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -358,8 +358,8 @@ class SubscribeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.SubscribeDataInterface/UnSubscribeAllBidAsk',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.SubscribeDataInterface/UnSubscribeAllBidAsk',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            entity__pb2.ErrorMessage.FromString,
+            forwarder_dot_entity__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -1,4 +1,4 @@
-from pb import entity_pb2, subscribe_pb2, subscribe_pb2_grpc
+from pb.forwarder import entity_pb2, subscribe_pb2, subscribe_pb2_grpc
 from sinopac_worker import SinopacWorkerPool
 
 

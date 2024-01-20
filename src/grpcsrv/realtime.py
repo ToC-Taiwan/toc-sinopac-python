@@ -5,7 +5,7 @@ from shioaji.data import Snapshot
 from shioaji.error import TokenError
 
 from logger import logger
-from pb import realtime_pb2, realtime_pb2_grpc
+from pb.forwarder import realtime_pb2, realtime_pb2_grpc
 from sinopac import Shioaji
 from sinopac_worker import SinopacWorkerPool
 from yahoo_finance import Yahoo

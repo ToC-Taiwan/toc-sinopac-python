@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import basic_pb2 as basic__pb2
+from forwarder import basic_pb2 as forwarder_dot_basic__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
@@ -16,39 +16,39 @@ class BasicDataInterfaceStub(object):
             channel: A grpc.Channel.
         """
         self.CreateLongConnection = channel.stream_unary(
-                '/toc_python_forwarder.BasicDataInterface/CreateLongConnection',
+                '/forwarder.BasicDataInterface/CreateLongConnection',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.Terminate = channel.unary_unary(
-                '/toc_python_forwarder.BasicDataInterface/Terminate',
+                '/forwarder.BasicDataInterface/Terminate',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.CheckUsage = channel.unary_unary(
-                '/toc_python_forwarder.BasicDataInterface/CheckUsage',
+                '/forwarder.BasicDataInterface/CheckUsage',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=basic__pb2.ShioajiUsage.FromString,
+                response_deserializer=forwarder_dot_basic__pb2.ShioajiUsage.FromString,
                 )
         self.Login = channel.unary_unary(
-                '/toc_python_forwarder.BasicDataInterface/Login',
+                '/forwarder.BasicDataInterface/Login',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.GetAllStockDetail = channel.unary_unary(
-                '/toc_python_forwarder.BasicDataInterface/GetAllStockDetail',
+                '/forwarder.BasicDataInterface/GetAllStockDetail',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=basic__pb2.StockDetailResponse.FromString,
+                response_deserializer=forwarder_dot_basic__pb2.StockDetailResponse.FromString,
                 )
         self.GetAllFutureDetail = channel.unary_unary(
-                '/toc_python_forwarder.BasicDataInterface/GetAllFutureDetail',
+                '/forwarder.BasicDataInterface/GetAllFutureDetail',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=basic__pb2.FutureDetailResponse.FromString,
+                response_deserializer=forwarder_dot_basic__pb2.FutureDetailResponse.FromString,
                 )
         self.GetAllOptionDetail = channel.unary_unary(
-                '/toc_python_forwarder.BasicDataInterface/GetAllOptionDetail',
+                '/forwarder.BasicDataInterface/GetAllOptionDetail',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=basic__pb2.OptionDetailResponse.FromString,
+                response_deserializer=forwarder_dot_basic__pb2.OptionDetailResponse.FromString,
                 )
 
 
@@ -113,7 +113,7 @@ def add_BasicDataInterfaceServicer_to_server(servicer, server):
             'CheckUsage': grpc.unary_unary_rpc_method_handler(
                     servicer.CheckUsage,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=basic__pb2.ShioajiUsage.SerializeToString,
+                    response_serializer=forwarder_dot_basic__pb2.ShioajiUsage.SerializeToString,
             ),
             'Login': grpc.unary_unary_rpc_method_handler(
                     servicer.Login,
@@ -123,21 +123,21 @@ def add_BasicDataInterfaceServicer_to_server(servicer, server):
             'GetAllStockDetail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllStockDetail,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=basic__pb2.StockDetailResponse.SerializeToString,
+                    response_serializer=forwarder_dot_basic__pb2.StockDetailResponse.SerializeToString,
             ),
             'GetAllFutureDetail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllFutureDetail,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=basic__pb2.FutureDetailResponse.SerializeToString,
+                    response_serializer=forwarder_dot_basic__pb2.FutureDetailResponse.SerializeToString,
             ),
             'GetAllOptionDetail': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllOptionDetail,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=basic__pb2.OptionDetailResponse.SerializeToString,
+                    response_serializer=forwarder_dot_basic__pb2.OptionDetailResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'toc_python_forwarder.BasicDataInterface', rpc_method_handlers)
+            'forwarder.BasicDataInterface', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -156,7 +156,7 @@ class BasicDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_unary(request_iterator, target, '/toc_python_forwarder.BasicDataInterface/CreateLongConnection',
+        return grpc.experimental.stream_unary(request_iterator, target, '/forwarder.BasicDataInterface/CreateLongConnection',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
@@ -173,7 +173,7 @@ class BasicDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/Terminate',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.BasicDataInterface/Terminate',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
@@ -190,9 +190,9 @@ class BasicDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/CheckUsage',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.BasicDataInterface/CheckUsage',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            basic__pb2.ShioajiUsage.FromString,
+            forwarder_dot_basic__pb2.ShioajiUsage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -207,7 +207,7 @@ class BasicDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/Login',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.BasicDataInterface/Login',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
@@ -224,9 +224,9 @@ class BasicDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/GetAllStockDetail',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.BasicDataInterface/GetAllStockDetail',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            basic__pb2.StockDetailResponse.FromString,
+            forwarder_dot_basic__pb2.StockDetailResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -241,9 +241,9 @@ class BasicDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/GetAllFutureDetail',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.BasicDataInterface/GetAllFutureDetail',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            basic__pb2.FutureDetailResponse.FromString,
+            forwarder_dot_basic__pb2.FutureDetailResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -258,8 +258,8 @@ class BasicDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.BasicDataInterface/GetAllOptionDetail',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.BasicDataInterface/GetAllOptionDetail',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            basic__pb2.OptionDetailResponse.FromString,
+            forwarder_dot_basic__pb2.OptionDetailResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

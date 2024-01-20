@@ -45,6 +45,21 @@ TYPE_KBAR_ARR: WSType.ValueType  # 6
 TYPE_FUTURE_DETAIL: WSType.ValueType  # 7
 global___WSType = WSType
 
+class _PickListType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _PickListTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_PickListType.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    TYPE_ADD: _PickListType.ValueType  # 0
+    TYPE_REMOVE: _PickListType.ValueType  # 1
+
+class PickListType(_PickListType, metaclass=_PickListTypeEnumTypeWrapper): ...
+
+TYPE_ADD: PickListType.ValueType  # 0
+TYPE_REMOVE: PickListType.ValueType  # 1
+global___PickListType = PickListType
+
 @typing_extensions.final
 class WSMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -429,3 +444,35 @@ class Kbar(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["close", b"close", "high", b"high", "kbar_time", b"kbar_time", "low", b"low", "open", b"open", "volume", b"volume"]) -> None: ...
 
 global___Kbar = Kbar
+
+@typing_extensions.final
+class PickRealMap(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    @typing_extensions.final
+    class PickMapEntry(google.protobuf.message.Message):
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+        KEY_FIELD_NUMBER: builtins.int
+        VALUE_FIELD_NUMBER: builtins.int
+        key: builtins.str
+        value: global___PickListType.ValueType
+        def __init__(
+            self,
+            *,
+            key: builtins.str = ...,
+            value: global___PickListType.ValueType = ...,
+        ) -> None: ...
+        def ClearField(self, field_name: typing_extensions.Literal["key", b"key", "value", b"value"]) -> None: ...
+
+    PICK_MAP_FIELD_NUMBER: builtins.int
+    @property
+    def pick_map(self) -> google.protobuf.internal.containers.ScalarMap[builtins.str, global___PickListType.ValueType]: ...
+    def __init__(
+        self,
+        *,
+        pick_map: collections.abc.Mapping[builtins.str, global___PickListType.ValueType] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["pick_map", b"pick_map"]) -> None: ...
+
+global___PickRealMap = PickRealMap

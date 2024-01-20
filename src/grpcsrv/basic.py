@@ -5,7 +5,7 @@ import google.protobuf.empty_pb2
 import grpc
 
 from logger import logger
-from pb import basic_pb2, basic_pb2_grpc
+from pb.forwarder import basic_pb2, basic_pb2_grpc
 from sinopac_worker import SinopacWorkerPool
 
 

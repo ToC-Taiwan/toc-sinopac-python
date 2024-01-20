@@ -9,7 +9,7 @@ import shioaji.constant as sc
 from pika.channel import Channel
 
 from logger import logger
-from pb import mq_pb2
+from pb.forwarder import mq_pb2
 
 logging.getLogger("pika").setLevel(logging.WARNING)
 

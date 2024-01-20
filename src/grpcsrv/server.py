@@ -3,7 +3,7 @@ from concurrent import futures
 import grpc
 
 from logger import logger
-from pb import basic_pb2_grpc, history_pb2_grpc, realtime_pb2_grpc, subscribe_pb2_grpc, trade_pb2_grpc
+from pb.forwarder import basic_pb2_grpc, history_pb2_grpc, realtime_pb2_grpc, subscribe_pb2_grpc, trade_pb2_grpc
 from rabbitmq import RabbitMQS
 from simulator import Simulator
 from sinopac_worker import SinopacWorkerPool

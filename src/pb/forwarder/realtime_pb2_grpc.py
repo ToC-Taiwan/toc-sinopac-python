@@ -2,9 +2,9 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import entity_pb2 as entity__pb2
+from forwarder import entity_pb2 as forwarder_dot_entity__pb2
+from forwarder import realtime_pb2 as forwarder_dot_realtime__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-import realtime_pb2 as realtime__pb2
 
 
 class RealTimeDataInterfaceStub(object):
@@ -17,44 +17,44 @@ class RealTimeDataInterfaceStub(object):
             channel: A grpc.Channel.
         """
         self.GetAllStockSnapshot = channel.unary_unary(
-                '/toc_python_forwarder.RealTimeDataInterface/GetAllStockSnapshot',
+                '/forwarder.RealTimeDataInterface/GetAllStockSnapshot',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=realtime__pb2.SnapshotResponse.FromString,
+                response_deserializer=forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
                 )
         self.GetStockSnapshotByNumArr = channel.unary_unary(
-                '/toc_python_forwarder.RealTimeDataInterface/GetStockSnapshotByNumArr',
-                request_serializer=entity__pb2.StockNumArr.SerializeToString,
-                response_deserializer=realtime__pb2.SnapshotResponse.FromString,
+                '/forwarder.RealTimeDataInterface/GetStockSnapshotByNumArr',
+                request_serializer=forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+                response_deserializer=forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
                 )
         self.GetStockSnapshotTSE = channel.unary_unary(
-                '/toc_python_forwarder.RealTimeDataInterface/GetStockSnapshotTSE',
+                '/forwarder.RealTimeDataInterface/GetStockSnapshotTSE',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=realtime__pb2.SnapshotMessage.FromString,
+                response_deserializer=forwarder_dot_realtime__pb2.SnapshotMessage.FromString,
                 )
         self.GetStockSnapshotOTC = channel.unary_unary(
-                '/toc_python_forwarder.RealTimeDataInterface/GetStockSnapshotOTC',
+                '/forwarder.RealTimeDataInterface/GetStockSnapshotOTC',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=realtime__pb2.SnapshotMessage.FromString,
+                response_deserializer=forwarder_dot_realtime__pb2.SnapshotMessage.FromString,
                 )
         self.GetNasdaq = channel.unary_unary(
-                '/toc_python_forwarder.RealTimeDataInterface/GetNasdaq',
+                '/forwarder.RealTimeDataInterface/GetNasdaq',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=realtime__pb2.YahooFinancePrice.FromString,
+                response_deserializer=forwarder_dot_realtime__pb2.YahooFinancePrice.FromString,
                 )
         self.GetNasdaqFuture = channel.unary_unary(
-                '/toc_python_forwarder.RealTimeDataInterface/GetNasdaqFuture',
+                '/forwarder.RealTimeDataInterface/GetNasdaqFuture',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=realtime__pb2.YahooFinancePrice.FromString,
+                response_deserializer=forwarder_dot_realtime__pb2.YahooFinancePrice.FromString,
                 )
         self.GetStockVolumeRank = channel.unary_unary(
-                '/toc_python_forwarder.RealTimeDataInterface/GetStockVolumeRank',
-                request_serializer=realtime__pb2.VolumeRankRequest.SerializeToString,
-                response_deserializer=realtime__pb2.StockVolumeRankResponse.FromString,
+                '/forwarder.RealTimeDataInterface/GetStockVolumeRank',
+                request_serializer=forwarder_dot_realtime__pb2.VolumeRankRequest.SerializeToString,
+                response_deserializer=forwarder_dot_realtime__pb2.StockVolumeRankResponse.FromString,
                 )
         self.GetFutureSnapshotByCodeArr = channel.unary_unary(
-                '/toc_python_forwarder.RealTimeDataInterface/GetFutureSnapshotByCodeArr',
-                request_serializer=entity__pb2.FutureCodeArr.SerializeToString,
-                response_deserializer=realtime__pb2.SnapshotResponse.FromString,
+                '/forwarder.RealTimeDataInterface/GetFutureSnapshotByCodeArr',
+                request_serializer=forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+                response_deserializer=forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
                 )
 
 
@@ -115,46 +115,46 @@ def add_RealTimeDataInterfaceServicer_to_server(servicer, server):
             'GetAllStockSnapshot': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllStockSnapshot,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=realtime__pb2.SnapshotResponse.SerializeToString,
+                    response_serializer=forwarder_dot_realtime__pb2.SnapshotResponse.SerializeToString,
             ),
             'GetStockSnapshotByNumArr': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotByNumArr,
-                    request_deserializer=entity__pb2.StockNumArr.FromString,
-                    response_serializer=realtime__pb2.SnapshotResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.StockNumArr.FromString,
+                    response_serializer=forwarder_dot_realtime__pb2.SnapshotResponse.SerializeToString,
             ),
             'GetStockSnapshotTSE': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotTSE,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=realtime__pb2.SnapshotMessage.SerializeToString,
+                    response_serializer=forwarder_dot_realtime__pb2.SnapshotMessage.SerializeToString,
             ),
             'GetStockSnapshotOTC': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotOTC,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=realtime__pb2.SnapshotMessage.SerializeToString,
+                    response_serializer=forwarder_dot_realtime__pb2.SnapshotMessage.SerializeToString,
             ),
             'GetNasdaq': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNasdaq,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=realtime__pb2.YahooFinancePrice.SerializeToString,
+                    response_serializer=forwarder_dot_realtime__pb2.YahooFinancePrice.SerializeToString,
             ),
             'GetNasdaqFuture': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNasdaqFuture,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=realtime__pb2.YahooFinancePrice.SerializeToString,
+                    response_serializer=forwarder_dot_realtime__pb2.YahooFinancePrice.SerializeToString,
             ),
             'GetStockVolumeRank': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockVolumeRank,
-                    request_deserializer=realtime__pb2.VolumeRankRequest.FromString,
-                    response_serializer=realtime__pb2.StockVolumeRankResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_realtime__pb2.VolumeRankRequest.FromString,
+                    response_serializer=forwarder_dot_realtime__pb2.StockVolumeRankResponse.SerializeToString,
             ),
             'GetFutureSnapshotByCodeArr': grpc.unary_unary_rpc_method_handler(
                     servicer.GetFutureSnapshotByCodeArr,
-                    request_deserializer=entity__pb2.FutureCodeArr.FromString,
-                    response_serializer=realtime__pb2.SnapshotResponse.SerializeToString,
+                    request_deserializer=forwarder_dot_entity__pb2.FutureCodeArr.FromString,
+                    response_serializer=forwarder_dot_realtime__pb2.SnapshotResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'toc_python_forwarder.RealTimeDataInterface', rpc_method_handlers)
+            'forwarder.RealTimeDataInterface', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -173,9 +173,9 @@ class RealTimeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.RealTimeDataInterface/GetAllStockSnapshot',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetAllStockSnapshot',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            realtime__pb2.SnapshotResponse.FromString,
+            forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -190,9 +190,9 @@ class RealTimeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.RealTimeDataInterface/GetStockSnapshotByNumArr',
-            entity__pb2.StockNumArr.SerializeToString,
-            realtime__pb2.SnapshotResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetStockSnapshotByNumArr',
+            forwarder_dot_entity__pb2.StockNumArr.SerializeToString,
+            forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -207,9 +207,9 @@ class RealTimeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.RealTimeDataInterface/GetStockSnapshotTSE',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetStockSnapshotTSE',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            realtime__pb2.SnapshotMessage.FromString,
+            forwarder_dot_realtime__pb2.SnapshotMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -224,9 +224,9 @@ class RealTimeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.RealTimeDataInterface/GetStockSnapshotOTC',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetStockSnapshotOTC',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            realtime__pb2.SnapshotMessage.FromString,
+            forwarder_dot_realtime__pb2.SnapshotMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -241,9 +241,9 @@ class RealTimeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.RealTimeDataInterface/GetNasdaq',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetNasdaq',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            realtime__pb2.YahooFinancePrice.FromString,
+            forwarder_dot_realtime__pb2.YahooFinancePrice.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -258,9 +258,9 @@ class RealTimeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.RealTimeDataInterface/GetNasdaqFuture',
+        return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetNasdaqFuture',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            realtime__pb2.YahooFinancePrice.FromString,
+            forwarder_dot_realtime__pb2.YahooFinancePrice.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -275,9 +275,9 @@ class RealTimeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.RealTimeDataInterface/GetStockVolumeRank',
-            realtime__pb2.VolumeRankRequest.SerializeToString,
-            realtime__pb2.StockVolumeRankResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetStockVolumeRank',
+            forwarder_dot_realtime__pb2.VolumeRankRequest.SerializeToString,
+            forwarder_dot_realtime__pb2.StockVolumeRankResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -292,8 +292,8 @@ class RealTimeDataInterface(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/toc_python_forwarder.RealTimeDataInterface/GetFutureSnapshotByCodeArr',
-            entity__pb2.FutureCodeArr.SerializeToString,
-            realtime__pb2.SnapshotResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetFutureSnapshotByCodeArr',
+            forwarder_dot_entity__pb2.FutureCodeArr.SerializeToString,
+            forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

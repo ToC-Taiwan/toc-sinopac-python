@@ -3,7 +3,7 @@ from datetime import datetime
 
 import google.protobuf.empty_pb2
 
-from pb import entity_pb2, trade_pb2, trade_pb2_grpc
+from pb.forwarder import entity_pb2, trade_pb2, trade_pb2_grpc
 from rabbitmq import RabbitMQS
 from simulator import Simulator
 from sinopac_worker import SinopacWorkerPool

@@ -1,6 +1,6 @@
 import threading
 
-from pb import history_pb2, history_pb2_grpc
+from pb.forwarder import history_pb2, history_pb2_grpc
 from sinopac import Shioaji
 from sinopac_worker import SinopacWorkerPool
 
