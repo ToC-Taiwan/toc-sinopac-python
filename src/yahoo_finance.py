@@ -1,7 +1,10 @@
 import logging
 import os
+import warnings
 
 import yfinance as yf
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
 
 yf.set_tz_cache_location(os.getcwd())
 
