@@ -1,6 +1,5 @@
 """SINOPAC PYTHON API FORWARDER"""
 
-
 import os
 import time
 
