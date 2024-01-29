@@ -247,6 +247,7 @@ class WSFutureTick(google.protobuf.message.Message):
     CHG_TYPE_FIELD_NUMBER: builtins.int
     PRICE_CHG_FIELD_NUMBER: builtins.int
     PCT_CHG_FIELD_NUMBER: builtins.int
+    COMBO_COUNT_FIELD_NUMBER: builtins.int
     code: builtins.str
     tick_time: builtins.str
     open: builtins.float
@@ -265,6 +266,7 @@ class WSFutureTick(google.protobuf.message.Message):
     chg_type: builtins.int
     price_chg: builtins.float
     pct_chg: builtins.float
+    combo_count: builtins.int
     def __init__(
         self,
         *,
@@ -286,8 +288,9 @@ class WSFutureTick(google.protobuf.message.Message):
         chg_type: builtins.int = ...,
         price_chg: builtins.float = ...,
         pct_chg: builtins.float = ...,
+        combo_count: builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["amount", b"amount", "ask_side_total_vol", b"ask_side_total_vol", "avg_price", b"avg_price", "bid_side_total_vol", b"bid_side_total_vol", "chg_type", b"chg_type", "close", b"close", "code", b"code", "high", b"high", "low", b"low", "open", b"open", "pct_chg", b"pct_chg", "price_chg", b"price_chg", "tick_time", b"tick_time", "tick_type", b"tick_type", "total_amount", b"total_amount", "total_volume", b"total_volume", "underlying_price", b"underlying_price", "volume", b"volume"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["amount", b"amount", "ask_side_total_vol", b"ask_side_total_vol", "avg_price", b"avg_price", "bid_side_total_vol", b"bid_side_total_vol", "chg_type", b"chg_type", "close", b"close", "code", b"code", "combo_count", b"combo_count", "high", b"high", "low", b"low", "open", b"open", "pct_chg", b"pct_chg", "price_chg", b"price_chg", "tick_time", b"tick_time", "tick_type", b"tick_type", "total_amount", b"total_amount", "total_volume", b"total_volume", "underlying_price", b"underlying_price", "volume", b"volume"]) -> None: ...
 
 global___WSFutureTick = WSFutureTick
 
