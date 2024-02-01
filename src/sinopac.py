@@ -6,6 +6,7 @@ from typing import List
 import shioaji as sj
 import shioaji.constant as sc
 from shioaji.contracts import Contract
+from shioaji.data import ScannerItem
 from shioaji.error import SystemMaintenance, TokenError
 from shioaji.order import Order, Trade
 from shioaji.position import AccountBalance, FuturePosition, Margin, StockPosition
@@ -52,6 +53,9 @@ class Shioaji:
 
         self.option_map: dict[str, Contract] = {}
         self.option_map_lock = threading.Lock()
+
+        self.__rank_lock = threading.Lock()
+        self.__rank: List[ScannerItem] = []
 
     def login(self, user: ShioajiAuth, is_main: bool):
         # before gRPC set cb, using logger to save event
@@ -347,11 +351,15 @@ class Shioaji:
             return self.get_future_last_close_by_date(code, date)
 
     def get_stock_volume_rank_by_date(self, count, date):
-        return self.__api.scanners(
+        result = self.__api.scanners(
             scanner_type=sc.ScannerType.VolumeRank,
             count=count,
             date=date,
         )
+        with self.__rank_lock:
+            if result is not None and len(result) > 0:
+                self.__rank = result
+            return self.__rank
 
     def subscribe_stock_tick(self, stock_num: str, odd: bool):
         try:
