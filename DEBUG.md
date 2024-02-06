@@ -9,7 +9,7 @@ echo '{
     "configurations": [
         {
             "name": "Debug",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/main.py",
             "console": "integratedTerminal",
@@ -28,7 +28,8 @@ echo '{
             "internalConsoleOptions": "neverOpen"
         }
     ]
-}' > .vscode/launch.json
+}
+' > .vscode/launch.json
 
 echo '{
     "version": "2.0.0",
@@ -47,5 +48,6 @@ echo '{
             ],
         },
     ]
-}' > .vscode/tasks.json
+}
+' > .vscode/tasks.json
 ```
