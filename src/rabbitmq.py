@@ -10,14 +10,14 @@ from pb.forwarder import mq_pb2
 
 logging.getLogger("pika").setLevel(logging.WARNING)
 
-EXCAHNG_TYPE = "direct"
-ROUTING_KEY_EVENT = "event"
-ROUTING_KEY_ORDER_ARR = "order_arr"
-ROUTING_KEY_TICK = "tick"
-ROUTING_KEY_FUTURE_TICK = "future_tick"
-ROUTING_KEY_BID_ASK = "bid_ask"
-ROUTING_KEY_FUTURE_BID_ASK = "future_bid_ask"
-DATE_TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+EXCAHNG_TYPE: str = "direct"
+ROUTING_KEY_EVENT: str = "event"
+ROUTING_KEY_ORDER_ARR: str = "order_arr"
+ROUTING_KEY_TICK: str = "tick"
+ROUTING_KEY_FUTURE_TICK: str = "future_tick"
+ROUTING_KEY_BID_ASK: str = "bid_ask"
+ROUTING_KEY_FUTURE_BID_ASK: str = "future_bid_ask"
+DATE_TIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
 
 
 class RabbitMQ:
