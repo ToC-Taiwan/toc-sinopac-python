@@ -1,9 +1,9 @@
 from pb.forwarder import entity_pb2, subscribe_pb2, subscribe_pb2_grpc
-from sinopac_worker import SinopacWorkerPool
+from worker_pool import WorkerPool
 
 
 class RPCSubscribe(subscribe_pb2_grpc.SubscribeDataInterfaceServicer):
-    def __init__(self, workers: SinopacWorkerPool):
+    def __init__(self, workers: WorkerPool):
         self.workers = workers
 
     def SubscribeStockTick(self, request, _):

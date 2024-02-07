@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 
 from logger import logger
-from rabbitmq import RabbitMQS
+from rabbitmq import RabbitMQ
 from sinopac import Shioaji, ShioajiAuth
 
 
@@ -15,8 +15,8 @@ class QueryDataLimit:
         self.order = order
 
 
-class SinopacWorkerPool:
-    def __init__(self, count: int, account: ShioajiAuth, rabbit: RabbitMQS, request_limt: QueryDataLimit):
+class WorkerPool:
+    def __init__(self, count: int, account: ShioajiAuth, rabbit: RabbitMQ, request_limt: QueryDataLimit):
         self.main_worker = Shioaji()
         self.workers: list[Shioaji] = []
         self.worker_count = count

@@ -2,11 +2,11 @@ import threading
 
 from pb.forwarder import history_pb2, history_pb2_grpc
 from sinopac import Shioaji
-from sinopac_worker import SinopacWorkerPool
+from worker_pool import WorkerPool
 
 
 class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
-    def __init__(self, workers: SinopacWorkerPool):
+    def __init__(self, workers: WorkerPool):
         self.workers = workers
 
     def fill_stock_history_tick_response(self, num, date, response, worker: Shioaji):

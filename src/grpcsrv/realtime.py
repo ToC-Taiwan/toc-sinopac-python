@@ -6,13 +6,13 @@ from shioaji.error import TokenError
 
 from logger import logger
 from pb.forwarder import realtime_pb2, realtime_pb2_grpc
+from realtime_us import RealTimeUS
 from sinopac import Shioaji
-from sinopac_worker import SinopacWorkerPool
-from yahoo_finance import Yahoo
+from worker_pool import WorkerPool
 
 
 class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
-    def __init__(self, source: Yahoo, workers: SinopacWorkerPool):
+    def __init__(self, source: RealTimeUS, workers: WorkerPool):
         self.source = source
         self.workers = workers
 

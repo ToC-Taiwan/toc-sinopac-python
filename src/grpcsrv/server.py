@@ -4,10 +4,10 @@ import grpc
 
 from logger import logger
 from pb.forwarder import basic_pb2_grpc, history_pb2_grpc, realtime_pb2_grpc, subscribe_pb2_grpc, trade_pb2_grpc
-from rabbitmq import RabbitMQS
+from rabbitmq import RabbitMQ
+from realtime_us import RealTimeUS
 from simulator import Simulator
-from sinopac_worker import SinopacWorkerPool
-from yahoo_finance import Yahoo
+from worker_pool import WorkerPool
 
 from .basic import RPCBasic
 from .history import RPCHistory
@@ -17,7 +17,7 @@ from .trade import RPCTrade
 
 
 class GRPCServer:
-    def __init__(self, worker_pool: SinopacWorkerPool, rabbit: RabbitMQS):
+    def __init__(self, worker_pool: WorkerPool, rabbit: RabbitMQ):
         logger.info("Shioaji version: %s", worker_pool.get_sj_version())
 
         # simulator
@@ -26,7 +26,7 @@ class GRPCServer:
         # gRPC servicer
         basic_servicer = RPCBasic(worker_pool)
         history_servicer = RPCHistory(worker_pool)
-        realtime_servicer = RPCRealTime(Yahoo(), worker_pool)
+        realtime_servicer = RPCRealTime(RealTimeUS(), worker_pool)
         subscribe_servicer = RPCSubscribe(worker_pool)
         trade_servicer = RPCTrade(rabbit, simulator, worker_pool)
 

@@ -12,7 +12,7 @@ yf.set_tz_cache_location(os.getcwd())
 logging.getLogger("yfinance").disabled = True
 
 
-class Yahoo:
+class RealTimeUS:
     def get_nasdaq(self):
         return self.get_price("^IXIC")
 

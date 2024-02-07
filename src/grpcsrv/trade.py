@@ -4,17 +4,17 @@ from datetime import datetime
 import google.protobuf.empty_pb2
 
 from pb.forwarder import entity_pb2, trade_pb2, trade_pb2_grpc
-from rabbitmq import RabbitMQS
+from rabbitmq import RabbitMQ
 from simulator import Simulator
-from sinopac_worker import SinopacWorkerPool
+from worker_pool import WorkerPool
 
 
 class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
     def __init__(
         self,
-        rabbit: RabbitMQS,
+        rabbit: RabbitMQ,
         simulator: Simulator,
-        workers: SinopacWorkerPool,
+        workers: WorkerPool,
     ):
         self.rabbit = rabbit
         self.simulator = simulator

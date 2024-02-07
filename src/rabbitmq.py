@@ -1,81 +1,73 @@
 import logging
 import threading
 from datetime import datetime, timedelta
-from queue import Queue
 
 import pika
 import shioaji as sj
 import shioaji.constant as sc
-from pika.channel import Channel
 
-from logger import logger
 from pb.forwarder import mq_pb2
 
 logging.getLogger("pika").setLevel(logging.WARNING)
 
+EXCAHNG_TYPE = "direct"
+ROUTING_KEY_EVENT = "event"
+ROUTING_KEY_ORDER_ARR = "order_arr"
+ROUTING_KEY_TICK = "tick"
+ROUTING_KEY_FUTURE_TICK = "future_tick"
+ROUTING_KEY_BID_ASK = "bid_ask"
+ROUTING_KEY_FUTURE_BID_ASK = "future_bid_ask"
+DATE_TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
-class PikaCC:
-    def __init__(self, conn: pika.BlockingConnection, channel: Channel):
-        self.conn = conn
-        self.channel = channel
 
-    def heartbeat(self):
-        self.conn.process_data_events()
-
-
-class RabbitMQS:
-    def __init__(self, url: str, exchange: str, pool_size: int):
-        self.parameters = pika.URLParameters(url)
+class RabbitMQ:
+    def __init__(
+        self,
+        url: str,
+        exchange: str,
+    ):
         self.exchange = exchange
-        self.pool_size = pool_size
-
-        # rabbit mq connection queue
-        self.pika_queue: Queue = Queue()
-
-        # initial connections
-        self.fill_pika_queue()
-
-        # lock
+        self.channel = pika.BlockingConnection(pika.URLParameters(url)).channel(channel_number=256)
+        self.channel.exchange_declare(exchange=self.exchange, exchange_type=EXCAHNG_TYPE, durable=True)
         self.order_cb_lock = threading.Lock()
 
-    def create_pika(self):
-        conn = pika.BlockingConnection(self.parameters)
-        channel = conn.channel()
-        channel.exchange_declare(exchange=self.exchange, exchange_type="direct", durable=True)
-        return PikaCC(conn, channel)
-
-    def fill_pika_queue(self):
-        for _ in range(self.pool_size):
-            self.pika_queue.put(self.create_pika())
-        # threading.Thread(target=self.send_heartbeat, daemon=True).start()
-
-    def event_callback(self, resp_code: int, event_code: int, info: str, event: str):
-        rabbit = self.pika_queue.get(block=True)
-        try:
-            rabbit.channel.basic_publish(
-                exchange=self.exchange,
-                routing_key="event",
-                body=mq_pb2.EventMessage(
+    def event_callback(
+        self,
+        resp_code: int,
+        event_code: int,
+        info: str,
+        event: str,
+    ):
+        threading.Thread(
+            daemon=True,
+            target=self.channel.basic_publish,
+            args=(
+                self.exchange,
+                ROUTING_KEY_EVENT,
+                mq_pb2.EventMessage(
                     resp_code=resp_code,
                     event_code=event_code,
                     info=info,
                     event=event,
-                    event_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                    event_time=datetime.now().strftime(DATE_TIME_FORMAT),
                 ).SerializeToString(),
-            )
-        except Exception as err:
-            logger.error("event_callback error %s", err)
-        self.pika_queue.put(rabbit)
+            ),
+        ).start()
 
-    def stock_quote_callback_v1(self, _, tick: sj.TickSTKv1):
-        rabbit = self.pika_queue.get(block=True)
-        try:
-            rabbit.channel.basic_publish(
-                exchange=self.exchange,
-                routing_key=f"tick:{tick.code}",
-                body=mq_pb2.StockRealTimeTickMessage(
+    def stock_quote_callback_v1(
+        self,
+        _,
+        tick: sj.TickSTKv1,
+    ):
+        threading.Thread(
+            daemon=True,
+            target=self.channel.basic_publish,
+            args=(
+                self.exchange,
+                f"{ROUTING_KEY_TICK}:{tick.code}",
+                mq_pb2.StockRealTimeTickMessage(
                     code=tick.code,
-                    date_time=datetime.strftime(tick.datetime, "%Y-%m-%d %H:%M:%S.%f"),
+                    date_time=datetime.strftime(tick.datetime, DATE_TIME_FORMAT),
                     open=tick.open,
                     avg_price=tick.avg_price,
                     close=tick.close,
@@ -96,20 +88,23 @@ class RabbitMQS:
                     suspend=tick.suspend,
                     simtrade=tick.simtrade,
                 ).SerializeToString(),
-            )
-        except Exception as err:
-            logger.error("stock_quote_callback_v1 error %s", err)
-        self.pika_queue.put(rabbit)
+            ),
+        ).start()
 
-    def future_quote_callback_v1(self, _, tick: sj.TickFOPv1):
-        rabbit = self.pika_queue.get(block=True)
-        try:
-            rabbit.channel.basic_publish(
-                exchange=self.exchange,
-                routing_key=f"future_tick:{tick.code}",
-                body=mq_pb2.FutureRealTimeTickMessage(
+    def future_quote_callback_v1(
+        self,
+        _,
+        tick: sj.TickFOPv1,
+    ):
+        threading.Thread(
+            daemon=True,
+            target=self.channel.basic_publish,
+            args=(
+                self.exchange,
+                f"{ROUTING_KEY_FUTURE_TICK}:{tick.code}",
+                mq_pb2.FutureRealTimeTickMessage(
                     code=tick.code,
-                    date_time=datetime.strftime(tick.datetime, "%Y-%m-%d %H:%M:%S.%f"),
+                    date_time=datetime.strftime(tick.datetime, DATE_TIME_FORMAT),
                     open=tick.open,
                     underlying_price=tick.underlying_price,
                     bid_side_total_vol=tick.bid_side_total_vol,
@@ -128,20 +123,23 @@ class RabbitMQS:
                     pct_chg=tick.pct_chg,
                     simtrade=tick.simtrade,
                 ).SerializeToString(),
-            )
-        except Exception as err:
-            logger.error("future_quote_callback_v1 error %s", err)
-        self.pika_queue.put(rabbit)
+            ),
+        ).start()
 
-    def stock_bid_ask_callback(self, _, bidask: sj.BidAskSTKv1):
-        rabbit = self.pika_queue.get(block=True)
-        try:
-            rabbit.channel.basic_publish(
-                exchange=self.exchange,
-                routing_key=f"bid_ask:{bidask.code}",
-                body=mq_pb2.StockRealTimeBidAskMessage(
+    def stock_bid_ask_callback(
+        self,
+        _,
+        bidask: sj.BidAskSTKv1,
+    ):
+        threading.Thread(
+            daemon=True,
+            target=self.channel.basic_publish,
+            args=(
+                self.exchange,
+                f"{ROUTING_KEY_BID_ASK}:{bidask.code}",
+                mq_pb2.StockRealTimeBidAskMessage(
                     code=bidask.code,
-                    date_time=datetime.strftime(bidask.datetime, "%Y-%m-%d %H:%M:%S.%f"),
+                    date_time=datetime.strftime(bidask.datetime, DATE_TIME_FORMAT),
                     suspend=bidask.suspend,
                     simtrade=bidask.simtrade,
                     bid_price=bidask.bid_price,
@@ -151,20 +149,23 @@ class RabbitMQS:
                     ask_volume=bidask.ask_volume,
                     diff_ask_vol=bidask.diff_ask_vol,
                 ).SerializeToString(),
-            )
-        except Exception as err:
-            logger.error("stock_bid_ask_callback error %s", err)
-        self.pika_queue.put(rabbit)
+            ),
+        ).start()
 
-    def future_bid_ask_callback(self, _, bidask: sj.BidAskFOPv1):
-        rabbit = self.pika_queue.get(block=True)
-        try:
-            rabbit.channel.basic_publish(
-                exchange=self.exchange,
-                routing_key=f"future_bid_ask:{bidask.code}",
-                body=mq_pb2.FutureRealTimeBidAskMessage(
+    def future_bid_ask_callback(
+        self,
+        _,
+        bidask: sj.BidAskFOPv1,
+    ):
+        threading.Thread(
+            daemon=True,
+            target=self.channel.basic_publish,
+            args=(
+                self.exchange,
+                f"{ROUTING_KEY_FUTURE_BID_ASK}:{bidask.code}",
+                mq_pb2.FutureRealTimeBidAskMessage(
                     code=bidask.code,
-                    date_time=datetime.strftime(bidask.datetime, "%Y-%m-%d %H:%M:%S.%f"),
+                    date_time=datetime.strftime(bidask.datetime, DATE_TIME_FORMAT),
                     bid_total_vol=bidask.bid_total_vol,
                     ask_total_vol=bidask.ask_total_vol,
                     simtrade=bidask.simtrade,
@@ -180,15 +181,19 @@ class RabbitMQS:
                     first_derived_ask_vol=bidask.first_derived_ask_vol,
                     underlying_price=bidask.underlying_price,
                 ).SerializeToString(),
-            )
-        except Exception as err:
-            logger.error("future_bid_ask_callback error %s", err)
-        self.pika_queue.put(rabbit)
+            ),
+        ).start()
 
-    def order_status_callback(self, reply: list[sj.order.Trade]):
+    def order_status_callback(
+        self,
+        reply: list[sj.order.Trade],
+    ):
         self.send_order_arr(reply)
 
-    def send_order_arr(self, arr: list[sj.order.Trade]):
+    def send_order_arr(
+        self,
+        arr: list[sj.order.Trade],
+    ):
         if len(arr) == 0:
             return
         with self.order_cb_lock:
@@ -239,13 +244,12 @@ class RabbitMQS:
                     )
                 )
 
-            rabbit = self.pika_queue.get(block=True)
-            try:
-                rabbit.channel.basic_publish(
-                    exchange=self.exchange,
-                    routing_key="order_arr",
-                    body=result.SerializeToString(),
-                )
-            except Exception as err:
-                logger.error("send_order_arr error %s", err)
-            self.pika_queue.put(rabbit)
+            threading.Thread(
+                daemon=True,
+                target=self.channel.basic_publish,
+                args=(
+                    self.exchange,
+                    ROUTING_KEY_ORDER_ARR,
+                    result.SerializeToString(),
+                ),
+            ).start()

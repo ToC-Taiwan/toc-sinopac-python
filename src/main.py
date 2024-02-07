@@ -8,10 +8,10 @@ from prometheus_client import start_http_server
 from env import RequiredEnv
 from grpcsrv.server import GRPCServer
 from logger import logger
-from rabbitmq import RabbitMQS
-from rabbitmq_setting import RabbitMQSetting
+from rabbitmq import RabbitMQ
+from rabbitmq_api import RabbitAPI
 from sinopac import ShioajiAuth
-from sinopac_worker import QueryDataLimit, SinopacWorkerPool
+from worker_pool import QueryDataLimit, WorkerPool
 
 if __name__ == "__main__":
     env = RequiredEnv()
@@ -21,26 +21,20 @@ if __name__ == "__main__":
     logger.info("sinopac prometheus server started at port %d", PROMETHEUS_PORT)
 
     try:
-        rc = RabbitMQSetting(
+        RabbitAPI(
             env.rabbitmq_user,
             env.rabbitmq_password,
             env.rabbitmq_host,
             env.rabbitmq_exchange,
-        )
-        rc.reset_rabbitmq_exchange()
+        ).reset_rabbitmq_exchange()
 
     except RuntimeError:
         logger.error("reset rabbitmq exchange fail, retry after 30 seconds")
         time.sleep(30)
         os._exit(0)
 
-    rabbit = RabbitMQS(
-        env.rabbitmq_url,
-        env.rabbitmq_exchange,
-        64,
-    )
-
-    worker_pool = SinopacWorkerPool(
+    rabbit = RabbitMQ(env.rabbitmq_url, env.rabbitmq_exchange)
+    worker_pool = WorkerPool(
         env.connection_count,
         ShioajiAuth(
             env.api_key,

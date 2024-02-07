@@ -6,13 +6,13 @@ import grpc
 
 from logger import logger
 from pb.forwarder import basic_pb2, basic_pb2_grpc
-from sinopac_worker import SinopacWorkerPool
+from worker_pool import WorkerPool
 
 
 class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
     def __init__(
         self,
-        workers: SinopacWorkerPool,
+        workers: WorkerPool,
     ):
         self.workers = workers
 
