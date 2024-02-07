@@ -27,7 +27,7 @@ class RabbitMQ:
         exchange: str,
     ):
         self.exchange = exchange
-        self.channel = pika.BlockingConnection(pika.URLParameters(url)).channel(channel_number=256)
+        self.channel = pika.BlockingConnection(pika.URLParameters(url)).channel()
         self.channel.exchange_declare(exchange=self.exchange, exchange_type=EXCAHNG_TYPE, durable=True)
         self.order_cb_lock = threading.Lock()
 
