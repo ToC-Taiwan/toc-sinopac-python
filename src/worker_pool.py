@@ -3,38 +3,52 @@ import threading
 import time
 from datetime import datetime
 
+from shioaji.error import SystemMaintenance
+
 from logger import logger
 from rabbitmq import RabbitMQ
 from sinopac import Shioaji, ShioajiAuth
 
 
 class QueryDataLimit:
-    def __init__(self, data: int, portfolio: int, order: int):
+    def __init__(
+        self,
+        data: int,
+        portfolio: int,
+        order: int,
+    ):
         self.data = data
         self.portfolio = portfolio
         self.order = order
 
 
 class WorkerPool:
-    def __init__(self, count: int, account: ShioajiAuth, rabbit: RabbitMQ, request_limt: QueryDataLimit):
-        self.main_worker = Shioaji()
-        self.workers: list[Shioaji] = []
+    def __init__(
+        self,
+        count: int,
+        user: ShioajiAuth,
+        rabbit: RabbitMQ,
+        request_limt: QueryDataLimit,
+    ):
         self.worker_count = count
-        self.account = account
+        self.user = user
         self.rabbit = rabbit
 
+        self.main_worker = Shioaji()
+        self.workers: list[Shioaji] = []
+
         # request count
-        self.request_count = [int() for _ in range(count - 1)]
         self.lock = threading.RLock()
+        self.request_count = [int() for _ in range(count - 1)]
 
         # subscribe list
-        self.subscribe_count = [int() for _ in range(count - 1)]
         self.sub_lock = threading.Lock()
+        self.subscribe_count = [int() for _ in range(count - 1)]
+
         self.stock_tick_sub_dict: dict[str, int] = {}
         self.stock_bidask_sub_dict: dict[str, int] = {}
         self.future_tick_sub_dict: dict[str, int] = {}
         self.future_bidask_sub_dict: dict[str, int] = {}
-        self.option_tick_sub_dict: dict[str, int] = {}
 
         # request workder limit
         self.request_limit = request_limt
@@ -51,10 +65,10 @@ class WorkerPool:
             logger.info("establish connection %d", i + 1)
             is_main = bool(i == 0)
             try:
-                new_connection = Shioaji().login(
-                    self.account,
-                    is_main,
-                )
+                new_connection = Shioaji().login(self.user, is_main)
+            except SystemMaintenance:
+                time.sleep(75)
+                self.logout_and_exit()
             except Exception as error:
                 if str(error) != "":
                     logger.error("establish connection %d fail: %s", i + 1, str(error))
@@ -79,23 +93,31 @@ class WorkerPool:
         try:
             for worker in self.workers:
                 worker.log_out()
-            self.main_worker.log_out()
+            self.get_main().log_out()
         except Exception as error:
             logger.error("logout fail: %s", str(error))
         os._exit(0)
 
+    def get_contract_by_stock_num_arr(self, num_arr: list[str]):
+        contract_arr = []
+        for num in num_arr:
+            contract_arr.append(self.get_main().get_contract_by_stock_num(num))
+        return contract_arr
+
+    def get_contract_by_future_code_arr(self, code_arr: list[str]):
+        contract_arr = []
+        for code in code_arr:
+            contract_arr.append(self.get_main().get_contract_by_future_code(code))
+        return contract_arr
+
     def check_usage(self):
-        return self.main_worker.get_usage()
+        return self.get_main().get_usage()
 
     def get_sj_version(self):
-        return self.main_worker.get_sj_version()
+        return self.get_main().get_sj_version()
 
-    def get(self) -> Shioaji:
-        with self.lock:
-            idx = self.request_count.index(min(self.request_count))
-            self.request_count[idx] += 1
-            self.request_worker_times += 1
-            return self.workers[idx]
+    def get_main(self) -> Shioaji:
+        return self.main_worker
 
     def get_data(self) -> Shioaji:
         with self.lock:
@@ -124,7 +146,7 @@ class WorkerPool:
                 rest_time = 1 - (gap / 1000)
                 time.sleep(rest_time)
                 return self.get_portfolio()
-            return self.main_worker
+            return self.get_main()
 
     def get_order_worker(self) -> Shioaji:
         with self.lock:
@@ -137,7 +159,7 @@ class WorkerPool:
                 rest_time = 1 - (gap / 1000)
                 time.sleep(rest_time)
                 return self.get_order_worker()
-            return self.main_worker
+            return self.get_main()
 
     def count(self):
         return len(self.workers)
@@ -153,7 +175,7 @@ class WorkerPool:
             logger.info(
                 "subscribe stock tick %s %s",
                 stock_num,
-                self.workers[idx].get_contract_by_stock_num(stock_num).name,
+                self.get_main().get_contract_by_stock_num(stock_num).name,
             )
             self.subscribe_count[idx] += 1
             self.stock_tick_sub_dict[stock_num] = idx
@@ -171,7 +193,7 @@ class WorkerPool:
                 logger.info(
                     "unsubscribe stock tick %s %s",
                     stock_num,
-                    self.workers[idx].get_contract_by_stock_num(stock_num).name,
+                    self.get_main().get_contract_by_stock_num(stock_num).name,
                 )
         return None
 
@@ -186,7 +208,7 @@ class WorkerPool:
             logger.info(
                 "subscribe future tick %s %s",
                 code,
-                self.workers[idx].get_contract_by_future_code(code).name,
+                self.get_main().get_contract_by_future_code(code).name,
             )
             self.subscribe_count[idx] += 1
             self.future_tick_sub_dict[code] = idx
@@ -204,7 +226,7 @@ class WorkerPool:
                 logger.info(
                     "unsubscribe future tick %s %s",
                     code,
-                    self.workers[idx].get_contract_by_future_code(code).name,
+                    self.get_main().get_contract_by_future_code(code).name,
                 )
         return None
 
@@ -219,7 +241,7 @@ class WorkerPool:
             logger.info(
                 "subscribe stock bidask %s %s",
                 stock_num,
-                self.workers[idx].get_contract_by_stock_num(stock_num).name,
+                self.get_main().get_contract_by_stock_num(stock_num).name,
             )
             self.subscribe_count[idx] += 1
             self.stock_bidask_sub_dict[stock_num] = idx
@@ -237,7 +259,7 @@ class WorkerPool:
                 logger.info(
                     "unsubscribe stock bidask %s %s",
                     stock_num,
-                    self.workers[idx].get_contract_by_stock_num(stock_num).name,
+                    self.get_main().get_contract_by_stock_num(stock_num).name,
                 )
         return None
 
@@ -252,7 +274,7 @@ class WorkerPool:
             logger.info(
                 "subscribe future bidask %s %s",
                 code,
-                self.workers[idx].get_contract_by_future_code(code).name,
+                self.get_main().get_contract_by_future_code(code).name,
             )
             self.subscribe_count[idx] += 1
             self.future_bidask_sub_dict[code] = idx
@@ -270,7 +292,7 @@ class WorkerPool:
                 logger.info(
                     "unsubscribe future bidask %s %s",
                     code,
-                    self.workers[idx].get_contract_by_future_code(code).name,
+                    self.get_main().get_contract_by_future_code(code).name,
                 )
         return None
 
@@ -290,51 +312,12 @@ class WorkerPool:
                 if self.unsubscribe_future_tick(code) is not None:
                     fail_arr["future"].append(code)
 
-        if len(self.option_tick_sub_dict) != 0:
-            for code in list(self.option_tick_sub_dict):
-                if self.unsubscribe_option_tick(code) is not None:
-                    fail_arr["option"].append(code)
-
         return fail_arr
-
-    def subscribe_option_tick(self, code):
-        with self.sub_lock:
-            if code in self.option_tick_sub_dict:
-                return None
-            idx = self.subscribe_count.index(min(self.subscribe_count))
-            result = self.workers[idx].subscribe_option_tick(code)
-            if result is not None:
-                return result
-            logger.info(
-                "subscribe option tick %s %s",
-                code,
-                self.workers[idx].get_contract_by_option_code(code).name,
-            )
-            self.subscribe_count[idx] += 1
-            self.option_tick_sub_dict[code] = idx
-        return None
-
-    def unsubscribe_option_tick(self, code):
-        with self.sub_lock:
-            if code in self.option_tick_sub_dict:
-                idx = self.option_tick_sub_dict[code]
-                self.subscribe_count[idx] -= 1
-                del self.option_tick_sub_dict[code]
-                result = self.workers[idx].unsubscribe_option_tick(code)
-                if result is not None:
-                    return result
-                logger.info(
-                    "unsubscribe option tick %s %s",
-                    code,
-                    self.workers[idx].get_contract_by_option_code(code).name,
-                )
-        return None
 
     def unsubscribe_all_bidask(self):
         fail_arr: dict[str, list] = {}
         fail_arr["stock"] = []
         fail_arr["future"] = []
-
         if len(self.stock_bidask_sub_dict) != 0:
             for stock_num in list(self.stock_bidask_sub_dict):
                 if self.unsubscribe_stock_bidask(stock_num) is not None:
@@ -344,11 +327,10 @@ class WorkerPool:
             for code in list(self.future_bidask_sub_dict):
                 if self.unsubscribe_future_bidask(code) is not None:
                     fail_arr["future"].append(code)
-
         return fail_arr
 
     def set_event_cb(self, func):
-        self.main_worker.set_event_callback(func)
+        self.get_main().set_event_callback(func)
         for worker in self.workers:
             worker.set_event_callback(func)
 
@@ -369,7 +351,7 @@ class WorkerPool:
             worker.set_on_bidask_fop_v1_callback(func)
 
     def set_non_block_order_callback(self, func):
-        self.main_worker.set_non_block_order_callback(func)
+        self.get_main().set_non_block_order_callback(func)
 
     def buy_stock(self, stock_num, price, quantity):
         return self.get_order_worker().buy_stock(stock_num, price, quantity)
@@ -417,13 +399,13 @@ class WorkerPool:
         return self.get_portfolio().list_stock_positions()
 
     def get_stock_contract_list(self):
-        return self.main_worker.get_stock_contract_list()
+        return self.get_main().get_stock_contract_list()
 
     def get_future_contract_list(self):
-        return self.main_worker.get_future_contract_list()
+        return self.get_main().get_future_contract_list()
 
     def get_option_contract_list(self):
-        return self.main_worker.get_option_contract_list()
+        return self.get_main().get_option_contract_list()
 
     def buy_option(self, code, price, quantity):
         return self.get_order_worker().buy_option(code, price, quantity)
@@ -438,10 +420,16 @@ class WorkerPool:
         return self.get_order_worker().cancel_option(order_id)
 
     def account_balance(self):
-        return self.main_worker.account_balance()
+        return self.get_main().account_balance()
 
     def margin(self):
         return self.get_portfolio().margin()
 
     def settlements(self):
         return self.get_portfolio().settlements()
+
+    def get_tse_001_contract(self):
+        return self.get_main().get_tse_001_contract()
+
+    def get_otc_101_contract(self):
+        return self.get_main().get_otc_101_contract()

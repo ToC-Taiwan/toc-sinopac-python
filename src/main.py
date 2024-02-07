@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     PROMETHEUS_PORT = 6666
     start_http_server(PROMETHEUS_PORT)
-    logger.info("sinopac prometheus server started at port %d", PROMETHEUS_PORT)
+    logger.info("sinopac forwarder prometheus started at port %d", PROMETHEUS_PORT)
 
     try:
         RabbitAPI(

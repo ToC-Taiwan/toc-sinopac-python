@@ -1,13 +1,11 @@
 import logging
 import threading
-import time
 from typing import List
 
 import shioaji as sj
 import shioaji.constant as sc
 from shioaji.contracts import Contract
 from shioaji.data import ScannerItem
-from shioaji.error import SystemMaintenance, TokenError
 from shioaji.order import Order, Trade
 from shioaji.position import AccountBalance, FuturePosition, Margin, StockPosition
 
@@ -57,41 +55,31 @@ class Shioaji:
         self.__rank_lock = threading.Lock()
         self.__rank: List[ScannerItem] = []
 
+    # before gRPC set cb, using logger to save event
+    def event_logger_cb(self, resp_code: int, event_code: int, info: str, event: str):
+        if event_code != 0:
+            logger.warning("resp_code: %d", resp_code)
+            logger.warning("event_code: %d", event_code)
+            logger.warning("info: %s", info)
+            logger.warning("event: %s", event)
+
+        # if event_code == 12:
+        #     raise RuntimeError("reconnecting in initial login")
+
+    def login_cb(self, security_type: sc.SecurityType):
+        with self.__login_status_lock:
+            if security_type.value in [item.value for item in sc.SecurityType]:
+                self.__login_progess += 1
+                logger.info("login progress: %d/4, %s", self.__login_progess, security_type)
+
     def login(self, user: ShioajiAuth, is_main: bool):
-        # before gRPC set cb, using logger to save event
-        def event_logger_cb(resp_code: int, event_code: int, info: str, event: str):
-            if event_code != 0:
-                logger.warning("resp_code: %d", resp_code)
-                logger.warning("event_code: %d", event_code)
-                logger.warning("info: %s", info)
-                logger.warning("event: %s", event)
-
-            if event_code == 12:
-                time.sleep(30)
-                raise RuntimeError("reconnecting in initial login")
-
-        def login_cb(security_type: sc.SecurityType):
-            with self.__login_status_lock:
-                if security_type.value in [item.value for item in sc.SecurityType]:
-                    self.__login_progess += 1
-                    logger.info("login progress: %d/4, %s", self.__login_progess, security_type)
-
-        try:
-            self.set_event_callback(event_logger_cb)
-            self.__api.login(
-                api_key=user.api_key,
-                secret_key=user.api_key_secret,
-                contracts_cb=login_cb,
-                subscribe_trade=is_main,
-            )
-
-        except SystemMaintenance as exc:
-            time.sleep(75)
-            raise RuntimeError("login 503 system maintenance") from exc
-
-        except Exception as error:
-            time.sleep(30)
-            raise RuntimeError("login error") from error
+        self.set_event_callback(self.event_logger_cb)
+        self.__api.login(
+            api_key=user.api_key,
+            secret_key=user.api_key_secret,
+            contracts_cb=self.login_cb,
+            subscribe_trade=is_main,
+        )
 
         while True:
             with self.__login_status_lock:
@@ -109,9 +97,8 @@ class Shioaji:
         self.fill_option_map()
 
         if is_main is True:
-            if self.__api.stock_account.signed is False or self.__api.futopt_account.signed is False:
-                raise RuntimeError("account not sign")
-
+            # if self.__api.stock_account.signed is False or self.__api.futopt_account.signed is False:
+            #     raise RuntimeError("account not sign")
             self.set_order_callback(self.order_callback)
             self.update_local_order()
 
@@ -154,28 +141,29 @@ class Shioaji:
     def fill_stock_map(self):
         for contract_arr in self.__api.Contracts.Stocks:
             for contract in contract_arr:
-                if contract.category != "00":
-                    with self.stock_map_lock:
-                        self.stock_map[contract.code] = contract
+                if contract.category == "00":
+                    continue
+                with self.stock_map_lock:
+                    self.stock_map[contract.code] = contract
         with self.stock_map_lock:
             if len(self.stock_map) != 0:
                 logger.info("total stock: %d", len(self.stock_map))
-            else:
-                raise RuntimeError("stock_map is empty")
+            # else:
+            #     raise RuntimeError("stock_map is empty")
 
     def get_stock_contract_list(self):
         with self.stock_map_lock:
             return list(self.stock_map.values())
 
     def get_contract_by_stock_num(self, num):
-        if num == "tse_001":
-            return self.__api.Contracts.Indexs.TSE.TSE001
-
-        if num == "otc_101":
-            return self.__api.Contracts.Indexs.OTC.OTC101
-
         with self.stock_map_lock:
             return self.stock_map[num]
+
+    def get_tse_001_contract(self):
+        return self.__api.Contracts.Indexs.TSE.TSE001
+
+    def get_otc_101_contract(self):
+        return self.__api.Contracts.Indexs.OTC.OTC101
 
     def fill_future_map(self):
         for future_arr in self.__api.Contracts.Futures:
@@ -185,8 +173,8 @@ class Shioaji:
         with self.future_map_lock:
             if len(self.future_map) != 0:
                 logger.info("total future: %d", len(self.future_map))
-            else:
-                raise RuntimeError("future_map is empty")
+            # else:
+            #     raise RuntimeError("future_map is empty")
 
     def get_future_contract_list(self):
         with self.future_map_lock:
@@ -204,8 +192,8 @@ class Shioaji:
         with self.option_map_lock:
             if len(self.option_map) != 0:
                 logger.info("total option: %d", len(self.option_map))
-            else:
-                raise RuntimeError("option_map is empty")
+            # else:
+            #     raise RuntimeError("option_map is empty")
 
     def get_option_contract_list(self):
         with self.option_map_lock:
@@ -241,8 +229,7 @@ class Shioaji:
                 self.__order_map = cache
 
     def order_callback(self, order_state: sc.OrderState, res: dict):
-        # every time order callback, update local order
-        self.update_local_order()
+        self.update_local_order()  # every time order callback, update local order
         if order_state in (sc.OrderState.FuturesOrder, sc.OrderState.StockOrder):
             if res["contract"]["code"] is None:
                 logger.error("place order code is none")
@@ -284,23 +271,20 @@ class Shioaji:
     def snapshots(self, contracts):
         try:
             return self.__api.snapshots(contracts)
-        except TokenError as error:
-            raise error
-        except Exception as error:
-            logger.error(str(error))
+        except Exception:
             return None
 
     def stock_ticks(self, num, date):
         try:
             return self.__api.ticks(self.get_contract_by_stock_num(num), date)
-        except TimeoutError:
-            return self.stock_ticks(num, date)
+        except Exception:
+            return None
 
     def future_ticks(self, code, date):
         try:
             return self.__api.ticks(self.get_contract_by_future_code(code), date)
-        except TimeoutError:
-            return self.future_ticks(code, date)
+        except Exception:
+            return None
 
     def stock_kbars(self, num, date):
         try:
@@ -309,8 +293,8 @@ class Shioaji:
                 start=date,
                 end=date,
             )
-        except TimeoutError:
-            return self.stock_kbars(num, date)
+        except Exception:
+            return None
 
     def future_kbars(self, code, date):
         try:
@@ -319,36 +303,30 @@ class Shioaji:
                 start=date,
                 end=date,
             )
-        except TimeoutError:
-            return self.future_kbars(code, date)
+        except Exception:
+            return None
 
     def get_stock_last_close_by_date(self, num, date):
-        try:
-            ticks = self.__api.quote.ticks(
-                contract=self.get_contract_by_stock_num(num),
-                date=date,
-                query_type=sc.TicksQueryType.LastCount,
-                last_cnt=1,
-            )
-            if len(ticks.close) > 0:
-                return ticks.close[0]
-            return 0
-        except TimeoutError:
-            return self.get_stock_last_close_by_date(num, date)
+        ticks = self.__api.quote.ticks(
+            contract=self.get_contract_by_stock_num(num),
+            date=date,
+            query_type=sc.TicksQueryType.LastCount,
+            last_cnt=1,
+        )
+        if len(ticks.close) > 0:
+            return ticks.close[0]
+        return 0
 
     def get_future_last_close_by_date(self, code, date):
-        try:
-            ticks = self.__api.quote.ticks(
-                contract=self.get_contract_by_future_code(code),
-                date=date,
-                query_type=sc.TicksQueryType.LastCount,
-                last_cnt=1,
-            )
-            if len(ticks.close) > 0:
-                return ticks.close[0]
-            return 0
-        except TimeoutError:
-            return self.get_future_last_close_by_date(code, date)
+        ticks = self.__api.quote.ticks(
+            contract=self.get_contract_by_future_code(code),
+            date=date,
+            query_type=sc.TicksQueryType.LastCount,
+            last_cnt=1,
+        )
+        if len(ticks.close) > 0:
+            return ticks.close[0]
+        return 0
 
     def get_stock_volume_rank_by_date(self, count, date):
         result = self.__api.scanners(

@@ -21,7 +21,7 @@ class GRPCServer:
         logger.info("Shioaji version: %s", worker_pool.get_sj_version())
 
         # simulator
-        simulator = Simulator(worker_pool.main_worker)
+        simulator = Simulator(worker_pool.get_main())
 
         # gRPC servicer
         basic_servicer = RPCBasic(worker_pool)

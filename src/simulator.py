@@ -13,8 +13,8 @@ from sinopac import OrderStatus, Shioaji
 
 
 class Simulator:
-    def __init__(self, sinopac: Shioaji):
-        self.sinopac = sinopac
+    def __init__(self, main_worker: Shioaji):
+        self.main_worker = main_worker
         self.__simulation_count_map: dict[str, int] = {}  # key: stock_num or code, value: count
         self.__simulation_lock = threading.Lock()
 
@@ -38,7 +38,7 @@ class Simulator:
             self.__simulation_count_map[stock_num] = current + quantity
 
         sim_order = Trade(
-            contract=self.sinopac.get_contract_by_stock_num(stock_num),
+            contract=self.main_worker.get_contract_by_stock_num(stock_num),
             order=Order(
                 price=price,
                 quantity=quantity,
@@ -70,7 +70,7 @@ class Simulator:
             self.__simulation_count_map[stock_num] = current - quantity
 
         sim_order = Trade(
-            contract=self.sinopac.get_contract_by_stock_num(stock_num),
+            contract=self.main_worker.get_contract_by_stock_num(stock_num),
             order=Order(
                 price=price,
                 quantity=quantity,
@@ -102,7 +102,7 @@ class Simulator:
             self.__simulation_count_map[stock_num] = current - quantity
 
         sim_order = Trade(
-            contract=self.sinopac.get_contract_by_stock_num(stock_num),
+            contract=self.main_worker.get_contract_by_stock_num(stock_num),
             order=Order(
                 price=price,
                 quantity=quantity,
@@ -143,7 +143,7 @@ class Simulator:
             self.__simulation_count_map[code] = current + quantity
 
         sim_order = Trade(
-            contract=self.sinopac.get_contract_by_future_code(code),
+            contract=self.main_worker.get_contract_by_future_code(code),
             order=Order(
                 price=price,
                 quantity=quantity,
@@ -175,7 +175,7 @@ class Simulator:
             self.__simulation_count_map[code] = current - quantity
 
         sim_order = Trade(
-            contract=self.sinopac.get_contract_by_future_code(code),
+            contract=self.main_worker.get_contract_by_future_code(code),
             order=Order(
                 price=price,
                 quantity=quantity,
@@ -207,7 +207,7 @@ class Simulator:
             self.__simulation_count_map[code] = current - quantity
 
         sim_order = Trade(
-            contract=self.sinopac.get_contract_by_future_code(code),
+            contract=self.main_worker.get_contract_by_future_code(code),
             order=Order(
                 price=price,
                 quantity=quantity,
@@ -247,7 +247,7 @@ class Simulator:
             self.__simulation_count_map[code] = current + quantity
 
         sim_order = Trade(
-            contract=self.sinopac.get_contract_by_option_code(code),
+            contract=self.main_worker.get_contract_by_option_code(code),
             order=Order(
                 price=price,
                 quantity=quantity,
@@ -278,7 +278,7 @@ class Simulator:
             self.__simulation_count_map[code] = current - quantity
 
         sim_order = Trade(
-            contract=self.sinopac.get_contract_by_option_code(code),
+            contract=self.main_worker.get_contract_by_option_code(code),
             order=Order(
                 price=price,
                 quantity=quantity,
@@ -309,7 +309,7 @@ class Simulator:
             self.__simulation_count_map[code] = current - quantity
 
         sim_order = Trade(
-            contract=self.sinopac.get_contract_by_option_code(code),
+            contract=self.main_worker.get_contract_by_option_code(code),
             order=Order(
                 price=price,
                 quantity=quantity,

@@ -11,21 +11,10 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
 
     def fill_stock_history_tick_response(self, num, date, response, worker: Shioaji):
         ticks = worker.stock_ticks(num, date)
+        if ticks is None or len(ticks.ts) == 0:
+            return
+
         total_count = len(ticks.ts)
-        tmp_length = [
-            len(ticks.close),
-            len(ticks.tick_type),
-            len(ticks.volume),
-            len(ticks.bid_price),
-            len(ticks.bid_volume),
-            len(ticks.ask_price),
-            len(ticks.ask_volume),
-        ]
-
-        for length in tmp_length:
-            if length - total_count != 0:
-                return
-
         for pos in range(total_count):
             response.data.append(
                 history_pb2.HistoryTickMessage(
@@ -63,19 +52,10 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
 
     def fill_stock_history_kbar_response(self, num, date, response, worker: Shioaji):
         kbar = worker.stock_kbars(num, date)
+        if kbar is None or len(kbar.ts) == 0:
+            return
+
         total_count = len(kbar.ts)
-        tmp_length = [
-            len(kbar.Close),
-            len(kbar.Open),
-            len(kbar.High),
-            len(kbar.Low),
-            len(kbar.Volume),
-        ]
-
-        for length in tmp_length:
-            if length - total_count != 0:
-                return
-
         for pos in range(total_count):
             response.data.append(
                 history_pb2.HistoryKbarMessage(
@@ -215,21 +195,10 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
 
     def fill_future_history_tick_response(self, code, date, response, worker: Shioaji):
         ticks = worker.future_ticks(code, date)
+        if ticks is None or len(ticks.ts) == 0:
+            return
+
         total_count = len(ticks.ts)
-        tmp_length = [
-            len(ticks.close),
-            len(ticks.tick_type),
-            len(ticks.volume),
-            len(ticks.bid_price),
-            len(ticks.bid_volume),
-            len(ticks.ask_price),
-            len(ticks.ask_volume),
-        ]
-
-        for length in tmp_length:
-            if length - total_count != 0:
-                return
-
         for pos in range(total_count):
             response.data.append(
                 history_pb2.HistoryTickMessage(
@@ -265,21 +234,18 @@ class RPCHistory(history_pb2_grpc.HistoryDataInterfaceServicer):
             thread.join()
         return response
 
-    def fill_future_history_kbar_response(self, code, date, response, sinopac: Shioaji):
+    def fill_future_history_kbar_response(
+        self,
+        code: str,
+        date,
+        response: history_pb2.HistoryKbarResponse,
+        sinopac: Shioaji,
+    ):
         kbar = sinopac.future_kbars(code, date)
+        if kbar is None or len(kbar.ts) == 0:
+            return
+
         total_count = len(kbar.ts)
-        tmp_length = [
-            len(kbar.Close),
-            len(kbar.Open),
-            len(kbar.High),
-            len(kbar.Low),
-            len(kbar.Volume),
-        ]
-
-        for length in tmp_length:
-            if length - total_count != 0:
-                return
-
         for pos in range(total_count):
             response.data.append(
                 history_pb2.HistoryKbarMessage(
