@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import pika
 import shioaji as sj
 import shioaji.constant as sc
+from pika import SelectConnection
+from pika.channel import Channel
 
 from pb.forwarder import mq_pb2
 
@@ -27,9 +29,36 @@ class RabbitMQ:
         exchange: str,
     ):
         self.exchange = exchange
-        self.channel = pika.BlockingConnection(pika.URLParameters(url)).channel(channel_number=256)
-        self.channel.exchange_declare(exchange=self.exchange, exchange_type=EXCAHNG_TYPE, durable=True)
         self.order_cb_lock = threading.Lock()
+
+        self._url = url
+        self._connection: SelectConnection = None
+        self._channel: Channel = None
+
+        self.connect()
+
+    def connect(self):
+        self._connection = pika.SelectConnection(
+            pika.URLParameters(self._url),
+            on_open_callback=self.on_connection_open,
+        )
+        threading.Thread(target=self._connection.ioloop.start).start()
+
+    def on_connection_open(self, _):
+        self.open_channel()
+
+    def open_channel(self):
+        self._connection.channel(
+            on_open_callback=self.on_channel_open,
+        )
+
+    def on_channel_open(self, channel: Channel):
+        self._channel = channel
+        self._channel.exchange_declare(
+            exchange=self.exchange,
+            exchange_type=EXCAHNG_TYPE,
+            durable=True,
+        )
 
     def event_callback(
         self,
@@ -38,7 +67,7 @@ class RabbitMQ:
         info: str,
         event: str,
     ):
-        self.channel.basic_publish(
+        self._channel.basic_publish(
             exchange=self.exchange,
             routing_key=ROUTING_KEY_EVENT,
             body=mq_pb2.EventMessage(
@@ -55,7 +84,7 @@ class RabbitMQ:
         _,
         tick: sj.TickSTKv1,
     ):
-        self.channel.basic_publish(
+        self._channel.basic_publish(
             exchange=self.exchange,
             routing_key=f"{ROUTING_KEY_TICK}:{tick.code}",
             body=mq_pb2.StockRealTimeTickMessage(
@@ -88,7 +117,7 @@ class RabbitMQ:
         _,
         tick: sj.TickFOPv1,
     ):
-        self.channel.basic_publish(
+        self._channel.basic_publish(
             exchange=self.exchange,
             routing_key=f"{ROUTING_KEY_FUTURE_TICK}:{tick.code}",
             body=mq_pb2.FutureRealTimeTickMessage(
@@ -119,7 +148,7 @@ class RabbitMQ:
         _,
         bidask: sj.BidAskSTKv1,
     ):
-        self.channel.basic_publish(
+        self._channel.basic_publish(
             exchange=self.exchange,
             routing_key=f"{ROUTING_KEY_BID_ASK}:{bidask.code}",
             body=mq_pb2.StockRealTimeBidAskMessage(
@@ -141,7 +170,7 @@ class RabbitMQ:
         _,
         bidask: sj.BidAskFOPv1,
     ):
-        self.channel.basic_publish(
+        self._channel.basic_publish(
             exchange=self.exchange,
             routing_key=f"{ROUTING_KEY_FUTURE_BID_ASK}:{bidask.code}",
             body=mq_pb2.FutureRealTimeBidAskMessage(
@@ -224,7 +253,7 @@ class RabbitMQ:
                     )
                 )
 
-            self.channel.basic_publish(
+            self._channel.basic_publish(
                 exchange=self.exchange,
                 routing_key=ROUTING_KEY_ORDER_ARR,
                 body=result.SerializeToString(),
