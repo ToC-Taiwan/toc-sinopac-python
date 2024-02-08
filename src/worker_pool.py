@@ -164,9 +164,17 @@ class WorkerPool:
     def count(self):
         return len(self.workers)
 
+    def get_all_sub_count(self):
+        total = 0
+        for count in self.subscribe_count:
+            total += count
+        return total
+
     def subscribe_stock_tick(self, stock_num: str, odd: bool):
         with self.sub_lock:
             if stock_num in self.stock_tick_sub_dict:
+                return None
+            if self.get_all_sub_count() + 1 > 200 * len(self.workers):
                 return None
             idx = self.subscribe_count.index(min(self.subscribe_count))
             result = self.workers[idx].subscribe_stock_tick(stock_num, odd)
@@ -201,6 +209,8 @@ class WorkerPool:
         with self.sub_lock:
             if code in self.future_tick_sub_dict:
                 return None
+            if self.get_all_sub_count() + 1 > 200 * len(self.workers):
+                return None
             idx = self.subscribe_count.index(min(self.subscribe_count))
             result = self.workers[idx].subscribe_future_tick(code)
             if result is not None:
@@ -234,6 +244,8 @@ class WorkerPool:
         with self.sub_lock:
             if stock_num in self.stock_bidask_sub_dict:
                 return None
+            if self.get_all_sub_count() + 1 > 200 * len(self.workers):
+                return None
             idx = self.subscribe_count.index(min(self.subscribe_count))
             result = self.workers[idx].subscribe_stock_bidask(stock_num)
             if result is not None:
@@ -266,6 +278,8 @@ class WorkerPool:
     def subscribe_future_bidask(self, code):
         with self.sub_lock:
             if code in self.future_bidask_sub_dict:
+                return None
+            if self.get_all_sub_count() + 1 > 200 * len(self.workers):
                 return None
             idx = self.subscribe_count.index(min(self.subscribe_count))
             result = self.workers[idx].subscribe_future_bidask(code)
