@@ -88,7 +88,10 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
         return response
 
     def GetAllStockSnapshot(self, request, _):
-        splits = np.array_split(self.workers.get_stock_contract_list(), self.workers.count())
+        splits = []
+        total = self.workers.get_stock_contract_list()
+        for i in range(0, len(total), 500):
+            splits.append(total[i : i + 500])
         response = realtime_pb2.SnapshotResponse()
         threads = []
         for i, split in enumerate(splits):
