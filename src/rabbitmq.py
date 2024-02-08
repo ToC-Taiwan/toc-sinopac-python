@@ -6,6 +6,7 @@ import pika
 import shioaji as sj
 import shioaji.constant as sc
 from pika import SelectConnection
+from pika.adapters.select_connection import IOLoop
 from pika.channel import Channel
 
 from pb.forwarder import mq_pb2
@@ -42,13 +43,15 @@ class RabbitMQ:
             pika.URLParameters(self._url),
             on_open_callback=self.on_connection_open,
         )
-        threading.Thread(target=self._connection.ioloop.start).start()
+        holding_thread: IOLoop = self._connection.ioloop
+        threading.Thread(target=holding_thread.start).start()
 
     def on_connection_open(self, _):
         self.open_channel()
 
     def open_channel(self):
         self._connection.channel(
+            channel_number=1024,
             on_open_callback=self.on_channel_open,
         )
 
