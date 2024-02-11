@@ -77,6 +77,7 @@ class StockPosition(google.protobuf.message.Message):
     collateral (int): collateral
     short_sale_margin (int): short_sale_margin
     interest (int): interest
+    StockPosition(id = 0, code = '2344', direction = <Action.Buy: 'Buy'>, quantity = 10, price = 28.3, last_price = 27.1, pnl = -15.0, yd_quantity = 10, margin_purchase_amount = 0, collateral = 0, short_sale_margin = 0, interest = 0)
     """
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -94,6 +95,7 @@ class StockPosition(google.protobuf.message.Message):
     COLLATERAL_FIELD_NUMBER: builtins.int
     SHORT_SALE_MARGIN_FIELD_NUMBER: builtins.int
     INTEREST_FIELD_NUMBER: builtins.int
+    DETAIL_ARR_FIELD_NUMBER: builtins.int
     id: builtins.int
     code: builtins.str
     direction: builtins.str
@@ -107,6 +109,8 @@ class StockPosition(google.protobuf.message.Message):
     collateral: builtins.int
     short_sale_margin: builtins.int
     interest: builtins.int
+    @property
+    def detail_arr(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___StockPositionDetail]: ...
     def __init__(
         self,
         *,
@@ -123,8 +127,9 @@ class StockPosition(google.protobuf.message.Message):
         collateral: builtins.int = ...,
         short_sale_margin: builtins.int = ...,
         interest: builtins.int = ...,
+        detail_arr: collections.abc.Iterable[global___StockPositionDetail] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["code", b"code", "collateral", b"collateral", "cond", b"cond", "direction", b"direction", "id", b"id", "interest", b"interest", "last_price", b"last_price", "margin_purchase_amount", b"margin_purchase_amount", "pnl", b"pnl", "price", b"price", "quantity", b"quantity", "short_sale_margin", b"short_sale_margin", "yd_quantity", b"yd_quantity"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["code", b"code", "collateral", b"collateral", "cond", b"cond", "detail_arr", b"detail_arr", "direction", b"direction", "id", b"id", "interest", b"interest", "last_price", b"last_price", "margin_purchase_amount", b"margin_purchase_amount", "pnl", b"pnl", "price", b"price", "quantity", b"quantity", "short_sale_margin", b"short_sale_margin", "yd_quantity", b"yd_quantity"]) -> None: ...
 
 global___StockPosition = StockPosition
 
@@ -143,6 +148,50 @@ class StockPositionArr(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["position_arr", b"position_arr"]) -> None: ...
 
 global___StockPositionArr = StockPositionArr
+
+@typing_extensions.final
+class StockPositionDetail(google.protobuf.message.Message):
+    """StockPositionDetail(date = '2024-01-04', code = '2344', quantity = 0, price = 147.0, last_price = 134.0, dseq = 'IC320', direction = <Action.Buy: 'Buy'>, pnl = -13.0, currency = <Currency.TWD: 'TWD'>, fee = 1.0)"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DATE_FIELD_NUMBER: builtins.int
+    CODE_FIELD_NUMBER: builtins.int
+    QUANTITY_FIELD_NUMBER: builtins.int
+    PRICE_FIELD_NUMBER: builtins.int
+    LAST_PRICE_FIELD_NUMBER: builtins.int
+    DSEQ_FIELD_NUMBER: builtins.int
+    DIRECTION_FIELD_NUMBER: builtins.int
+    PNL_FIELD_NUMBER: builtins.int
+    CURRENCY_FIELD_NUMBER: builtins.int
+    FEE_FIELD_NUMBER: builtins.int
+    date: builtins.str
+    code: builtins.str
+    quantity: builtins.int
+    price: builtins.float
+    last_price: builtins.float
+    dseq: builtins.str
+    direction: builtins.str
+    pnl: builtins.float
+    currency: builtins.str
+    fee: builtins.float
+    def __init__(
+        self,
+        *,
+        date: builtins.str = ...,
+        code: builtins.str = ...,
+        quantity: builtins.int = ...,
+        price: builtins.float = ...,
+        last_price: builtins.float = ...,
+        dseq: builtins.str = ...,
+        direction: builtins.str = ...,
+        pnl: builtins.float = ...,
+        currency: builtins.str = ...,
+        fee: builtins.float = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["code", b"code", "currency", b"currency", "date", b"date", "direction", b"direction", "dseq", b"dseq", "fee", b"fee", "last_price", b"last_price", "pnl", b"pnl", "price", b"price", "quantity", b"quantity"]) -> None: ...
+
+global___StockPositionDetail = StockPositionDetail
 
 @typing_extensions.final
 class StockOrderDetail(google.protobuf.message.Message):

@@ -41,6 +41,25 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         response = trade_pb2.StockPositionArr()
         result = self.workers.get_stock_position()
         for pos in result:
+            data_arr: list[trade_pb2.StockPositionDetail] = []
+            detail = self.workers.get_position_detail(pos.id)
+            if detail is not None and len(detail) > 0:
+                for d in detail:
+                    data_arr.append(
+                        trade_pb2.StockPositionDetail(
+                            date=d.date,
+                            code=d.code,
+                            quantity=d.quantity,
+                            price=d.price,
+                            last_price=d.last_price,
+                            dseq=d.dseq,
+                            direction=d.direction,
+                            pnl=d.pnl,
+                            currency=d.currency,
+                            fee=d.fee,
+                        )
+                    )
+
             response.position_arr.append(
                 trade_pb2.StockPosition(
                     id=pos.id,
@@ -56,6 +75,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
                     collateral=pos.collateral,
                     short_sale_margin=pos.short_sale_margin,
                     interest=pos.interest,
+                    detail_arr=data_arr,
                 )
             )
         return response

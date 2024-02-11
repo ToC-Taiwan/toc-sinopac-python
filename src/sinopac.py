@@ -4,10 +4,10 @@ from typing import List
 
 import shioaji as sj
 import shioaji.constant as sc
+import shioaji.position as sp
 from shioaji.contracts import Contract
 from shioaji.data import ScannerItem
 from shioaji.order import Order, Trade
-from shioaji.position import AccountBalance, FuturePosition, Margin, StockPosition
 
 from logger import logger
 
@@ -616,32 +616,41 @@ class Shioaji:
         self.update_local_order()
         return OrderStatus(order_id, self.get_local_order_by_order_id(order_id).status.status, "")
 
-    def account_balance(self) -> AccountBalance | None:
+    def account_balance(self) -> sp.AccountBalance | None:
         try:
             return self.__api.account_balance()
         except Exception:
             return None
 
-    def margin(self) -> Margin | None:
+    def margin(self) -> sp.Margin | None:
         try:
             return self.__api.margin(self.__api.futopt_account)
         except Exception:
             return None
 
-    def list_future_positions(self) -> List[FuturePosition]:
+    def list_future_positions(self) -> List[sp.FuturePosition]:
         try:
-            result: List[FuturePosition] = []
+            result: List[sp.FuturePosition] = []
             result = self.__api.list_positions(self.__api.futopt_account)
             return result
         except Exception:
             return []
 
-    def list_stock_positions(self) -> List[StockPosition]:
+    def list_stock_positions(self) -> List[sp.StockPosition]:
         try:
-            result: List[StockPosition] = []
-            result = self.__api.list_positions(
+            result: List[sp.StockPosition] = self.__api.list_positions(
                 self.__api.stock_account,
                 unit=sc.Unit.Share,
+            )
+            return result
+        except Exception:
+            return []
+
+    def get_position_detail(self, detail_id: int) -> List[sp.StockPositionDetail | sp.FuturePositionDetail]:
+        try:
+            result: List[sp.StockPositionDetail | sp.FuturePositionDetail] = self.__api.list_position_detail(
+                self.__api.stock_account,
+                detail_id,
             )
             return result
         except Exception:

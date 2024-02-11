@@ -412,6 +412,9 @@ class WorkerPool:
     def get_stock_position(self):
         return self.get_portfolio().list_stock_positions()
 
+    def get_position_detail(self, detail_id: int):
+        return self.get_portfolio().get_position_detail(detail_id)
+
     def get_stock_contract_list(self):
         return self.get_main().get_stock_contract_list()
 
