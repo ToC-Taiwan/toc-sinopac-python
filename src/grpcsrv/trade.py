@@ -3,7 +3,7 @@ from datetime import datetime
 
 import google.protobuf.empty_pb2
 
-from pb.forwarder import entity_pb2, trade_pb2, trade_pb2_grpc
+from pb.forwarder import trade_pb2, trade_pb2_grpc
 from rabbitmq import RabbitMQ
 from simulator import Simulator
 from worker_pool import WorkerPool
@@ -178,18 +178,6 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def GetOrderStatusByID(self, request, _):
-        result = None
-        if request.simulate is not True:
-            result = self.workers.get_order_status_by_id(request.order_id)
-        else:
-            result = self.simulator.get_local_order_by_id(request.order_id)
-        return trade_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
     def GetLocalOrderStatusArr(self, request, _):
         with self.send_order_lock:
             self.rabbit.send_order_arr(self.workers.get_local_order())
@@ -199,9 +187,6 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         with self.send_order_lock:
             self.rabbit.send_order_arr(self.simulator.get_local_order())
             return google.protobuf.empty_pb2.Empty()
-
-    def GetNonBlockOrderStatusArr(self, request, _):
-        return entity_pb2.ErrorMessage(err=self.workers.get_non_block_order_status_arr())
 
     def BuyFuture(self, request, _):
         result = None

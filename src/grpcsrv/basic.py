@@ -1,4 +1,3 @@
-import threading
 import time
 
 import google.protobuf.empty_pb2
@@ -22,10 +21,6 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
             time.sleep(1)
         self.workers.logout_and_exit()
 
-    def Terminate(self, request, _):
-        threading.Thread(target=self.wait_and_terminate, daemon=True).start()
-        return google.protobuf.empty_pb2.Empty()
-
     def CheckUsage(self, request, _):
         usage = self.workers.check_usage()
         return basic_pb2.ShioajiUsage(
@@ -38,10 +33,6 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
     def Login(self, request, _):
         self.workers.login()
         return google.protobuf.empty_pb2.Empty()
-
-    def wait_and_terminate(self):
-        time.sleep(3)
-        self.workers.logout_and_exit()
 
     def GetAllStockDetail(self, request, _):
         response = basic_pb2.StockDetailResponse()

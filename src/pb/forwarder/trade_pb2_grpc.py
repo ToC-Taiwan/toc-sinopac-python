@@ -2,7 +2,6 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from forwarder import entity_pb2 as forwarder_dot_entity__pb2
 from forwarder import trade_pb2 as forwarder_dot_trade__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
@@ -95,16 +94,6 @@ class TradeInterfaceStub(object):
                 '/forwarder.TradeInterface/GetSimulateOrderStatusArr',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                )
-        self.GetOrderStatusByID = channel.unary_unary(
-                '/forwarder.TradeInterface/GetOrderStatusByID',
-                request_serializer=forwarder_dot_trade__pb2.OrderID.SerializeToString,
-                response_deserializer=forwarder_dot_trade__pb2.TradeResult.FromString,
-                )
-        self.GetNonBlockOrderStatusArr = channel.unary_unary(
-                '/forwarder.TradeInterface/GetNonBlockOrderStatusArr',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=forwarder_dot_entity__pb2.ErrorMessage.FromString,
                 )
         self.GetFuturePosition = channel.unary_unary(
                 '/forwarder.TradeInterface/GetFuturePosition',
@@ -232,18 +221,6 @@ class TradeInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetOrderStatusByID(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetNonBlockOrderStatusArr(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def GetFuturePosition(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -356,16 +333,6 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
                     servicer.GetSimulateOrderStatusArr,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            ),
-            'GetOrderStatusByID': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetOrderStatusByID,
-                    request_deserializer=forwarder_dot_trade__pb2.OrderID.FromString,
-                    response_serializer=forwarder_dot_trade__pb2.TradeResult.SerializeToString,
-            ),
-            'GetNonBlockOrderStatusArr': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetNonBlockOrderStatusArr,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=forwarder_dot_entity__pb2.ErrorMessage.SerializeToString,
             ),
             'GetFuturePosition': grpc.unary_unary_rpc_method_handler(
                     servicer.GetFuturePosition,
@@ -671,40 +638,6 @@ class TradeInterface(object):
         return grpc.experimental.unary_unary(request, target, '/forwarder.TradeInterface/GetSimulateOrderStatusArr',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetOrderStatusByID(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/forwarder.TradeInterface/GetOrderStatusByID',
-            forwarder_dot_trade__pb2.OrderID.SerializeToString,
-            forwarder_dot_trade__pb2.TradeResult.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetNonBlockOrderStatusArr(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/forwarder.TradeInterface/GetNonBlockOrderStatusArr',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            forwarder_dot_entity__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
