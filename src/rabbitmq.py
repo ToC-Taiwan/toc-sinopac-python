@@ -82,17 +82,20 @@ class RabbitMQ:
         info: str,
         event: str,
     ):
-        self._channel.basic_publish(
-            exchange=self.exchange,
-            routing_key=ROUTING_KEY_EVENT,
-            body=mq_pb2.EventMessage(
-                resp_code=resp_code,
-                event_code=event_code,
-                info=info,
-                event=event,
-                event_time=datetime.now().strftime(DATE_TIME_FORMAT),
-            ).SerializeToString(),
-        )
+        try:
+            self._channel.basic_publish(
+                exchange=self.exchange,
+                routing_key=ROUTING_KEY_EVENT,
+                body=mq_pb2.EventMessage(
+                    resp_code=resp_code,
+                    event_code=event_code,
+                    info=info,
+                    event=event,
+                    event_time=datetime.now().strftime(DATE_TIME_FORMAT),
+                ).SerializeToString(),
+            )
+        except Exception as e:
+            logger.error("event_callback: %s", e)
 
     def stock_quote_callback_v1(
         self,
