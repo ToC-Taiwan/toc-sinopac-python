@@ -1,6 +1,7 @@
 import threading
 
 import numpy as np
+from shioaji.contracts import Contract
 
 from pb.forwarder import realtime_pb2, realtime_pb2_grpc
 from realtime_us import RealTimeUS
@@ -15,7 +16,7 @@ class RPCRealTime(realtime_pb2_grpc.RealTimeDataInterfaceServicer):
 
     def fill_snapshot_arr(
         self,
-        contracts,
+        contracts: list[Contract],
         response: realtime_pb2.SnapshotResponse,
         worker: Shioaji,
     ):

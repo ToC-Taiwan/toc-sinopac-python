@@ -29,12 +29,12 @@ class RealTimeDataInterfaceStub(object):
         self.GetStockSnapshotTSE = channel.unary_unary(
                 '/forwarder.RealTimeDataInterface/GetStockSnapshotTSE',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=forwarder_dot_realtime__pb2.SnapshotMessage.FromString,
+                response_deserializer=forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
                 )
         self.GetStockSnapshotOTC = channel.unary_unary(
                 '/forwarder.RealTimeDataInterface/GetStockSnapshotOTC',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=forwarder_dot_realtime__pb2.SnapshotMessage.FromString,
+                response_deserializer=forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
                 )
         self.GetNasdaq = channel.unary_unary(
                 '/forwarder.RealTimeDataInterface/GetNasdaq',
@@ -125,12 +125,12 @@ def add_RealTimeDataInterfaceServicer_to_server(servicer, server):
             'GetStockSnapshotTSE': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotTSE,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=forwarder_dot_realtime__pb2.SnapshotMessage.SerializeToString,
+                    response_serializer=forwarder_dot_realtime__pb2.SnapshotResponse.SerializeToString,
             ),
             'GetStockSnapshotOTC': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStockSnapshotOTC,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=forwarder_dot_realtime__pb2.SnapshotMessage.SerializeToString,
+                    response_serializer=forwarder_dot_realtime__pb2.SnapshotResponse.SerializeToString,
             ),
             'GetNasdaq': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNasdaq,
@@ -209,7 +209,7 @@ class RealTimeDataInterface(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetStockSnapshotTSE',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            forwarder_dot_realtime__pb2.SnapshotMessage.FromString,
+            forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -226,7 +226,7 @@ class RealTimeDataInterface(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/forwarder.RealTimeDataInterface/GetStockSnapshotOTC',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            forwarder_dot_realtime__pb2.SnapshotMessage.FromString,
+            forwarder_dot_realtime__pb2.SnapshotResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
