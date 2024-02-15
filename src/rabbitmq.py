@@ -40,16 +40,15 @@ class RabbitMQ:
         self.connect()
 
     def connect(self):
-        for _ in range(1024):
-            self._connection = pika.SelectConnection(
-                pika.URLParameters(self._url),
-                on_open_callback=self.on_connection_open,
-            )
-            holding_thread: IOLoop = self._connection.ioloop
-            threading.Thread(
-                target=holding_thread.start,
-                daemon=True,
-            ).start()
+        self._connection = pika.SelectConnection(
+            pika.URLParameters(self._url),
+            on_open_callback=self.on_connection_open,
+        )
+        holding_thread: IOLoop = self._connection.ioloop
+        threading.Thread(
+            target=holding_thread.start,
+            daemon=True,
+        ).start()
 
     def on_connection_open(self, _):
         self.open_channel()
@@ -58,12 +57,13 @@ class RabbitMQ:
         self._connection.channel(on_open_callback=self.on_channel_open)
 
     def on_channel_open(self, channel: Channel):
-        channel.exchange_declare(
-            exchange=self.exchange,
-            exchange_type=EXCAHNG_TYPE,
-            durable=True,
-        )
-        self._ch_queue.put(channel)
+        for _ in range(1024):
+            channel.exchange_declare(
+                exchange=self.exchange,
+                exchange_type=EXCAHNG_TYPE,
+                durable=True,
+            )
+            self._ch_queue.put(channel)
 
     def event_callback(
         self,
