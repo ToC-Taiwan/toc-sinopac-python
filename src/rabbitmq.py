@@ -36,7 +36,6 @@ class RabbitMQ:
         self._url = url
         self._connection: SelectConnection = None
         self._channel: Channel = None
-        self._channel_is_open = False
 
         self.connect()
 
@@ -50,8 +49,6 @@ class RabbitMQ:
             target=holding_thread.start,
             daemon=True,
         ).start()
-        while not self._channel_is_open:
-            pass
 
     def on_connection_open(self, _):
         self.open_channel()
@@ -64,16 +61,15 @@ class RabbitMQ:
 
     def on_channel_open(self, channel: Channel):
         self._channel = channel
-        # self._channel.add_on_close_callback(self.on_channel_closed)
+        self._channel.add_on_close_callback(self.on_channel_closed)
         self._channel.exchange_declare(
             exchange=self.exchange,
             exchange_type=EXCAHNG_TYPE,
             durable=True,
         )
-        self._channel_is_open = True
 
-    # def on_channel_closed(self, _, reason):
-    #     logger.error("Channel closed: %s", reason)
+    def on_channel_closed(self, _, reason):
+        logger.error("Channel closed: %s", reason)
 
     def event_callback(
         self,
@@ -94,8 +90,8 @@ class RabbitMQ:
                     event_time=datetime.now().strftime(DATE_TIME_FORMAT),
                 ).SerializeToString(),
             )
-        except Exception as e:
-            logger.error("event_callback: %s", e)
+        except Exception:
+            return
 
     def stock_quote_callback_v1(
         self,
@@ -130,8 +126,8 @@ class RabbitMQ:
                     simtrade=tick.simtrade,
                 ).SerializeToString(),
             )
-        except Exception as e:
-            logger.error("stock_quote_callback_v1: %s", e)
+        except Exception:
+            return
 
     def future_quote_callback_v1(
         self,
@@ -164,8 +160,8 @@ class RabbitMQ:
                     simtrade=tick.simtrade,
                 ).SerializeToString(),
             )
-        except Exception as e:
-            logger.error("future_quote_callback_v1: %s", e)
+        except Exception:
+            return
 
     def stock_bid_ask_callback(
         self,
@@ -189,8 +185,8 @@ class RabbitMQ:
                     diff_ask_vol=bidask.diff_ask_vol,
                 ).SerializeToString(),
             )
-        except Exception as e:
-            logger.error("stock_bid_ask_callback: %s", e)
+        except Exception:
+            return
 
     def future_bid_ask_callback(
         self,
@@ -220,8 +216,8 @@ class RabbitMQ:
                     underlying_price=bidask.underlying_price,
                 ).SerializeToString(),
             )
-        except Exception as e:
-            logger.error("future_bid_ask_callback: %s", e)
+        except Exception:
+            return
 
     def order_status_callback(
         self,
@@ -289,5 +285,5 @@ class RabbitMQ:
                     routing_key=ROUTING_KEY_ORDER_ARR,
                     body=result.SerializeToString(),
                 )
-            except Exception as e:
-                logger.error("send_order_arr: %s", e)
+            except Exception:
+                return
