@@ -9,6 +9,7 @@ from pika import SelectConnection
 from pika.adapters.select_connection import IOLoop
 from pika.channel import Channel
 
+from logger import logger
 from pb.forwarder import mq_pb2
 
 logging.getLogger("pika").setLevel(logging.WARNING)
@@ -45,7 +46,10 @@ class RabbitMQ:
             on_close_callback=self.on_connection_closed,
         )
         holding_thread: IOLoop = self._connection.ioloop
-        threading.Thread(target=holding_thread.start).start()
+        threading.Thread(
+            target=holding_thread.start,
+            daemon=True,
+        ).start()
 
     def on_connection_closed(self, _):
         self.connect()
@@ -61,11 +65,15 @@ class RabbitMQ:
 
     def on_channel_open(self, channel: Channel):
         self._channel = channel
+        self._channel.add_on_close_callback(self.on_channel_closed)
         self._channel.exchange_declare(
             exchange=self.exchange,
             exchange_type=EXCAHNG_TYPE,
             durable=True,
         )
+
+    def on_channel_closed(self, _, reason):
+        logger.error("Channel closed: %s", reason)
 
     def event_callback(
         self,
@@ -91,114 +99,126 @@ class RabbitMQ:
         _,
         tick: sj.TickSTKv1,
     ):
-        self._channel.basic_publish(
-            exchange=self.exchange,
-            routing_key=f"{ROUTING_KEY_TICK}:{tick.code}",
-            body=mq_pb2.StockRealTimeTickMessage(
-                code=tick.code,
-                date_time=datetime.strftime(tick.datetime, DATE_TIME_FORMAT),
-                open=tick.open,
-                avg_price=tick.avg_price,
-                close=tick.close,
-                high=tick.high,
-                low=tick.low,
-                amount=tick.amount,
-                total_amount=tick.total_amount,
-                volume=tick.volume,
-                total_volume=tick.total_volume,
-                tick_type=tick.tick_type,
-                chg_type=tick.chg_type,
-                price_chg=tick.price_chg,
-                pct_chg=tick.pct_chg,
-                bid_side_total_vol=tick.bid_side_total_vol,
-                ask_side_total_vol=tick.ask_side_total_vol,
-                bid_side_total_cnt=tick.bid_side_total_cnt,
-                ask_side_total_cnt=tick.ask_side_total_cnt,
-                suspend=tick.suspend,
-                simtrade=tick.simtrade,
-            ).SerializeToString(),
-        )
+        try:
+            self._channel.basic_publish(
+                exchange=self.exchange,
+                routing_key=f"{ROUTING_KEY_TICK}:{tick.code}",
+                body=mq_pb2.StockRealTimeTickMessage(
+                    code=tick.code,
+                    date_time=datetime.strftime(tick.datetime, DATE_TIME_FORMAT),
+                    open=tick.open,
+                    avg_price=tick.avg_price,
+                    close=tick.close,
+                    high=tick.high,
+                    low=tick.low,
+                    amount=tick.amount,
+                    total_amount=tick.total_amount,
+                    volume=tick.volume,
+                    total_volume=tick.total_volume,
+                    tick_type=tick.tick_type,
+                    chg_type=tick.chg_type,
+                    price_chg=tick.price_chg,
+                    pct_chg=tick.pct_chg,
+                    bid_side_total_vol=tick.bid_side_total_vol,
+                    ask_side_total_vol=tick.ask_side_total_vol,
+                    bid_side_total_cnt=tick.bid_side_total_cnt,
+                    ask_side_total_cnt=tick.ask_side_total_cnt,
+                    suspend=tick.suspend,
+                    simtrade=tick.simtrade,
+                ).SerializeToString(),
+            )
+        except Exception as e:
+            logger.error("stock_quote_callback_v1: %s", e)
 
     def future_quote_callback_v1(
         self,
         _,
         tick: sj.TickFOPv1,
     ):
-        self._channel.basic_publish(
-            exchange=self.exchange,
-            routing_key=f"{ROUTING_KEY_FUTURE_TICK}:{tick.code}",
-            body=mq_pb2.FutureRealTimeTickMessage(
-                code=tick.code,
-                date_time=datetime.strftime(tick.datetime, DATE_TIME_FORMAT),
-                open=tick.open,
-                underlying_price=tick.underlying_price,
-                bid_side_total_vol=tick.bid_side_total_vol,
-                ask_side_total_vol=tick.ask_side_total_vol,
-                avg_price=tick.avg_price,
-                close=tick.close,
-                high=tick.high,
-                low=tick.low,
-                amount=tick.amount,
-                total_amount=tick.total_amount,
-                volume=tick.volume,
-                total_volume=tick.total_volume,
-                tick_type=tick.tick_type,
-                chg_type=tick.chg_type,
-                price_chg=tick.price_chg,
-                pct_chg=tick.pct_chg,
-                simtrade=tick.simtrade,
-            ).SerializeToString(),
-        )
+        try:
+            self._channel.basic_publish(
+                exchange=self.exchange,
+                routing_key=f"{ROUTING_KEY_FUTURE_TICK}:{tick.code}",
+                body=mq_pb2.FutureRealTimeTickMessage(
+                    code=tick.code,
+                    date_time=datetime.strftime(tick.datetime, DATE_TIME_FORMAT),
+                    open=tick.open,
+                    underlying_price=tick.underlying_price,
+                    bid_side_total_vol=tick.bid_side_total_vol,
+                    ask_side_total_vol=tick.ask_side_total_vol,
+                    avg_price=tick.avg_price,
+                    close=tick.close,
+                    high=tick.high,
+                    low=tick.low,
+                    amount=tick.amount,
+                    total_amount=tick.total_amount,
+                    volume=tick.volume,
+                    total_volume=tick.total_volume,
+                    tick_type=tick.tick_type,
+                    chg_type=tick.chg_type,
+                    price_chg=tick.price_chg,
+                    pct_chg=tick.pct_chg,
+                    simtrade=tick.simtrade,
+                ).SerializeToString(),
+            )
+        except Exception as e:
+            logger.error("future_quote_callback_v1: %s", e)
 
     def stock_bid_ask_callback(
         self,
         _,
         bidask: sj.BidAskSTKv1,
     ):
-        self._channel.basic_publish(
-            exchange=self.exchange,
-            routing_key=f"{ROUTING_KEY_BID_ASK}:{bidask.code}",
-            body=mq_pb2.StockRealTimeBidAskMessage(
-                code=bidask.code,
-                date_time=datetime.strftime(bidask.datetime, DATE_TIME_FORMAT),
-                suspend=bidask.suspend,
-                simtrade=bidask.simtrade,
-                bid_price=bidask.bid_price,
-                bid_volume=bidask.bid_volume,
-                diff_bid_vol=bidask.diff_bid_vol,
-                ask_price=bidask.ask_price,
-                ask_volume=bidask.ask_volume,
-                diff_ask_vol=bidask.diff_ask_vol,
-            ).SerializeToString(),
-        )
+        try:
+            self._channel.basic_publish(
+                exchange=self.exchange,
+                routing_key=f"{ROUTING_KEY_BID_ASK}:{bidask.code}",
+                body=mq_pb2.StockRealTimeBidAskMessage(
+                    code=bidask.code,
+                    date_time=datetime.strftime(bidask.datetime, DATE_TIME_FORMAT),
+                    suspend=bidask.suspend,
+                    simtrade=bidask.simtrade,
+                    bid_price=bidask.bid_price,
+                    bid_volume=bidask.bid_volume,
+                    diff_bid_vol=bidask.diff_bid_vol,
+                    ask_price=bidask.ask_price,
+                    ask_volume=bidask.ask_volume,
+                    diff_ask_vol=bidask.diff_ask_vol,
+                ).SerializeToString(),
+            )
+        except Exception as e:
+            logger.error("stock_bid_ask_callback: %s", e)
 
     def future_bid_ask_callback(
         self,
         _,
         bidask: sj.BidAskFOPv1,
     ):
-        self._channel.basic_publish(
-            exchange=self.exchange,
-            routing_key=f"{ROUTING_KEY_FUTURE_BID_ASK}:{bidask.code}",
-            body=mq_pb2.FutureRealTimeBidAskMessage(
-                code=bidask.code,
-                date_time=datetime.strftime(bidask.datetime, DATE_TIME_FORMAT),
-                bid_total_vol=bidask.bid_total_vol,
-                ask_total_vol=bidask.ask_total_vol,
-                simtrade=bidask.simtrade,
-                bid_price=bidask.bid_price,
-                bid_volume=bidask.bid_volume,
-                diff_bid_vol=bidask.diff_bid_vol,
-                ask_price=bidask.ask_price,
-                ask_volume=bidask.ask_volume,
-                diff_ask_vol=bidask.diff_ask_vol,
-                first_derived_bid_price=bidask.first_derived_bid_price,
-                first_derived_ask_price=bidask.first_derived_ask_price,
-                first_derived_bid_vol=bidask.first_derived_bid_vol,
-                first_derived_ask_vol=bidask.first_derived_ask_vol,
-                underlying_price=bidask.underlying_price,
-            ).SerializeToString(),
-        )
+        try:
+            self._channel.basic_publish(
+                exchange=self.exchange,
+                routing_key=f"{ROUTING_KEY_FUTURE_BID_ASK}:{bidask.code}",
+                body=mq_pb2.FutureRealTimeBidAskMessage(
+                    code=bidask.code,
+                    date_time=datetime.strftime(bidask.datetime, DATE_TIME_FORMAT),
+                    bid_total_vol=bidask.bid_total_vol,
+                    ask_total_vol=bidask.ask_total_vol,
+                    simtrade=bidask.simtrade,
+                    bid_price=bidask.bid_price,
+                    bid_volume=bidask.bid_volume,
+                    diff_bid_vol=bidask.diff_bid_vol,
+                    ask_price=bidask.ask_price,
+                    ask_volume=bidask.ask_volume,
+                    diff_ask_vol=bidask.diff_ask_vol,
+                    first_derived_bid_price=bidask.first_derived_bid_price,
+                    first_derived_ask_price=bidask.first_derived_ask_price,
+                    first_derived_bid_vol=bidask.first_derived_bid_vol,
+                    first_derived_ask_vol=bidask.first_derived_ask_vol,
+                    underlying_price=bidask.underlying_price,
+                ).SerializeToString(),
+            )
+        except Exception as e:
+            logger.error("future_bid_ask_callback: %s", e)
 
     def order_status_callback(
         self,
@@ -260,8 +280,11 @@ class RabbitMQ:
                     )
                 )
 
-            self._channel.basic_publish(
-                exchange=self.exchange,
-                routing_key=ROUTING_KEY_ORDER_ARR,
-                body=result.SerializeToString(),
-            )
+            try:
+                self._channel.basic_publish(
+                    exchange=self.exchange,
+                    routing_key=ROUTING_KEY_ORDER_ARR,
+                    body=result.SerializeToString(),
+                )
+            except Exception as e:
+                logger.error("send_order_arr: %s", e)
