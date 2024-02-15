@@ -54,16 +54,16 @@ class RabbitMQ:
         self.open_channel()
 
     def open_channel(self):
-        self._connection.channel(on_open_callback=self.on_channel_open)
+        for _ in range(1024):
+            self._connection.channel(on_open_callback=self.on_channel_open)
 
     def on_channel_open(self, channel: Channel):
-        for _ in range(1024):
-            channel.exchange_declare(
-                exchange=self.exchange,
-                exchange_type=EXCAHNG_TYPE,
-                durable=True,
-            )
-            self._ch_queue.put(channel)
+        channel.exchange_declare(
+            exchange=self.exchange,
+            exchange_type=EXCAHNG_TYPE,
+            durable=True,
+        )
+        self._ch_queue.put(channel)
 
     def event_callback(
         self,
