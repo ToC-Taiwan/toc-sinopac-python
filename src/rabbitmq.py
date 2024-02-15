@@ -17,10 +17,16 @@ logging.getLogger("pika").setLevel(logging.WARNING)
 EXCAHNG_TYPE: str = "direct"
 ROUTING_KEY_EVENT: str = "event"
 ROUTING_KEY_ORDER_ARR: str = "order_arr"
-ROUTING_KEY_TICK: str = "tick"
+
+ROUTING_KEY_STOCK_TICK: str = "stock_tick"
+ROUTING_KEY_STOCK_TICK_ODDS: str = "stock_tick_odds"
+
 ROUTING_KEY_FUTURE_TICK: str = "future_tick"
-ROUTING_KEY_BID_ASK: str = "bid_ask"
 ROUTING_KEY_FUTURE_BID_ASK: str = "future_bid_ask"
+
+ROUTING_KEY_STOCK_BID_ASK: str = "stock_bid_ask"
+ROUTING_KEY_STOCK_BID_ASK_ODDS: str = "stock_bid_ask_odds"
+
 DATE_TIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
 
 
@@ -92,9 +98,12 @@ class RabbitMQ:
         tick: sj.TickSTKv1,
     ):
         ch = self._ch_queue.get(block=True)
+        key = f"{ROUTING_KEY_STOCK_TICK}:{tick.code}"
+        if tick.intraday_odd is True:
+            key = f"{ROUTING_KEY_STOCK_TICK_ODDS}:{tick.code}"
         ch.basic_publish(
             exchange=self.exchange,
-            routing_key=f"{ROUTING_KEY_TICK}:{tick.code}",
+            routing_key=key,
             body=mq_pb2.StockRealTimeTickMessage(
                 code=tick.code,
                 date_time=datetime.strftime(tick.datetime, DATE_TIME_FORMAT),
@@ -160,9 +169,12 @@ class RabbitMQ:
         bidask: sj.BidAskSTKv1,
     ):
         ch = self._ch_queue.get(block=True)
+        key = f"{ROUTING_KEY_STOCK_BID_ASK}:{bidask.code}"
+        if bidask.intraday_odd is True:
+            key = f"{ROUTING_KEY_STOCK_BID_ASK_ODDS}:{bidask.code}"
         ch.basic_publish(
             exchange=self.exchange,
-            routing_key=f"{ROUTING_KEY_BID_ASK}:{bidask.code}",
+            routing_key=key,
             body=mq_pb2.StockRealTimeBidAskMessage(
                 code=bidask.code,
                 date_time=datetime.strftime(bidask.datetime, DATE_TIME_FORMAT),

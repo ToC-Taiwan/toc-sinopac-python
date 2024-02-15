@@ -46,7 +46,11 @@ class WorkerPool:
         self.subscribe_count = [int() for _ in range(count - 1)]
 
         self.stock_tick_sub_dict: dict[str, int] = {}
+        self.stock_tick_odds_sub_dict: dict[str, int] = {}
+
         self.stock_bidask_sub_dict: dict[str, int] = {}
+        self.stock_bidask_odds_sub_dict: dict[str, int] = {}
+
         self.future_tick_sub_dict: dict[str, int] = {}
         self.future_bidask_sub_dict: dict[str, int] = {}
 
@@ -172,8 +176,12 @@ class WorkerPool:
 
     def subscribe_stock_tick(self, stock_num: str, odd: bool):
         with self.sub_lock:
-            if stock_num in self.stock_tick_sub_dict:
-                return None
+            if odd is True:
+                if stock_num in self.stock_tick_odds_sub_dict:
+                    return None
+            else:
+                if stock_num in self.stock_tick_sub_dict:
+                    return None
             if self.get_all_sub_count() + 1 > 200 * len(self.workers):
                 return None
             idx = self.subscribe_count.index(min(self.subscribe_count))
@@ -181,12 +189,16 @@ class WorkerPool:
             if result is not None:
                 return result
             logger.info(
-                "subscribe stock tick %s %s",
+                "subscribe stock tick(odds: %s) %s %s",
+                str(odd),
                 stock_num,
                 self.get_main().get_contract_by_stock_num(stock_num).name,
             )
             self.subscribe_count[idx] += 1
-            self.stock_tick_sub_dict[stock_num] = idx
+            if odd is True:
+                self.stock_tick_odds_sub_dict[stock_num] = idx
+            else:
+                self.stock_tick_sub_dict[stock_num] = idx
         return None
 
     def unsubscribe_stock_tick(self, stock_num):
