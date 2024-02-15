@@ -188,9 +188,11 @@ class WorkerPool:
             result = self.workers[idx].subscribe_stock_tick(stock_num, odd)
             if result is not None:
                 return result
+            msg = "subscribe stock tick %s %s"
+            if odd is True:
+                msg = "subscribe stock odd tick %s %s"
             logger.info(
-                "subscribe stock tick(odds: %s) %s %s",
-                str(odd),
+                msg,
                 stock_num,
                 self.get_main().get_contract_by_stock_num(stock_num).name,
             )
