@@ -36,6 +36,7 @@ class RabbitMQ:
         self._url = url
         self._connection: SelectConnection = None
         self._channel: Channel = None
+        self._channel_is_open = False
 
         self.connect()
 
@@ -43,16 +44,14 @@ class RabbitMQ:
         self._connection = pika.SelectConnection(
             pika.URLParameters(self._url),
             on_open_callback=self.on_connection_open,
-            on_close_callback=self.on_connection_closed,
         )
         holding_thread: IOLoop = self._connection.ioloop
         threading.Thread(
             target=holding_thread.start,
             daemon=True,
         ).start()
-
-    def on_connection_closed(self, _):
-        self.connect()
+        while not self._channel_is_open:
+            pass
 
     def on_connection_open(self, _):
         self.open_channel()
@@ -65,15 +64,16 @@ class RabbitMQ:
 
     def on_channel_open(self, channel: Channel):
         self._channel = channel
-        self._channel.add_on_close_callback(self.on_channel_closed)
+        # self._channel.add_on_close_callback(self.on_channel_closed)
         self._channel.exchange_declare(
             exchange=self.exchange,
             exchange_type=EXCAHNG_TYPE,
             durable=True,
         )
+        self._channel_is_open = True
 
-    def on_channel_closed(self, _, reason):
-        logger.error("Channel closed: %s", reason)
+    # def on_channel_closed(self, _, reason):
+    #     logger.error("Channel closed: %s", reason)
 
     def event_callback(
         self,
