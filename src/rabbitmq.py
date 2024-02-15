@@ -1,7 +1,7 @@
 import logging
 import threading
-import time
 from datetime import datetime, timedelta
+from queue import Queue
 
 import pika
 import shioaji as sj
@@ -10,7 +10,6 @@ from pika import SelectConnection
 from pika.adapters.select_connection import IOLoop
 from pika.channel import Channel
 
-from logger import logger
 from pb.forwarder import mq_pb2
 
 logging.getLogger("pika").setLevel(logging.WARNING)
@@ -36,42 +35,35 @@ class RabbitMQ:
 
         self._url = url
         self._connection: SelectConnection = None
-        self._channel: Channel = None
-        self._channel_is_open = False
+        self._ch_queue: Queue = Queue()
 
         self.connect()
 
     def connect(self):
-        self._connection = pika.SelectConnection(
-            pika.URLParameters(self._url),
-            on_open_callback=self.on_connection_open,
-        )
-        holding_thread: IOLoop = self._connection.ioloop
-        threading.Thread(
-            target=holding_thread.start,
-            daemon=True,
-        ).start()
-        while not self._channel_is_open:
-            logger.info("waiting for channel to open")
-            time.sleep(1)
+        for _ in range(1024):
+            self._connection = pika.SelectConnection(
+                pika.URLParameters(self._url),
+                on_open_callback=self.on_connection_open,
+            )
+            holding_thread: IOLoop = self._connection.ioloop
+            threading.Thread(
+                target=holding_thread.start,
+                daemon=True,
+            ).start()
 
     def on_connection_open(self, _):
         self.open_channel()
 
     def open_channel(self):
-        self._connection.channel(
-            channel_number=1024,
-            on_open_callback=self.on_channel_open,
-        )
+        self._connection.channel(on_open_callback=self.on_channel_open)
 
     def on_channel_open(self, channel: Channel):
-        self._channel = channel
-        self._channel.exchange_declare(
+        channel.exchange_declare(
             exchange=self.exchange,
             exchange_type=EXCAHNG_TYPE,
             durable=True,
         )
-        self._channel_is_open = True
+        self._ch_queue.put(channel)
 
     def event_callback(
         self,
@@ -80,7 +72,8 @@ class RabbitMQ:
         info: str,
         event: str,
     ):
-        self._channel.basic_publish(
+        ch = self._ch_queue.get(block=True)
+        ch.basic_publish(
             exchange=self.exchange,
             routing_key=ROUTING_KEY_EVENT,
             body=mq_pb2.EventMessage(
@@ -91,13 +84,15 @@ class RabbitMQ:
                 event_time=datetime.now().strftime(DATE_TIME_FORMAT),
             ).SerializeToString(),
         )
+        self._ch_queue.put(ch)
 
     def stock_quote_callback_v1(
         self,
         _,
         tick: sj.TickSTKv1,
     ):
-        self._channel.basic_publish(
+        ch = self._ch_queue.get(block=True)
+        ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"{ROUTING_KEY_TICK}:{tick.code}",
             body=mq_pb2.StockRealTimeTickMessage(
@@ -124,13 +119,15 @@ class RabbitMQ:
                 simtrade=tick.simtrade,
             ).SerializeToString(),
         )
+        self._ch_queue.put(ch)
 
     def future_quote_callback_v1(
         self,
         _,
         tick: sj.TickFOPv1,
     ):
-        self._channel.basic_publish(
+        ch = self._ch_queue.get(block=True)
+        ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"{ROUTING_KEY_FUTURE_TICK}:{tick.code}",
             body=mq_pb2.FutureRealTimeTickMessage(
@@ -155,13 +152,15 @@ class RabbitMQ:
                 simtrade=tick.simtrade,
             ).SerializeToString(),
         )
+        self._ch_queue.put(ch)
 
     def stock_bid_ask_callback(
         self,
         _,
         bidask: sj.BidAskSTKv1,
     ):
-        self._channel.basic_publish(
+        ch = self._ch_queue.get(block=True)
+        ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"{ROUTING_KEY_BID_ASK}:{bidask.code}",
             body=mq_pb2.StockRealTimeBidAskMessage(
@@ -177,13 +176,15 @@ class RabbitMQ:
                 diff_ask_vol=bidask.diff_ask_vol,
             ).SerializeToString(),
         )
+        self._ch_queue.put(ch)
 
     def future_bid_ask_callback(
         self,
         _,
         bidask: sj.BidAskFOPv1,
     ):
-        self._channel.basic_publish(
+        ch = self._ch_queue.get(block=True)
+        ch.basic_publish(
             exchange=self.exchange,
             routing_key=f"{ROUTING_KEY_FUTURE_BID_ASK}:{bidask.code}",
             body=mq_pb2.FutureRealTimeBidAskMessage(
@@ -205,6 +206,7 @@ class RabbitMQ:
                 underlying_price=bidask.underlying_price,
             ).SerializeToString(),
         )
+        self._ch_queue.put(ch)
 
     def order_status_callback(
         self,
@@ -265,9 +267,10 @@ class RabbitMQ:
                         ),
                     )
                 )
-
-            self._channel.basic_publish(
+            ch = self._ch_queue.get(block=True)
+            ch.basic_publish(
                 exchange=self.exchange,
                 routing_key=ROUTING_KEY_ORDER_ARR,
                 body=result.SerializeToString(),
             )
+            self._ch_queue.put(ch)
