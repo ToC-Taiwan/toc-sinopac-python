@@ -42,9 +42,13 @@ class RabbitMQ:
         self._connection = pika.SelectConnection(
             pika.URLParameters(self._url),
             on_open_callback=self.on_connection_open,
+            on_close_callback=self.on_connection_closed,
         )
         holding_thread: IOLoop = self._connection.ioloop
         threading.Thread(target=holding_thread.start).start()
+
+    def on_connection_closed(self, _):
+        self.connect()
 
     def on_connection_open(self, _):
         self.open_channel()
