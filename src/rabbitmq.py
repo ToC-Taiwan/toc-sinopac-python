@@ -99,7 +99,7 @@ class RabbitMQ:
     ):
         ch = self._ch_queue.get(block=True)
         key = f"{ROUTING_KEY_STOCK_TICK}:{tick.code}"
-        if tick.intraday_odd is True:
+        if tick.intraday_odd == 1:
             key = f"{ROUTING_KEY_STOCK_TICK_ODDS}:{tick.code}"
         ch.basic_publish(
             exchange=self.exchange,
