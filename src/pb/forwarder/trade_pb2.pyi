@@ -326,42 +326,6 @@ class OrderID(google.protobuf.message.Message):
 global___OrderID = OrderID
 
 @typing_extensions.final
-class FutureOrderID(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ORDER_ID_FIELD_NUMBER: builtins.int
-    SIMULATE_FIELD_NUMBER: builtins.int
-    order_id: builtins.str
-    simulate: builtins.bool
-    def __init__(
-        self,
-        *,
-        order_id: builtins.str = ...,
-        simulate: builtins.bool = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["order_id", b"order_id", "simulate", b"simulate"]) -> None: ...
-
-global___FutureOrderID = FutureOrderID
-
-@typing_extensions.final
-class OptionOrderID(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ORDER_ID_FIELD_NUMBER: builtins.int
-    SIMULATE_FIELD_NUMBER: builtins.int
-    order_id: builtins.str
-    simulate: builtins.bool
-    def __init__(
-        self,
-        *,
-        order_id: builtins.str = ...,
-        simulate: builtins.bool = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["order_id", b"order_id", "simulate", b"simulate"]) -> None: ...
-
-global___OptionOrderID = OptionOrderID
-
-@typing_extensions.final
 class Margin(google.protobuf.message.Message):
     """status(FetchStatus): 資料回傳狀態
     yesterday_balance(float): 前日餘額

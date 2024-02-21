@@ -15,6 +15,11 @@ class TradeInterfaceStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.CancelOrder = channel.unary_unary(
+                '/forwarder.TradeInterface/CancelOrder',
+                request_serializer=forwarder_dot_trade__pb2.OrderID.SerializeToString,
+                response_deserializer=forwarder_dot_trade__pb2.TradeResult.FromString,
+                )
         self.BuyStock = channel.unary_unary(
                 '/forwarder.TradeInterface/BuyStock',
                 request_serializer=forwarder_dot_trade__pb2.StockOrderDetail.SerializeToString,
@@ -40,11 +45,6 @@ class TradeInterfaceStub(object):
                 request_serializer=forwarder_dot_trade__pb2.StockOrderDetail.SerializeToString,
                 response_deserializer=forwarder_dot_trade__pb2.TradeResult.FromString,
                 )
-        self.CancelStock = channel.unary_unary(
-                '/forwarder.TradeInterface/CancelStock',
-                request_serializer=forwarder_dot_trade__pb2.OrderID.SerializeToString,
-                response_deserializer=forwarder_dot_trade__pb2.TradeResult.FromString,
-                )
         self.BuyFuture = channel.unary_unary(
                 '/forwarder.TradeInterface/BuyFuture',
                 request_serializer=forwarder_dot_trade__pb2.FutureOrderDetail.SerializeToString,
@@ -60,11 +60,6 @@ class TradeInterfaceStub(object):
                 request_serializer=forwarder_dot_trade__pb2.FutureOrderDetail.SerializeToString,
                 response_deserializer=forwarder_dot_trade__pb2.TradeResult.FromString,
                 )
-        self.CancelFuture = channel.unary_unary(
-                '/forwarder.TradeInterface/CancelFuture',
-                request_serializer=forwarder_dot_trade__pb2.FutureOrderID.SerializeToString,
-                response_deserializer=forwarder_dot_trade__pb2.TradeResult.FromString,
-                )
         self.BuyOption = channel.unary_unary(
                 '/forwarder.TradeInterface/BuyOption',
                 request_serializer=forwarder_dot_trade__pb2.OptionOrderDetail.SerializeToString,
@@ -78,11 +73,6 @@ class TradeInterfaceStub(object):
         self.SellFirstOption = channel.unary_unary(
                 '/forwarder.TradeInterface/SellFirstOption',
                 request_serializer=forwarder_dot_trade__pb2.OptionOrderDetail.SerializeToString,
-                response_deserializer=forwarder_dot_trade__pb2.TradeResult.FromString,
-                )
-        self.CancelOption = channel.unary_unary(
-                '/forwarder.TradeInterface/CancelOption',
-                request_serializer=forwarder_dot_trade__pb2.OptionOrderID.SerializeToString,
                 response_deserializer=forwarder_dot_trade__pb2.TradeResult.FromString,
                 )
         self.GetLocalOrderStatusArr = channel.unary_unary(
@@ -125,6 +115,12 @@ class TradeInterfaceStub(object):
 class TradeInterfaceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
+    def CancelOrder(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def BuyStock(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -155,12 +151,6 @@ class TradeInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def CancelStock(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def BuyFuture(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -179,12 +169,6 @@ class TradeInterfaceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def CancelFuture(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def BuyOption(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -198,12 +182,6 @@ class TradeInterfaceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def SellFirstOption(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def CancelOption(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -254,6 +232,11 @@ class TradeInterfaceServicer(object):
 
 def add_TradeInterfaceServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'CancelOrder': grpc.unary_unary_rpc_method_handler(
+                    servicer.CancelOrder,
+                    request_deserializer=forwarder_dot_trade__pb2.OrderID.FromString,
+                    response_serializer=forwarder_dot_trade__pb2.TradeResult.SerializeToString,
+            ),
             'BuyStock': grpc.unary_unary_rpc_method_handler(
                     servicer.BuyStock,
                     request_deserializer=forwarder_dot_trade__pb2.StockOrderDetail.FromString,
@@ -279,11 +262,6 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
                     request_deserializer=forwarder_dot_trade__pb2.StockOrderDetail.FromString,
                     response_serializer=forwarder_dot_trade__pb2.TradeResult.SerializeToString,
             ),
-            'CancelStock': grpc.unary_unary_rpc_method_handler(
-                    servicer.CancelStock,
-                    request_deserializer=forwarder_dot_trade__pb2.OrderID.FromString,
-                    response_serializer=forwarder_dot_trade__pb2.TradeResult.SerializeToString,
-            ),
             'BuyFuture': grpc.unary_unary_rpc_method_handler(
                     servicer.BuyFuture,
                     request_deserializer=forwarder_dot_trade__pb2.FutureOrderDetail.FromString,
@@ -299,11 +277,6 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
                     request_deserializer=forwarder_dot_trade__pb2.FutureOrderDetail.FromString,
                     response_serializer=forwarder_dot_trade__pb2.TradeResult.SerializeToString,
             ),
-            'CancelFuture': grpc.unary_unary_rpc_method_handler(
-                    servicer.CancelFuture,
-                    request_deserializer=forwarder_dot_trade__pb2.FutureOrderID.FromString,
-                    response_serializer=forwarder_dot_trade__pb2.TradeResult.SerializeToString,
-            ),
             'BuyOption': grpc.unary_unary_rpc_method_handler(
                     servicer.BuyOption,
                     request_deserializer=forwarder_dot_trade__pb2.OptionOrderDetail.FromString,
@@ -317,11 +290,6 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
             'SellFirstOption': grpc.unary_unary_rpc_method_handler(
                     servicer.SellFirstOption,
                     request_deserializer=forwarder_dot_trade__pb2.OptionOrderDetail.FromString,
-                    response_serializer=forwarder_dot_trade__pb2.TradeResult.SerializeToString,
-            ),
-            'CancelOption': grpc.unary_unary_rpc_method_handler(
-                    servicer.CancelOption,
-                    request_deserializer=forwarder_dot_trade__pb2.OptionOrderID.FromString,
                     response_serializer=forwarder_dot_trade__pb2.TradeResult.SerializeToString,
             ),
             'GetLocalOrderStatusArr': grpc.unary_unary_rpc_method_handler(
@@ -368,6 +336,23 @@ def add_TradeInterfaceServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class TradeInterface(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def CancelOrder(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/forwarder.TradeInterface/CancelOrder',
+            forwarder_dot_trade__pb2.OrderID.SerializeToString,
+            forwarder_dot_trade__pb2.TradeResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def BuyStock(request,
@@ -455,23 +440,6 @@ class TradeInterface(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def CancelStock(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/forwarder.TradeInterface/CancelStock',
-            forwarder_dot_trade__pb2.OrderID.SerializeToString,
-            forwarder_dot_trade__pb2.TradeResult.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
     def BuyFuture(request,
             target,
             options=(),
@@ -523,23 +491,6 @@ class TradeInterface(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def CancelFuture(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/forwarder.TradeInterface/CancelFuture',
-            forwarder_dot_trade__pb2.FutureOrderID.SerializeToString,
-            forwarder_dot_trade__pb2.TradeResult.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
     def BuyOption(request,
             target,
             options=(),
@@ -586,23 +537,6 @@ class TradeInterface(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/forwarder.TradeInterface/SellFirstOption',
             forwarder_dot_trade__pb2.OptionOrderDetail.SerializeToString,
-            forwarder_dot_trade__pb2.TradeResult.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def CancelOption(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/forwarder.TradeInterface/CancelOption',
-            forwarder_dot_trade__pb2.OptionOrderID.SerializeToString,
             forwarder_dot_trade__pb2.TradeResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -80,6 +80,18 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             )
         return response
 
+    def CancelOrder(self, request, _):
+        result = None
+        if request.simulate is not True:
+            result = self.workers.cancel_stock(request.order_id)
+        else:
+            result = self.simulator.cancel_stock(request.order_id)
+        return trade_pb2.TradeResult(
+            order_id=result.order_id,
+            status=result.status,
+            error=result.error,
+        )
+
     def BuyStock(self, request, _):
         result = None
         if request.simulate is not True:
@@ -166,18 +178,6 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def CancelStock(self, request, _):
-        result = None
-        if request.simulate is not True:
-            result = self.workers.cancel_stock(request.order_id)
-        else:
-            result = self.simulator.cancel_stock(request.order_id)
-        return trade_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
     def GetLocalOrderStatusArr(self, request, _):
         with self.send_order_lock:
             self.rabbit.send_order_arr(self.workers.get_local_order())
@@ -248,22 +248,6 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def CancelFuture(self, request, _):
-        result = None
-        if request.simulate is not True:
-            result = self.workers.cancel_future(
-                request.order_id,
-            )
-        else:
-            result = self.simulator.cancel_future(
-                request.order_id,
-            )
-        return trade_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
     def BuyOption(self, request, _):
         result = None
         if request.simulate is not True:
@@ -317,22 +301,6 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
                 request.code,
                 request.price,
                 request.quantity,
-            )
-        return trade_pb2.TradeResult(
-            order_id=result.order_id,
-            status=result.status,
-            error=result.error,
-        )
-
-    def CancelOption(self, request, _):
-        result = None
-        if request.simulate is not True:
-            result = self.workers.cancel_option(
-                request.order_id,
-            )
-        else:
-            result = self.simulator.cancel_option(
-                request.order_id,
             )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
