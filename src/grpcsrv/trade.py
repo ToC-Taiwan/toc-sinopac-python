@@ -21,7 +21,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         self.send_order_lock = threading.Lock()
         self.workers = workers
 
-    def GetFuturePosition(self, request, _):
+    def GetFuturePosition(self, request: google.protobuf.empty_pb2.Empty, _):
         response = trade_pb2.FuturePositionArr()
         result = self.workers.get_future_position()
         for pos in result:
@@ -37,7 +37,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             )
         return response
 
-    def GetStockPosition(self, request, _):
+    def GetStockPosition(self, request: google.protobuf.empty_pb2.Empty, _):
         response = trade_pb2.StockPositionArr()
         result = self.workers.get_stock_position()
         for pos in result:
@@ -80,7 +80,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             )
         return response
 
-    def CancelOrder(self, request, _):
+    def CancelOrder(self, request: trade_pb2.OrderID, _):
         result = None
         if request.simulate is not True:
             result = self.workers.cancel_stock(request.order_id)
@@ -92,7 +92,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def BuyStock(self, request, _):
+    def BuyStock(self, request: trade_pb2.StockOrderDetail, _):
         result = None
         if request.simulate is not True:
             result = self.workers.buy_stock(
@@ -112,7 +112,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def SellStock(self, request, _):
+    def SellStock(self, request: trade_pb2.StockOrderDetail, _):
         result = None
         if request.simulate is not True:
             result = self.workers.sell_stock(
@@ -132,7 +132,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def BuyOddStock(self, request, _):
+    def BuyOddStock(self, request: trade_pb2.OddStockOrderDetail, _):
         result = None
         result = self.workers.buy_odd_stock(
             request.stock_num,
@@ -145,12 +145,12 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def SellOddStock(self, request, _):
+    def SellOddStock(self, request: trade_pb2.OddStockOrderDetail, _):
         result = None
         result = self.workers.sell_odd_stock(
             request.stock_num,
             request.price,
-            request.quantity,
+            request.share,
         )
         return trade_pb2.TradeResult(
             order_id=result.order_id,
@@ -158,7 +158,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def SellFirstStock(self, request, _):
+    def SellFirstStock(self, request: trade_pb2.StockOrderDetail, _):
         result = None
         if request.simulate is not True:
             result = self.workers.sell_first_stock(
@@ -178,17 +178,17 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def GetLocalOrderStatusArr(self, request, _):
+    def GetLocalOrderStatusArr(self, request: google.protobuf.empty_pb2.Empty, _):
         with self.send_order_lock:
             self.rabbit.send_order_arr(self.workers.get_local_order())
             return google.protobuf.empty_pb2.Empty()
 
-    def GetSimulateOrderStatusArr(self, request, _):
+    def GetSimulateOrderStatusArr(self, request: google.protobuf.empty_pb2.Empty, _):
         with self.send_order_lock:
             self.rabbit.send_order_arr(self.simulator.get_local_order())
             return google.protobuf.empty_pb2.Empty()
 
-    def BuyFuture(self, request, _):
+    def BuyFuture(self, request: trade_pb2.FutureOrderDetail, _):
         result = None
         if request.simulate is not True:
             result = self.workers.buy_future(
@@ -208,7 +208,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def SellFuture(self, request, _):
+    def SellFuture(self, request: trade_pb2.FutureOrderDetail, _):
         result = None
         if request.simulate is not True:
             result = self.workers.sell_future(
@@ -228,7 +228,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def SellFirstFuture(self, request, _):
+    def SellFirstFuture(self, request: trade_pb2.FutureOrderDetail, _):
         result = None
         if request.simulate is not True:
             result = self.workers.sell_first_future(
@@ -248,7 +248,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def BuyOption(self, request, _):
+    def BuyOption(self, request: trade_pb2.OptionOrderDetail, _):
         result = None
         if request.simulate is not True:
             result = self.workers.buy_option(
@@ -268,7 +268,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def SellOption(self, request, _):
+    def SellOption(self, request: trade_pb2.OptionOrderDetail, _):
         result = None
         if request.simulate is not True:
             result = self.workers.sell_option(
@@ -288,7 +288,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def SellFirstOption(self, request, _):
+    def SellFirstOption(self, request: trade_pb2.OptionOrderDetail, _):
         result = None
         if request.simulate is not True:
             result = self.workers.sell_first_option(
@@ -308,7 +308,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def GetAccountBalance(self, request, _):
+    def GetAccountBalance(self, request: google.protobuf.empty_pb2.Empty, _):
         balance = self.workers.account_balance()
         if balance is None:
             return trade_pb2.AccountBalance(
@@ -320,7 +320,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             balance=balance.acc_balance,
         )
 
-    def GetSettlement(self, request, _):
+    def GetSettlement(self, request: google.protobuf.empty_pb2.Empty, _):
         result = trade_pb2.SettlementList()
         settlements = self.workers.settlements()
         for settle in settlements:
@@ -332,7 +332,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             )
         return result
 
-    def GetMargin(self, request, _):
+    def GetMargin(self, request: google.protobuf.empty_pb2.Empty, _):
         margin = self.workers.margin()
         if margin is None:
             return trade_pb2.Margin()
