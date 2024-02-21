@@ -307,37 +307,46 @@ class Shioaji:
             return None
 
     def get_stock_last_close_by_date(self, num, date):
-        ticks = self.__api.quote.ticks(
-            contract=self.get_contract_by_stock_num(num),
-            date=date,
-            query_type=sc.TicksQueryType.LastCount,
-            last_cnt=1,
-        )
-        if len(ticks.close) > 0:
-            return ticks.close[0]
-        return 0
+        try:
+            ticks = self.__api.quote.ticks(
+                contract=self.get_contract_by_stock_num(num),
+                date=date,
+                query_type=sc.TicksQueryType.LastCount,
+                last_cnt=1,
+            )
+            if len(ticks.close) > 0:
+                return ticks.close[0]
+            return 0
+        except Exception:
+            return 0
 
     def get_future_last_close_by_date(self, code, date):
-        ticks = self.__api.quote.ticks(
-            contract=self.get_contract_by_future_code(code),
-            date=date,
-            query_type=sc.TicksQueryType.LastCount,
-            last_cnt=1,
-        )
-        if len(ticks.close) > 0:
-            return ticks.close[0]
-        return 0
+        try:
+            ticks = self.__api.quote.ticks(
+                contract=self.get_contract_by_future_code(code),
+                date=date,
+                query_type=sc.TicksQueryType.LastCount,
+                last_cnt=1,
+            )
+            if len(ticks.close) > 0:
+                return ticks.close[0]
+            return 0
+        except Exception:
+            return 0
 
     def get_stock_volume_rank_by_date(self, count, date):
-        result = self.__api.scanners(
-            scanner_type=sc.ScannerType.VolumeRank,
-            count=count,
-            date=date,
-        )
-        with self.__rank_lock:
-            if result is not None and len(result) > 0:
-                self.__rank = result
-            return self.__rank
+        try:
+            result = self.__api.scanners(
+                scanner_type=sc.ScannerType.VolumeRank,
+                count=count,
+                date=date,
+            )
+            with self.__rank_lock:
+                if result is not None and len(result) > 0:
+                    self.__rank = result
+                return self.__rank
+        except Exception:
+            return []
 
     def subscribe_stock_tick(self, stock_num: str, odd: bool):
         try:
