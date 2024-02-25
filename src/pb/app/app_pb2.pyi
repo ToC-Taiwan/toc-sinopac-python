@@ -7,6 +7,7 @@ import collections.abc
 import forwarder.basic_pb2
 import forwarder.history_pb2
 import forwarder.mq_pb2
+import forwarder.realtime_pb2
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
@@ -90,6 +91,7 @@ class WSMessage(google.protobuf.message.Message):
     FUTURE_DETAIL_FIELD_NUMBER: builtins.int
     FUTURE_TICK_FIELD_NUMBER: builtins.int
     HISTORY_KBAR_FIELD_NUMBER: builtins.int
+    SNAPSHOT_FIELD_NUMBER: builtins.int
     TRADE_INDEX_FIELD_NUMBER: builtins.int
     @property
     def future_detail(self) -> forwarder.basic_pb2.FutureDetailMessage: ...
@@ -98,6 +100,8 @@ class WSMessage(google.protobuf.message.Message):
     @property
     def history_kbar(self) -> forwarder.history_pb2.HistoryKbarResponse: ...
     @property
+    def snapshot(self) -> forwarder.realtime_pb2.SnapshotMessage: ...
+    @property
     def trade_index(self) -> global___TradeIndex: ...
     def __init__(
         self,
@@ -105,11 +109,12 @@ class WSMessage(google.protobuf.message.Message):
         future_detail: forwarder.basic_pb2.FutureDetailMessage | None = ...,
         future_tick: forwarder.mq_pb2.FutureRealTimeTickMessage | None = ...,
         history_kbar: forwarder.history_pb2.HistoryKbarResponse | None = ...,
+        snapshot: forwarder.realtime_pb2.SnapshotMessage | None = ...,
         trade_index: global___TradeIndex | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["data", b"data", "future_detail", b"future_detail", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "trade_index", b"trade_index"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["data", b"data", "future_detail", b"future_detail", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "trade_index", b"trade_index"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["data", b"data"]) -> typing_extensions.Literal["future_detail", "future_tick", "history_kbar", "trade_index"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["data", b"data", "future_detail", b"future_detail", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "snapshot", b"snapshot", "trade_index", b"trade_index"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["data", b"data", "future_detail", b"future_detail", "future_tick", b"future_tick", "history_kbar", b"history_kbar", "snapshot", b"snapshot", "trade_index", b"trade_index"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["data", b"data"]) -> typing_extensions.Literal["future_detail", "future_tick", "history_kbar", "snapshot", "trade_index"] | None: ...
 
 global___WSMessage = WSMessage
 
