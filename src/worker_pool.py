@@ -4,9 +4,10 @@ import time
 from datetime import datetime
 
 from shioaji.error import SystemMaintenance
+from shioaji.order import Trade
 
 from logger import logger
-from rabbitmq import RabbitMQ
+from mqtt import MQTT
 from sinopac import Shioaji, ShioajiAuth
 
 
@@ -27,12 +28,13 @@ class WorkerPool:
         self,
         count: int,
         user: ShioajiAuth,
-        rabbit: RabbitMQ,
+        mq: MQTT,
         request_limt: QueryDataLimit,
     ):
+        self.send_order_lock = threading.Lock()
         self.worker_count = count
         self.user = user
-        self.rabbit = rabbit
+        self.mq = mq
 
         self.main_worker = Shioaji()
         self.workers: list[Shioaji] = []
@@ -65,6 +67,7 @@ class WorkerPool:
         self.request_order_times = int()
 
     def login(self):
+        self.mq.connect("127.0.0.1", 18883)
         for i in range(self.worker_count):
             logger.info("establish connection %d", i + 1)
             is_main = bool(i == 0)
@@ -86,12 +89,12 @@ class WorkerPool:
                 self.workers.append(new_connection)
             logger.info("login success")
 
-        self.set_event_cb(self.rabbit.event_callback)
-        self.set_stock_quote_cb(self.rabbit.stock_quote_callback_v1)
-        self.set_future_quote_cb(self.rabbit.future_quote_callback_v1)
-        self.set_stock_bid_ask_cb(self.rabbit.stock_bid_ask_callback)
-        self.set_future_bid_ask_cb(self.rabbit.future_bid_ask_callback)
-        self.set_non_block_order_callback(self.rabbit.order_status_callback)
+        self.set_event_cb(self.mq.event_callback)
+        self.set_stock_quote_cb(self.mq.stock_quote_callback_v1)
+        self.set_future_quote_cb(self.mq.future_quote_callback_v1)
+        self.set_stock_bid_ask_cb(self.mq.stock_bid_ask_callback)
+        self.set_future_bid_ask_cb(self.mq.future_bid_ask_callback)
+        self.set_non_block_order_callback(self.mq.order_status_callback)
 
     def logout_and_exit(self):
         try:
@@ -464,3 +467,11 @@ class WorkerPool:
 
     def get_otc_101_contract(self):
         return self.get_main().get_otc_101_contract()
+
+    def send_local_order_status_arr(self):
+        with self.send_order_lock:
+            self.mq.send_order_arr(self.get_local_order())
+
+    def send_simulate_local_order_status_arr(self, orders: list[Trade]):
+        with self.send_order_lock:
+            self.mq.send_order_arr(orders)

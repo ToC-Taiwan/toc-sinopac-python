@@ -4,7 +4,6 @@ from datetime import datetime
 import google.protobuf.empty_pb2
 
 from pb.forwarder import trade_pb2, trade_pb2_grpc
-from rabbitmq import RabbitMQ
 from simulator import Simulator
 from worker_pool import WorkerPool
 
@@ -12,14 +11,12 @@ from worker_pool import WorkerPool
 class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
     def __init__(
         self,
-        rabbit: RabbitMQ,
         simulator: Simulator,
         workers: WorkerPool,
     ):
-        self.rabbit = rabbit
         self.simulator = simulator
-        self.send_order_lock = threading.Lock()
         self.workers = workers
+        self.send_order_lock = threading.Lock()
 
     def GetFuturePosition(self, request: google.protobuf.empty_pb2.Empty, _):
         response = trade_pb2.FuturePositionArr()
@@ -179,14 +176,12 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         )
 
     def GetLocalOrderStatusArr(self, request: google.protobuf.empty_pb2.Empty, _):
-        with self.send_order_lock:
-            self.rabbit.send_order_arr(self.workers.get_local_order())
-            return google.protobuf.empty_pb2.Empty()
+        self.workers.send_local_order_status_arr()
+        return google.protobuf.empty_pb2.Empty()
 
     def GetSimulateOrderStatusArr(self, request: google.protobuf.empty_pb2.Empty, _):
-        with self.send_order_lock:
-            self.rabbit.send_order_arr(self.simulator.get_local_order())
-            return google.protobuf.empty_pb2.Empty()
+        self.workers.send_simulate_local_order_status_arr(self.simulator.get_local_order())
+        return google.protobuf.empty_pb2.Empty()
 
     def BuyFuture(self, request: trade_pb2.FutureOrderDetail, _):
         result = None

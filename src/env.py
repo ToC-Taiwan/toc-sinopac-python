@@ -44,26 +44,6 @@ class RequiredEnv:  # pylint: disable=too-many-statements
         if self.request_order_limit_per_second is None:
             raise RuntimeError("Missing environment REQUEST_ORDER_LIMIT_PER_SECOND")
 
-        self.rabbitmq_host = str(os.environ.get("RABBITMQ_HOST"))
-        if self.rabbitmq_host is None:
-            raise RuntimeError("Missing environment RABBITMQ_HOST")
-
-        self.rabbitmq_user = str(os.environ.get("RABBITMQ_USER"))
-        if self.rabbitmq_user is None:
-            raise RuntimeError("Missing environment RABBITMQ_USER")
-
-        self.rabbitmq_password = str(os.environ.get("RABBITMQ_PASSWORD"))
-        if self.rabbitmq_password is None:
-            raise RuntimeError("Missing environment RABBITMQ_PASSWORD")
-
-        self.rabbitmq_exchange = str(os.environ.get("RABBITMQ_EXCHANGE"))
-        if self.rabbitmq_exchange is None:
-            raise RuntimeError("Missing environment RABBITMQ_EXCHANGE")
-
-        self.rabbitmq_url = str(os.environ.get("RABBITMQ_URL"))
-        if self.rabbitmq_url is None:
-            raise RuntimeError("Missing environment RABBITMQ_URL")
-
         self.connection_count = int(str(os.environ.get("CONNECTION_COUNT")))
         if self.connection_count is None:
             raise RuntimeError("Missing environment CONNECTION_COUNT")

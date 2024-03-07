@@ -22,7 +22,7 @@ $pip install -U \
   python-dotenv \
   numpy \
   schedule \
-  pika \
+  paho-mqtt \
   requests \
   yfinance \
   prometheus-client

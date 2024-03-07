@@ -1,15 +1,11 @@
 """SINOPAC PYTHON API FORWARDER"""
 
-import os
-import time
-
 from prometheus_client import start_http_server
 
 from env import RequiredEnv
 from grpcsrv.server import GRPCServer
 from logger import logger
-from rabbitmq import RabbitMQ
-from rabbitmq_api import RabbitAPI
+from mqtt import MQTT
 from sinopac import ShioajiAuth
 from worker_pool import QueryDataLimit, WorkerPool
 
@@ -20,20 +16,7 @@ if __name__ == "__main__":
     start_http_server(PROMETHEUS_PORT)
     logger.info("sinopac forwarder prometheus started at port %d", PROMETHEUS_PORT)
 
-    try:
-        RabbitAPI(
-            env.rabbitmq_user,
-            env.rabbitmq_password,
-            env.rabbitmq_host,
-            env.rabbitmq_exchange,
-        ).reset_rabbitmq_exchange()
-
-    except RuntimeError:
-        logger.error("reset rabbitmq exchange fail, retry after 30 seconds")
-        time.sleep(30)
-        os._exit(0)
-
-    rabbit = RabbitMQ(env.rabbitmq_url, env.rabbitmq_exchange)
+    mq = MQTT()
     worker_pool = WorkerPool(
         env.connection_count,
         ShioajiAuth(
@@ -42,7 +25,7 @@ if __name__ == "__main__":
             env.person_id,
             env.ca_password,
         ),
-        rabbit,
+        mq,
         QueryDataLimit(
             data=env.request_data_limit_per_second,
             portfolio=env.request_portfolio_limit_per_second,
@@ -51,11 +34,7 @@ if __name__ == "__main__":
     )
 
     try:
-        server = GRPCServer(
-            worker_pool=worker_pool,
-            rabbit=rabbit,
-        )
-        server.serve(port=env.grpc_port)
+        GRPCServer(worker_pool=worker_pool).serve(port=env.grpc_port)
 
     except Exception as e:
         logger.error(str(e))
