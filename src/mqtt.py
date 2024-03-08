@@ -1,10 +1,12 @@
 import threading
+import time
 from datetime import datetime, timedelta
 
 import paho.mqtt.client as mqtt
 import shioaji as sj
 import shioaji.constant as sc
 
+from logger import logger
 from pb.forwarder import mq_pb2
 
 EXCAHNG_TYPE: str = "direct"
@@ -25,16 +27,35 @@ DATE_TIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
 
 
 class MQTT:
-    def __init__(self):
+    def __init__(self, host: str, port: int):
         self.order_cb_lock = threading.Lock()
         self.mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.mqttc.on_connect = self.on_connect
+        self.mqttc.on_disconnect = self.on_disconnect
+        self.host = host
+        self.port = port
 
-    def connect(self, host: str, port: int):
-        self.mqttc.connect(host, port=port, keepalive=60)
+    def connect(self):
+        try:
+            self.mqttc.connect(self.host, port=self.port, keepalive=10)
+        except Exception:
+            logger.error("MQTT connect failed, retrying...")
+            time.sleep(1)
+            self.connect()
 
-    def on_connect(self, client: mqtt.Client, _, __, ___, ____):
-        client.loop_forever()
+        thread = threading.Thread(
+            target=self.mqttc.loop_forever,
+            daemon=True,
+        )
+        thread.start()
+
+    def on_connect(self, _____, _, __, ___, ____):
+        logger.info("MQTT connected")
+
+    def on_disconnect(self, _, __, ___, ____, _____):
+        logger.error("MQTT disconnected, reconnecting...")
+        self.mqttc.disconnect()
+        self.connect()
 
     def event_callback(
         self,

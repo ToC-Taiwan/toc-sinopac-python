@@ -67,7 +67,7 @@ class WorkerPool:
         self.request_order_times = int()
 
     def login(self):
-        self.mq.connect("127.0.0.1", 18883)
+        self.mq.connect()
         for i in range(self.worker_count):
             logger.info("establish connection %d", i + 1)
             is_main = bool(i == 0)
