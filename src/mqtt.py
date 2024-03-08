@@ -29,7 +29,10 @@ DATE_TIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
 class MQTT:
     def __init__(self, host: str, port: int):
         self.order_cb_lock = threading.Lock()
-        self.mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        self.mqttc = mqtt.Client(
+            callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+            protocol=mqtt.MQTTv5,
+        )
         self.mqttc.on_connect = self.on_connect
         self.mqttc.on_disconnect = self.on_disconnect
         self.host = host
@@ -53,9 +56,7 @@ class MQTT:
         logger.info("MQTT connected")
 
     def on_disconnect(self, _, __, ___, ____, _____):
-        logger.error("MQTT disconnected, reconnecting...")
-        self.mqttc.disconnect()
-        self.connect()
+        logger.warning("MQTT disconnected")
 
     def event_callback(
         self,
