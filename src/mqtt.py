@@ -40,7 +40,11 @@ class MQTT:
 
     def connect(self):
         try:
-            self.mqttc.connect(self.host, port=self.port, keepalive=10)
+            self.mqttc.connect(
+                host=self.host,
+                port=self.port,
+                keepalive=60,
+            )
         except Exception:
             logger.error("MQTT connect failed, retrying...")
             time.sleep(1)
@@ -48,6 +52,10 @@ class MQTT:
 
         thread = threading.Thread(
             target=self.mqttc.loop_forever,
+            args=(
+                1,
+                True,
+            ),
             daemon=True,
         )
         thread.start()
