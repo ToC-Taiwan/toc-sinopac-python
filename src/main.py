@@ -16,7 +16,7 @@ if __name__ == "__main__":
     start_http_server(PROMETHEUS_PORT)
     logger.info("sinopac forwarder prometheus started at port %d", PROMETHEUS_PORT)
 
-    mq = MQTT("127.0.0.1", 18883)
+    mq = MQTT(env.mq_host, env.mq_port)
     worker_pool = WorkerPool(
         env.connection_count,
         ShioajiAuth(

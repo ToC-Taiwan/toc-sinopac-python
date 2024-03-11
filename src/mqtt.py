@@ -47,7 +47,7 @@ class MQTT:
             )
         except Exception:
             logger.error("MQTT connect failed, retrying...")
-            time.sleep(1)
+            time.sleep(3)
             self.connect()
 
         thread = threading.Thread(

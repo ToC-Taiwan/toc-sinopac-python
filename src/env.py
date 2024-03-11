@@ -7,6 +7,12 @@ class RequiredEnv:  # pylint: disable=too-many-statements
     def __init__(self):
         # load .env file
         load_dotenv()
+        self.mq_host = str(os.environ.get("MQ_HOST"))
+        if self.mq_host is None:
+            raise RuntimeError("Missing environment MQ_HOST")
+        self.mq_port = int(str(os.environ.get("MQ_PORT")))
+        if self.mq_port is None:
+            raise RuntimeError("Missing environment MQ_PORT")
 
         self.log_format = os.environ.get("LOG_FORMAT")
         if self.log_format is None:
