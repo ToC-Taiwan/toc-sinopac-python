@@ -1,7 +1,7 @@
 # TOC SINOPAC PYTHON
 
 [![BUILD](https://img.shields.io/github/actions/workflow/status/ToC-Taiwan/toc-sinopac-python/main.yml?style=for-the-badge&logo=github)](https://github.com/ToC-Taiwan/toc-sinopac-python/actions/workflows/main.yml)
-[![Python](https://img.shields.io/badge/Python-3.11.7-yellow?logo=python&logoColor=yellow&style=for-the-badge)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.11.8-yellow?logo=python&logoColor=yellow&style=for-the-badge)](https://python.org)
 [![CONTAINER](https://img.shields.io/badge/Container-Docker-blue?style=for-the-badge&logo=docker&logoColor=blue)](https://www.docker.com/)
 
 [![RELEASE](https://img.shields.io/github/release/ToC-Taiwan/toc-sinopac-python?style=for-the-badge)](https://github.com/ToC-Taiwan/toc-sinopac-python/releases/latest)
