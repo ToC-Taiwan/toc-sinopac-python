@@ -16,24 +16,22 @@ if __name__ == "__main__":
     start_http_server(PROMETHEUS_PORT)
     logger.info("sinopac forwarder prometheus started at port %d", PROMETHEUS_PORT)
 
-    mq = MQTT(env.mq_host, env.mq_port)
-    worker_pool = WorkerPool(
-        env.connection_count,
-        ShioajiAuth(
-            env.api_key,
-            env.api_key_secret,
-            env.person_id,
-            env.ca_password,
-        ),
-        mq,
-        QueryDataLimit(
-            data=env.request_data_limit_per_second,
-            portfolio=env.request_portfolio_limit_per_second,
-            order=env.request_order_limit_per_second,
-        ),
-    )
-
     try:
+        worker_pool = WorkerPool(
+            env.connection_count,
+            ShioajiAuth(
+                env.api_key,
+                env.api_key_secret,
+                env.person_id,
+                env.ca_password,
+            ),
+            MQTT(env.mq_host, env.mq_port),
+            QueryDataLimit(
+                data=env.request_data_limit_per_second,
+                portfolio=env.request_portfolio_limit_per_second,
+                order=env.request_order_limit_per_second,
+            ),
+        )
         GRPCServer(worker_pool=worker_pool).serve(port=env.grpc_port)
 
     except Exception as e:
