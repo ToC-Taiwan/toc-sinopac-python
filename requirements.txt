@@ -9,8 +9,8 @@ charset-normalizer==3.3.2
 ciso8601==2.3.1
 filelock==3.4.1
 frozendict==2.4.2
-grpcio==1.62.2
-grpcio-tools==1.62.2
+grpcio==1.63.0
+grpcio-tools==1.63.0
 html5lib==1.1
 idna==3.7
 importlib_metadata==7.1.0
@@ -19,12 +19,12 @@ lxml==5.2.1
 msgpack==1.0.8
 multitasking==0.0.11
 numpy==1.26.4
-orjson==3.10.1
-paho-mqtt==2.0.0
+orjson==3.10.2
+paho-mqtt==2.1.0
 pandas==2.2.2
 peewee==3.17.3
 prometheus_client==0.20.0
-protobuf==4.25.3
+protobuf==5.26.1
 pycparser==2.22
 pydantic==2.7.1
 pydantic_core==2.18.2
