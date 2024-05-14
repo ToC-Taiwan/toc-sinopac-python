@@ -1,7 +1,7 @@
 import time
 
-import google.protobuf.empty_pb2
 import grpc
+from google.protobuf import empty_pb2
 
 from logger import logger
 from pb.forwarder import basic_pb2, basic_pb2_grpc
@@ -32,7 +32,7 @@ class RPCBasic(basic_pb2_grpc.BasicDataInterfaceServicer):
 
     def Login(self, request, _):
         self.workers.login()
-        return google.protobuf.empty_pb2.Empty()
+        return empty_pb2.Empty()
 
     def GetAllStockDetail(self, request, _):
         response = basic_pb2.StockDetailResponse()

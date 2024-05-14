@@ -1,7 +1,7 @@
 import threading
 from datetime import datetime
 
-import google.protobuf.empty_pb2
+from google.protobuf import empty_pb2
 
 from pb.forwarder import trade_pb2, trade_pb2_grpc
 from simulator import Simulator
@@ -18,7 +18,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
         self.workers = workers
         self.send_order_lock = threading.Lock()
 
-    def GetFuturePosition(self, request: google.protobuf.empty_pb2.Empty, _):
+    def GetFuturePosition(self, request: empty_pb2.Empty, _):
         response = trade_pb2.FuturePositionArr()
         result = self.workers.get_future_position()
         for pos in result:
@@ -34,7 +34,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             )
         return response
 
-    def GetStockPosition(self, request: google.protobuf.empty_pb2.Empty, _):
+    def GetStockPosition(self, request: empty_pb2.Empty, _):
         response = trade_pb2.StockPositionArr()
         result = self.workers.get_stock_position()
         for pos in result:
@@ -175,13 +175,13 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def GetLocalOrderStatusArr(self, request: google.protobuf.empty_pb2.Empty, _):
+    def GetLocalOrderStatusArr(self, request: empty_pb2.Empty, _):
         self.workers.send_local_order_status_arr()
-        return google.protobuf.empty_pb2.Empty()
+        return empty_pb2.Empty()
 
-    def GetSimulateOrderStatusArr(self, request: google.protobuf.empty_pb2.Empty, _):
+    def GetSimulateOrderStatusArr(self, request: empty_pb2.Empty, _):
         self.workers.send_simulate_local_order_status_arr(self.simulator.get_local_order())
-        return google.protobuf.empty_pb2.Empty()
+        return empty_pb2.Empty()
 
     def BuyFuture(self, request: trade_pb2.FutureOrderDetail, _):
         result = None
@@ -303,7 +303,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             error=result.error,
         )
 
-    def GetAccountBalance(self, request: google.protobuf.empty_pb2.Empty, _):
+    def GetAccountBalance(self, request: empty_pb2.Empty, _):
         balance = self.workers.account_balance()
         if balance is None:
             return trade_pb2.AccountBalance(
@@ -315,7 +315,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             balance=balance.acc_balance,
         )
 
-    def GetSettlement(self, request: google.protobuf.empty_pb2.Empty, _):
+    def GetSettlement(self, request: empty_pb2.Empty, _):
         result = trade_pb2.SettlementList()
         settlements = self.workers.settlements()
         for settle in settlements:
@@ -327,7 +327,7 @@ class RPCTrade(trade_pb2_grpc.TradeInterfaceServicer):
             )
         return result
 
-    def GetMargin(self, request: google.protobuf.empty_pb2.Empty, _):
+    def GetMargin(self, request: empty_pb2.Empty, _):
         margin = self.workers.margin()
         if margin is None:
             return trade_pb2.Margin()
