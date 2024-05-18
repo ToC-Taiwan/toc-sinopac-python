@@ -2,9 +2,9 @@ import time
 
 import grpc
 from google.protobuf import empty_pb2
+from toc_trade_pb.forwarder import basic_pb2, basic_pb2_grpc
 
 from logger import logger
-from pb.forwarder import basic_pb2, basic_pb2_grpc
 from worker_pool import WorkerPool
 
 

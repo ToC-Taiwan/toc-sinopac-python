@@ -16,6 +16,7 @@ $pip install --upgrade pip
 $pip install -U \
   --no-warn-script-location \
   --no-cache-dir \
+  toc-trade-pb-v2 \
   shioaji[speed] \
   grpcio \
   grpcio-tools \

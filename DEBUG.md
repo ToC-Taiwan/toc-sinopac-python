@@ -16,8 +16,7 @@ echo '{
             "justMyCode": true,
             "env": {
                 "SJ_LOG_PATH": "${workspaceFolder}/logs/shioaji.log",
-                "SJ_CONTRACTS_PATH": "${workspaceFolder}/data",
-                "PYTHONPATH": "${workspaceFolder}/src/pb"
+                "SJ_CONTRACTS_PATH": "${workspaceFolder}/data"
             },
             "envFile": "${workspaceFolder}/.env",
             "python": "${command:python.interpreterPath}",

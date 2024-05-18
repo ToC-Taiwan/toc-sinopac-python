@@ -1,22 +1,21 @@
 repos:
-  - repo: local
-    hooks:
-      - id: lint
-        name: lint
-        language: system
-        entry: ./scripts/hook_lint.sh
+    - repo: local
+      hooks:
+          - id: lint
+            name: lint
+            language: system
+            entry: ./scripts/hook_lint.sh
 
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
-    hooks:
-      - id: black
-        exclude: pb
+    - repo: https://github.com/psf/black
+      rev: 24.4.2
+      hooks:
+          - id: black
 
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-shebang-scripts-are-executable
-      - id: detect-private-key
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.6.0
+      hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-yaml
+          - id: check-shebang-scripts-are-executable
+          - id: detect-private-key

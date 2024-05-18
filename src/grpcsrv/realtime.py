@@ -2,8 +2,8 @@ import threading
 
 import numpy as np
 from shioaji.contracts import Contract
+from toc_trade_pb.forwarder import realtime_pb2, realtime_pb2_grpc
 
-from pb.forwarder import realtime_pb2, realtime_pb2_grpc
 from realtime_us import RealTimeUS
 from sinopac import Shioaji
 from worker_pool import WorkerPool

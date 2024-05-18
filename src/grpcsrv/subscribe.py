@@ -1,4 +1,5 @@
-from pb.forwarder import entity_pb2, subscribe_pb2, subscribe_pb2_grpc
+from toc_trade_pb.forwarder import entity_pb2, subscribe_pb2, subscribe_pb2_grpc
+
 from worker_pool import WorkerPool
 
 

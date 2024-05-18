@@ -2,8 +2,8 @@ import threading
 from datetime import datetime
 
 from google.protobuf import empty_pb2
+from toc_trade_pb.forwarder import trade_pb2, trade_pb2_grpc
 
-from pb.forwarder import trade_pb2, trade_pb2_grpc
 from simulator import Simulator
 from worker_pool import WorkerPool
 

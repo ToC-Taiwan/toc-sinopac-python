@@ -1,9 +1,15 @@
 from concurrent import futures
 
 import grpc
+from toc_trade_pb.forwarder import (
+    basic_pb2_grpc,
+    history_pb2_grpc,
+    realtime_pb2_grpc,
+    subscribe_pb2_grpc,
+    trade_pb2_grpc,
+)
 
 from logger import logger
-from pb.forwarder import basic_pb2_grpc, history_pb2_grpc, realtime_pb2_grpc, subscribe_pb2_grpc, trade_pb2_grpc
 from realtime_us import RealTimeUS
 from simulator import Simulator
 from worker_pool import WorkerPool
