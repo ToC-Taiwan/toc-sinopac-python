@@ -40,7 +40,7 @@ sentry-sdk==1.5.12
 shioaji==1.2.3
 six==1.16.0
 soupsieve==2.5
-toc-trade-pb-v2==0.1.4
+toc-trade-pb-v2==0.1.7
 typing_extensions==4.11.0
 tzdata==2024.1
 urllib3==2.2.1
