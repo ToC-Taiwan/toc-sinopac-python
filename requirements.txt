@@ -1,5 +1,4 @@
 annotated-types==0.6.0
-appdirs==1.4.4
 base58==2.1.1
 based58==0.1.1
 beautifulsoup4==4.12.3
@@ -23,6 +22,7 @@ orjson==3.10.3
 paho-mqtt==2.1.0
 pandas==2.2.2
 peewee==3.17.5
+platformdirs==4.2.2
 prometheus_client==0.20.0
 protobuf==5.26.1
 pycparser==2.22
@@ -40,11 +40,11 @@ sentry-sdk==1.5.12
 shioaji==1.2.3
 six==1.16.0
 soupsieve==2.5
-toc-trade-pb-v2==0.1.7
+toc-trade-pb-v2==0.1.10
 typing_extensions==4.11.0
 tzdata==2024.1
 urllib3==2.2.1
 webencodings==0.5.1
 xxhash==3.4.1
-yfinance==0.2.38
+yfinance==0.2.40
 zipp==3.18.2
