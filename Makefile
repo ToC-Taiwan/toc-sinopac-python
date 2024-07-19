@@ -10,6 +10,11 @@ lint: check
 	@mypy --check-untyped-defs --config-file=./mypy.ini ./src
 	@PYLINTHOME=$(PWD) pylint ./src
 
+install: check ### install dependencies
+	@$(PIP) install --no-warn-script-location --no-cache-dir -r requirements.txt
+	@$(PIP) install --no-warn-script-location --no-cache-dir mypy-protobuf pylint-protobuf mypy pylint
+	@mypy --install-types --check-untyped-defs --non-interactive ./src
+
 update: check
 	@./scripts/update_dependency.sh $(PIP)
 	@./scripts/install_dev_dependency.sh $(PIP)
