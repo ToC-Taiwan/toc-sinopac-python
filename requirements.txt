@@ -43,7 +43,7 @@ six==1.16.0
 soupsieve==2.6
 toc-trade-pb-v2==0.1.11
 typing_extensions==4.12.2
-tzdata==2024.1
+tzdata==2024.2
 urllib3==2.2.3
 webencodings==0.5.1
 xxhash==3.5.0

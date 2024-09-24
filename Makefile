@@ -26,10 +26,13 @@ endif
 	@echo "Venv python version: $(shell $(PYTHON) --version | awk '{print $$2}')"
 	@echo "Python path: $(PYTHON)"
 
+# venv: clean ## create virtual environment
+# ifneq ($(ARCH),x86_64)
+# 	$(error "This script only supports x86_64")
+# endif
+# 	@$(PYTHON) -m venv venv
+
 venv: clean ## create virtual environment
-ifneq ($(ARCH),x86_64)
-	$(error "This script only supports x86_64")
-endif
 	@$(PYTHON) -m venv venv
 
 clean: ## clear virtual environment
