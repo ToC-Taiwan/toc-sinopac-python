@@ -27,9 +27,6 @@ endif
 	@echo "Python path: $(PYTHON)"
 
 venv: clean ## create virtual environment
-ifneq ($(ARCH),x86_64)
-	$(error "This script only supports x86_64")
-endif
 	@$(PYTHON) -m venv venv
 
 clean: ## clear virtual environment
